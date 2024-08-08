@@ -65,7 +65,6 @@ public class NcpObjectStorageService implements ObjectStorageService {
 
 	@Override
 	public void deleteFile(String bucketName, String directoryPath, String fileName) {
-		// TODO Auto-generated method stub
 		String path=directoryPath+"/"+fileName;
 		System.out.println("path="+path);
 		//해당 버킷에 파일이 존재하면 true 반환
