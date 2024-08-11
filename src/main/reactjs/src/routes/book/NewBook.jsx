@@ -3,65 +3,65 @@
 
 export default function NewBook() {
     return (
-    <div class="flex flex-col items-center w-full min-h-screen">
-    <header class="flex items-center justify-between w-full h-16 px-4 border-b shrink-0 md:px-6">
-        <div class="flex items-center gap-2 text-lg font-semibold">
+    <div className="flex flex-col items-center w-full min-h-screen">
+    <header className="flex items-center justify-between w-full h-16 px-4 border-b shrink-0 md:px-6">
+        <div className="flex items-center gap-2 text-lg font-semibold">
         <span>QuizVerse</span>
         </div>
-        <nav class="flex items-center gap-6 text-lg font-medium md:gap-5 md:text-sm lg:gap-6">
-        <a class="font-bold" href="#">
+        <nav className="flex items-center gap-6 text-lg font-medium md:gap-5 md:text-sm lg:gap-6">
+        <a className="font-bold" href="#">
             문제집 목록
         </a>
-        <a class="text-muted-foreground" href="#">
+        <a className="text-muted-foreground" href="#">
             화상스터디
         </a>
         </nav>
-        <div class="flex items-center gap-4">
-        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+        <div className="flex items-center gap-4">
+        <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
             로그아웃
         </button>
-        <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            <span class="flex h-full w-full items-center justify-center rounded-full bg-muted">유</span>
+        <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">유</span>
         </span>
         </div>
     </header>
-    <main class="flex flex-col items-center w-full p-4 md:p-10">
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl" data-v0-t="card">
-        <div class="flex flex-col space-y-1.5 p-6">
-            <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
+    <main className="flex flex-col items-center w-full p-4 md:p-10">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl" data-v0-t="card">
+        <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
             문제집 생성
             </h3>
         </div>
-        <div class="p-6 space-y-4">
-            <div class="space-y-2">
+        <div className="p-6 space-y-4">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="name"
             >
                 문제집 이름
             </label>
             <input
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="name"
                 placeholder="문제집 이름"
             />
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="description"
             >
                 문제집 설명
             </label>
             <input
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="description"
                 placeholder="문제집 설명"
             />
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="visibility"
             >
                 공개범위
@@ -75,7 +75,7 @@ export default function NewBook() {
                 dir="ltr"
                 data-state="closed"
                 data-placeholder=""
-                class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="visibility"
             >
                 <span style="pointer-events:none">전체 공개</span>
@@ -89,7 +89,7 @@ export default function NewBook() {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                className="lucide lucide-chevron-down h-4 w-4 opacity-50"
                 aria-hidden="true"
                 >
                 <path d="m6 9 6 6 6-6"></path>
@@ -103,9 +103,9 @@ export default function NewBook() {
                 <option value=""></option>
             </select>
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="category"
             >
                 카테고리
@@ -119,7 +119,7 @@ export default function NewBook() {
                 dir="ltr"
                 data-state="closed"
                 data-placeholder=""
-                class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="category"
             >
                 <span style="pointer-events:none">초등</span>
@@ -133,7 +133,7 @@ export default function NewBook() {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-chevron-down h-4 w-4 opacity-50"
+                className="lucide lucide-chevron-down h-4 w-4 opacity-50"
                 aria-hidden="true"
                 >
                 <path d="m6 9 6 6 6-6"></path>
@@ -147,22 +147,22 @@ export default function NewBook() {
                 <option value=""></option>
             </select>
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="points"
             >
                 문제집 총점(점)
             </label>
             <input
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="points"
                 placeholder="100"
             />
             </div>
-            <div class="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="equal-distribution"
             >
                 점수 균등 분배
@@ -173,12 +173,12 @@ export default function NewBook() {
                 aria-checked="true"
                 data-state="checked"
                 value="on"
-                class="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+                className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
                 id="equal-distribution"
             >
                 <span
                 data-state="checked"
-                class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+                className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
                 ></span>
             </button>
             <input
@@ -190,9 +190,9 @@ export default function NewBook() {
                 value="on"
             />
             </div>
-            <div class="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="time-limit"
             >
                 제한시간 여부
@@ -203,12 +203,12 @@ export default function NewBook() {
                 aria-checked="true"
                 data-state="checked"
                 value="on"
-                class="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
+                className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
                 id="time-limit"
             >
                 <span
                 data-state="checked"
-                class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+                className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
                 ></span>
             </button>
             <input
@@ -220,36 +220,36 @@ export default function NewBook() {
                 value="on"
             />
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="time"
             >
                 제한시간 (분)
             </label>
             <input
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="time"
                 placeholder="10"
             />
             </div>
-            <div class="space-y-2">
+            <div className="space-y-2">
             <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 for="cover"
             >
                 문제집 표지
             </label>
-            <div class="relative">
+            <div className="relative">
                 <img
                 src="/placeholder.svg"
                 alt="Cover"
-                class="w-36 h-36 object-cover"
+                className="w-36 h-36 object-cover"
                 width="150"
                 height="150"
                 style="aspect-ratio:150/150;object-fit:cover"
                 />
-                <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 absolute bottom-2 right-2">
+                <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 absolute bottom-2 right-2">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -260,7 +260,7 @@ export default function NewBook() {
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="w-4 h-4"
+                    className="w-4 h-4"
                 >
                     <path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10"></path>
                     <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
@@ -270,11 +270,11 @@ export default function NewBook() {
             </div>
             </div>
         </div>
-        <div class="items-center p-6 flex justify-between">
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+        <div className="items-center p-6 flex justify-between">
+            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
             취소
             </button>
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
             확인
             </button>
         </div>

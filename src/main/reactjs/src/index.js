@@ -9,6 +9,10 @@ import {
 } from "react-router-dom";
 import ErrorPage from './routes/ErrorPage';
 import Login from './routes/account/Login';
+import Signup from './routes/account/Signup';
+import FindUser from './routes/account/FindUser';
+import FindUserResult from './routes/account/FindUserResult';
+import ChangePassword from './routes/account/ChangePassword';
 import BookList from './routes/book/BookList';
 import StudyList from './routes/study/StudyList';
 import Summary from './routes/mypage/Summary';
@@ -22,6 +26,31 @@ const router = createBrowserRouter([
     {
         path: "/account",
         element: <Login />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/account/login",
+        element: <Login />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/account/signup",
+        element: <Signup />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/account/finduser",
+        element: <FindUser />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/account/finduser/result",
+        element: <FindUserResult />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/account/changepassword",
+        element: <ChangePassword />,
         errorElement: <ErrorPage />,
     },
     {
