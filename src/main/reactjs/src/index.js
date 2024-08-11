@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import ErrorPage from "./routes/errorPage";
 import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
+import ErrorPage from './routes/ErrorPage';
 
 const router = createBrowserRouter([
     {
