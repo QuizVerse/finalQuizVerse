@@ -54,7 +54,6 @@ export default function Explanation() {
                 className="mx-auto mb-4"
                 width="300"
                 height="200"
-                style="aspect-ratio:300/200;object-fit:cover"
             />
             <div className="flex space-x-2 mb-4">
                 <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
@@ -106,7 +105,6 @@ export default function Explanation() {
                 className="mx-auto mb-4"
                 width="300"
                 height="200"
-                style="aspect-ratio:300/200;object-fit:cover"
             />
             </section>
         </main>

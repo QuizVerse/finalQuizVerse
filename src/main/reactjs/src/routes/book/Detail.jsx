@@ -29,7 +29,7 @@ export default function Detail() {
             className="w-full max-w-lg"
             width="600"
             height="400"
-            style="aspect-ratio: 600 / 400; object-fit: cover;"
+            
             />
             <div className="flex flex-col w-full space-y-4">
             <div className="flex flex-col space-y-2">

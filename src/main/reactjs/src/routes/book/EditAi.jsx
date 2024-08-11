@@ -4,12 +4,12 @@
 export default function EditAi() {
     return (
 
-        <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen">
         <header className="flex items-center justify-between p-4 border-b">
           <h1 className="text-xl font-bold">QuizVerse</h1>
           <nav className="flex items-center space-x-4">
-            <a className="text-blue-500" href="#"> 로그인 </a
-            ><a className="text-blue-500" href="#"> 가입동의 </a>
+            <a className="text-blue-500" href="#"> 로그인 </a>
+            <a className="text-blue-500" href="#"> 가입동의 </a>
           </nav>
         </header>
         <main className="flex flex-1 p-4">

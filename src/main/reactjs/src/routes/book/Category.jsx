@@ -79,7 +79,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -122,7 +121,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -165,7 +163,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -208,7 +205,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -251,7 +247,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -351,7 +346,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -394,7 +388,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -437,7 +430,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -480,7 +472,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -523,7 +514,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -566,7 +556,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -609,7 +598,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -652,7 +640,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -695,7 +682,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">
@@ -738,7 +724,6 @@ export default function Category() {
             className="w-full h-48 object-cover"
             width="200"
             height="200"
-            style="aspect-ratio:200/200;object-fit:cover"
           />
           <div className="p-6">
             <div className="flex items-center justify-between mb-2">

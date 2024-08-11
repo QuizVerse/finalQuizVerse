@@ -14,6 +14,11 @@ import FindUser from './routes/account/FindUser';
 import FindUserResult from './routes/account/FindUserResult';
 import ChangePassword from './routes/account/ChangePassword';
 import BookList from './routes/book/BookList';
+import Detail from './routes/book/Detail';
+import BookPreview from './routes/book/BookPreview';
+import NewBook from './routes/book/NewBook';
+import Edit from './routes/book/Edit';
+import EditAi from './routes/book/EditAi';
 import StudyList from './routes/study/StudyList';
 import Summary from './routes/mypage/Summary';
 
@@ -56,6 +61,36 @@ const router = createBrowserRouter([
     {
         path: "/book",
         element: <BookList />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/list",
+        element: <BookList />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/detail",
+        element: <Detail />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/bookpreview",
+        element: <BookPreview />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/new",
+        element: <NewBook />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/edit",
+        element: <Edit />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book/edit/ai",
+        element: <EditAi />,
         errorElement: <ErrorPage />,
     },
     {

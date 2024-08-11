@@ -78,7 +78,7 @@ export default function NewBook() {
                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="visibility"
             >
-                <span style="pointer-events:none">전체 공개</span>
+                <span>전체 공개</span>
                 <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -98,7 +98,6 @@ export default function NewBook() {
             <select
                 aria-hidden="true"
                 tabindex="-1"
-                style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
             >
                 <option value=""></option>
             </select>
@@ -122,7 +121,7 @@ export default function NewBook() {
                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="category"
             >
-                <span style="pointer-events:none">초등</span>
+                <span>초등</span>
                 <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -142,7 +141,6 @@ export default function NewBook() {
             <select
                 aria-hidden="true"
                 tabindex="-1"
-                style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
             >
                 <option value=""></option>
             </select>
@@ -184,7 +182,6 @@ export default function NewBook() {
             <input
                 type="checkbox"
                 aria-hidden="true"
-                style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                 tabindex="-1"
                 checked=""
                 value="on"
@@ -214,7 +211,6 @@ export default function NewBook() {
             <input
                 type="checkbox"
                 aria-hidden="true"
-                style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                 tabindex="-1"
                 checked=""
                 value="on"
@@ -247,7 +243,6 @@ export default function NewBook() {
                 className="w-36 h-36 object-cover"
                 width="150"
                 height="150"
-                style="aspect-ratio:150/150;object-fit:cover"
                 />
                 <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 absolute bottom-2 right-2">
                 <svg
