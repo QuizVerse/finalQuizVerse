@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './routes/App';
+import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './routes/ErrorPage';
+import Login from './routes/account/Login';
+import BookList from './routes/book/BookList';
+import StudyList from './routes/study/StudyList';
+import Summary from './routes/mypage/Summary';
 
 const router = createBrowserRouter([
     {
@@ -14,6 +19,27 @@ const router = createBrowserRouter([
         element: <App />,
         errorElement: <ErrorPage />,
     },
+    {
+        path: "/account",
+        element: <Login />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/book",
+        element: <BookList />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/study",
+        element: <StudyList />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/mypage",
+        element: <Summary />,
+        errorElement: <ErrorPage />,
+    },
+
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
