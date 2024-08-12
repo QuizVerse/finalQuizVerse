@@ -3,22 +3,6 @@
 
 export default function Login() {
   return (
-    <div className="flex flex-col items-center min-h-screen">
-      <header className="flex items-center justify-between w-full p-4 border-b">
-        <div className="text-lg font-bold">QuizVerse</div>
-        <nav className="flex items-center space-x-4">
-          <button className="text-sm">문제집 목록</button>
-          <button className="text-sm">화상스터디</button>
-        </nav>
-        <div className="flex items-center space-x-2">
-          <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-            로그인
-          </button>
-          <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-            회원가입
-          </button>
-        </div>
-      </header>
       <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
         <div className="w-full max-w-md p-8 space-y-4 border rounded-md">
           <h2 className="text-2xl font-semibold text-center">로그인</h2>
@@ -128,6 +112,5 @@ export default function Login() {
           </button>
         </div>
       </main>
-    </div>
   );
 }

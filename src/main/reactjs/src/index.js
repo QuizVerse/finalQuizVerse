@@ -10,6 +10,7 @@ import {
 import ErrorPage from './routes/ErrorPage';
 
 // account 관련 컴포넌트
+import Account from "./routes/account/Account";
 import Login from './routes/account/Login';
 import Signup from './routes/account/Signup';
 import FindUser from './routes/account/FindUser';
@@ -38,6 +39,7 @@ import StudyRoom from './routes/study/StudyRoom';
 import SearchRoom from './routes/study/SearchRoom';
 
 // MyPage 관련 컴포넌트
+import Book from "./routes/book/book";
 import Summary from './routes/mypage/Summary';
 import PublishedBook from './routes/mypage/PublishedBook';
 import SolvedBook from './routes/mypage/SolvedBook';
@@ -49,76 +51,119 @@ import TestWrong from './routes/mypage/TestWrong';
 import UpdateUser from './routes/mypage/UpdateUser';
 import Leave from './routes/mypage/Leave';
 
+
+
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <App />,
-        errorElement: <ErrorPage />,
-    },
-    {
         path: "/account",
-        element: <Login />,
+        element: <Account />,
         errorElement: <ErrorPage />,
-    },
-    {
-        path: "/account/login",
-        element: <Login />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/account/signup",
-        element: <Signup />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/account/finduser",
-        element: <FindUser />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/account/finduser/result",
-        element: <FindUserResult />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/account/changepassword",
-        element: <ChangePassword />,
-        errorElement: <ErrorPage />,
+        children :[
+            {
+                path: "",
+                element: <Login />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/account/login",
+                element: <Login />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/account/signup",
+                element: <Signup />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/account/finduser",
+                element: <FindUser />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/account/finduser/result",
+                element: <FindUserResult />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/account/changepassword",
+                element: <ChangePassword />,
+                errorElement: <ErrorPage />,
+            },
+        ]
     },
     {
         path: "/book",
-        element: <BookList />,
+        element: <Book />,
         errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/list",
-        element: <BookList />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/detail",
-        element: <Detail />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/bookpreview",
-        element: <BookPreview />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/new",
-        element: <NewBook />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/edit",
-        element: <Edit />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/book/edit/ai",
-        element: <EditAi />,
-        errorElement: <ErrorPage />,
+        children :[
+            {
+                path: "",
+                element: <BookList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/list",
+                element: <BookList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/detail",
+                element: <Detail />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/bookpreview",
+                element: <BookPreview />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/new",
+                element: <NewBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/edit",
+                element: <Edit />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/edit/ai",
+                element: <EditAi />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/book/questionpreview',
+                element: <QuestionPreview />,
+            },
+            {
+                path: '/book/test',
+                element: <Test />,
+            },
+            {
+                path: '/book/score',
+                element: <Score />,
+            },
+            {
+                path: '/book/scorepreview',
+                element: <ScorePreview />,
+            },
+            {
+                path: '/book/result',
+                element: <Result />,
+            },
+            {
+                path: '/book/explanation',
+                element: <Explanation />,
+            },
+            {
+                path: '/book/searchbook',
+                element: <SearchBook />,
+            },
+            {
+                path: '/book/category',
+                element: <Category />,
+            },
+        ]
     },
     {
         path: "/study",
@@ -130,38 +175,6 @@ const router = createBrowserRouter([
         element: <Summary />,
         errorElement: <ErrorPage />,
     },
-    {
-        path: '/book/questionpreview',
-        element: <QuestionPreview />,
-      },
-      {
-        path: '/book/test',
-        element: <Test />,
-      },
-      {
-        path: '/book/score',
-        element: <Score />,
-      },
-      {
-        path: '/book/scorepreview',
-        element: <ScorePreview />,
-      },
-      {
-        path: '/book/result',
-        element: <Result />,
-      },
-      {
-        path: '/book/explanation',
-        element: <Explanation />,
-      },
-      {
-        path: '/book/searchbook',
-        element: <SearchBook />,
-      },
-      {
-        path: '/book/category',
-        element: <Category />,
-      },
       {
         path: '/study/list',
         element: <StudyList />,
