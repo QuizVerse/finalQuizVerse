@@ -8,19 +8,46 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './routes/ErrorPage';
+
+// account 관련 컴포넌트
 import Login from './routes/account/Login';
 import Signup from './routes/account/Signup';
 import FindUser from './routes/account/FindUser';
 import FindUserResult from './routes/account/FindUserResult';
 import ChangePassword from './routes/account/ChangePassword';
+
+// Book 관련 컴포넌트
 import BookList from './routes/book/BookList';
 import Detail from './routes/book/Detail';
 import BookPreview from './routes/book/BookPreview';
 import NewBook from './routes/book/NewBook';
 import Edit from './routes/book/Edit';
 import EditAi from './routes/book/EditAi';
+import QuestionPreview from './routes/book/QuestionPreview';
+import Test from './routes/book/Test';
+import Score from './routes/book/Score';
+import ScorePreview from './routes/book/ScorePreview';
+import Result from './routes/book/Result';
+import Explanation from './routes/book/Explanation';
+import SearchBook from './routes/book/SearchBook';
+import Category from './routes/book/Category';
+
+// Study 관련 컴포넌트
 import StudyList from './routes/study/StudyList';
+import StudyRoom from './routes/study/StudyRoom';
+import SearchRoom from './routes/study/SearchRoom';
+
+// MyPage 관련 컴포넌트
 import Summary from './routes/mypage/Summary';
+import PublishedBook from './routes/mypage/PublishedBook';
+import SolvedBook from './routes/mypage/SolvedBook';
+import Myclass from './routes/mypage/Myclass';
+import MyclassDetail from './routes/mypage/MyclassDetail';
+import Bookmark from './routes/mypage/Bookmark';
+import Wrong from './routes/mypage/Wrong';
+import TestWrong from './routes/mypage/TestWrong';
+import UpdateUser from './routes/mypage/UpdateUser';
+import Leave from './routes/mypage/Leave';
 
 const router = createBrowserRouter([
     {
@@ -103,6 +130,90 @@ const router = createBrowserRouter([
         element: <Summary />,
         errorElement: <ErrorPage />,
     },
+    {
+        path: '/book/questionpreview',
+        element: <QuestionPreview />,
+      },
+      {
+        path: '/book/test',
+        element: <Test />,
+      },
+      {
+        path: '/book/score',
+        element: <Score />,
+      },
+      {
+        path: '/book/scorepreview',
+        element: <ScorePreview />,
+      },
+      {
+        path: '/book/result',
+        element: <Result />,
+      },
+      {
+        path: '/book/explanation',
+        element: <Explanation />,
+      },
+      {
+        path: '/book/searchbook',
+        element: <SearchBook />,
+      },
+      {
+        path: '/book/category',
+        element: <Category />,
+      },
+      {
+        path: '/study/list',
+        element: <StudyList />,
+      },
+      {
+        path: '/study/room',
+        element: <StudyRoom />,
+      },
+      {
+        path: '/study/searchroom',
+        element: <SearchRoom />,
+      },
+      {
+        path: '/mypage/summary',
+        element: <Summary />,
+      },
+      {
+        path: '/mypage/publishedbook',
+        element: <PublishedBook />,
+      },
+      {
+        path: '/mypage/solvedbook',
+        element: <SolvedBook />,
+      },
+      {
+        path: '/mypage/myclass',
+        element: <Myclass />,
+      },
+      {
+        path: '/mypage/myclass/detail',
+        element: <MyclassDetail />,
+      },
+      {
+        path: '/mypage/bookmark',
+        element: <Bookmark />,
+      },
+      {
+        path: '/mypage/wrong',
+        element: <Wrong />,
+      },
+      {
+        path: '/mypage/testwrong',
+        element: <TestWrong />,
+      },
+      {
+        path: '/mypage/updateuser',
+        element: <UpdateUser />,
+      },
+      {
+        path: '/mypage/leave',
+        element: <Leave />,
+      },
 
 ]);
 
