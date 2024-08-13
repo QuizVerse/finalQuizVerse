@@ -7,7 +7,10 @@ export default function BookList() {
         <div className="min-h-screen bg-white">
             <Header/>
             <CategoryHeader/>
-            <Outlet/>
+            <div className="p-16">
+                <Outlet/>
+            </div>
+
         </div>
     )
 }
