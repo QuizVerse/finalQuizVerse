@@ -12,7 +12,6 @@ export default function Bookmark() {
             className="w-10 h-10 mr-2"
             width="40"
             height="40"
-            style="aspect-ratio:40/40;object-fit:cover"
           />
           <span className="text-xl font-bold">Logoipsu</span>
         </div>
@@ -64,7 +63,7 @@ export default function Bookmark() {
               className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Filter"
             >
-              <span style="pointer-events:none">등록일순</span>
+              <span>등록일순</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -84,7 +83,6 @@ export default function Bookmark() {
             <select
               aria-hidden="true"
               tabindex="-1"
-              style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
             >
               <option value=""></option>
             </select>
@@ -101,7 +99,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -145,7 +142,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -189,7 +185,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -233,7 +228,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -277,7 +271,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -321,7 +314,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -365,7 +357,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
@@ -409,7 +400,6 @@ export default function Bookmark() {
               className="w-full h-48 object-cover"
               width="200"
               height="200"
-              style="aspect-ratio:200/200;object-fit:cover"
             />
             <div className="p-6">
               <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>

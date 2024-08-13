@@ -12,7 +12,6 @@ export default function SolvedBook() {
             className="mr-2"
             width="32"
             height="32"
-            style="aspect-ratio:32/32;object-fit:cover"
           />
           <span className="text-xl font-bold">Logoipsu</span>
         </div>
@@ -61,7 +60,7 @@ export default function SolvedBook() {
             data-placeholder=""
             className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span style="pointer-events:none">등록일순</span>
+            <span>등록일순</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -81,7 +80,6 @@ export default function SolvedBook() {
           <select
             aria-hidden="true"
             tabindex="-1"
-            style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
           >
             <option value=""></option>
           </select>

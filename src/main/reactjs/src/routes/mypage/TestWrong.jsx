@@ -67,7 +67,6 @@ export default function TestWrong() {
             className="mt-4"
             width="300"
             height="200"
-            style="aspect-ratio:300/200;object-fit:cover"
           />
           <div className="mt-4 space-y-2">
             <div className="flex items-center space-x-2">
@@ -121,7 +120,6 @@ export default function TestWrong() {
             className="mt-4"
             width="300"
             height="200"
-            style="aspect-ratio:300/200;object-fit:cover"
           />
           <div className="mt-4 space-y-2">
             <div className="flex items-center space-x-2">

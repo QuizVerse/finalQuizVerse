@@ -12,7 +12,6 @@ export default function MyclassDetail() {
             className="w-10 h-10 mr-2"
             width="40"
             height="40"
-            style="aspect-ratio:40/40;object-fit:cover"
           />
           <span className="text-xl font-bold">Logoipsu</span>
         </div>
@@ -83,7 +82,7 @@ export default function MyclassDetail() {
                 data-placeholder=""
                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <span style="pointer-events:none">등록일순</span>
+                <span>등록일순</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -103,7 +102,6 @@ export default function MyclassDetail() {
               <select
                 aria-hidden="true"
                 tabindex="-1"
-                style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
               >
                 <option value=""></option>
               </select>
@@ -152,7 +150,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -185,7 +182,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -228,7 +224,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -271,7 +266,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -314,7 +308,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -357,7 +350,6 @@ export default function MyclassDetail() {
                     <input
                       type="checkbox"
                       aria-hidden="true"
-                      style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                       tabindex="-1"
                       value="on"
                     />
@@ -409,7 +401,6 @@ export default function MyclassDetail() {
                 className="w-full h-48 mb-4"
                 width="200"
                 height="200"
-                style="aspect-ratio:200/200;object-fit:cover"
               />
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -459,7 +450,6 @@ export default function MyclassDetail() {
                 className="w-full h-48 mb-4"
                 width="200"
                 height="200"
-                style="aspect-ratio:200/200;object-fit:cover"
               />
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -509,7 +499,6 @@ export default function MyclassDetail() {
                 className="w-full h-48 mb-4"
                 width="200"
                 height="200"
-                style="aspect-ratio:200/200;object-fit:cover"
               />
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -559,7 +548,6 @@ export default function MyclassDetail() {
                 className="w-full h-48 mb-4"
                 width="200"
                 height="200"
-                style="aspect-ratio:200/200;object-fit:cover"
               />
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

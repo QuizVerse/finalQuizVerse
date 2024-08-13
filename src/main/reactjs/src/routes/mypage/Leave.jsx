@@ -12,7 +12,6 @@ export default function Leave() {
             className="w-8 h-8 mr-2"
             width="32"
             height="32"
-            style="aspect-ratio:32/32;object-fit:cover"
           />
           <span className="text-lg font-bold">Logoipsu</span>
         </div>

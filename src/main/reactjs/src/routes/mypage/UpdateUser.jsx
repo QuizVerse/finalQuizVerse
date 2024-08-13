@@ -275,7 +275,6 @@ export default function UpdateUser() {
               <input
                 type="checkbox"
                 aria-hidden="true"
-                style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                 tabindex="-1"
                 checked=""
                 value="on"
@@ -305,7 +304,6 @@ export default function UpdateUser() {
               <input
                 type="checkbox"
                 aria-hidden="true"
-                style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
                 tabindex="-1"
                 value="on"
               />

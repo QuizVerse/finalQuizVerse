@@ -12,7 +12,6 @@ export default function Myclass() {
             className="mr-2"
             width="32"
             height="32"
-            style="aspect-ratio:32/32;object-fit:cover"
           />
           <span className="text-xl font-bold">Logoipsu</span>
         </div>
@@ -87,7 +86,7 @@ export default function Myclass() {
             className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Filter"
           >
-            <span style="pointer-events:none">가입 일순</span>
+            <span>가입 일순</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -107,7 +106,6 @@ export default function Myclass() {
           <select
             aria-hidden="true"
             tabindex="-1"
-            style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
           >
             <option value=""></option>
           </select>
