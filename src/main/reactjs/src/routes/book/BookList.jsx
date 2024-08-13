@@ -4,12 +4,13 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import BookCard from "../../components/BookCard";
+import CustomInput from "../../components/CustomInput";
 
 
 export default function BookList() {
   return (
       <main className="p-16">
-
+        <CustomInput label="텍스트다 이말이야" placeholder="풀레이수홀다" value="값"/>
         <div className="flex items-center justify-center mb-8">
           <div className="w-full max-w-4xl p-16 text-center bg-gray-200 rounded">문제집 추천배너</div>
         </div>
