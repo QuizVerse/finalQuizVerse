@@ -39,9 +39,9 @@ export default function CustomInput(prop) {
                 /**
                  * @TODO : 타이머 함수 추가
                  * */
-            prop.timerVisible &&
-                <Typography variant="caption" color={prop.captionColor}>인증 제한 시간 : 03:00</Typography>
-            }
+                prop.timerVisible &&
+                    <Typography variant="caption" color={prop.captionColor}>인증 제한 시간 : 03:00</Typography>
+                }
         </div>
         )
 }
