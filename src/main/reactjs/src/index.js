@@ -216,6 +216,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children :[
             {
+                path: "",
+                element: <Summary />,
+                errorElement: <ErrorPage />,
+            },
+            {
                 path: '/mypage/summary',
                 element: <Summary />,
                 errorElement: <ErrorPage />,
