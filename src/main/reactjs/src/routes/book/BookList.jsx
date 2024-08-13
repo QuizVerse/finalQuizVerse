@@ -4,8 +4,8 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import BookCard from "../../components/BookCard";
-import CustomInput from "../../components/CustomInput";
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import {Link} from "react-router-dom";
 
 export default function BookList() {
   return (
@@ -16,51 +16,25 @@ export default function BookList() {
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">취업/자격증 문제집 Top 5</h2>
-            <a href="#" className="text-gray-600">
-              전체보기 &amp;gt;
-            </a>
+            <Link className="text-gray-600 flex gap-2 items-center">
+              전체보기
+              <ArrowForwardIosIcon fontSize={'8px'}/>
+            </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
+            <BookCard cardType={'A'}/>
+            <BookCard cardType={'A'}/>
+            <BookCard cardType={'A'}/>
+            <BookCard cardType={'A'}/>
           </div>
         </section>
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">초등 문제집 Top 5</h2>
-            <a href="#" className="text-gray-600">
-              전체보기 &amp;gt;
-            </a>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-          </div>
-        </section>
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">중고등 문제집 Top 5</h2>
-            <a href="#" className="text-gray-600">
-              전체보기 &amp;gt;
-            </a>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-          </div>
-        </section>
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">외국어/어학 문제집 Top 5</h2>
-            <a href="#" className="text-gray-600">
-              전체보기 &amp;gt;
-            </a>
+            <Link className="text-gray-600 flex gap-2 items-center">
+              전체보기
+              <ArrowForwardIosIcon fontSize={'8px'}/>
+            </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <BookCard/>
