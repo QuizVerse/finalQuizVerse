@@ -3,61 +3,13 @@
 
 export default function Summary() {
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 p-4 border-r">
-        <div className="flex items-center mb-6">
-          <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">
-              Logo
-            </span>
-          </span>
-          <span className="ml-2 text-xl font-bold">Logoipsu</span>
-        </div>
-        <input
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mb-6"
-          placeholder="Placeholder"
-        />
-        <nav className="space-y-2">
-          <a className="block py-2" href="#">
-            나의 이력
-          </a>
-          <a className="block py-2" href="#">
-            나의 풀이이력
-          </a>
-          <a className="block py-2" href="#">
-            나의 학습이력
-          </a>
-          <div className="space-y-2">
-            <a className="block py-2" href="#">
-              나의 클래스
-            </a>
-            <a className="block py-2" href="#">
-              즐겨찾기
-            </a>
-            <a className="block py-2" href="#">
-              오답노트
-            </a>
-          </div>
-          <div className="space-y-2">
-            <a className="block py-2" href="#">
-              회원정보
-            </a>
-            <a className="block py-2" href="#">
-              회원정보 수정
-            </a>
-            <a className="block py-2" href="#">
-              회원 탈퇴
-            </a>
-          </div>
-        </nav>
-      </aside>
       <main className="flex-1 p-8">
         <section className="mb-8">
           <h2 className="mb-4 text-2xl font-bold">개요</h2>
           <div className="grid grid-cols-4 gap-4">
             <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
+                className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
+                data-v0-t="card"
             >
               <div className="p-6">
                 <h3 className="mb-2 text-lg font-semibold">내가 만든 문제집</h3>
@@ -65,8 +17,8 @@ export default function Summary() {
               </div>
             </div>
             <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
+                className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
+                data-v0-t="card"
             >
               <div className="p-6">
                 <h3 className="mb-2 text-lg font-semibold">나의 클래스</h3>
@@ -74,8 +26,8 @@ export default function Summary() {
               </div>
             </div>
             <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
+                className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
+                data-v0-t="card"
             >
               <div className="p-6">
                 <h3 className="mb-2 text-lg font-semibold">내가 푼 문제집</h3>
@@ -83,8 +35,8 @@ export default function Summary() {
               </div>
             </div>
             <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
+                className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
+                data-v0-t="card"
             >
               <div className="p-6">
                 <h3 className="mb-2 text-lg font-semibold">즐겨찾기한 문제집</h3>
@@ -301,38 +253,37 @@ export default function Summary() {
                 </td>
               </tr>
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">
-                    영어스터디
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    2024-07-19
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    5
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    멤버
-                  </td>
-                </tr>
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">
-                    언어교환
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    2024-07-17
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    9
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    멤버
-                  </td>
-                </tr>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">
+                  영어스터디
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  2024-07-19
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  5
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  멤버
+                </td>
+              </tr>
+              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0 font-medium">
+                  언어교환
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  2024-07-17
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  9
+                </td>
+                <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                  멤버
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
         </section>
       </main>
-    </div>
   );
 }

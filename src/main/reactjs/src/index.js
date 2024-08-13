@@ -49,6 +49,7 @@ import Wrong from './routes/mypage/Wrong';
 import TestWrong from './routes/mypage/TestWrong';
 import UpdateUser from './routes/mypage/UpdateUser';
 import Leave from './routes/mypage/Leave';
+import Mypage from "./routes/mypage/Mypage";
 
 
 
@@ -211,9 +212,14 @@ const router = createBrowserRouter([
     },
     {
         path: "/mypage",
-        element: <Summary />,
+        element: <Mypage />,
         errorElement: <ErrorPage />,
         children :[
+            {
+                path: "",
+                element: <Summary />,
+                errorElement: <ErrorPage />,
+            },
             {
                 path: '/mypage/summary',
                 element: <Summary />,
