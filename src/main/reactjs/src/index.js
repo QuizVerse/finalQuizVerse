@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './routes/App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
@@ -54,6 +53,15 @@ import Leave from './routes/mypage/Leave';
 
 
 const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Book />,
+        errorElement: <ErrorPage />,
+        children: [{
+            path: "",
+            element: <BookList/>
+        }]
+    },
     {
         path: "/account",
         element: <Account />,
@@ -134,34 +142,42 @@ const router = createBrowserRouter([
             {
                 path: '/book/questionpreview',
                 element: <QuestionPreview />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/test',
                 element: <Test />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/score',
                 element: <Score />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/scorepreview',
                 element: <ScorePreview />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/result',
                 element: <Result />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/explanation',
                 element: <Explanation />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/searchbook',
                 element: <SearchBook />,
+                errorElement: <ErrorPage />,
             },
             {
                 path: '/book/category',
                 element: <Category />,
+                errorElement: <ErrorPage />,
             },
         ]
     },
@@ -169,64 +185,89 @@ const router = createBrowserRouter([
         path: "/study",
         element: <StudyList />,
         errorElement: <ErrorPage />,
+        children : [
+            {
+                path: '',
+                element: <StudyList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/study/list',
+                element: <StudyList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/study/room',
+                element: <StudyRoom />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/study/searchroom',
+                element: <SearchRoom />,
+                errorElement: <ErrorPage />,
+            },
+
+        ]
     },
     {
         path: "/mypage",
         element: <Summary />,
         errorElement: <ErrorPage />,
+        children :[
+            {
+                path: '/mypage/summary',
+                element: <Summary />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/publishedbook',
+                element: <PublishedBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/solvedbook',
+                element: <SolvedBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/myclass',
+                element: <Myclass />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/myclass/detail',
+                element: <MyclassDetail />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/bookmark',
+                element: <Bookmark />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/wrong',
+                element: <Wrong />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/testwrong',
+                element: <TestWrong />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/updateuser',
+                element: <UpdateUser />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/mypage/leave',
+                element: <Leave />,
+                errorElement: <ErrorPage />,
+            },
+        ]
     },
-      {
-        path: '/study/list',
-        element: <StudyList />,
-      },
-      {
-        path: '/study/room',
-        element: <StudyRoom />,
-      },
-      {
-        path: '/study/searchroom',
-        element: <SearchRoom />,
-      },
-      {
-        path: '/mypage/summary',
-        element: <Summary />,
-      },
-      {
-        path: '/mypage/publishedbook',
-        element: <PublishedBook />,
-      },
-      {
-        path: '/mypage/solvedbook',
-        element: <SolvedBook />,
-      },
-      {
-        path: '/mypage/myclass',
-        element: <Myclass />,
-      },
-      {
-        path: '/mypage/myclass/detail',
-        element: <MyclassDetail />,
-      },
-      {
-        path: '/mypage/bookmark',
-        element: <Bookmark />,
-      },
-      {
-        path: '/mypage/wrong',
-        element: <Wrong />,
-      },
-      {
-        path: '/mypage/testwrong',
-        element: <TestWrong />,
-      },
-      {
-        path: '/mypage/updateuser',
-        element: <UpdateUser />,
-      },
-      {
-        path: '/mypage/leave',
-        element: <Leave />,
-      },
+     
+      
 
 ]);
 
