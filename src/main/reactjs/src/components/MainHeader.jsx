@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 
-export default function Header() {
+export default function MainHeader() {
     return (
         <div>
             <header className="flex items-center justify-between w-full px-4 py-2 border-b">
-                <h1 className="text-xl font-bold">QuizVerse</h1>
+                <Link to='/'>
+                    <h1 className="text-xl font-bold">QuizVerse</h1>
+                </Link>
                 <nav className="flex items-center space-x-4">
                     <Button>
                         <Link to='/book/list' className="text-sm font-medium text-gray-700" >
