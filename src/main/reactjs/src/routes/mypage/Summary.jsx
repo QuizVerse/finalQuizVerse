@@ -59,7 +59,7 @@ export default function Summary() {
                 <div className="text-3xl font-bold">+</div>
               </div>
             </div>
-            <BookCard className={"flex-1"}/>
+            <BookCard cardType="B" className={"flex-1"}/>
             <BookCard className={"flex-1"}/>
             <BookCard className={"flex-1"}/>
           </div>
