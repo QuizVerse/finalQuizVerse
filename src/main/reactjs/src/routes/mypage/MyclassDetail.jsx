@@ -3,65 +3,6 @@
 
 export default function MyclassDetail() {
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 p-4 border-r">
-        <div className="flex items-center mb-6">
-          <img
-            src="/placeholder.svg"
-            alt="Logo"
-            className="w-10 h-10 mr-2"
-            width="40"
-            height="40"
-          />
-          <span className="text-xl font-bold">Logoipsu</span>
-        </div>
-        <input
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mb-6"
-          placeholder="Placeholder"
-        />
-        <nav className="space-y-4">
-          <div>
-            <h3 className="mb-2 text-sm font-semibold">나의 이력</h3>
-            <ul className="space-y-2">
-              <li>
-                <a className="block text-sm" href="#">
-                  나의 플레이리스트
-                </a>
-              </li>
-              <li>
-                <a className="block text-sm" href="#">
-                  나의 학습이력
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-2 text-sm font-semibold">나의 클래스</h3>
-            <ul className="space-y-2">
-              <li>
-                <a className="block text-sm" href="#">
-                  정치기
-                </a>
-              </li>
-              <li>
-                <a className="block text-sm" href="#">
-                  오답노트
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-2 text-sm font-semibold">회원정보 수정</h3>
-            <ul className="space-y-2">
-              <li>
-                <a className="block text-sm" href="#">
-                  회원 탈퇴
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </aside>
       <main className="flex-1 p-6">
         <h1 className="mb-6 text-2xl font-bold">정치기 실기 스터디</h1>
         <div className="mb-6">
@@ -588,6 +529,5 @@ export default function MyclassDetail() {
           </div>
         </div>
       </main>
-    </div>
   );
 }
