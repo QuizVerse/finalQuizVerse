@@ -5,23 +5,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {useState} from "react";
+import ModalContent from "./ConfirmContent";
 
-export default function CustomModal(prop) {
-    const [open, setOpen] = useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+export default function CustomConfirm(prop) {
 
     return (
         <>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open alert dialog
-            </Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -29,16 +19,17 @@ export default function CustomModal(prop) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {prop.title}
+                    {ModalContent[prop.modalId].title || '모달 타이틀'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {prop.description}
+                        {ModalContent[prop.modalId].content || '모달 설명'}
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions> 
-                    <Button onClick={handleClose}>취소</Button>
-                    <Button onClick={handleClose} autoFocus>확인</Button>
+                <DialogActions>
+                    <Button onClick={handleClose} autoFocus>
+                        {ModalContent[prop.modalId].btn2Text || '확인'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

@@ -1,12 +1,24 @@
 // v0 by Vercel.
 // https://v0.dev/t/PyQHzVi1rPb
 
-import CustomModal from "../../components/CustomModal";
+import CustomConfirm from "../../components/CustomConfirm";
+import {useState} from "react";
+import {Button} from "@mui/material";
 
 export default function Myclass() {
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
       <main className="flex-1 p-6">
-        <CustomModal></CustomModal>
+
         <h1 className="mb-6 text-2xl font-bold">나의 클래스</h1>
         <div className="flex items-center mb-4 space-x-4">
           <input
@@ -48,10 +60,12 @@ export default function Myclass() {
           >
             <option value=""></option>
           </select>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+          <Button
+              onClick={handleClickOpen}
+              className="whitespace-nowrap">
             클래스 생성
-          </button>
+          </Button>
+          <CustomConfirm id={0} openConfirm={open} closeConfirm={handleClose}></CustomConfirm>
         </div>
         <div
             className="rounded-lg border bg-card text-card-foreground shadow-sm"
