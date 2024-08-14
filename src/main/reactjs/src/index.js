@@ -51,6 +51,7 @@ import UpdateUser from './routes/mypage/UpdateUser';
 import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
+import UseModal from "./routes/devtest/UseModal";
 
 
 
@@ -68,11 +69,16 @@ const router = createBrowserRouter([
         path: "/devtest",
         element: <DevTest />,
         errorElement: <ErrorPage />,
-        children: [{
-            path: "/devtest/pagenation",
-            element: <BookList/>
-        }]
-
+        children: [
+            {
+                path: "/devtest/pagenation",
+                element: <BookList/>
+            },
+            {
+                path: "/devtest/usemodal",
+                element: <UseModal/>
+            },
+        ]
     },
     {
         path: "/account",
