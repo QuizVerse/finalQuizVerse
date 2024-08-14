@@ -50,6 +50,7 @@ import TestWrong from './routes/mypage/TestWrong';
 import UpdateUser from './routes/mypage/UpdateUser';
 import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
+import DevTest from "./routes/devtest/DevTest";
 
 
 
@@ -62,6 +63,16 @@ const router = createBrowserRouter([
             path: "",
             element: <BookList/>
         }]
+    },
+    {   // 개발 중 테스트가 필요한 경우 사용
+        path: "/devtest",
+        element: <DevTest />,
+        errorElement: <ErrorPage />,
+        children: [{
+            path: "/devtest/pagenation",
+            element: <BookList/>
+        }]
+
     },
     {
         path: "/account",
