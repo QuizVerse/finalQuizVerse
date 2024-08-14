@@ -2,12 +2,22 @@ package org.example.final1.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "tb_study")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudyDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +47,6 @@ public class StudyDto {
     private String study_url;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserDto user_id;
+    @JoinColumn(name = "user_id", nullable = true)
+    private UserDto user;
 }

@@ -1,9 +1,19 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "tb_page")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PageDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +34,6 @@ public class PageDto {
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
-    private BookDto book_id;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private BookDto book;
 }
