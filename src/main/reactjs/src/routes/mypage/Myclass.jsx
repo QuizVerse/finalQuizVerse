@@ -1,9 +1,12 @@
 // v0 by Vercel.
 // https://v0.dev/t/PyQHzVi1rPb
 
+import CustomModal from "../../components/CustomModal";
+
 export default function Myclass() {
   return (
       <main className="flex-1 p-6">
+        <CustomModal></CustomModal>
         <h1 className="mb-6 text-2xl font-bold">나의 클래스</h1>
         <div className="flex items-center mb-4 space-x-4">
           <input
