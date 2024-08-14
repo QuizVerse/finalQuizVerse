@@ -59,15 +59,7 @@ const AlertContent = [
     {
         id: 8,
         title: "더이상 답안을 추가할 수 없습니다.",
-        content: "선택형 답은은 최대 5개까지 가능합니다.",
-        btnText: "",
-        btnFunc: function (){
-        },
-    },
-    {
-        id: 9,
-        title: "‘2024 정보처리기사 실기’에 대한 링크 생성됨",
-        content: "생성된 링크",
+        content: "선택형 답은 최대 5개까지 가능합니다.",
         btnText: "",
         btnFunc: function (){
         },

@@ -15,14 +15,14 @@ export default function CustomAlert(prop) {
 
     const clickBtn = () => {
         AlertContent[prop.id].btnFunc()
-        prop.closeConfirm();
+        prop.closeAlert();
     };
 
     return (
         <>
             <Dialog
-                open={prop.openConfirm}
-                onClose={prop.closeConfirm}
+                open={prop.openAlert}
+                onClose={prop.closeAlert}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
