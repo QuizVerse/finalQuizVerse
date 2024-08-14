@@ -8,6 +8,7 @@ export default function Mypage() {
         <div className="flex min-h-screen">
             <MypageSidebar/>
             <Outlet/>
+            
         </div>
     )
 }
