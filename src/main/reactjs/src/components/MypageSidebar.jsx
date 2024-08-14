@@ -1,13 +1,34 @@
+
+import { useState } from "react";
 import {Link} from "react-router-dom";
 
 export default function MypageSidebar() {
+
+    const [openHistory, setOpenHistory] = useState(false);
+    const [openUserInfo, setOpenUserInfo] = useState(false);
+  
+    const handleHistoryClick = () => {
+      setOpenHistory(!openHistory);
+    };
+  
+    const handleUserInfoClick = () => {
+      setOpenUserInfo(!openUserInfo);
+    };
+  
+    const menus = [
+      { name: "즐겨찾기", path: "/mypage/bookmark" },
+      { name: "오답노트", path: "/mypage/wrong" }
+    ];
+
     return (
         <aside className="w-64 p-4 border-r">
             <div className="flex items-center mb-6">
+
                 <span className="text-xl font-bold">Logoipsu</span>
             </div>
             <nav className="space-y-4">
                 <div>
+
                     <h3 className="text-lg font-semibold">나의 이력</h3>
                     <ul className="space-y-2">
                         <li><Link to={"publishedbook"}>나의 출제이력</Link></li>
@@ -40,5 +61,5 @@ export default function MypageSidebar() {
                 </div>
             </nav>
         </aside>
-    )
+    );
 }
