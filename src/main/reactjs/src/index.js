@@ -6,7 +6,7 @@ import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
-import ErrorPage from './routes/ErrorPage';
+import ErrorPage from './routes/ErrorPage404';
 
 // account 관련 컴포넌트
 import Account from "./routes/account/Account";

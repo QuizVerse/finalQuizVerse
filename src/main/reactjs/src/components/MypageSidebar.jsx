@@ -1,12 +1,6 @@
+
 import { useState } from "react";
-import image1 from "../image/Quizverse.png";
-import { Link } from 'react-router-dom';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import {Link} from "react-router-dom";
 
 export default function MypageSidebar() {
 
@@ -29,74 +23,41 @@ export default function MypageSidebar() {
     return (
         <aside className="w-64 p-4 border-r">
             <div className="flex items-center mb-6">
-                <img
-                    src={image1}
-                    alt="Logo"
-                    className="w-10 h-10 mr-2"
-                    width="40"
-                    height="40"
-                />
-                <span className="text-xl font-bold">Quizeverse</span>
+
+                <span className="text-xl font-bold">Logoipsu</span>
             </div>
-            <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mb-6"
-                placeholder="Placeholder"
-            />
             <nav className="space-y-4">
                 <div>
-                <Link to="/mypage" style={{ textDecoration: 'none', color: 'inherit' }}>
-      <ListItemText primary="마이페이지" primaryTypographyProps={{ fontSize: '20px' }} />
-      </Link>
-      <ListItemButton onClick={handleHistoryClick}>
-        <ListItemText primary="나의 이력" primaryTypographyProps={{ fontSize: '20px' }} /> {/* 글씨 크기 조정 */}
-        {openHistory ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={openHistory} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link to="/mypage/publishedbook" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="나의 출제이력" primaryTypographyProps={{ fontSize: '15px' }} /> {/* 글씨 크기 조정 */}
-            </ListItemButton>
-          </Link>
-          <Link to="/mypage/solvedbook" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="나의 학습이력" primaryTypographyProps={{ fontSize: '15px' }} /> {/* 글씨 크기 조정 */}
-            </ListItemButton>
-          </Link>
-          <Link to="/mypage/myclass" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="나의 클래스" primaryTypographyProps={{ fontSize: '15px' }} /> {/* 글씨 크기 조정 */}
-            </ListItemButton>
-          </Link>
-        </List>
-      </Collapse>
 
-      {menus.map((menu, index) => (
-        <Link to={menu.path} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
-          <ListItemButton>
-            <ListItemText primary={menu.name} primaryTypographyProps={{ fontSize: '20px' }} /> {/* 글씨 크기 조정 */}
-          </ListItemButton>
-        </Link>
-      ))}
-
-      <ListItemButton onClick={handleUserInfoClick}>
-        <ListItemText primary="회원정보" primaryTypographyProps={{ fontSize: '20px' }} /> {/* 글씨 크기 조정 */}
-        {openUserInfo ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={openUserInfo} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link to="/mypage/updateuser" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="회원정보 수정" primaryTypographyProps={{ fontSize: '15px' }} /> {/* 글씨 크기 조정 */}
-            </ListItemButton>
-          </Link>
-          <Link to="/mypage/leave" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemText primary="회원 탈퇴" primaryTypographyProps={{ fontSize: '15px' }} /> {/* 글씨 크기 조정 */}
-            </ListItemButton>
-          </Link>
-        </List>
-      </Collapse>
+                    <h3 className="text-lg font-semibold">나의 이력</h3>
+                    <ul className="space-y-2">
+                        <li><Link to={"publishedbook"}>나의 출제이력</Link></li>
+                        <li><Link to={"solvedbook"}>나의 학습이력</Link></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">
+                        <Link to={"myclass"}>나의 클래스</Link>
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">
+                        <Link to={"bookmark"}>즐겨찾기</Link>
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">
+                        <Link to={"wrong"}>오답노트</Link>
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">
+                        <Link to={"updateuser"}>회원정보</Link>
+                    </h3>
+                    <ul className="space-y-2">
+                        <li><Link to={"updateuser"}>회원정보 수정</Link></li>
+                        <li><Link to={"leave"}>회원 탈퇴</Link></li>
+                    </ul>
                 </div>
             </nav>
         </aside>

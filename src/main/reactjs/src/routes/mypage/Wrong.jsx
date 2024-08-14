@@ -3,46 +3,6 @@
 
 export default function Wrong() {
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 p-4 border-r">
-        <div className="flex items-center mb-6">
-          <img
-            src="/placeholder.svg"
-            alt="Logo"
-            className="mr-2"
-            width="32"
-            height="32"
-          />
-          <span className="text-xl font-bold">Logoipsu</span>
-        </div>
-        <input
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mb-6"
-          placeholder="Placeholder"
-        />
-        <nav className="space-y-2">
-          <div>
-            <p className="font-semibold">나의 이력</p>
-            <ul className="pl-4 space-y-1">
-              <li>나의 출제이력</li>
-              <li>나의 학습이력</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-semibold">나의 클래스</p>
-            <ul className="pl-4 space-y-1">
-              <li>즐겨찾기</li>
-              <li>오답노트</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-semibold">회원정보</p>
-            <ul className="pl-4 space-y-1">
-              <li>회원정보 수정</li>
-              <li>회원 탈퇴</li>
-            </ul>
-          </div>
-        </nav>
-      </aside>
       <main className="flex-1 p-6">
         <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
         <div className="flex items-center mb-6 space-x-4">
@@ -488,6 +448,5 @@ export default function Wrong() {
           </button>
         </div>
       </main>
-    </div>
   );
 }
