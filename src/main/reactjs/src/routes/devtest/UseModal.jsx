@@ -19,6 +19,14 @@ export default function UseModal() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [className, setClassName] = useState("");
     const [classDescription, setClassDescription] = useState("");
+    const [alertTitle, setAlertTitle] = useState("");
+    const onSetClassName = (className) => {
+        setClassName(className);
+    }
+
+    const onSetClassDescription = (classDescription) => {
+        setClassDescription(classDescription);
+    }
 
     /**
      * @description : Confirm창 열릴 때
@@ -28,11 +36,38 @@ export default function UseModal() {
     };
 
     /**
-     * @description : Confirm창 닫힐 때
+     * @description : 취소 버튼 클릭시 실행되는 로직
      * */
-    const closeConfirm = () => {
-        console.log(className);
-        createClass();
+    const clickBtn1 = () => {
+        setConfirmVisible(false);
+    };
+
+    /**
+     * @description : 확인 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn2 = () => {
+        if(className==''){
+            setAlertTitle("클래스 이름을 입력해주세요.");
+            openAlert();
+            return;
+        }
+        if(classDescription==''){
+            setAlertTitle("클래스 설명을 입력해주세요.");
+            openAlert();
+            return;
+        }
+        axios({
+            method:'post',
+            url:'/myclass/newclass',
+            data:{
+                "class_name": className,
+                "class_description": classDescription,
+            },
+        }).then(res=>{
+            console.log(res);
+            setClassName('');
+            setClassDescription('')
+        })
         setConfirmVisible(false);
     };
 
@@ -43,7 +78,6 @@ export default function UseModal() {
         setAlertVisible(true);
     };
 
-
     /**
      * @description : Alert창 닫힐 때
      * */
@@ -51,36 +85,6 @@ export default function UseModal() {
         setAlertVisible(false);
     };
 
-
-    /**
-     * @description :
-     * */
-    const onSetClassName = (className) => {
-        setClassName(className);
-    }
-
-    /**
-     * @description :
-     * */
-    const onSetClassDescription = (classDescription) => {
-        setClassDescription(classDescription);
-    }
-
-    /**
-     * @description : class 생성
-     * */
-    const createClass=(e)=>{
-        axios({
-            method:'post',
-            url:'/myclass/newclass',
-            data:{
-                "class_name": className,
-                "class_description": classDescription,
-            },
-        }).then(res=>{
-            console.log(res);
-        })
-    }
 
     return (
         <>
@@ -101,7 +105,8 @@ export default function UseModal() {
                     />
                 }
                 openConfirm={confirmVisible}
-                closeConfirm={closeConfirm}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
             />
             <Button
                 onClick={openAlert}
@@ -109,8 +114,9 @@ export default function UseModal() {
                 버튼 한개 모달 띄우는 버튼
             </Button>
             <CustomAlert
-                id={5} // CustomAlert id 확인하여 입력
+                //id={5} // CustomAlert id 확인하여 입력
                 // props으로도 입력 가능 (title, content, btnText)
+                title={alertTitle}
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />

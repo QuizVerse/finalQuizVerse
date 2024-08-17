@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AlertContent from "./AlertContent";
+import ConfirmContent from "./ConfirmContent";
 
 /**
  * @description :
@@ -12,9 +13,18 @@ import AlertContent from "./AlertContent";
  * props으로 id를 넘겨주면 해당 Alert의 data를 가져와 출력
  * */
 export default function CustomAlert(props) {
+    let title = "";
+    let content = "";
+    let btnText = "";
 
+    ConfirmContent.map((e)=>{
+        if(e.id === props.id) {
+            title = e.title;
+            content = e.content;
+            btnText = e.btnText;
+        }
+    })
     const clickBtn = () => {
-        AlertContent[props.id].btnFunc()
         props.closeAlert();
     };
 
@@ -27,16 +37,16 @@ export default function CustomAlert(props) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {AlertContent[props.id].title || '모달 타이틀'}
+                    {props.title || title }
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {props.content || AlertContent[props.id].content || '모달 설명'}
+                        {props.content || content }
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={clickBtn} autoFocus>
-                        {props.btnText || AlertContent[props.id].btnText || '확인'}
+                        {props.btnText || btnText || '확인'}
                     </Button>
                 </DialogActions>
             </Dialog>

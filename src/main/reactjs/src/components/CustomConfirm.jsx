@@ -16,8 +16,6 @@ export default function CustomConfirm(props) {
     let content = "";
     let btn1Text = "";
     let btn2Text = "";
-    let btn1Func = "";
-    let btn2Func = "";
 
     ConfirmContent.map((e)=>{
         if(e.id === props.id) {
@@ -25,19 +23,15 @@ export default function CustomConfirm(props) {
             content = e.content;
             btn1Text = e.btn1Text;
             btn2Text = e.btn2Text;
-            btn1Func = e.btn1Func;
-            btn2Func = e.btn2Func;
         }
     })
 
     const clickBtn1 = () => {
-        btn1Func();
-        props.closeConfirm();
+        props.clickBtn1();
     };
 
     const clickBtn2 = () => {
-        btn2Func();
-        props.closeConfirm();
+        props.clickBtn2();
     };
 
     return (
