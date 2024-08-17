@@ -41,7 +41,7 @@ export default function CustomAlert(props) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {props.content || content }
+                        {props.content || content   }
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

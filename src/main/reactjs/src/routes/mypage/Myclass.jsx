@@ -3,69 +3,145 @@
 
 import CustomConfirm from "../../components/CustomConfirm";
 import {useState} from "react";
-import {Button} from "@mui/material";
+import {Button, MenuItem, TextField} from "@mui/material";
+import NewClass from "../../components/NewClass";
+import axios from "axios";
+import CustomAlert from "../../components/CustomAlert";
 
 export default function Myclass() {
-  const [open, setOpen] = useState(false);
+  const conditions = [
+    {
+      value: 'popular',
+      label: '인기순',
+    },
+    {
+      value: 'recent',
+      label: '최신순',
+    },
+    {
+      value: 'old',
+      label: '오래된순',
+    },
+    {
+      value: 'title',
+      label: '제목순',
+    },
+  ];
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [className, setClassName] = useState("");
+  const [classDescription, setClassDescription] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const onSetClassName = (className) => {
+    setClassName(className);
+  }
+
+  const onSetClassDescription = (classDescription) => {
+    setClassDescription(classDescription);
+  }
+  /**
+   * @description : Confirm창 열릴 때
+   * */
+  const openConfirm = () => {
+    setConfirmVisible(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  /**
+   * @description : Alert창 열릴 때
+   * */
+  const openAlert = () => {
+    setAlertVisible(true);
   };
+
+  /**
+   * @description : Alert창 닫힐 때
+   * */
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
+  /**
+   * @description : 취소 버튼 클릭시 실행되는 로직
+   * */
+  const clickBtn1 = () => {
+    setConfirmVisible(false);
+  };
+
+  /**
+   * @description : 확인 버튼 클릭시 실행되는 로직
+   * */
+  const clickBtn2 = () => {
+    if(className==''){
+      setAlertTitle("클래스 이름을 입력해주세요.");
+      openAlert();
+      return;
+    }
+    if(classDescription==''){
+      setAlertTitle("클래스 설명을 입력해주세요.");
+      openAlert();
+      return;
+    }
+    axios({
+      method:'post',
+      url:'/myclass/newclass',
+      data:{
+        "class_name": className,
+        "class_description": classDescription,
+      },
+    }).then(res=>{
+      console.log(res);
+      setClassName('');
+      setClassDescription('')
+    })
+    setConfirmVisible(false);
+  };
+
 
   return (
       <main className="flex-1 p-6">
 
         <h1 className="mb-6 text-2xl font-bold">나의 클래스</h1>
         <div className="flex items-center mb-4 space-x-4">
-          <input
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
-              placeholder="Name, email, etc..."
-          />
-          <button
-              type="button"
-              role="combobox"
-              aria-controls="radix-:Rilufnnkr:"
-              aria-expanded="false"
-              aria-autocomplete="none"
-              dir="ltr"
-              data-state="closed"
-              data-placeholder=""
-              className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Filter"
-          >
-            <span>가입 일순</span>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                aria-hidden="true"
+            <TextField
+                id="outlined-select-currency"
+                select
+                defaultValue="popular"
             >
-              <path d="m6 9 6 6 6-6"></path>
-            </svg>
-          </button>
-          <select
-              aria-hidden="true"
-              tabIndex="-1"
-          >
-            <option value=""></option>
-          </select>
+              {conditions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+              ))}
+            </TextField>
           <Button
-              onClick={handleClickOpen}
+              onClick={openConfirm}
+              variant="contained"
               className="whitespace-nowrap">
             클래스 생성
           </Button>
-          <CustomConfirm id={0} openConfirm={open} closeConfirm={handleClose}></CustomConfirm>
+          <CustomConfirm
+              id={9} // CustomConfirm에서 id 확인하여 입력
+              // props으로도 입력 가능 (title, content, btn1Text,  btn2Text)
+              content={
+                <NewClass
+                    label={"Class name"}
+                    placeholder={""}
+                    updateClassName={onSetClassName}
+                    updateClassDescription={onSetClassDescription}
+                />
+              }
+              openConfirm={confirmVisible}
+              clickBtn1={clickBtn1}
+              clickBtn2={clickBtn2}
+          />
+          <CustomAlert
+              //id={5} // CustomAlert id 확인하여 입력
+              // props으로도 입력 가능 (title, content, btnText)
+              title={alertTitle}
+              openAlert={alertVisible}
+              closeAlert={closeAlert}
+          />
         </div>
         <div
             className="rounded-lg border bg-card text-card-foreground shadow-sm"
