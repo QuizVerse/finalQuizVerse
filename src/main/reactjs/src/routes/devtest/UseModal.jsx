@@ -5,8 +5,9 @@ import {useState} from "react";
 // 모달 내용 수정 시 아래의 파일로 이동하여 수정
 import CustomConfirm from "../../components/CustomConfirm";
 import CustomAlert from "../../components/CustomAlert";
-import SearchInput from "../../components/SearchInput";
 import CustomInput from "../../components/CustomInput";
+import axios from "axios";
+import NewClass from "../../components/NewClass";
 
 /**
  * @description:
@@ -16,27 +17,69 @@ export default function UseModal() {
 
     const [confirmVisible, setConfirmVisible] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false);
+    const [className, setClassName] = useState("");
+    const [classDescription, setClassDescription] = useState("");
 
+    /**
+     * @description : Confirm창 열릴 때
+     * */
     const openConfirm = () => {
         setConfirmVisible(true);
     };
 
+    /**
+     * @description : Confirm창 닫힐 때
+     * */
     const closeConfirm = () => {
+        console.log(className);
+        createClass();
         setConfirmVisible(false);
     };
 
+    /**
+    * @description : Alert창 열릴 때
+    * */
     const openAlert = () => {
         setAlertVisible(true);
     };
 
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
     const closeAlert = () => {
         setAlertVisible(false);
     };
 
-    const [name, setName] = useState("Superman");
-    const onSetName = (name) => {
-        setName(name);
-        console.log(name);
+
+    /**
+     * @description :
+     * */
+    const onSetClassName = (className) => {
+        setClassName(className);
+    }
+
+    /**
+     * @description :
+     * */
+    const onSetClassDescription = (classDescription) => {
+        setClassDescription(classDescription);
+    }
+
+    /**
+     * @description : class 생성
+     * */
+    const createClass=(e)=>{
+        axios({
+            method:'post',
+            url:'/myclass/newclass',
+            data:{
+                "class_name": className,
+                "class_description": classDescription,
+            },
+        }).then(res=>{
+            console.log(res);
+        })
     }
 
     return (
@@ -50,10 +93,12 @@ export default function UseModal() {
                 id={9} // CustomConfirm에서 id 확인하여 입력
                 // props으로도 입력 가능 (title, content, btn1Text,  btn2Text)
                 content={
-                    <CustomInput
+                    <NewClass
                         label={"Class name"}
                         placeholder={""}
-                        updateValue={onSetName}/>
+                        updateClassName={onSetClassName}
+                        updateClassDescription={onSetClassDescription}
+                    />
                 }
                 openConfirm={confirmVisible}
                 closeConfirm={closeConfirm}

@@ -27,7 +27,7 @@ export default function CustomAlert(props) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {props.title || AlertContent[props.id].title || '모달 타이틀'}
+                    {AlertContent[props.id].title || '모달 타이틀'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">

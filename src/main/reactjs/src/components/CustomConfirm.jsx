@@ -12,14 +12,31 @@ import ConfirmContent from "./ConfirmContent";
  * props으로 id를 넘겨주면 해당 Confirm의 data를 가져와 출력
  * */
 export default function CustomConfirm(props) {
+    let title = "";
+    let content = "";
+    let btn1Text = "";
+    let btn2Text = "";
+    let btn1Func = "";
+    let btn2Func = "";
+
+    ConfirmContent.map((e)=>{
+        if(e.id === props.id) {
+            title = e.title;
+            content = e.content;
+            btn1Text = e.btn1Text;
+            btn2Text = e.btn2Text;
+            btn1Func = e.btn1Func;
+            btn2Func = e.btn2Func;
+        }
+    })
 
     const clickBtn1 = () => {
-        ConfirmContent[props.id].btn1Func()
+        btn1Func();
         props.closeConfirm();
     };
 
     const clickBtn2 = () => {
-        ConfirmContent[props.id].btn2Func();
+        btn2Func();
         props.closeConfirm();
     };
 
@@ -32,20 +49,20 @@ export default function CustomConfirm(props) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {props.title || ConfirmContent[props.id].title || '모달 타이틀'}
+                    {props.title || title ||'모달 제목'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         {/* content props을 통해서 컴포넌트를 삽입할 수 있다. */}
-                        {props.content || ConfirmContent[props.id].content || '모달 설명'}
+                        {props.content || content || '모달 설명'}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={clickBtn1}>
-                        {props.btn1Text || ConfirmContent[props.id].btn1Text || '취소'}
+                        {props.btn1Text || btn1Text || '취소'}
                     </Button>
                     <Button onClick={clickBtn2} autoFocus>
-                        {props.btn2Text || ConfirmContent[props.id].btn2Text || '확인'}
+                        {props.btn2Text || btn2Text || '확인'}
                     </Button>
                 </DialogActions>
             </Dialog>

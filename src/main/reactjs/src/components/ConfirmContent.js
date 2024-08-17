@@ -105,6 +105,19 @@ const confirmContent = [
             console.log("hi")
         },
     },
+    {
+        id: 9,
+        title: "클래스 추가",
+        content: "",
+        btn1Text: "",
+        btn2Text: "",
+        btn1Func: function (){
+            console.log("hi11")
+        },
+        btn2Func: function (){
+            console.log("hi")
+        },
+    },
     // {
     //     id: 8,
     //     title: "시험 응시를 종료합니다.",
@@ -118,19 +131,6 @@ const confirmContent = [
     //         console.log("hi")
     //     },
     // },
-    {
-        id: 9,
-        title: "클래스 추가",
-        content: <NewClass/>,
-        btn1Text: "",
-        btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
-    },
     // {
     //     id: 10,
     //     title: "초대할 구성원의 닉네임을 입력해주세요.",

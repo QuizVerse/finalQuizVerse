@@ -11,7 +11,7 @@ export default function CustomInput(props) {
      *
     * */
     const updateValue = (e) => {
-            props.updateValue(e.target.value);
+        props.updateValue(e.target.value);
     }
 
     return (
