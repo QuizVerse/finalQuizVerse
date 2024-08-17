@@ -52,6 +52,7 @@ import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
 import UseModal from "./routes/devtest/UseModal";
+import UseCustomInput from "./routes/devtest/UseCustomInput";
 
 
 
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/usemodal",
                 element: <UseModal/>
+            },
+            {
+                path: "/devtest/usecustominput",
+                element: <UseCustomInput/>
             },
         ]
     },
