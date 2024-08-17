@@ -18,13 +18,14 @@ export default function Signup() {
     const [nicknameMessage, setNicknameMessage] = useState('닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.');
     const [agreecheck, setAgreecheck] = useState(false);
 
-    //비밀번호 유효성
+    // 비밀번호 유효성 검사
     const validatePassword = (password) => {
         const lengthCheck = password.length >= 8 && password.length <= 20;
         const typeCheck = /^(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[!@#$%^&*])|(?=.*\d)(?=.*[!@#$%^&*])/.test(password);
         return lengthCheck && typeCheck;
     };
-    //닉네임 유효성
+
+    // 닉네임 유효성 검사
     const validateNickname = (nickname) => {
         const lengthCheck = nickname.length >= 1 && nickname.length <= 10;
         const charCheck = /^[가-힣a-zA-Z0-9]+$/.test(nickname);
@@ -67,21 +68,21 @@ export default function Signup() {
                 .then(res => {
                     if (res.data === 'success') {
                         setNicknamecheck(true);
-                        setNicknameMessage("사용 가능한 닉네임 입니다.")
+                        setNicknameMessage("사용 가능한 닉네임 입니다.");
                     } else {
                         setNicknamecheck(false);
-                        setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.")
+                        setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.");
                     }
                 });
         } else {
-            setNicknameMessage("닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.")
+            setNicknameMessage("닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.");
             setNicknamecheck(false);
-
         }
     };
+
     // 비밀번호 확인 이벤트
     useEffect(() => {
-        // First, check if the passwords are identical
+        // 비밀번호 일치 여부 확인
         if (user_password === user_passwordcheck && user_password !== '') {
             if (validatePassword(user_password)) {
                 setPasswordcheck(true);
@@ -99,6 +100,15 @@ export default function Signup() {
             }
         }
     }, [user_password, user_passwordcheck]);
+
+    // 사용자가 인증 코드 또는 닉네임을 수정할 경우 상태 초기화
+    useEffect(() => {
+        setEmailcheck(false); // 인증 코드가 변경되면 이메일 체크 상태 초기화
+    }, [auth_code]);
+
+    useEffect(() => {
+        setNicknamecheck(false); // 닉네임이 변경되면 닉네임 체크 상태 초기화
+    }, [user_nickname]);
 
     // 필수 동의 이벤트
     const checkAgree = (e) => {
