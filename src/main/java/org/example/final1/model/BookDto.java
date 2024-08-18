@@ -1,9 +1,19 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name="tb_book")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +37,14 @@ public class BookDto {
 
     // Foreign Key reference to UserDTO
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
+    //사용자가 탈퇴할시 없는 사용자라고 뜨게 해주기!
     private UserDto user;
 
     // Foreign Key reference to CategoryDTO
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = true)
+    //카테고리가 삭제되었을시 기타라고 해주기
     private CategoryDto category;
 
     @Column(name = "book_divide", nullable = false)

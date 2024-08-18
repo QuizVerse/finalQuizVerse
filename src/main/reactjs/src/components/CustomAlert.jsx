@@ -4,41 +4,40 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {useState} from "react";
+import AlertContent from "./AlertContent";
 
-export default function CustomModal(prop) {
-    const [open, setOpen] = useState(false);
+/**
+ * @description :
+ * 버튼이 한 개 있는 모달을 원할 때 사용
+ * prop으로 id를 넘겨주면 해당 Alert의 data를 가져와 출력
+ * */
+export default function CustomAlert(prop) {
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
+    const clickBtn = () => {
+        AlertContent[prop.id].btnFunc()
+        prop.closeAlert();
     };
 
     return (
         <>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open alert dialog
-            </Button>
             <Dialog
-                open={open}
-                onClose={handleClose}
+                open={prop.openAlert}
+                onClose={prop.closeAlert}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {prop.title}
+                    {AlertContent[prop.id].title || '모달 타이틀'}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {prop.description}
+                        {AlertContent[prop.id].content || '모달 설명'}
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions> 
-                    <Button onClick={handleClose}>취소</Button>
-                    <Button onClick={handleClose} autoFocus>확인</Button>
+                <DialogActions>
+                    <Button onClick={clickBtn} autoFocus>
+                        {AlertContent[prop.id].btnText || '확인'}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

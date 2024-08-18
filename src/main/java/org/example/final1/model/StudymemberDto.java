@@ -2,9 +2,19 @@ package org.example.final1.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "tb_studymember")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudymemberDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +30,6 @@ public class StudymemberDto {
 
     @ManyToOne
     @JoinColumn(name = "study_id", nullable = false)
-    private StudyDto study_id;
+    @OnDelete(action = OnDeleteAction.CASCADE)//study가 삭제되면 해당 dto삭제
+    private StudyDto study;
 }

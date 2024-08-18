@@ -1,12 +1,22 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "tb_class")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClassDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +34,7 @@ public class ClassDto {
     private Timestamp class_createdate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserDto user_id;
+    @JoinColumn(name = "user_id", nullable = true)
+    private UserDto user;
 
 }
