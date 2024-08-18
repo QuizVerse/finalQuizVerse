@@ -1,12 +1,13 @@
 package org.example.final1.service;
 
-import lombok.AllArgsConstructor;
+import java.util.UUID;
+
 import org.example.final1.model.UserDto;
 import org.example.final1.repository.User.UserDao;
 import org.example.final1.repository.User.UserDaoInter;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +26,11 @@ public class UserService {
         userDto.setUser_role("ROLE_USER");
         userDaoInter.save(userDto);
 
+    }
+
+    // email로 가입 여부 확인 
+    public boolean getEmailcheck(String user_email) {
+        return userDaoInter.getEmailcheck(user_email)==1;
     }
 
 }
