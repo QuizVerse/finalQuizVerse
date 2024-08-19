@@ -51,6 +51,8 @@ import UpdateUser from './routes/mypage/UpdateUser';
 import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
+import UseModal from "./routes/devtest/UseModal";
+import PrivateRoute from "./components/PrivateRoute";
 
 // Test 관련 컴포넌트
 import Pagenation from './routes/devtest/Pagenation';
@@ -70,10 +72,17 @@ const router = createBrowserRouter([
         path: "/devtest",
         element: <DevTest />,
         errorElement: <ErrorPage />,
-        children: [{
-            path: "/devtest/pagenation",
-            element: <Pagenation/>
-        }]
+
+        children: [
+            {
+                path: "/devtest/pagenation",
+                element: <Pagenation/>
+            },
+            {
+                path: "/devtest/usemodal",
+                element: <UseModal/>
+            },
+        ]
 
     },
     {
@@ -224,8 +233,13 @@ const router = createBrowserRouter([
         ]
     },
     {
+
         path: "/mypage",
-        element: <Mypage />,
+        element: (
+            <PrivateRoute>
+                <Mypage />
+            </PrivateRoute>
+        ),
         errorElement: <ErrorPage />,
         children :[
             {
@@ -284,8 +298,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
         ]
-    },
-     
+    }
       
 
 ]);
