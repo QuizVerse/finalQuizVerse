@@ -1,8 +1,6 @@
 // v0 by Vercel.
 // https://v0.dev/t/PyQHzVi1rPb
 
-import { Pagination, Stack } from "@mui/material";
-import CustomModal from "../../components/CustomModal";
 import CustomConfirm from "../../components/CustomConfirm";
 import {useState} from "react";
 import {Button} from "@mui/material";
@@ -209,9 +207,7 @@ export default function Myclass() {
             </table>
           </div>
         </div>
-        <Stack spacing={2}>
-          <Pagination count={10} showFirstButton showLastButton />
-        </Stack>
+        
       </main>
   );
 }

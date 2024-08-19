@@ -52,6 +52,8 @@ import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
 
+// Test 관련 컴포넌트
+import Pagenation from './routes/devtest/Pagenation';
 
 
 const router = createBrowserRouter([
@@ -70,7 +72,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [{
             path: "/devtest/pagenation",
-            element: <BookList/>
+            element: <Pagenation/>
         }]
 
     },
