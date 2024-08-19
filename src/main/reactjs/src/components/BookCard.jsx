@@ -3,8 +3,19 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
-
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 export default function BookCard(props) {
+
+    /**
+     * @description : 북마크 클릭시 상태 업데이트
+     * */
+    const updateBookmark = () => {
+        props.updateBookmark()
+    }
+
     return (
         <>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
@@ -27,8 +38,8 @@ export default function BookCard(props) {
                     {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/
                         props.cardType === 'A' ?
                             <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600">
-                                    <FavoriteBorderIcon/>
+                                <IconButton className="text-red-600" onClick={updateBookmark}>
+                                    { props.isBookmark ? <BookmarkIcon/> : <BookmarkBorderIcon/> }
                                 </IconButton>
                                 <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">공유하기</Button>
                             </div> : ""
