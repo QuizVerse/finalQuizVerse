@@ -12,6 +12,11 @@ public interface UserDaoInter extends JpaRepository<UserDto, Integer> {
 			""",nativeQuery = true)
     public int getNicknamecheck(@Param("user_nickname") String user_nickname);
 
+    // email로 가입 여부 확인 
+    @Query(value = """
+            SELECT COUNT(*) FROM tb_user WHERE user_email = :user_email
+            """, nativeQuery = true)
+    public int getEmailcheck(@Param("user_email") String user_email);
 
     @Query("SELECT u FROM UserDto u WHERE u.user_email = :user_email")
     public UserDto findByEmail(@Param("user_email") String user_email);
