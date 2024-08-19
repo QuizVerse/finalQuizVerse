@@ -54,6 +54,8 @@ import DevTest from "./routes/devtest/DevTest";
 import UseModal from "./routes/devtest/UseModal";
 import PrivateRoute from "./components/PrivateRoute";
 
+// Test 관련 컴포넌트
+import Pagenation from './routes/devtest/Pagenation';
 
 
 const router = createBrowserRouter([
@@ -70,16 +72,18 @@ const router = createBrowserRouter([
         path: "/devtest",
         element: <DevTest />,
         errorElement: <ErrorPage />,
+
         children: [
             {
                 path: "/devtest/pagenation",
-                element: <BookList/>
+                element: <Pagenation/>
             },
             {
                 path: "/devtest/usemodal",
                 element: <UseModal/>
             },
         ]
+
     },
     {
         path: "/account",

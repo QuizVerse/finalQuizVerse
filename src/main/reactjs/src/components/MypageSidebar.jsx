@@ -1,65 +1,98 @@
-
-import { useState } from "react";
-import {Link} from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { List, ListItemButton, ListItemText, Collapse } from '@mui/material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import image1 from "../image/Quizverse.png";
 
 export default function MypageSidebar() {
-
     const [openHistory, setOpenHistory] = useState(false);
     const [openUserInfo, setOpenUserInfo] = useState(false);
-  
+
     const handleHistoryClick = () => {
-      setOpenHistory(!openHistory);
+        setOpenHistory(!openHistory);
     };
-  
+
     const handleUserInfoClick = () => {
-      setOpenUserInfo(!openUserInfo);
+        setOpenUserInfo(!openUserInfo);
     };
-  
-    const menus = [
-      { name: "즐겨찾기", path: "/mypage/bookmark" },
-      { name: "오답노트", path: "/mypage/wrong" }
-    ];
 
     return (
         <aside className="w-64 p-4 border-r">
-            <div className="flex items-center mb-6">
+        <div className="flex items-center mb-6">
+            <img src={image1} style={{ width: "50px", borderRadius: "100%", marginRight: "10px" }} alt="QuizVerse Logo" />
+            <span className="text-xl font-bold">QuizVerse</span>
+        </div>
+        <nav className="space-y-4">
+            <Link to={"summary"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <ListItemText primary={"마이페이지"} primaryTypographyProps={{ fontSize: '19px', fontWeight: 600 }} />
+            </Link>
 
-                <span className="text-xl font-bold">Logoipsu</span>
+            <h3 className="text-lg font-semibold"><ListItemButton onClick={handleHistoryClick}>
+                <ListItemText primary="나의 이력" primaryTypographyProps={{ fontSize: '19px', fontWeight: 600  }} />
+                {openHistory ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton></h3>
+            <Collapse in={openHistory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <Link to={"publishedbook"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText primary="나의 출제이력" primaryTypographyProps={{ fontSize: '14px' }} />
+                        </ListItemButton>
+                    </Link>
+                    <Link to={"solvedbook"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText primary="나의 학습이력" primaryTypographyProps={{ fontSize: '14px' }} />
+                        </ListItemButton>
+                    </Link>
+                </List>
+            </Collapse>
+
+            <div>
+                <h3 className="text-lg font-semibold">
+                    <Link to={"myclass"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemButton sx={{ pl: 2 }}>
+                                나의 클래스
+                            </ListItemButton>
+                    </Link>
+                </h3>
             </div>
-            <nav className="space-y-4">
-                <div>
+            <div>
+                <h3 className="text-lg font-semibold">
+                    <Link to={"bookmark"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemButton sx={{ pl: 2 }}>
+                                즐겨찾기
+                            </ListItemButton>
+                    </Link>
+                </h3>
+            </div>
+            <div>
+                <h3 className="text-lg font-semibold">
+                    <Link to={"wrong"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItemButton sx={{ pl: 2 }}>
+                                오답노트
+                            </ListItemButton>
+                    </Link>
+                </h3>
+            </div>
 
-                    <h3 className="text-lg font-semibold">나의 이력</h3>
-                    <ul className="space-y-2">
-                        <li><Link to={"publishedbook"}>나의 출제이력</Link></li>
-                        <li><Link to={"solvedbook"}>나의 학습이력</Link></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold">
-                        <Link to={"myclass"}>나의 클래스</Link>
-                    </h3>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold">
-                        <Link to={"bookmark"}>즐겨찾기</Link>
-                    </h3>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold">
-                        <Link to={"wrong"}>오답노트</Link>
-                    </h3>
-                </div>
-                <div>
-                    <h3 className="text-lg font-semibold">
-                        <Link to={"updateuser"}>회원정보</Link>
-                    </h3>
-                    <ul className="space-y-2">
-                        <li><Link to={"updateuser"}>회원정보 수정</Link></li>
-                        <li><Link to={"leave"}>회원 탈퇴</Link></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
+            <ListItemButton onClick={handleUserInfoClick}>
+                <ListItemText primary="회원정보" primaryTypographyProps={{ fontSize: '19px', fontWeight: 600 }} />
+                {openUserInfo ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openUserInfo} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <Link to={"updateuser"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText primary="회원정보 수정" primaryTypographyProps={{ fontSize: '14px' }} />
+                        </ListItemButton>
+                    </Link>
+                    <Link to={"leave"} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText primary="회원 탈퇴" primaryTypographyProps={{ fontSize: '14px' }} />
+                        </ListItemButton>
+                    </Link>
+                </List>
+            </Collapse>
+        </nav>
+    </aside>
     );
 }
