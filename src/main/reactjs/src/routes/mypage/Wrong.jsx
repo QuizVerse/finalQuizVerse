@@ -233,7 +233,7 @@ export default function Wrong() {
          
             
             <BookCard cardType="C" className={"flex-1"} 
-            photo={"Q"}
+            photo={"야이야이야"}
             createDate={"2023-12-12"} nickname={"하이요"} 
             title={"제목이네요"} category={"취업 / 자격증"}
              />
