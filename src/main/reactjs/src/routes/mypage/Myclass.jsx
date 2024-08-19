@@ -92,7 +92,9 @@ export default function Myclass() {
     }).then(res=>{
       console.log(res);
       setClassName('');
-      setClassDescription('')
+      setClassDescription('');
+      setAlertTitle("클래스 생성이 완료되었습니다.");
+      openAlert();
     })
     setConfirmVisible(false);
   };
