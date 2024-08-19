@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, CardMedia, IconButton, Typography} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,7 +9,7 @@ export default function BookCard(props) {
         <>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link>
-                    <img src="/placeholder.svg" alt="Placeholder" className="w-full h-48 rounded-t"/>
+                    <img src={prop.photo} alt="사진왜안들어가" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
                 </Link>
                 
                 <div className="p-4">

@@ -53,7 +53,10 @@ import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
 import UseModal from "./routes/devtest/UseModal";
 import UseCustomInput from "./routes/devtest/UseCustomInput";
+import PrivateRoute from "./components/PrivateRoute";
 
+// Test 관련 컴포넌트
+import Pagenation from './routes/devtest/Pagenation';
 
 
 const router = createBrowserRouter([
@@ -70,10 +73,11 @@ const router = createBrowserRouter([
         path: "/devtest",
         element: <DevTest />,
         errorElement: <ErrorPage />,
+
         children: [
             {
                 path: "/devtest/pagenation",
-                element: <BookList/>
+                element: <Pagenation/>
             },
             {
                 path: "/devtest/usemodal",
@@ -84,6 +88,7 @@ const router = createBrowserRouter([
                 element: <UseCustomInput/>
             },
         ]
+
     },
     {
         path: "/account",
@@ -233,8 +238,13 @@ const router = createBrowserRouter([
         ]
     },
     {
+
         path: "/mypage",
-        element: <Mypage />,
+        element: (
+
+            <Mypage />
+
+        ),
         errorElement: <ErrorPage />,
         children :[
             {
@@ -293,8 +303,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
         ]
-    },
-     
+    }
       
 
 ]);

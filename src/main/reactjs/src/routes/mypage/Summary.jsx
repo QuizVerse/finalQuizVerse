@@ -2,6 +2,10 @@
 // https://v0.dev/t/AIdkA9Pm9Pa
 
 import BookCard from "../../components/BookCard";
+import Q from "../../image/Q.jpg";
+import W from "../../image/W.jpg";
+import E from "../../image/E.jpg";
+import R from "../../image/R.jpg";
 
 export default function Summary() {
   return (
@@ -59,9 +63,21 @@ export default function Summary() {
                 <div className="text-3xl font-bold">+</div>
               </div>
             </div>
-            <BookCard className={"flex-1"}/>
-            <BookCard className={"flex-1"}/>
-            <BookCard className={"flex-1"}/>
+            <BookCard cardType="B" className={"flex-1"} 
+            photo={R}
+            createDate={"2024-08-17"} nickname={"닉네임"} 
+            title={"제목이랍니다"} category={"취업 / 자격증"}
+             />
+             <BookCard cardType="B" className={"flex-1"} 
+             photo={R}
+             createDate={"2024-08-18"} nickname={"쿠킹호일"} 
+             title={"제목일걸요"} category={"여기는 카테고리"}
+              />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={R}
+              createDate={"2000-05-16"} nickname={"이시연"} 
+              title={"R"} category={" 보컬 / 서브기타"}
+               />
           </div>
         </section>
         <section>
