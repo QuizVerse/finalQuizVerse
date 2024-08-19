@@ -32,18 +32,24 @@ export default function Signup() {
         return lengthCheck && charCheck;
     };
 
-    // 인증번호 보내기 및 재발송 이벤트
+// 인증번호 보내기 및 재발송 이벤트
     const sendEmail = () => {
         let url = `/signup/user/send?user_email=${encodeURIComponent(user_email)}`;
         axios.get(url)
             .then(res => {
                 if (res.data === 'success') {
                     alert("인증 코드가 이메일로 발송되었습니다.");
+                } else if (res.data === '이메일이 존재하는 회원입니다.') {
+                    alert("이미 존재하는 이메일입니다. 다른 이메일을 사용하세요.");
                 } else {
                     alert("이메일 전송 실패");
                 }
+            })
+            .catch(error => {
+                console.error("Error sending email:", error);
+                alert("이메일 전송 중 오류가 발생했습니다.");
             });
-    }
+    };
 
     // 이메일 인증 코드 맞는지 확인 이벤트
     const checkEmail = () => {

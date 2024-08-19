@@ -232,9 +232,9 @@ const router = createBrowserRouter([
 
         path: "/mypage",
         element: (
-            <PrivateRoute>
-                <Mypage />
-            </PrivateRoute>
+
+            <Mypage />
+
         ),
         errorElement: <ErrorPage />,
         children :[
