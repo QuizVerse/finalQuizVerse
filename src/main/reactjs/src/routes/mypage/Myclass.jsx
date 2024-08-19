@@ -2,37 +2,50 @@
 // https://v0.dev/t/PyQHzVi1rPb
 
 import CustomConfirm from "../../components/CustomConfirm";
-import {useState} from "react";
-import {Button, MenuItem, TextField} from "@mui/material";
+import {useEffect, useState} from "react";
+import {
+  Button,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
+} from "@mui/material";
 import NewClass from "../../components/NewClass";
 import axios from "axios";
 import CustomAlert from "../../components/CustomAlert";
+import Paper from '@mui/material/Paper';
+
+const conditions = [
+  {
+    value: 'popular',
+    label: '인기순',
+  },
+  {
+    value: 'recent',
+    label: '최신순',
+  },
+  {
+    value: 'old',
+    label: '오래된순',
+  },
+  {
+    value: 'title',
+    label: '제목순',
+  },
+];
 
 export default function Myclass() {
-  const conditions = [
-    {
-      value: 'popular',
-      label: '인기순',
-    },
-    {
-      value: 'recent',
-      label: '최신순',
-    },
-    {
-      value: 'old',
-      label: '오래된순',
-    },
-    {
-      value: 'title',
-      label: '제목순',
-    },
-  ];
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
   const [alertTitle, setAlertTitle] = useState("");
+  const [classList,setClassList]=useState([]);
   const onSetClassName = (className) => {
     setClassName(className);
   }
@@ -40,6 +53,22 @@ export default function Myclass() {
   const onSetClassDescription = (classDescription) => {
     setClassDescription(classDescription);
   }
+
+  //처음 딱 한번 목록 가져오기
+  useEffect(()=>{
+    getDataList();
+  },[]);
+
+  const getDataList=()=>{
+      axios({
+        method:'get',
+        url:'/myclass/list',
+      }).then(res=>{
+        console.log(res);
+        setClassList(res.data);
+      })
+  }
+
   /**
    * @description : Confirm창 열릴 때
    * */
@@ -98,7 +127,6 @@ export default function Myclass() {
     })
     setConfirmVisible(false);
   };
-
 
   return (
       <main className="flex-1 p-6">
@@ -285,6 +313,37 @@ export default function Myclass() {
             </table>
           </div>
         </div>
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>이름</TableCell>
+                <TableCell>구성원수</TableCell>
+                <TableCell>가입일시</TableCell>
+                <TableCell>생성일시</TableCell>
+                <TableCell>상태</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {classList.map((row) => (
+                  <TableRow
+                      key={row.class_id}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {
+                        row.class_name}
+                    </TableCell>
+                    <TableCell>{row.class_description}</TableCell>
+                    <TableCell>{format(row.class_createdate, 'MMMM do yyyy, h:mm:ss a')}</TableCell>
+                    <TableCell>{row.carbs}</TableCell>
+                    <TableCell>{row.protein}</TableCell>
+                  </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
         <div className="flex justify-center mt-4">
           <nav className="flex items-center space-x-2">
             <button
