@@ -29,6 +29,7 @@ public class UserService {
 
     }
 
+
     // 이메일 중복 확인
     public boolean countByUser_email(String user_email) {
         return userDaoInter.countByUser_email(user_email) > 0;
