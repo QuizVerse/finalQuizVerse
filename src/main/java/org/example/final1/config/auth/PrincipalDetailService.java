@@ -15,19 +15,21 @@ import org.springframework.stereotype.Service;
 //규칙인거임
 
 @Service
+@AllArgsConstructor
 public class PrincipalDetailService implements UserDetailsService {
-    @Autowired
-    private UserDaoInter userDaoInter;
+    private final UserDaoInter userDaoInter;
 
+    //시큐리티 session = 내부 authentication=내부 userdetails
+    //함수 종료시 @AuthenticationPricipal 어노테이션이 만드어진다.
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        /*UserDto userEntity=userDaoInter.findByUserEmail(username);
-        if(userEntity==null){
-            return new PrincipalDetails(userEntity);
+    public UserDetails loadUserByUsername(String user_email) throws UsernameNotFoundException {
+        UserDto userDto=userDaoInter.findByEmail(user_email);
+        if(userDto!=null){
+            return new PrincipalDetails(userDto);
         }
-*/
 
-        return null;
+        System.out.println("User not found with email: " + user_email);
+       return null;
     }
 }

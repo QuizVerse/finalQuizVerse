@@ -1,16 +1,49 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
   const [user_email, setUser_email] = useState('');
   const [user_password, setUser_password] = useState('');
   const navi = useNavigate();
 
+  const submitLoginEvent = (e) => {
+    e.preventDefault();
+
+    // 폼 데이터를 URLSearchParams로 변환
+    const formData = new URLSearchParams();
+    formData.append('user_email', user_email);
+    formData.append('user_password', user_password);
+
+    axios.post('/login/user/check', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+        .then(res => {
+          if (res.status === 200) {
+            navi('/');
+          }
+        })
+        .catch(error => {
+          console.error('로그인 중 오류 발생:', error);
+          alert('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+        });
+  }
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:9002/oauth2/authorization/google";
+  }
+  const handleNaverLogin = () => {
+    window.location.href = "http://localhost:9002/oauth2/authorization/naver";
+  }
+  const handleKakaoLogin = () => {
+    window.location.href = "http://localhost:9002/oauth2/authorization/kakao";
+  }
   return (
       <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
         <div className="w-full max-w-md p-8 space-y-4 border rounded-md">
           <h2 className="text-2xl font-semibold text-center">로그인</h2>
-          <form method="POST" action="/account/login" className="space-y-4"> {/* Form 태그 추가 */}
+          <form onSubmit={submitLoginEvent} className="space-y-4"> {/* Form 태그 추가 */}
             <div className="space-y-2">
               <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -101,6 +134,8 @@ export default function Login() {
                 className="w-10 h-10"
                 width="40"
                 height="40"
+                onClick={handleKakaoLogin}
+                style={{cursor:'pointer'}}
             />
             <img
                 src="/navericon.png"
@@ -108,6 +143,8 @@ export default function Login() {
                 className="w-10 h-10"
                 width="40"
                 height="40"
+                onClick={handleNaverLogin}
+                style={{cursor:'pointer'}}
             />
             <img
                 src="/googleicon.png"
@@ -115,6 +152,8 @@ export default function Login() {
                 className="w-10 h-10"
                 width="40"
                 height="40"
+                onClick={handleGoogleLogin}
+                style={{cursor: 'pointer'}}
             />
           </div>
           <button
