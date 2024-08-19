@@ -335,7 +335,7 @@ export default function Myclass() {
                         row.class_name}
                     </TableCell>
                     <TableCell>{row.class_description}</TableCell>
-                    <TableCell>{format(row.class_createdate, 'MMMM do yyyy, h:mm:ss a')}</TableCell>
+                    <TableCell>{row.class_createdate}</TableCell>
                     <TableCell>{row.carbs}</TableCell>
                     <TableCell>{row.protein}</TableCell>
                   </TableRow>
