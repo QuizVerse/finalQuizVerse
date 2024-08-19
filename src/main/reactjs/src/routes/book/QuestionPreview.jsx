@@ -97,7 +97,6 @@ export default function QuestionPreview() {
             className="w-full max-w-sm mx-auto"
             width="300"
             height="200"
-            style="aspect-ratio:300/200;object-fit:cover"
             />
             <p className="mt-4 text-gray-700">이렇게 귀여운 문제가 관련된 문제로 모여 배정됩니다. 열심히 처리해 주세요.</p>
         </div>
@@ -131,7 +130,6 @@ export default function QuestionPreview() {
             className="w-full max-w-sm mx-auto mb-4"
             width="300"
             height="200"
-            style="aspect-ratio:300/200;object-fit:cover"
             />
             <div className="space-y-2">
             <div className="flex items-center space-x-2">
