@@ -1,6 +1,12 @@
 // v0 by Vercel.
 // https://v0.dev/t/dHZziAi3ddS
 
+import BookCard from "../../components/BookCard";
+import Q from "../../image/Q.jpg";
+import W from "../../image/W.jpg";
+import E from "../../image/E.jpg";
+import R from "../../image/R.jpg";
+
 export default function PublishedBook() {
   return (
       <main className="flex-1 p-6">
@@ -67,335 +73,47 @@ export default function PublishedBook() {
           </button>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={Q}
+              createDate={"1998-11-01"} nickname={"홍지혜"} 
+              title={"Q"} category={" 드럼 / 리다"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={W}
+              createDate={"1997-06-02"} nickname={"이아희"} 
+              title={"W"} category={" 베이스 / 4줄기타"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={E}
+              createDate={"2001-01-30"} nickname={"장나영"} 
+              title={"E"} category={" 기타 / 메인기타"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={R}
+              createDate={"2000-05-16"} nickname={"이시연"} 
+              title={"R"} category={" 보컬 / 서브기타"}
+               />
+               <BookCard cardType="B" className={"flex-1"} 
+              photo={R}
+              createDate={"2000-05-16"} nickname={"이시연"} 
+              title={"R"} category={" 보컬 / 서브기타"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={E}
+              createDate={"2001-01-30"} nickname={"장나영"} 
+              title={"E"} category={" 기타 / 메인기타"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={W}
+              createDate={"1997-06-02"} nickname={"이아희"} 
+              title={"W"} category={" 베이스 / 4줄기타"}
+               />
+              <BookCard cardType="B" className={"flex-1"} 
+              photo={Q}
+              createDate={"1998-11-01"} nickname={"홍지혜"} 
+              title={"Q"} category={" 드럼 / 리다"}
+               />
           </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <img
-              src="/placeholder.svg"
-              alt="Profile"
-              className="w-full h-48 object-cover"
-              width="300"
-              height="200"
-            />
-            <div className="p-6">
-              <div className="mb-2 text-sm text-blue-500">캠페인 • 2022.04.27</div>
-              <h2 className="mb-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <p className="mb-2 text-sm text-muted-foreground">취업 / 자격증</p>
-              <p className="mb-2 text-sm text-muted-foreground">
-                조회수 311 | 응답수 20 | 섹션수 2
-              </p>
-              <p className="mb-2 text-sm text-muted-foreground">비공개</p>
-              <div className="flex items-center justify-between">
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  className="w-5 h-5 text-muted-foreground"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="flex justify-center mt-6 space-x-2">
           <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
             1

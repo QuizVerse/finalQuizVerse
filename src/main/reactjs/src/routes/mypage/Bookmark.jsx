@@ -1,6 +1,8 @@
 // v0 by Vercel.
 // https://v0.dev/t/hx5RoREe1hV
 
+import { Stack } from "@mui/material";
+
 export default function Bookmark() {
   return (
       <main className="flex-1 p-6">
