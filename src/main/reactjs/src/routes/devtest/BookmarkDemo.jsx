@@ -11,15 +11,29 @@ export default function BookmarkDemo() {
     const clickBookmark = () => {
         setIsBookmark(!isBookmark);
     }
+    
+    const emptyFunc = () => {
+
+    }
 
     return (
-        <div style={{width:"300px"}}>
+        <div className="flex gap-12">
             <BookCard
                 cardType={"A"}
                 updateBookmark={clickBookmark}
                 title={"정보처리기사"}
                 bookUrl={"www.copy.com"}
                 isBookmark={isBookmark} 
+            ></BookCard>
+            <BookCard
+                cardType={"B"}
+                title={"웹디자인기능사"}
+                bookUrl={"www.copycopy.com"}
+            ></BookCard>
+            <BookCard
+                cardType={"C"}
+                title={"정보처리기사"}
+                bookUrl={"www.copy.com"}
             ></BookCard>
 
         </div>

@@ -1,4 +1,4 @@
-import {Button, IconButton, Slide} from "@mui/material";
+import {Button, IconButton, Menu, MenuItem, Slide} from "@mui/material";
 import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -22,41 +22,45 @@ export default function BookCard(props) {
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
-    const [alertTitle, setAlertTitle] = useState("");
-    const [alertContent, setAlertContent] = useState("");
+
+    // setting menu state
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
     /**
      * @description : 북마크 클릭시 발생하는 로직
      * */
-    const handleClick = (Transition) => () => {
-        // 북마크 상태 업데이트
-        props.updateBookmark();
-        // snack message 교체
-        setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
-        // snack 상태 업데이트
-        setState({
-            open: true,
-            Transition,
-        });
-    };
-
-        /**
-     * @description : 링크 클릭시 발생하는 로직
-     * */
-        const handleCopy = (Transition) => () => {
+    const handleBookmarkClick = () => () => {
+        if(props.cardType === 'A'){
+            // 북마크 상태 업데이트
+            props.updateBookmark();
             // snack message 교체
-            setSnackMessage("클립보드에 복사되었습니다.");
+            setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
             // snack 상태 업데이트
             setState({
                 open: true,
-                Transition,
+                Transition: Fade,
             });
-        };
-    
+        }
+    };
 
     /**
-     * @description : 북마크 닫힐때 발생하는 로직
+     * @description : 링크 클릭시 발생하는 로직
      * */
-    const handleClose = () => {
+    const handleCopy = () => () => {
+        // snack message 교체
+        setSnackMessage("클립보드에 복사되었습니다.");
+        // snack 상태 업데이트
+        setState({
+            open: true,
+            Transition: Fade,
+        });
+    };
+
+    /**
+     * @description : 스낵바 닫힐때 발생하는 로직
+     * */
+    const handleSnackClose = () => {
         setState({
             ...state,
             open: false,
@@ -77,19 +81,42 @@ export default function BookCard(props) {
         setAlertVisible(false);
     };
 
+    /**
+     * @description : setting 버튼 클릭했을때
+     * */
+    const handleSettingClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    
+    /**
+     * @description : setting 닫힐 때
+     * */
+    const handleSettingClose = () => {
+    setAnchorEl(null);
+    };
+
+    
+    /**
+     * @description : 삭제 버튼 클릭했을 때
+     * */
+    const handleDeleteClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
     return (
         <>
-            {/* 즐겨찾기 추가 삭제 메서드 */}
+            {/* 알림 스낵바 */}
             <Snackbar
                 open={state.open}
-                onClose={handleClose}
+                onClose={handleSnackClose}
                 TransitionComponent={state.Transition}
                 message={snackMessage}
                 key={state.Transition.name}
                 autoHideDuration={1200}
             />
-   
+            
+            {/* 링크 복사 Alert */}
             <CustomAlert
                 title={props.title+"에 대한 링크가 생성되었습니다."}
                 content={         
@@ -101,6 +128,22 @@ export default function BookCard(props) {
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />
+
+            {/* Setting 버튼 클릭시 보이는 메뉴 */}
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleSettingClose}
+                MenuListProps={{
+                'aria-labelledby': 'basic-button',
+                }}
+            >
+                <MenuItem onClick={handleSettingClose}>문제집 설정</MenuItem>
+                <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
+                <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
+                <MenuItem onClick={handleSettingClose}>삭제하기</MenuItem>
+            </Menu>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link>
                     <img src={props.photo} alt="사진왜안들어가" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
@@ -121,28 +164,31 @@ export default function BookCard(props) {
                     {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/
                         props.cardType === 'A' ?
                             <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600" onClick={handleClick(Fade)}>
+                                <IconButton className="text-red-600" 
+                                            onClick={handleBookmarkClick()}>
                                     { props.isBookmark ? <BookmarkIcon/> : <BookmarkBorderIcon/> }
                                 </IconButton>
                                 <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded"
-                                        onClick={openAlert}
-                                >공유하기</Button>
+                                        onClick={openAlert}>공유하기</Button>
                             </div> : ""
                     }
 
                     { /* B타입 - 마이페이지 메인 - 내가 만든 문제집, 나의 출제이력 */
                         props.cardType === 'B' ?
                             <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600">
+                                <IconButton className="text-red-600"
+                                            onClick={handleSettingClick}>
                                     <SettingsIcon/>
                                 </IconButton>
-                                <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">공유하기</Button>
+                                <Button className="px-4 py-2 text-gray-600 border border-gray-rounded"
+                                        onClick={openAlert}>공유하기</Button>
                             </div> : ""
                     }
                     {/* C타입 - 오답노트 */
                         props.cardType === 'C' ?
                         <div className="flex items-center justify-between mt-4">
-                            <IconButton className="text-red-600">
+                            <IconButton className="text-red-600"
+                                        onClick={handleDeleteClick}>
                                 <DeleteIcon/>
                             </IconButton>
                             <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">다시 학습하기</Button>
