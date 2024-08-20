@@ -19,6 +19,7 @@ export default function BookmarkDemo() {
                 updateBookmark = {clickBookmark}
                 isBookmark={isBookmark}
             ></BookCard>
+
         </div>
     );
 }

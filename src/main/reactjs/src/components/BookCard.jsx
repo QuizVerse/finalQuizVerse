@@ -1,23 +1,85 @@
-import {Button, IconButton} from "@mui/material";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import {Button, IconButton, Slide} from "@mui/material";
 import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import Snackbar from '@mui/material/Snackbar';
+import Fade from '@mui/material/Fade';
+import {useState} from "react";
+import CustomAlert from "./CustomAlert";
+
+
 export default function BookCard(props) {
+    // snack state
+    const [state, setState] = useState({
+        open: false,
+        Transition: Fade,
+    });
+
+    // snackMessage
+    const [snackMessage, setSnackMessage] = useState("추가");
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
 
     /**
-     * @description : 북마크 클릭시 상태 업데이트
+     * @description : 북마크 클릭시 발생하는 로직
      * */
-    const updateBookmark = () => {
-        props.updateBookmark()
-    }
+    const handleClick = (Transition) => () => {
+        // 북마크 상태 업데이트
+        props.updateBookmark();
+        // snack message 띄우기
+        setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
+        // snack 상태 업데이트
+        setState({
+            open: true,
+            Transition,
+        });
+    };
+
+    /**
+     * @description : 북마크 닫힐때 발생하는 로직
+     * */
+    const handleClose = () => {
+        setState({
+            ...state,
+            open: false,
+        });
+    };
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = () => {
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
 
     return (
         <>
+            {/* 즐겨찾기 추가 삭제 메서드 */}
+            <Snackbar
+                open={state.open}
+                onClose={handleClose}
+                TransitionComponent={state.Transition}
+                message={snackMessage}
+                key={state.Transition.name}
+                autoHideDuration={1200}
+            />
+            <CustomAlert
+                id={9}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link>
                     <img src={props.photo} alt="사진왜안들어가" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
@@ -38,10 +100,12 @@ export default function BookCard(props) {
                     {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/
                         props.cardType === 'A' ?
                             <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600" onClick={updateBookmark}>
+                                <IconButton className="text-red-600" onClick={handleClick(Fade)}>
                                     { props.isBookmark ? <BookmarkIcon/> : <BookmarkBorderIcon/> }
                                 </IconButton>
-                                <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">공유하기</Button>
+                                <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded"
+                                        onClick={openAlert}
+                                >공유하기</Button>
                             </div> : ""
                     }
 
