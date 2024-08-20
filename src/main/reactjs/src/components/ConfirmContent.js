@@ -1,5 +1,3 @@
-import NewClass from "./NewClass";
-
 const confirmContent = [
     {
         id: 0,
@@ -70,12 +68,6 @@ const confirmContent = [
     //     content: "문제에 대해 한줄평을 남겨주세요!",
     //     btn1Text: "",
     //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
     // },
     // {
     //     id: 10,
@@ -83,12 +75,6 @@ const confirmContent = [
     //     content: "",
     //     btn1Text: "",
     //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
     // },
     // {
     //     id: 11,
@@ -96,13 +82,15 @@ const confirmContent = [
     //     content: "",
     //     btn1Text: "",
     //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
     // }
+
+    {
+        id: 12,
+        title: "문제집을 삭제하시겠습니까?",
+        content: "문제집을 삭제하면 복구할 수 없습니다.",
+        btn1Text: "",
+        btn2Text: "",
+    }
 
 ]
 

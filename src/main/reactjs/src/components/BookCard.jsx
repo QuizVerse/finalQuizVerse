@@ -1,4 +1,4 @@
-import {Button, IconButton, Menu, MenuItem, Slide} from "@mui/material";
+import {Button, IconButton, Menu, MenuItem} from "@mui/material";
 import { Link } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -9,6 +9,7 @@ import Fade from '@mui/material/Fade';
 import {useState} from "react";
 import CustomAlert from "./CustomAlert";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import CustomConfirm from "./CustomConfirm";
 
 export default function BookCard(props) {
     // snack state
@@ -26,6 +27,24 @@ export default function BookCard(props) {
     // setting menu state
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    // confirm state
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
+    /**
+     * @description : 삭제 취소 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn1 = () => {
+        setConfirmVisible(false);
+    };
+
+    /**
+     * @description : 삭제 확인 버튼 클릭시 실행되는 로직
+     * @TODO : 문제집 삭제 기능 추가
+     * */
+    const clickBtn2 = () => {
+        setConfirmVisible(false);
+    };
 
     /**
      * @description : 북마크 클릭시 발생하는 로직
@@ -98,11 +117,12 @@ export default function BookCard(props) {
 
     
     /**
-     * @description : 삭제 버튼 클릭했을 때
+     * @description : Confirm창 열릴 때
      * */
-    const handleDeleteClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const openConfirm = () => {
+        setConfirmVisible(true);
     };
+
 
     return (
         <>
@@ -137,13 +157,20 @@ export default function BookCard(props) {
                 onClose={handleSettingClose}
                 MenuListProps={{
                 'aria-labelledby': 'basic-button',
-                }}
-            >
+                }}>
                 <MenuItem onClick={handleSettingClose}>문제집 설정</MenuItem>
                 <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
                 <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
                 <MenuItem onClick={handleSettingClose}>삭제하기</MenuItem>
             </Menu>
+
+            {/* Setting 버튼 클릭시 보이는 메뉴 */}       
+            <CustomConfirm
+                id={12}
+                openConfirm={confirmVisible}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
+            />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link>
                     <img src={props.photo} alt="사진왜안들어가" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
@@ -188,7 +215,7 @@ export default function BookCard(props) {
                         props.cardType === 'C' ?
                         <div className="flex items-center justify-between mt-4">
                             <IconButton className="text-red-600"
-                                        onClick={handleDeleteClick}>
+                                        onClick={openConfirm}>
                                 <DeleteIcon/>
                             </IconButton>
                             <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">다시 학습하기</Button>
