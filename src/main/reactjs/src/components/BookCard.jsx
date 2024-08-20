@@ -40,7 +40,7 @@ export default function BookCard(props) {
     };
 
         /**
-     * @description : 북마크 클릭시 발생하는 로직
+     * @description : 링크 클릭시 발생하는 로직
      * */
         const handleCopy = (Transition) => () => {
             // snack message 교체
@@ -89,15 +89,15 @@ export default function BookCard(props) {
                 key={state.Transition.name}
                 autoHideDuration={1200}
             />
+   
             <CustomAlert
-                title={props.bookTitle+"에 대한 링크가 생성되었습니다. 링크를 클릭하여 복사할 수 있습니다."}
-                content={
+                title={props.title+"에 대한 링크가 생성되었습니다."}
+                content={         
                 <CopyToClipboard
                     text={props.bookUrl}
-                    onCopy={()=>handleCopy}
-                  >
-                    <button>{props.bookUrl}</button>
-                  </CopyToClipboard>}
+                    onCopy={handleCopy(Fade)}>
+                    <button>링크를 클릭하여 복사 : {props.bookUrl}</button>
+                </CopyToClipboard>}
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />

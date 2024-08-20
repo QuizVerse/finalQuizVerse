@@ -17,9 +17,9 @@ export default function BookmarkDemo() {
             <BookCard
                 cardType={"A"}
                 updateBookmark={clickBookmark}
-                bookTitle={"정보처리기사"}
+                title={"정보처리기사"}
                 bookUrl={"www.copy.com"}
-                isBookmark={isBookmark}
+                isBookmark={isBookmark} 
             ></BookCard>
 
         </div>
