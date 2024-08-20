@@ -218,7 +218,9 @@ export default function BookCard(props) {
                                         onClick={openConfirm}>
                                 <DeleteIcon/>
                             </IconButton>
-                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">다시 학습하기</Button>
+                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">
+                                <Link to={props.bookUrl}>다시 학습하기</Link>
+                            </Button>
                         </div>  : ""
                     }
                 </div>
