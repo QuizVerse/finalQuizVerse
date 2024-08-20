@@ -8,7 +8,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Fade from '@mui/material/Fade';
 import {useState} from "react";
 import CustomAlert from "./CustomAlert";
-
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function BookCard(props) {
     // snack state
@@ -18,19 +18,19 @@ export default function BookCard(props) {
     });
 
     // snackMessage
-    const [snackMessage, setSnackMessage] = useState("추가");
+    const [snackMessage, setSnackMessage] = useState("");
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
-
+    const [alertContent, setAlertContent] = useState("");
     /**
      * @description : 북마크 클릭시 발생하는 로직
      * */
     const handleClick = (Transition) => () => {
         // 북마크 상태 업데이트
         props.updateBookmark();
-        // snack message 띄우기
+        // snack message 교체
         setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
         // snack 상태 업데이트
         setState({
@@ -38,6 +38,20 @@ export default function BookCard(props) {
             Transition,
         });
     };
+
+        /**
+     * @description : 북마크 클릭시 발생하는 로직
+     * */
+        const handleCopy = (Transition) => () => {
+            // snack message 교체
+            setSnackMessage("클립보드에 복사되었습니다.");
+            // snack 상태 업데이트
+            setState({
+                open: true,
+                Transition,
+            });
+        };
+    
 
     /**
      * @description : 북마크 닫힐때 발생하는 로직
@@ -76,7 +90,14 @@ export default function BookCard(props) {
                 autoHideDuration={1200}
             />
             <CustomAlert
-                id={9}
+                title={props.bookTitle+"에 대한 링크가 생성되었습니다. 링크를 클릭하여 복사할 수 있습니다."}
+                content={
+                <CopyToClipboard
+                    text={props.bookUrl}
+                    onCopy={()=>handleCopy}
+                  >
+                    <button>{props.bookUrl}</button>
+                  </CopyToClipboard>}
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />

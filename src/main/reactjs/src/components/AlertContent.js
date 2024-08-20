@@ -48,13 +48,6 @@ const AlertContent = [
         content: "선택형 답은 최대 5개까지 가능합니다.",
         btnText: "",
     },
-    {
-        id: 9,
-        title: "에 대한 링크가 생성되었습니다.",
-        content: "",
-        btnText: "복사",
-    },
-
 ]
 
 export default AlertContent;
