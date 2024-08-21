@@ -9,9 +9,11 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
 
+
 export default function Score() {
-  // 일단 문제 개수를 10개로 지정
-  const questions = Array.from({ length: 10 }, (_, index) => ({
+
+  // 일단 문제 개수를 20개로 지정
+  const questions = Array.from({ length: 20 }, (_, index) => ({
     number: `${index + 1}번`,
     score: "5p",
     correct: true,
@@ -132,7 +134,6 @@ export default function Score() {
               }}
             >
               <span style={{ color: "#626262" }}>
-                {" "}
                 인자한 혹등고래님의 점수는?
               </span>
               <span
