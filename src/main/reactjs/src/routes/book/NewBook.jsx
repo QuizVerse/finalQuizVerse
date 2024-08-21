@@ -67,6 +67,7 @@ export default function NewBook() {
         axios.post('/new/newbook', newBookData)
             .then((res) => {
                 console.log(res.data);
+                navigate("/book/edit")
             })
             .catch((err) => {
                 console.error(err);
@@ -159,7 +160,7 @@ export default function NewBook() {
                             >
                                 {categoryList &&
                                     categoryList.map((row) => (
-                                        <MenuItem value={row.category_id}>{row.category_name}</MenuItem>
+                                        <MenuItem key={row.category_id} value={row.category_id}>{row.category_name}</MenuItem>
                                     ))
                                 }
                             </Select>
@@ -225,7 +226,7 @@ export default function NewBook() {
                         <div className="relative">
                             {/* Upload Button */}
                             <div className={"flex justify-end"}>
-                                <IconButton>
+                                <IconButton onClick={() => document.getElementById('file-input').click()}>
                                     <CreateIcon/>
                                 </IconButton>
                             </div>
