@@ -1,5 +1,3 @@
-import NewClass from "./NewClass";
-
 const confirmContent = [
     {
         id: 0,
@@ -7,12 +5,6 @@ const confirmContent = [
         content: "확인을 누르면 현재까지의 내용이 저장됩니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 1,
@@ -20,12 +12,6 @@ const confirmContent = [
         content: "확인을 누르면 로그인 화면으로 이동합니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 2,
@@ -33,12 +19,6 @@ const confirmContent = [
         content: "현재 응시 내용은 저장되어 이어서 응시할 수 있습니다.",
         btn1Text: "저장하지 않고 나가기",
         btn2Text: "저장하기",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 3,
@@ -46,12 +26,6 @@ const confirmContent = [
         content: "확인을 누르면 오답노트 목록에서 삭제됩니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 4,
@@ -59,12 +33,6 @@ const confirmContent = [
         content: "확인을 누르면 클래스 목록에서 클래스가 삭제됩니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 5,
@@ -72,12 +40,6 @@ const confirmContent = [
         content: "확인을 누르면 클래스에서 구성원이 삭제됩니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 6,
@@ -85,12 +47,6 @@ const confirmContent = [
         content: "확인버튼을 클릭하면 스터디에서 퇴장됩니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
     {
         id: 7,
@@ -98,65 +54,42 @@ const confirmContent = [
         content: "드래그하여 섹션을 재정렬할 수 있습니다.",
         btn1Text: "",
         btn2Text: "",
-        btn1Func: function (){
-            console.log("hi11")
-        },
-        btn2Func: function (){
-            console.log("hi")
-        },
     },
-    // {
-    //     id: 8,
-    //     title: "시험 응시를 종료합니다.",
-    //     content: "문제에 대해 한줄평을 남겨주세요!",
-    //     btn1Text: "",
-    //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
-    // },
-    // {
-    //     id: 9,
-    //     title: "클래스 추가",
-    //     content: <NewClass/>,
-    //     btn1Text: "",
-    //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
-    // },
-    // {
-    //     id: 10,
-    //     title: "초대할 구성원의 닉네임을 입력해주세요.",
-    //     content: "",
-    //     btn1Text: "",
-    //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
-    // },
-    // {
-    //     id: 11,
-    //     title: "화상스터디 개설",
-    //     content: "",
-    //     btn1Text: "",
-    //     btn2Text: "",
-    //     btn1Func: function (){
-    //         console.log("hi11")
-    //     },
-    //     btn2Func: function (){
-    //         console.log("hi")
-    //     },
-    // }
+    {
+        id: 8,
+        title: "시험 응시를 종료합니다.",
+        content: "문제에 대해 한줄평을 남겨주세요!",
+        btn1Text: "",
+        btn2Text: "",
+    },
+    {
+        id: 9,
+        title: "클래스 추가",
+        content: "",
+        btn1Text: "",
+        btn2Text: "",
+    },
+    {
+        id: 10,
+        title: "구성원 초대",
+        content: "초대할 구성원의 닉네임을 입력해주세요.",
+        btn1Text: "",
+        btn2Text: "",
+    },
+    {
+        id: 11,
+        title: "화상스터디 개설",
+        content: "",
+        btn1Text: "",
+        btn2Text: "",
+    },
+    {
+        id: 12,
+        title: "문제집을 삭제하시겠습니까?",
+        content: "문제집을 삭제하면 복구할 수 없습니다.",
+        btn1Text: "",
+        btn2Text: "",
+    }
 
 ]
 

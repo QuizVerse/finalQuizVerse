@@ -52,11 +52,14 @@ import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
 import UseModal from "./routes/devtest/UseModal";
+import UseCustomInput from "./routes/devtest/UseCustomInput";
 import PrivateRoute from "./components/PrivateRoute";
 
 // Test 관련 컴포넌트
 import Pagenation from './routes/devtest/Pagenation';
 import MakeLeave from './routes/devtest/MakeLeave';
+import BookmarkDemo from "./routes/devtest/BookmarkDemo";
+import ReactDnd from "./routes/devtest/ReactDnd";
 
 
 const router = createBrowserRouter([
@@ -86,6 +89,18 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/makeleave",
                 element: <MakeLeave/>
+            },
+            {
+                path: "/devtest/usecustominput",
+                element: <UseCustomInput/>
+            },
+            {
+                path: "/devtest/bookmarkdemo",
+                element: <BookmarkDemo/>
+            },
+            {
+                path: "/devtest/reactdnd",
+                element: <ReactDnd/>
             },
         ]
 

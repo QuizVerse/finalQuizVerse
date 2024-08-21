@@ -9,34 +9,43 @@ import AlertContent from "./AlertContent";
 /**
  * @description :
  * 버튼이 한 개 있는 모달을 원할 때 사용
- * prop으로 id를 넘겨주면 해당 Alert의 data를 가져와 출력
+ * props으로 id를 넘겨주면 해당 Alert의 data를 가져와 출력
  * */
-export default function CustomAlert(prop) {
+export default function CustomAlert(props) {
+    let title = "";
+    let content = "";
+    let btnText = "";
 
+    AlertContent.map((e)=>{
+        if(e.id === props.id) {
+            title = e.title;
+            content = e.content;
+            btnText = e.btnText;
+        }
+    })
     const clickBtn = () => {
-        AlertContent[prop.id].btnFunc()
-        prop.closeAlert();
+        props.closeAlert();
     };
 
     return (
         <>
             <Dialog
-                open={prop.openAlert}
-                onClose={prop.closeAlert}
+                open={props.openAlert}
+                onClose={props.closeAlert}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {AlertContent[prop.id].title || '모달 타이틀'}
+                    {props.title || title }
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {AlertContent[prop.id].content || '모달 설명'}
+                        {props.content || content   }
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={clickBtn} autoFocus>
-                        {AlertContent[prop.id].btnText || '확인'}
+                        {props.btnText || btnText || '확인'}
                     </Button>
                 </DialogActions>
             </Dialog>
