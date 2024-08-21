@@ -1,9 +1,40 @@
 // v0 by Vercel.
 // https://v0.dev/t/hx5RoREe1hV
 
-import { Stack } from "@mui/material";
+import { Pagination, Stack } from "@mui/material";
+import K from "../../image/K.jpg";
+import BookCard from "../../components/BookCard";
+import React, { useState } from 'react';
+
+const ITEMS_PER_PAGE=8;
+const SPACING=2;
+
+
+
 
 export default function Bookmark() {
+  const items= Array.from({length:30},(_, index) => ({
+    photo:K,
+    createDate:`2023-12${12-index}`,//각 항목의 날짜를 조금씩 다르게
+    nickname:"엔믹스",
+    title:`규진 ${index+1}`,
+    category:"처음뵙겠습니다"
+}));
+
+//페이지 관리
+const [page, setPage] = useState(1);
+
+//페이지 변경 처리
+const handleChange=(event, value) => {
+  setPage(value);
+  window.scrollTo(0,0); //페이지가 바뀔 때 상단으로 스크롤
+};
+
+//현재 페이지에 표시할 항목 계산
+const itemoffset=(page-1)*ITEMS_PER_PAGE;
+const currentItems=items.slice(itemoffset, itemoffset+ITEMS_PER_PAGE);
+const pageCount=Math.ceil(items.length/ITEMS_PER_PAGE);
+
   return (
       <main className="flex-1 p-6">
         <div className="flex items-center justify-between mb-6">
@@ -50,440 +81,31 @@ export default function Bookmark() {
             </select>
           </div>
         </div>
+        
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              data-v0-t="card"
-          >
-            <img
-                src="/placeholder.svg"
-                alt="Profile"
-                className="w-full h-48 object-cover"
-                width="200"
-                height="200"
-            />
-            <div className="p-6">
-              <div className="text-sm text-blue-500">캠퍼스 · 2022.04.27</div>
-              <h2 className="mt-2 text-lg font-semibold">2024 정보처리기사 실기</h2>
-              <div className="mt-2 text-sm text-gray-500">
-                <p>취미 / 자격증</p>
-                <p>조회수 31 | 응원수 20 | 댓글수 2</p>
-                <p>비공개</p>
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="w-4 h-4 mr-1"
-                  >
-                    <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                  31
-                </button>
-                <button
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                  공유하기
-                </button>
-              </div>
-            </div>
-          </div>
+        {currentItems.map((item, index) => (
+          <BookCard
+          key={index}
+          cardType="A"
+          className={"flex-1"}
+          photo={item.photo}
+          createDate={item.createDate}
+          nickname={item.nickname}
+          title={item.title}
+          category={item.category}
+          />
+        ))}  
         </div>
-        <div className="flex justify-center mt-6">
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-4 h-4"
-            >
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            1
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            2
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            3
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            4
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            5
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            6
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            7
-          </button>
-          <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-4 h-4"
-            >
-              <path d="m9 18 6-6-6-6"></path>
-            </svg>
-          </button>
-        </div>
+        {/*페이지네이션*/}
+        <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
+          <Pagination
+          count={pageCount}
+          page={page}
+          onChange={handleChange}
+          showFirstButton
+          showLastButton
+          />
+        </Stack>
       </main>
     );
 }
