@@ -4,6 +4,7 @@ package org.example.final1.config;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.config.oauth.PrincipalOauth2UserService;
 import org.example.final1.filter.MyFilter1;
+import org.example.final1.filter.MyFilter3;
 import org.example.final1.jwt.JwtAuthenticationFilter;
 import org.example.final1.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
 
@@ -29,24 +31,21 @@ public class SecurityConfig {
     private final PrincipalOauth2UserService principalOauth2UserService;
     private final CorsFilter corsFilter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     // 시큐리티 필터 체인 -> 로그인 시 가는 경로 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-        // JwtAuthenticationFilter 설정
+        //jwtauthenticationfilter에서 authenticationmanager를 넣어줘서, 이 매니저를 통해 로그인 인증을 도움받는다.
+
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/login/user/check"); // 필터가 동작할 경로 설정
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/mypage/**").authenticated()
-                        .anyRequest().permitAll() // 나머지 URL은 전부 권한을 허용해줌
-                )
                 .addFilter(corsFilter)
-                .addFilter(jwtAuthenticationFilter)
                 .formLogin(form -> form
                         .loginPage("/account/login") // 로그인 페이지 설정
                         .usernameParameter("user_email") // username 변수를 user_email로 변경
@@ -54,6 +53,16 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login/user/check") // 로그인 처리 경로
                         .defaultSuccessUrl("/") // 로그인 성공 후 이동할 기본 페이지
                 )
+
+
+                .addFilter(jwtAuthenticationFilter)//jwtauthenticationfilter걸어줘서 jwt토큰으로 사용자 정보받음
+
+
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/mypage/**").authenticated()
+                        .anyRequest().permitAll() // 나머지 URL은 전부 권한을 허용해줌
+                )
+
 
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/account/login") // OAuth2 로그인 페이지 설정

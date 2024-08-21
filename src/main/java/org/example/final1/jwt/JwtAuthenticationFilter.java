@@ -19,7 +19,7 @@ import java.io.IOException;
 
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter이 필터가 있는데
-// /account/login 요청해서 username,password전송하면(post)
+// /login/user/check 요청해서 username,password전송하면(post)
 // usernamepasswordauthenticationfilter동작을 한다.
 
 @RequiredArgsConstructor
@@ -55,8 +55,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //PrincipalDetailsService에서 loaduserbyname실행된 후 정상이면 authentication이 리턴이된다.
             //db에 있는 username과 password가 일치한다.
             Authentication authentication=authenticationManager.authenticate(authenticationToken);
+            //authentication에는 내 로그인한 정보가 담겨짐
             //print되면 로그인되었다는 뜻
             PrincipalDetails principalDetails=(PrincipalDetails)authentication.getPrincipal();
+
             System.out.println("로그인완료됨 "+principalDetails.getUserDto().getUser_email());//로그인 정상적으로 됨
 
             //authentication 객체가 session영역에 저장을 해야하고 그방법이 return해주면됨
