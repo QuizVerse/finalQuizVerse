@@ -1,5 +1,5 @@
 import {TextField} from "@mui/material";
-import CustomInput from "./CustomInput";
+import CustomInput from "../CustomInput";
 import {useState} from "react";
 
 export default function NewClass(props) {

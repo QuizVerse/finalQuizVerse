@@ -89,8 +89,14 @@ const confirmContent = [
         content: "문제집을 삭제하면 복구할 수 없습니다.",
         btn1Text: "",
         btn2Text: "",
+    },
+    {
+        id: 13,
+        title: "시험 응시를 종료합니다",
+        content: "문제에 대해 한줄평을 남겨주세요!",
+        btn1Text: "다음에 하기",
+        btn2Text: "제출하기",
     }
-
 ]
 
 export default confirmContent;

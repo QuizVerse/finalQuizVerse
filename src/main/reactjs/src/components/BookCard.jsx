@@ -7,9 +7,9 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Snackbar from '@mui/material/Snackbar';
 import Fade from '@mui/material/Fade';
 import {useState} from "react";
-import CustomAlert from "./CustomAlert";
+import CustomAlert from "./modal/CustomAlert";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import CustomConfirm from "./CustomConfirm";
+import CustomConfirm from "./modal/CustomConfirm";
 
 export default function BookCard(props) {
     // snack state
