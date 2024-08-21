@@ -14,6 +14,10 @@ export default function CustomInput(props) {
         props.updateValue(e.target.value);
     }
 
+    const updatePasswordVisible = () => {
+        props.updatePasswordVisible()
+    }
+
     return (
         <div className="flex flex-col">
             <div className="flex">
@@ -33,8 +37,8 @@ export default function CustomInput(props) {
                     * */
                     props.isPassword &&
                     <div>
-                        <IconButton>
-                            { props.passwordVisible ? <VisibilityIcon/> : <VisibilityOffIcon/> }
+                        <IconButton onClick={updatePasswordVisible}>
+                            { props.isPasswordVisible ? <VisibilityIcon/> : <VisibilityOffIcon/> }
                         </IconButton>
                     </div>
                 }

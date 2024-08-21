@@ -15,15 +15,18 @@ import NewClass from "../../components/NewClass";
 * */
 export default function UseModal() {
 
-    const [confirmVisible, setConfirmVisible] = useState(false);
+    // alert state
     const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    // confirm state
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
     const [className, setClassName] = useState("");
     const [classDescription, setClassDescription] = useState("");
-    const [alertTitle, setAlertTitle] = useState("");
     const onSetClassName = (className) => {
         setClassName(className);
     }
-
     const onSetClassDescription = (classDescription) => {
         setClassDescription(classDescription);
     }

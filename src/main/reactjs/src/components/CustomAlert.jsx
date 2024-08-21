@@ -5,7 +5,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AlertContent from "./AlertContent";
-import ConfirmContent from "./ConfirmContent";
 
 /**
  * @description :
@@ -17,7 +16,7 @@ export default function CustomAlert(props) {
     let content = "";
     let btnText = "";
 
-    ConfirmContent.map((e)=>{
+    AlertContent.map((e)=>{
         if(e.id === props.id) {
             title = e.title;
             content = e.content;

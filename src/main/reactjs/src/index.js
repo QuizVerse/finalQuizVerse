@@ -57,6 +57,8 @@ import PrivateRoute from "./components/PrivateRoute";
 
 // Test 관련 컴포넌트
 import Pagenation from './routes/devtest/Pagenation';
+import BookmarkDemo from "./routes/devtest/BookmarkDemo";
+import ReactDnd from "./routes/devtest/ReactDnd";
 
 
 const router = createBrowserRouter([
@@ -86,6 +88,14 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/usecustominput",
                 element: <UseCustomInput/>
+            },
+            {
+                path: "/devtest/bookmarkdemo",
+                element: <BookmarkDemo/>
+            },
+            {
+                path: "/devtest/reactdnd",
+                element: <ReactDnd/>
             },
         ]
 
