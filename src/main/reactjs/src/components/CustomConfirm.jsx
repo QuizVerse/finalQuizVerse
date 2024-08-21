@@ -41,6 +41,7 @@ export default function CustomConfirm(props) {
                 onClose={props.closeConfirm}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                maxWidth="lg"
             >
                 <DialogTitle id="alert-dialog-title">
                     {props.title || title ||'모달 제목'}
