@@ -13,13 +13,11 @@ package org.example.final1.config.auth;
 import lombok.Data;
 import org.example.final1.model.UserDto;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
@@ -41,15 +39,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     //해당 유저의 권한을 리턴하는 곳
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collect=new ArrayList<>();
-        collect.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return userDto.getUser_role();
-            }
-        });
-
-        return collect;
+        return Collections.singletonList(new SimpleGrantedAuthority(userDto.getUser_role()));
     }
 
     @Override
