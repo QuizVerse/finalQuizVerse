@@ -1,35 +1,23 @@
 // v0 by Vercel.
 // https://v0.dev/t/iQOyZU5fuUx
 
+import {Button} from "@mui/material";
+import CustomInput from "../../components/CustomInput";
+
 export default function Leave() {
   return (
       <main className="flex-1 p-8">
         <div className="max-w-md mx-auto">
           <h1 className="mb-6 text-2xl font-bold text-center">회원 탈퇴</h1>
           <div className="flex justify-between mb-4">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-1/2 mr-2">
-              인증코드 발송
-            </button>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-1/2 ml-2">
-              인증코드 재발송
-            </button>
+            <Button>인증코드 발송</Button>
+            <Button>인증코드 재발송</Button>
           </div>
           <div className="space-y-4">
             <div>
-              <label
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                for="auth-code"
-              >
-                Authentication code
-              </label>
-              <input
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1"
-                id="auth-code"
-                placeholder="인증 코드"
-              />
-              <p className="mt-1 text-sm text-muted-foreground">
-                인증 재발 시간 : 03:00
-              </p>
+              <CustomInput
+                  label={"인증코드"}
+                  timerVisible={true}/>
             </div>
             <div className="flex items-center">
               <label
@@ -76,9 +64,7 @@ export default function Leave() {
                 placeholder="탈퇴사유를 입력해주세요"
               ></textarea>
             </div>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full mt-4">
-              확인
-            </button>
+            <Button>확인</Button>
           </div>
         </div>
       </main>
