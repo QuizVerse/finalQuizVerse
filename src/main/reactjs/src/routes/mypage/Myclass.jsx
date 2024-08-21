@@ -155,7 +155,8 @@ export default function Myclass() {
               select
               defaultValue="popular"
           >
-            {conditions.map((option) => (
+            {conditions &&
+                conditions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
