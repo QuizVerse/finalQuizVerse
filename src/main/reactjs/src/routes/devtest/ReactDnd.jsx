@@ -26,24 +26,32 @@ export default function ReactDnd() {
      * @description : 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
+        /**
+         * @TODO: 확인 눌렀을 때 해당 사항 저장되는 로직 추가
+        * */
         setConfirmVisible(false);
     };
+
+    const arr = [
+        { id: 0, title: '야호' },
+        { id: 1, title: '야호1' },
+        { id: 2, title: '야호2' },
+    ];
 
     return (
         <>
             <Button
                 onClick={openConfirm}
                 className="whitespace-nowrap">
-                버튼 두개 모달 띄우는 버튼
+                섹션 재정렬
             </Button>
-            {/*<CustomConfirm*/}
-            {/*    id={7}*/}
-            {/*    content={*/}
-            {/*    <SectionSort*/}
-            {/*    />}*/}
-            {/*    openConfirm={true}*/}
-            {/*></CustomConfirm>*/}
-            <SectionSort/>
+            <CustomConfirm
+                id={7}
+                content={<SectionSort sortData={arr} />}
+                openConfirm={confirmVisible}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
+            ></CustomConfirm>
         </>
     );
 }
