@@ -26,16 +26,6 @@ export default function ReactDnd() {
      * @description : 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
-        axios({
-            method:'post',
-            url:'/myclass/newclass',
-            data:{
-
-            },
-        }).then(res=>{
-            console.log(res);
-
-        })
         setConfirmVisible(false);
     };
 
@@ -46,12 +36,14 @@ export default function ReactDnd() {
                 className="whitespace-nowrap">
                 버튼 두개 모달 띄우는 버튼
             </Button>
-            <CustomConfirm
-                id={7}
-                content={<SectionSort/>}
-                openConfirm={true}
-            ></CustomConfirm>
-
+            {/*<CustomConfirm*/}
+            {/*    id={7}*/}
+            {/*    content={*/}
+            {/*    <SectionSort*/}
+            {/*    />}*/}
+            {/*    openConfirm={true}*/}
+            {/*></CustomConfirm>*/}
+            <SectionSort/>
         </>
     );
 }
