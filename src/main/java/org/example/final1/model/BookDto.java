@@ -50,6 +50,6 @@ public class BookDto {
     @Column(name = "book_divide", nullable = false)
     private short book_divide;
 
-    @Column(name = "book_totalgrade", nullable = false)
-    private int book_totalgrade;
+    @Column(name = "book_totalscore", nullable = false)
+    private int book_totalscore;
 }

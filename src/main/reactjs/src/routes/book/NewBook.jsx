@@ -95,13 +95,14 @@ export default function NewBook() {
     // Submit new book
     const handleSubmit = () => {
         const newBookData = {
-            name: bookName,
-            description: bookDescription,
-            visibility: dropdownState.selectedVisibilityOption,
-            category: dropdownState.selectedCategory,
-            totalPoints: totalPoints,
-            timeLimit: isTimeLimitEnabled ? timeLimit : null,
-            coverImage: coverImage, // Assuming you upload this later
+            "book_title": bookName,
+            "book_description": bookDescription,
+            "book_status": 0,
+            "book_category": null,
+            "book_timer": 0,
+            "book_image": coverImage, // Assuming you upload this later
+            "book_divide":0, //on이면 1
+            "book_totalgrade":10
         };
 
         axios
