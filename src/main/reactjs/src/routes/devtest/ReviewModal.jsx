@@ -1,5 +1,5 @@
-import CustomConfirm from "../../components/CustomConfirm";
-import SectionSort from "../../components/SectionSort";
+import CustomConfirm from "../../components/modal/CustomConfirm";
+import SectionSort from "../../components/modal/SectionSort";
 import {Button} from "@mui/material";
 import {useState} from "react";
 import axios from "axios";

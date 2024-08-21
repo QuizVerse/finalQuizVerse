@@ -1,7 +1,7 @@
 // v0 by Vercel.
 // https://v0.dev/t/PyQHzVi1rPb
 
-import CustomConfirm from "../../components/CustomConfirm";
+import CustomConfirm from "../../components/modal/CustomConfirm";
 import React, {useEffect, useState} from "react";
 import {
   Button,
@@ -15,9 +15,9 @@ import {
   TableRow,
   TextField
 } from "@mui/material";
-import NewClass from "../../components/NewClass";
+import NewClass from "../../components/modal/NewClass";
 import axios from "axios";
-import CustomAlert from "../../components/CustomAlert";
+import CustomAlert from "../../components/modal/CustomAlert";
 import Paper from '@mui/material/Paper';
 
 const conditions = [
