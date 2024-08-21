@@ -44,10 +44,6 @@ export default function VarificationInput(props) {
                 </div>
             </div>
 
-            {props.captionVisible && (
-                <Typography variant="caption" color={props.captionColor}>{props.captionText}</Typography>
-            )}
-
             <Typography variant="caption" color={props.captionColor}>
                 인증 제한 시간: {formatTime(timeLeft)}
             </Typography>
