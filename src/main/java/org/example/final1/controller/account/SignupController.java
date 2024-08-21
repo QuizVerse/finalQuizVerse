@@ -36,19 +36,23 @@ public class SignupController {
     // 이메일 인증 코드 보내기 및 재발송
     @GetMapping("/user/send")
     public String sendAuthenticationCode(@RequestParam("user_email") String user_email) {
+
+        // 이메일 존재 여부 확인
+        if (userService.countByUser_email(user_email)) {
+            return "이메일이 존재하는 회원입니다.";
+        }
+
         String authenticationCode = String.format("%06d", new Random().nextInt(999999));  // 6자리 인증 코드 생성
         try {
             // 이메일로 인증 코드 발송
             emailService.sendVerificationEmail(user_email, authenticationCode);
-            // 이메일 주소를 키로, 인증 코드를 값으로 저장 ->메모리에 저장됨
+            // 이메일 주소를 키로, 인증 코드를 값으로 저장 -> 메모리에 저장됨
             authenticationCodes.put(user_email, authenticationCode);
-
 
             return "success";
         } catch (Exception e) {
             e.printStackTrace(); // 예외 출력
             return "fail"; // 예외 발생 시 실패 응답 반환
-
         }
     }
     // 이메일 인증 코드 확인

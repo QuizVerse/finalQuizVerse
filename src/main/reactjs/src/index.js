@@ -52,6 +52,7 @@ import Leave from './routes/mypage/Leave';
 import Mypage from "./routes/mypage/Mypage";
 import DevTest from "./routes/devtest/DevTest";
 import UseModal from "./routes/devtest/UseModal";
+import UseCustomInput from "./routes/devtest/UseCustomInput";
 import PrivateRoute from "./components/PrivateRoute";
 
 // Test 관련 컴포넌트
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/usemodal",
                 element: <UseModal/>
+            },
+            {
+                path: "/devtest/usecustominput",
+                element: <UseCustomInput/>
             },
         ]
 
@@ -236,9 +241,9 @@ const router = createBrowserRouter([
 
         path: "/mypage",
         element: (
-            <PrivateRoute>
-                <Mypage />
-            </PrivateRoute>
+
+            <Mypage />
+
         ),
         errorElement: <ErrorPage />,
         children :[

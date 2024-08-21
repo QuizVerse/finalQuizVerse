@@ -18,6 +18,11 @@ public interface UserDaoInter extends JpaRepository<UserDto, Integer> {
             """, nativeQuery = true)
     public int getEmailcheck(@Param("user_email") String user_email);
 
+    @Query("SELECT u FROM UserDto u WHERE u.user_email = :user_email")
+    public UserDto findByEmail(@Param("user_email") String user_email);
+
+    @Query("SELECT COUNT(u) FROM UserDto u WHERE u.user_email = :user_email")
+    int countByUser_email(@Param("user_email") String user_email);
 
 
 
