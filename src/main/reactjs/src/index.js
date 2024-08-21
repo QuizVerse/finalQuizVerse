@@ -61,6 +61,7 @@ import MakeLeave from './routes/devtest/MakeLeave';
 import BookmarkDemo from "./routes/devtest/BookmarkDemo";
 import ReactDnd from "./routes/devtest/ReactDnd";
 import ReviewModal from "./routes/devtest/ReviewModal";
+import AddClassMemberModal from "./routes/devtest/AddClassMemberModal";
 
 
 const router = createBrowserRouter([
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/reviewmodal",
                 element: <ReviewModal/>
+            },
+            {
+                path: "/devtest/addclassmembermodal",
+                element: <AddClassMemberModal/>
             },
         ]
 
