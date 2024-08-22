@@ -48,7 +48,6 @@ const AlertContent = [
         content: "선택형 답은 최대 5개까지 가능합니다.",
         btnText: "",
     },
-
 ]
 
 export default AlertContent;
