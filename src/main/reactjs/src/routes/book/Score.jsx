@@ -8,9 +8,10 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Score() {
+  const navigate = useNavigate();
 
   // 일단 문제 개수를 20개로 지정
   const questions = Array.from({ length: 20 }, (_, index) => ({
@@ -25,7 +26,7 @@ export default function Score() {
       {/*  헤더  */}
       <header className="flex items-center justify-between p-4 bg-gray-200 pr-4">
         <div className="flex items-center space-x-4">
-          <KeyboardArrowLeftIcon />
+          <KeyboardArrowLeftIcon onClick={() => navigate("/book/detail")} />
           <div className="flex items-center gap-2 pr-4">
             <img
               className="aspect-square h-full w-full"
@@ -149,9 +150,21 @@ export default function Score() {
 
       {/* 성젹표 */}
       <div className="flex justify-end p-4 space-x-2">
-        <Button variant="outlined">해설보기</Button>
-        <Button variant="outlined">문제집 리뷰 작성</Button>
-        <Button variant="contained">성적표 PDF 출력</Button>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/book/explanation")}
+        >
+          해설보기
+        </Button>
+        <Button variant="outlined" onClick={() => navigate("/book/detail")}>
+          문제집 정보 보기
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/book/scorepreview")}
+        >
+          성적표 PDF 출력
+        </Button>
       </div>
 
       <div className="p-4">

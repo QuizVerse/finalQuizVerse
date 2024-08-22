@@ -2,15 +2,27 @@
 // https://v0.dev/t/sYs3DjiaYvI
 
 import { Button, Table } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function ScorePreview() {
+  const navigate = useNavigate();
+
+  // const answers = Array.from({length : 15}, (_, index) => ({
+  //   number : `${index+1}번`,
+  //   correct : true
+  // }));
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="">
         <div className="flex justify-end space-x-2 mb-4">
-          <Button variant="outlined">성적표로 돌아가기</Button>
+          <Button variant="outlined" onClick={() => navigate("/book/score")}>
+            성적표로 돌아가기
+          </Button>
           <Button variant="outlined">PDF로 출력</Button>
-          <Button variant="contained">메인으로</Button>
+          <Button variant="contained" onClick={() => navigate("/book")}>
+            메인으로
+          </Button>
         </div>
         <div className="overflow-x-auto pt-5 py-8">
           <table className="min-w-full">
@@ -45,7 +57,6 @@ export default function ScorePreview() {
       </div>
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2">성적</h2>
-        {/* <div className="bg-gray-100 p-4 rounded-md border-2 border-gray-300"> */}
         <table className="min-w-full p-4 border-2 border-gray-300">
           <tbody>
             <tr>
@@ -86,7 +97,6 @@ export default function ScorePreview() {
             </tr>
           </tbody>
         </table>
-        {/* </div> */}
       </div>
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2 pt-8">정오답 표</h2>
