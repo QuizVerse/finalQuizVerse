@@ -48,6 +48,12 @@ const AlertContent = [
         content: "선택형 답은 최대 5개까지 가능합니다.",
         btnText: "",
     },
+    {
+        id: 9,
+        title: "인증 제한 시간이 만료되었습니다.",
+        content: "다시 시도해주세요.",
+        btnText: "",
+    },
 ]
 
 export default AlertContent;
