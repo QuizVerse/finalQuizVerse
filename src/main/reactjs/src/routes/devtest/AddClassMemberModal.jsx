@@ -4,6 +4,7 @@ import {Button} from "@mui/material";
 import {useState} from "react";
 import axios from "axios";
 import Review from "../../components/modal/Review";
+import AddClassMember from "../../components/modal/AddClassMember";
 
 export default function ReviewModal() {
     // confirm state
@@ -36,11 +37,11 @@ export default function ReviewModal() {
             <Button
                 onClick={openConfirm}
                 className="whitespace-nowrap">
-                평가 모달 열기
+                구성원 추가
             </Button>
             <CustomConfirm
-                id={13}
-                content={<Review/>}
+                id={10}
+                content={<AddClassMember/>}
                 openConfirm={confirmVisible}
                 clickBtn1={clickBtn1}
                 clickBtn2={clickBtn2}
