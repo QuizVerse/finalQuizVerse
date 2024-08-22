@@ -2,24 +2,62 @@ import {Button} from "@mui/material";
 import EditSidebar from "../../components/EditSidebar";
 import Section from "../../components/Section";
 import Question from "../../components/Question";
+import React, {useState} from "react";
 
 export default function Edit() {
+    // 상태로 관리되는 질문 리스트
+    const [questions, setQuestions] = useState([{id: 1, type: 3}]);
+
+    /**
+     * @description : 새로운 질문 추가
+     */
+    const handleAddQuestion = (type) => {
+        const newQuestion = {id: questions.length + 1, type: type};
+        setQuestions([...questions, newQuestion]);
+    };
+
+    /**
+     * @description : 질문 복제 기능
+     */
+    const handleDuplicateQuestion = (index) => {
+        const newQuestion = {...questions[index], id: questions.length + 1};
+        setQuestions([...questions, newQuestion]);
+    };
+
+    /**
+     * @description : 특정 질문 삭제 기능
+     */
+    const handleDeleteQuestion = (index) => {
+        if (questions.length > 1) {
+            const newQuestions = questions.filter((_, i) => i !== index);
+            setQuestions(newQuestions);
+        }
+    };
+
     return (
         <main className="p-4 space-y-4">
             <div className="flex justify-between">
                 <div className="flex space-x-2">
-                    <Button variant={"outlined"}>임시저장</Button>
-                    <Button variant={"outlined"}>AI 문제 출제</Button>
-                    <Button variant={"contained"}>출제하기</Button>
+                    <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
+                    <Button variant={"outlined"} onClick={() => handleAddQuestion(3)}>AI 문제 출제</Button>
+                    <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
                 </div>
             </div>
 
             <Section/>
-            <Question type={3}/>
+
+            {/* 질문 리스트 렌더링 */}
+            {questions.map((question, index) => (
+                <Question
+                    key={question.id}
+                    type={question.type}
+                    totalQuestions={questions.length}
+                    onDuplicate={() => handleDuplicateQuestion(index)}
+                    onDelete={() => handleDeleteQuestion(index)}
+                />
+            ))}
+
             <EditSidebar/>
         </main>
-
-)
-    ;
+    );
 }
-

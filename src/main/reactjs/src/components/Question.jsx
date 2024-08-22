@@ -25,6 +25,11 @@ export default function Question(props) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const [visibility, setVisibility] = useState('');
+    const [answers, setAnswers] = useState([]); // 답안 리스트 상태 관리
+    const [questionDesc, setQuestionDesc] = useState(""); // 문제 설명 상태 관리
+    const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 보이기 여부 상태
+    const [explanation, setExplanation] = useState(""); // 해설 상태 관리
+    const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
     /**
      * @description : More 버튼 클릭했을때
@@ -47,6 +52,80 @@ export default function Question(props) {
         setVisibility(event.target.value);
     };
 
+    /**
+     * @description : 답안 추가 버튼 클릭 시 새로운 답안을 추가
+     */
+    const handleAddAnswer = () => {
+        setAnswers([...answers, ""]);
+    };
+
+    /**
+     * @description : 특정 답안을 삭제
+     */
+    const handleDeleteAnswer = (index) => {
+        const newAnswers = answers.filter((_, i) => i !== index);
+        setAnswers(newAnswers);
+    };
+
+    /**
+     * @description : 문제 복제 버튼 기능 구현
+     */
+    const handleDuplicateQuestion = () => {
+        // props.onDuplicate는 부모 컴포넌트에서 제공되어야 함
+        if (props.onDuplicate) {
+            props.onDuplicate();
+        }
+    };
+
+    /**
+     * @description : 문제 삭제 버튼 기능 구현 - 문제가 하나 밖에 없을 경우에는 삭제 되지 않도록 구현
+     */
+    const handleDeleteQuestion = () => {
+        if (props.onDelete && props.totalQuestions > 1) {
+            props.onDelete();
+        }
+    };
+
+    /**
+     * @description : 문제 설명 입력란 추가 기능
+     */
+    const handleAddDescription = () => {
+        if (!questionDesc) {
+            setQuestionDesc("");
+        }
+        handleSettingClose();
+    };
+
+    /**
+     * @description : 문제 설명 삭제 버튼 기능 구현
+     */
+    const handleDeleteDescription = () => {
+        setQuestionDesc("");
+    };
+
+    /**
+     * @description : 문제 해설 입력란 추가 기능
+     */
+    const handleAddExplanation = () => {
+        setShowExplanation(true);
+        handleSettingClose();
+    };
+
+    /**
+     * @description : OX 답안 선택 기능 추가
+     */
+    const handleOxSelect = (selection) => {
+        setOxSelected(selection);
+    };
+
+    /**
+     * @description : 답안 무작위로 섞기 기능
+     */
+    const handleShuffleAnswers = () => {
+        const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+        setAnswers(shuffledAnswers);
+        handleSettingClose();
+    };
 
     return (
         <>
@@ -63,9 +142,6 @@ export default function Question(props) {
                             variant={"standard"}
                         />
                         {/* 문제형식 select 메뉴 */}
-                        {/**
-                         * @Todo : select 하면 문제 type 변경
-                         */}
                         <FormControl fullWidth>
                             <InputLabel id="visibility-label">문제 형식</InputLabel>
                             <Select
@@ -88,134 +164,154 @@ export default function Question(props) {
                             label={"문제 설명"}
                             placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
                             variant={"standard"}
+                            value={questionDesc}
+                            onChange={(e) => setQuestionDesc(e.target.value)}
                         />
-                        {/**
-                         * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
-                         */}
+                        {/* 문제 설명에 사진 추가 버튼 기능 구현 */}
                         <IconButton>
                             <InsertPhotoIcon/>
                         </IconButton>
-                        {/**
-                         * @Todo : 문제 설명 삭제 버튼 기능 구현
-                         */}
-                        <IconButton>
+                        {/* 문제 설명 삭제 버튼 기능 구현 */}
+                        <IconButton onClick={handleDeleteDescription}>
                             <CloseIcon/>
                         </IconButton>
                     </div>
                     { /* 선택형 */
-                        props.type &&
-                        props.type === 0 ? <div>
-                            <div className="flex gap-4 items-end">
-                                <Radio/>
-                                <TextField
-                                    fullWidth multiline
-                                    label={"답안"}
-                                    placeholder="답안을 입력하세요."
-                                    variant={"standard"}
-                                />
-                                {/**
-                                 * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
-                                 */}
-                                <IconButton>
-                                    <InsertPhotoIcon/>
-                                </IconButton>
-                                {/**
-                                 * @Todo : 문제 설명 삭제 버튼 기능 구현
-                                 */}
-                                <IconButton>
-                                    <CloseIcon/>
-                                </IconButton>
+                        visibility === 0 ? (
+                            <div>
+                                {answers.map((answer, index) => (
+                                    <div key={index} className="flex gap-4 items-end">
+                                        <Radio/>
+                                        <TextField
+                                            fullWidth multiline
+                                            label={"답안"}
+                                            placeholder="답안을 입력하세요."
+                                            variant={"standard"}
+                                            value={answer}
+                                            onChange={(e) => {
+                                                const newAnswers = [...answers];
+                                                newAnswers[index] = e.target.value;
+                                                setAnswers(newAnswers);
+                                            }}
+                                        />
+                                        {/* 답안에 사진 추가 버튼 기능 구현 */}
+                                        <IconButton>
+                                            <InsertPhotoIcon/>
+                                        </IconButton>
+                                        {/* 답안 삭제 버튼 기능 구현 */}
+                                        <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                            <CloseIcon/>
+                                        </IconButton>
+                                    </div>
+                                ))}
+                                {/* 답안 추가 버튼 기능 구현 */}
+                                <div className="flex gap-4 items-center">
+                                    <Radio/>
+                                    <Button onClick={handleAddAnswer}>답안 추가</Button>
+                                </div>
                             </div>
-                            {/**
-                             * @Todo : 답안 추가 버튼 기능 구현
-                             */}
-                            <div className="flex gap-4 items-center">
-                                <Radio/>
-                                <Button>답안 추가</Button>
-                            </div>
-                        </div> :""
+                        ) : ""
                     }
 
                     {   /* 다중선택형 */
-                        props.type &&
-                        props.type === 1 ? <div>
-                            <div className="flex gap-4 items-end">
-                                <Checkbox />
-                                <TextField
-                                    fullWidth multiline
-                                    label={"답안"}
-                                    placeholder="답안을 입력하세요."
-                                    variant={"standard"}
-                                />
-                                {/**
-                                 * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
-                                 */}
-                                <IconButton>
-                                    <InsertPhotoIcon/>
-                                </IconButton>
-                                {/**
-                                 * @Todo : 문제 설명 삭제 버튼 기능 구현
-                                 */}
-                                <IconButton>
-                                    <CloseIcon/>
-                                </IconButton>
+                        visibility === 1 ? (
+                            <div>
+                                {answers.map((answer, index) => (
+                                    <div key={index} className="flex gap-4 items-end">
+                                        <Checkbox />
+                                        <TextField
+                                            fullWidth multiline
+                                            label={"답안"}
+                                            placeholder="답안을 입력하세요."
+                                            variant={"standard"}
+                                            value={answer}
+                                            onChange={(e) => {
+                                                const newAnswers = [...answers];
+                                                newAnswers[index] = e.target.value;
+                                                setAnswers(newAnswers);
+                                            }}
+                                        />
+                                        {/* 답안에 사진 추가 버튼 기능 구현 */}
+                                        <IconButton>
+                                            <InsertPhotoIcon/>
+                                        </IconButton>
+                                        {/* 답안 삭제 버튼 기능 구현 */}
+                                        <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                            <CloseIcon/>
+                                        </IconButton>
+                                    </div>
+                                ))}
+                                {/* 답안 추가 버튼 기능 구현 */}
+                                <div className="flex gap-4 items-center">
+                                    <Checkbox />
+                                    <Button onClick={handleAddAnswer}>답안 추가</Button>
+                                </div>
                             </div>
-                            {/**
-                             * @Todo : 답안 추가 버튼 기능 구현
-                             */}
-                            <div className="flex gap-4 items-center">
-                                <Radio/>
-                                <Button>답안 추가</Button>
-                            </div>
-                        </div> :""
+                        ) : ""
                     }
 
                     {   /* ox 선택형 */
-                        props.type &&
-                        props.type === 2 ? <div>
-                            <div className="flex gap-4 items-end">
-                                {/**
-                                 * @Todo : ox 답안 선택 기능 추가
-                                 * 선택한 경우 variant contained, 선택하지 않은 경우 outlined, 둘중 하나만 선택가능
-                                 */}
-                                <Button
-                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
-                                    size={"large"} variant={"contained"}>
-                                    <PanoramaFishEyeIcon fontSize={"large"}/>
-                                </Button>
-                                <Button
-                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
-                                    color={"warning"} variant={"outlined"}>
-                                    <CloseIcon fontSize={"large"}/>
-                                </Button>
+                        visibility === 2 ? (
+                            <div>
+                                <div className="flex gap-4 items-end">
+                                    {/* OX 답안 선택 기능 추가 */}
+                                    <Button
+                                        className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
+                                        size={"large"}
+                                        variant={oxSelected === "O" ? "contained" : "outlined"}
+                                        onClick={() => handleOxSelect("O")}
+                                    >
+                                        <PanoramaFishEyeIcon fontSize={"large"}/>
+                                    </Button>
+                                    <Button
+                                        className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
+                                        color={"warning"}
+                                        variant={oxSelected === "X" ? "contained" : "outlined"}
+                                        onClick={() => handleOxSelect("X")}
+                                    >
+                                        <CloseIcon fontSize={"large"}/>
+                                    </Button>
+                                </div>
                             </div>
-                        </div> : ""
+                        ) : ""
                     }
+
                     {   /* 단답형 */
-                        props.type &&
-                        props.type === 3 ?
-                        <div>
-                            <div className="flex gap-4 items-end">
-                                <TextField
-                                    fullWidth multiline
-                                    label={"단답형 답안"}
-                                    placeholder="답안을 입력하세요."
-                                    variant={"standard"}
-                                />
+                        visibility === 3 ? (
+                            <div>
+                                <div className="flex gap-4 items-end">
+                                    <TextField
+                                        fullWidth multiline
+                                        label={"단답형 답안"}
+                                        placeholder="답안을 입력하세요."
+                                        variant={"standard"}
+                                    />
+                                </div>
                             </div>
-                        </div> :""
+                        ) : ""
                     }
+
+                    {/* 해설 입력란 */}
+                    {showExplanation && (
+                        <div className="flex gap-4">
+                            <TextField
+                                fullWidth
+                                label={"문제 해설"}
+                                placeholder="해설을 입력하세요."
+                                variant={"standard"}
+                                value={explanation}
+                                onChange={(e) => setExplanation(e.target.value)}
+                            />
+                        </div>
+                    )}
+
                     <div className="flex gap-4 justify-end">
-                        {/**
-                         * @Todo : 문제 복제 버튼 기능 구현
-                         */}
-                        <IconButton>
+                        {/* 문제 복제 버튼 기능 구현 */}
+                        <IconButton onClick={handleDuplicateQuestion}>
                             <ContentCopyIcon/>
                         </IconButton>
-                        {/**
-                         * @Todo : 문제 삭제 버튼 기능 구현 - 문제가 하나 밖에 없을 경우에는 삭제 되지 않도록 구현
-                         */}
-                        <IconButton>
+                        {/* 문제 삭제 버튼 기능 구현 */}
+                        <IconButton onClick={handleDeleteQuestion}>
                             <DeleteIcon/>
                         </IconButton>
                         <IconButton onClick={handleMoreClick}>
@@ -229,18 +325,16 @@ export default function Question(props) {
                             MenuListProps={{
                                 'aria-labelledby': 'basic-button',
                             }}>
-                            {/**
-                             * @Todo : 문제 설명 입력란이 없는 경우에만 보임, 누를 경우 문제 설명 입력란이 추가됨
-                             */}
-                            <MenuItem onClick={handleSettingClose}>설명 추가</MenuItem>
-                            {/**
-                             * @Todo : 현재 문제의 답안을 무작위로 섞음
-                             */}
-                            <MenuItem onClick={handleSettingClose}>답안 무작위로 섞기</MenuItem>
-                            {/**
-                             * @Todo : 문제 해설 입력란이 없는 경우에만 보임, 누를 경우 문제 해설 입력란이 추가됨
-                             */}
-                            <MenuItem onClick={handleSettingClose}>해설 추가</MenuItem>
+                            {/* 문제 설명 입력란 추가 */}
+                            {!questionDesc && (
+                                <MenuItem onClick={handleAddDescription}>설명 추가</MenuItem>
+                            )}
+                            {/* 답안 무작위로 섞기 */}
+                            <MenuItem onClick={handleShuffleAnswers}>답안 무작위로 섞기</MenuItem>
+                            {/* 해설 입력란 추가 */}
+                            {!showExplanation && (
+                                <MenuItem onClick={handleAddExplanation}>해설 추가</MenuItem>
+                            )}
                         </Menu>
                     </div>
                 </div>
@@ -248,4 +342,3 @@ export default function Question(props) {
         </>
     );
 }
-
