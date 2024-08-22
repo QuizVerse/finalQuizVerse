@@ -3,14 +3,16 @@
 
 import { Button, Table } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export default function ScorePreview() {
   const navigate = useNavigate();
 
-  // const answers = Array.from({length : 15}, (_, index) => ({
-  //   number : `${index+1}번`,
-  //   correct : true
-  // }));
+  const answers = Array.from({ length: 22 }, (_, index) => ({
+    number: `${index + 1}번`,
+    correct: true,
+  }));
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -107,64 +109,45 @@ export default function ScorePreview() {
                 <div className="overflow-x-auto">
                   <div className="overflow-x-auto">
                     <table className="min-w-full bg-white border border-gray-300">
-                      <tbody>
-                        <tr>
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <td
-                              key={i}
-                              className="px-4 py-2 text-center"
-                              style={{ width: "100px" }}
-                            >
-                              {i + 1}번
-                            </td>
-                          ))}
-                        </tr>
-                        <tr>
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <td
-                              key={i}
-                              className="px-4 py-2 text-center"
-                              style={{ width: "100px" }}
-                            >
-                              {
-                                [
-                                  "O",
-                                  "X",
-                                  "x",
-                                  "O",
-                                  "x",
-                                  "O",
-                                  "O",
-                                  "O",
-                                  "X",
-                                  "X",
-                                ][i]
-                              }
-                            </td>
-                          ))}
-                        </tr>
-                        <tr>
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <td
-                              key={i}
-                              className="px-4 py-2 text-center"
-                              style={{ width: "100px" }}
-                            >
-                              {i < 5 ? 11 + i + "번" : ""}
-                            </td>
-                          ))}
-                        </tr>
-                        <tr>
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <td
-                              key={i}
-                              className="px-4 py-2 text-center"
-                              style={{ width: "100px" }}
-                            >
-                              {i < 5 ? ["O", "X", "x", "O", "x"][i] : ""}
-                            </td>
-                          ))}
-                        </tr>
+                      <tbody className="border">
+                        {/* 한 줄에 최대 10문제가 나오도록 설정  */}
+
+                        {/* answer.length / 10 해서 나온 값의 올림한 값으로 배열 생성 */}
+                        {Array.from({
+                          length: Math.ceil(answers.length / 10),
+                        }).map((_, rowIndex) => {
+                          const rowAnswers = answers.slice(
+                            rowIndex * 10,
+                            rowIndex * 10 + 10
+                          );
+
+                          return [
+                            <tr key={`numbers-${rowIndex}`}>
+                              {rowAnswers.map((answer, index) => (
+                                <td
+                                  key={`number-${index}`}
+                                  className="text-center text-lg bg-gray-100 font-semibold py-3 border border-gray-300"
+                                >
+                                  {answer.number}
+                                </td>
+                              ))}
+                            </tr>,
+                            <tr key={`corrects-${rowIndex}`}>
+                              {rowAnswers.map((answer, index) => (
+                                <td
+                                  key={`correct-${index}`}
+                                  className="text-center py-3 border border-gray-300"
+                                >
+                                  {answer.correct ? (
+                                    <CheckIcon color="success" />
+                                  ) : (
+                                    <ClearIcon color="warning" />
+                                  )}
+                                </td>
+                              ))}
+                            </tr>,
+                          ];
+                        })}
                       </tbody>
                     </table>
                   </div>

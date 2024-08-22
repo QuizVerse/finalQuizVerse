@@ -56,6 +56,7 @@ public class EmailService {
         // 이메일 본문 설정 (HTML 형식)
         helper.setText(htmlContent, true);
 
+
         // 이메일에 이미지 파일을 첨부합
        //helper.addInline("quizverseLogo", new ClassPathResource("reactjs/src/image/Quizverse.png"));
 

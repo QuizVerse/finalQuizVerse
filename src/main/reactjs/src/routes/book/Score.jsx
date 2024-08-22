@@ -4,7 +4,6 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
@@ -202,7 +201,7 @@ export default function Score() {
                     {question.correct ? (
                       <CheckIcon color="success" />
                     ) : (
-                      <ClearIcon color="warning"></ClearIcon>
+                      <ClearIcon color="warning"/>
                     )}
                   </td>
                   <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
