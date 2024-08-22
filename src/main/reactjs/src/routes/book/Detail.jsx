@@ -1,201 +1,153 @@
-// v0 by Vercel.
-// https://v0.dev/t/MH9WmcxxRpC
-
 import { useState } from "react";
+import {
+  Typography,
+  Button,
+  Container,
+  Card,
+  CardContent,
+  CardMedia,
+  Avatar,
+  Box,
+  Grid,
+  Chip,
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 
 export default function Detail() {
-  //Review More
   const [showMoreReviews, setShowMoreReviews] = useState(false);
 
-  const toggleReviews = () => {
+  const toggleMoreReviews = () => {
     setShowMoreReviews(!showMoreReviews);
   };
+
   return (
-    <div className="flex flex-col items-center w-full min-h-screen p-4">
-      <header className="flex items-center justify-between w-full px-4 py-2 border-b">
-        <h1 className="text-xl font-bold">QuizVerse</h1>
-        <nav className="flex items-center space-x-4">
-          <a className="text-sm text-muted-foreground" href="#" rel="ugc">
-            문제집 목록
-          </a>
-          <a className="text-sm text-muted-foreground" href="#" rel="ugc">
-            화상스터디
-          </a>
-          <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-            로그인
-          </button>
-          <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            <img
-              className="aspect-square h-full w-full"
-              alt="User Avatar"
-              src="/placeholder-user.jpg"
-            />
-          </span>
-        </nav>
-      </header>
-      <main className="flex flex-col items-center w-full max-w-4xl mt-8 space-y-8">
-        <div className="flex flex-col items-center w-full space-y-4">
-          <img
-            src="/placeholder.svg"
-            alt="Main Image"
-            className="w-full max-w-md"
-            width="400"
-            height="300"
-          />
-          <div className="flex flex-col w-full space-y-2">
-            <h2 className="text-lg font-bold">[카테고리]</h2>
-            <h3 className="text-2xl font-semibold">
-              문제집 제목 어쩌고 저쩌고 조금 여유있게 작성하시면 될 듯 합니다
-              아주 크게요
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              출제자 박민지 | 조회수 180 | 출제일자 2024.07.18
-            </p>
-            <div className="p-4 border rounded-md">
-              <p className="text-sm">
-                문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
-                들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠
-                문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
-                들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠
-                문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
-                들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠
-                문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
-                들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center space-x-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-200 text-blue-800 hover:bg-blue-300"
-                data-v0-t="badge"
-              >
-                문항수
-              </div>
-              <span>100 문항</span>
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-200 text-blue-800 hover:bg-blue-300"
-                data-v0-t="badge"
-              >
-                섹션수
-              </div>
-              <span>10 섹션</span>
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-200 text-blue-800 hover:bg-blue-300"
-                data-v0-t="badge"
-              >
-                응시 제한시간
-              </div>
-              <span>60분(없을 경우 없음으로 표시)</span>
-            </div>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-500 text-white hover:bg-blue-600/90 h-10 px-4 py-2 mt-4">
-              시험 응시
-            </button>
-          </div>
-        </div>
-        <div className="w-full space-y-4">
-          <h4 className="text-lg font-semibold">
-            리뷰 (3) <span className="text-yellow-500">★ 2.5</span>
-          </h4>
-          <div className="space-y-4">
-            {/* Always visible reviews */}
-            <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
+      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
+          <Grid container spacing={1} justifyContent="center">
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardMedia
+                    component="img"
+                    image="/placeholder.svg"
+                    alt="Main Image"
+                    sx={{ height: 300 }}
+                />
+                <CardContent>
+                  <Typography variant="h6" component="div">
+                    [카테고리]
+                  </Typography>
+                  <Typography variant="h5" component="div">
+                    문제집 제목 어쩌고 저쩌고 조금 여유있게 작성하시면 될 듯 합니다
+                    아주 크게요
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    출제자 박민지 | 조회수 180 | 출제일자 2024.07.18
+                  </Typography>
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" component="p">
+                      문제집 설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집
+                      설명이 들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠 문제집 설명이 들어가겠죠 문제집 설명이
+                      들어가겠죠
+                    </Typography>
+                  </Box>
+                  <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
+                    <Chip label="문항수" color="primary" />
+                    <Typography>100 문항</Typography>
+                    <Chip label="섹션수" color="primary" />
+                    <Typography>10 섹션</Typography>
+                    <Chip label="응시 제한시간" color="primary" />
+                    <Typography>60분(없을 경우 없음으로 표시)</Typography>
+                  </Box>
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ mt: 2 }}
+                      fullWidth
+                  >
+                    시험 응시
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+        <Container component="section" sx={{ mt: 4, mb: 4 }}>
+          <Typography variant="h6" component="div">
+            리뷰 (4) <span style={{ color: "yellow" }}>★ 2.5</span>
+          </Typography>
+          <Box>
+            {[
+              {
+                id: 1,
+                reviewer: "리뷰어1",
+                date: "2024.06.19",
+                content:
+                    "리뷰 내용입니다. 아주 길게 적는 리뷰라면 이렇게 한참 더 길어질 수 있습니다. 예를 들어서, 이 리뷰가 여러 줄로 늘어지게 적혀있는 경우라면 사용자가 리뷰의 전체 내용을 읽기 위해서리뷰 내용입니다. 아주 길게 적는 리뷰라면 이렇게 한참 더 길어질 수 있습니다. 예를 들어서, 이 리뷰가 여러 줄로 늘어지게 적혀있는 경우라면 사용자가 리뷰의 전체 내용을 읽기 위해서리뷰 내용입니다. 아주 길게 적는 리뷰라면 이렇게 한참 더 길어질 수 있습니다. 예를 들어서, 이 리뷰가 여러 줄로 늘어지게 적혀있는 경우라면 사용자가 리뷰의 전체 내용을 읽기 위해서",
+              },
+              {
+                id: 2,
+                reviewer: "리뷰어2",
+                date: "2024.06.19",
+                content:
+                    "리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!! 리뷰 내용이 길다면, 처음에는 요약된 부분만 보여줄 수 있습니다.",
+              },
+              {
+                id: 3,
+                reviewer: "리뷰어3",
+                date: "2024.06.19",
+                content:
+                    "리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!!",
+              },
+              {
+                id: 4,
+                reviewer: "리뷰어4",
+                date: "2024.06.19",
+                content:
+                    "리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!! 여기에 더 많은 내용이 있을 수 있습니다.",
+              },
+            ]
+                .slice(0, showMoreReviews ? undefined : 2)
+                .map((review) => (
+                    <Card key={review.id} sx={{ mb: 2 }}>
+                      <CardContent sx={{ padding: 2 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                          <Avatar
+                              alt="Reviewer Avatar"
+                              src="/placeholder-user.jpg"
+                              sx={{ width: 40, height: 40 }}
+                          />
+                          <Box sx={{ ml: 2 }}>
+                            <Typography variant="body2" fontWeight="bold">
+                              {review.reviewer}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {review.date}
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Typography variant="body2">
+                          {review.content}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                ))}
+            <Button
+                onClick={toggleMoreReviews}
+                sx={{ mt: 2 }}
+                startIcon={<ExpandMore />}
             >
-              <div className="flex items-center space-x-2">
-                <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                  <img
-                    className="aspect-square h-full w-full"
-                    alt="Reviewer Avatar"
-                    src="/placeholder-user.jpg"
-                  />
-                </span>
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold">리뷰어1</span>
-                  <span className="text-xs text-muted-foreground">
-                    2024.06.19
-                  </span>
-                </div>
-                <div className="flex items-center ml-auto space-x-1">
-                  {/* Star Rating */}
-                  {/* Add your star SVGs here */}
-                </div>
-              </div>
-              <p className="mt-2 text-sm">
-                리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!!
-              </p>
-            </div>
-            <div
-              className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-              data-v0-t="card"
-            >
-              <div className="flex items-center space-x-2">
-                <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                  <img
-                    className="aspect-square h-full w-full"
-                    alt="Reviewer Avatar"
-                    src="/placeholder-user.jpg"
-                  />
-                </span>
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold">리뷰어2</span>
-                  <span className="text-xs text-muted-foreground">
-                    2024.06.19
-                  </span>
-                </div>
-                <div className="flex items-center ml-auto space-x-1">
-                  {/* Star Rating */}
-                  {/* Add your star SVGs here */}
-                </div>
-              </div>
-              <p className="mt-2 text-sm">
-                리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!!
-              </p>
-            </div>
-
-            {/* Conditionally visible reviews */}
-            {showMoreReviews && (
-              <>
-                <div
-                  className="rounded-lg border bg-card text-card-foreground shadow-sm p-4"
-                  data-v0-t="card"
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                      <img
-                        className="aspect-square h-full w-full"
-                        alt="Reviewer Avatar"
-                        src="/placeholder-user.jpg"
-                      />
-                    </span>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-semibold">리뷰어3</span>
-                      <span className="text-xs text-muted-foreground">
-                        2024.06.19
-                      </span>
-                    </div>
-                    <div className="flex items-center ml-auto space-x-1">
-                      {/* Star Rating */}
-                      {/* Add your star SVGs here */}
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm">
-                    리뷰 내용입니다. 이러쿵 저러쿵 어 어 어 어 얼렁뚱땅마!!!
-                  </p>
-                </div>
-
-                {/* Add more reviews here as needed */}
-              </>
-            )}
-          </div>
-
-          <button
-            onClick={toggleReviews}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-10 px-4 py-2 ml-auto"
-          >
-            {showMoreReviews ? "접기" : "더보기"}
-          </button>
-        </div>
-      </main>
-    </div>
+              {showMoreReviews ? "접기" : "더보기"}
+            </Button>
+          </Box>
+        </Container>
+      </Box>
   );
 }
