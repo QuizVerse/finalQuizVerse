@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { IconButton, TextField } from "@mui/material";
+import {IconButton, TextField, Typography} from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
@@ -19,16 +19,19 @@ export default function Section() {
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
-            <div className="flex items-center space-x-2 justify-end">
-                <span>1 섹션 / 3 섹션</span>
-                <IconButton onClick={toggleCollapse}>
-                    {isCollapsed ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                </IconButton>
+            <div className="flex items-center space-x-2 justify-between">
+                <Typography variant="h5">섹션 제목</Typography>
+                <div>
+                    <span>1 섹션 / 3 섹션</span>
+                    <IconButton onClick={toggleCollapse}>
+                        {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
+                    </IconButton>
+                </div>
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-4">
-                        <TextField
+                    <TextField
                             fullWidth
                             label={"섹션 제목"}
                             placeholder="질문을 입력하세요."
@@ -36,6 +39,7 @@ export default function Section() {
                         />
                         <TextField
                             fullWidth
+                            multiline
                             label={"섹션 설명"}
                             placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
                             variant={"standard"}

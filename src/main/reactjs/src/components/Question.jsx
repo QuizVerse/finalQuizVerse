@@ -1,225 +1,251 @@
+import {
+    Button,
+    Checkbox,
+    FormControl,
+    IconButton,
+    InputLabel,
+    Menu,
+    MenuItem,
+    Radio,
+    Select,
+    TextField, Typography
+} from "@mui/material";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import DeleteIcon from "@mui/icons-material/Delete";
+import React, {useState} from "react";
+import DragHandleIcon from '@mui/icons-material/DragHandle';
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import CloseIcon from '@mui/icons-material/Close';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 
-export default function Question() {
+export default function Question(props) {
+
+    // More 버튼 관련
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const [visibility, setVisibility] = useState('');
+
+    /**
+     * @description : More 버튼 클릭했을때
+     * */
+    const handleMoreClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    /**
+     * @description : More 닫힐 때
+     * */
+    const handleSettingClose = () => {
+        setAnchorEl(null);
+    };
+
+    /**
+     * @description : 문제형식 select 메뉴 보이기 여부 조절
+     * */
+    const handleVisibilityChange = (event) => {
+        setVisibility(event.target.value);
+    };
+
+
     return (
         <>
-            <div className="p-4 bg-white rounded-md shadow">
-                <div className="flex justify-between">
-                    <h2 className="text-lg font-bold">선택형 문제1</h2>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="w-6 h-6"
-                    >
-                        <line x1="4" x2="20" y1="12" y2="12"></line>
-                        <line x1="4" x2="20" y1="6" y2="6"></line>
-                        <line x1="4" x2="20" y1="18" y2="18"></line>
-                    </svg>
+            <div className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
+                <div className="flex items-center space-x-2 justify-center cursor-move">
+                    <DragHandleIcon/>
                 </div>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-sm font-medium">문제 질문</p>
-                            <input
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="질문을 입력하세요."
-                            />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">문제 형식</p>
-                            <button
-                                type="button"
-                                role="combobox"
-                                aria-controls="radix-:R53daafnnkr:"
-                                aria-expanded="false"
-                                aria-autocomplete="none"
-                                dir="ltr"
-                                data-state="closed"
-                                data-placeholder=""
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                <div className="flex flex-col gap-4">
+                    <div className="flex gap-4">
+                        <TextField
+                            fullWidth
+                            label={"문제 질문"}
+                            placeholder="질문을 입력하세요."
+                            variant={"standard"}
+                        />
+                        {/* 문제형식 select 메뉴 */}
+                        {/**
+                         * @Todo : select 하면 문제 type 변경
+                         */}
+                        <FormControl fullWidth>
+                            <InputLabel id="visibility-label">문제 형식</InputLabel>
+                            <Select
+                                labelId="visibility-label"
+                                value={visibility}
+                                label="문제 형식"
+                                variant={"standard"}
+                                onChange={handleVisibilityChange}
                             >
-                                <span style="pointer-events:none">선택형</span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                    aria-hidden="true"
-                                >
-                                    <path d="m6 9 6 6 6-6"></path>
-                                </svg>
-                            </button>
-                            <select
-                                aria-hidden="true"
-                                tabIndex="-1"
-                                style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
-                            >
-                                <option value=""></option>
-                            </select>
-                        </div>
+                                <MenuItem value={0}>선택형</MenuItem>
+                                <MenuItem value={1}>다중선택형</MenuItem>
+                                <MenuItem value={2}>ox 선택형</MenuItem>
+                                <MenuItem value={3}>단답형</MenuItem>
+                            </Select>
+                        </FormControl>
                     </div>
-                    <div>
-                        <p className="text-sm font-medium">문제 설명</p>
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    <div className="flex gap-4">
+                        <TextField
+                            fullWidth multiline
+                            label={"문제 설명"}
                             placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
+                            variant={"standard"}
                         />
+                        {/**
+                         * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
+                         */}
+                        <IconButton>
+                            <InsertPhotoIcon/>
+                        </IconButton>
+                        {/**
+                         * @Todo : 문제 설명 삭제 버튼 기능 구현
+                         */}
+                        <IconButton>
+                            <CloseIcon/>
+                        </IconButton>
                     </div>
-                    <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                            <div
-                                role="radiogroup"
-                                aria-required="false"
-                                dir="ltr"
-                                className="grid gap-2"
-                                tabIndex="-1"
-                                style="outline:none"
-                            >
-                                <button
-                                    type="button"
-                                    role="radio"
-                                    aria-checked="false"
-                                    data-state="unchecked"
-                                    value="1"
-                                    className="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    id="answer1"
-                                    tabIndex="-1"
-                                    data-radix-collection-item=""
-                                ></button>
-                                <input
-                                    type="radio"
-                                    aria-hidden="true"
-                                    style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
-                                    tabIndex="-1"
-                                    value="1"
+                    { /* 선택형 */
+                        props.type &&
+                        props.type === 0 ? <div>
+                            <div className="flex gap-4 items-end">
+                                <Radio/>
+                                <TextField
+                                    fullWidth multiline
+                                    label={"답안"}
+                                    placeholder="답안을 입력하세요."
+                                    variant={"standard"}
                                 />
-                                <input
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="Value"
-                                />
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                                    <circle cx="9" cy="9" r="2"></circle>
-                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
+                                {/**
+                                 * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
+                                 */}
+                                <IconButton>
+                                    <InsertPhotoIcon/>
+                                </IconButton>
+                                {/**
+                                 * @Todo : 문제 설명 삭제 버튼 기능 구현
+                                 */}
+                                <IconButton>
+                                    <CloseIcon/>
+                                </IconButton>
                             </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <div
-                                role="radiogroup"
-                                aria-required="false"
-                                dir="ltr"
-                                className="grid gap-2"
-                                tabIndex="-1"
-                                style="outline:none"
-                            >
-                                <button
-                                    type="button"
-                                    role="radio"
-                                    aria-checked="false"
-                                    data-state="unchecked"
-                                    value="2"
-                                    className="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    id="answer2"
-                                    tabIndex="-1"
-                                    data-radix-collection-item=""
-                                ></button>
-                                <input
-                                    type="radio"
-                                    aria-hidden="true"
-                                    style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
-                                    tabIndex="-1"
-                                    value="2"
-                                />
-                                <input
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="Value"
-                                />
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                                    <circle cx="9" cy="9" r="2"></circle>
-                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
+                            {/**
+                             * @Todo : 답안 추가 버튼 기능 구현
+                             */}
+                            <div className="flex gap-4 items-center">
+                                <Radio/>
+                                <Button>답안 추가</Button>
                             </div>
-                        </div>
-                        <button
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                            답안 추가
-                        </button>
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium">문제 해설</p>
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
-                        />
+                        </div> :""
+                    }
+
+                    {   /* 다중선택형 */
+                        props.type &&
+                        props.type === 1 ? <div>
+                            <div className="flex gap-4 items-end">
+                                <Checkbox />
+                                <TextField
+                                    fullWidth multiline
+                                    label={"답안"}
+                                    placeholder="답안을 입력하세요."
+                                    variant={"standard"}
+                                />
+                                {/**
+                                 * @Todo : 문제 설명에 사진 추가 버튼 기능 구현
+                                 */}
+                                <IconButton>
+                                    <InsertPhotoIcon/>
+                                </IconButton>
+                                {/**
+                                 * @Todo : 문제 설명 삭제 버튼 기능 구현
+                                 */}
+                                <IconButton>
+                                    <CloseIcon/>
+                                </IconButton>
+                            </div>
+                            {/**
+                             * @Todo : 답안 추가 버튼 기능 구현
+                             */}
+                            <div className="flex gap-4 items-center">
+                                <Radio/>
+                                <Button>답안 추가</Button>
+                            </div>
+                        </div> :""
+                    }
+
+                    {   /* ox 선택형 */
+                        props.type &&
+                        props.type === 2 ? <div>
+                            <div className="flex gap-4 items-end">
+                                {/**
+                                 * @Todo : ox 답안 선택 기능 추가
+                                 * 선택한 경우 variant contained, 선택하지 않은 경우 outlined, 둘중 하나만 선택가능
+                                 */}
+                                <Button
+                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
+                                    size={"large"} variant={"contained"}>
+                                    <PanoramaFishEyeIcon fontSize={"large"}/>
+                                </Button>
+                                <Button
+                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
+                                    color={"warning"} variant={"outlined"}>
+                                    <CloseIcon fontSize={"large"}/>
+                                </Button>
+                            </div>
+                        </div> : ""
+                    }
+                    {   /* 단답형 */
+                        props.type &&
+                        props.type === 3 ?
+                        <div>
+                            <div className="flex gap-4 items-end">
+                                <TextField
+                                    fullWidth multiline
+                                    label={"단답형 답안"}
+                                    placeholder="답안을 입력하세요."
+                                    variant={"standard"}
+                                />
+                            </div>
+                        </div> :""
+                    }
+                    <div className="flex gap-4 justify-end">
+                        {/**
+                         * @Todo : 문제 복제 버튼 기능 구현
+                         */}
+                        <IconButton>
+                            <ContentCopyIcon/>
+                        </IconButton>
+                        {/**
+                         * @Todo : 문제 삭제 버튼 기능 구현 - 문제가 하나 밖에 없을 경우에는 삭제 되지 않도록 구현
+                         */}
+                        <IconButton>
+                            <DeleteIcon/>
+                        </IconButton>
+                        <IconButton onClick={handleMoreClick}>
+                            <MoreVertIcon/>
+                        </IconButton>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleSettingClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}>
+                            {/**
+                             * @Todo : 문제 설명 입력란이 없는 경우에만 보임, 누를 경우 문제 설명 입력란이 추가됨
+                             */}
+                            <MenuItem onClick={handleSettingClose}>설명 추가</MenuItem>
+                            {/**
+                             * @Todo : 현재 문제의 답안을 무작위로 섞음
+                             */}
+                            <MenuItem onClick={handleSettingClose}>답안 무작위로 섞기</MenuItem>
+                            {/**
+                             * @Todo : 문제 해설 입력란이 없는 경우에만 보임, 누를 경우 문제 해설 입력란이 추가됨
+                             */}
+                            <MenuItem onClick={handleSettingClose}>해설 추가</MenuItem>
+                        </Menu>
                     </div>
                 </div>
             </div>
         </>
     );
 }
+

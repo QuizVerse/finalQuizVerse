@@ -1,6 +1,7 @@
 import {Button} from "@mui/material";
 import EditSidebar from "../../components/EditSidebar";
 import Section from "../../components/Section";
+import Question from "../../components/Question";
 
 export default function Edit() {
     return (
@@ -14,6 +15,7 @@ export default function Edit() {
             </div>
 
             <Section/>
+            <Question type={3}/>
             <EditSidebar/>
         </main>
 
