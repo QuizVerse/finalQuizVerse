@@ -63,6 +63,7 @@ import ReactDnd from "./routes/devtest/ReactDnd";
 import ReviewModal from "./routes/devtest/ReviewModal";
 import AddClassMemberModal from "./routes/devtest/AddClassMemberModal";
 import AlarmModal from "./routes/devtest/AlarmModal";
+import ChatbotModal from "./routes/devtest/ChatbotModal";
 
 const router = createBrowserRouter([
     {
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/alarmmodal",
                 element: <AlarmModal/>
+            },
+            {
+                path: "/devtest/chatbotmodal",
+                element: <ChatbotModal/>
             },
         ]
 
