@@ -12,7 +12,7 @@ export default function NewStudy() {
 
     const [bookName, setBookName] = useState('');
     const [bookDescription, setBookDescription] = useState('');
-    const [totalPoints, setTotalPoints] = useState('');
+    const [totalMember, setTotalMember] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
@@ -28,7 +28,7 @@ export default function NewStudy() {
 
     const handleBookNameChange = (e) => setBookName(e.target.value);
     const handleBookDescriptionChange = (e) => setBookDescription(e.target.value);
-    const handleTotalPointsChange = (e) => setTotalPoints(e.target.value);
+    const handleTotalMemberChange = (e) => setTotalMember(e.target.value);
     const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
 
     const toggleSwitch = () => {
@@ -59,7 +59,7 @@ export default function NewStudy() {
             "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "book_image": coverImage,
             "book_divide": isChecked ? 1 : 0,
-            "book_totalgrade": parseInt(totalPoints, 10) || 0
+            "book_totalgrade": parseInt(totalMember, 10) || 0
         };
 
         axios.post('/new/newbook', newBookData)
@@ -80,7 +80,7 @@ export default function NewStudy() {
         setCategory('');
         setVisibility('');
         setCoverImage('/placeholder.svg');
-        setTotalPoints('');
+        setTotalMember('');
         setIsChecked(false);
         setIsTimeLimitEnabled(false);
         setTimeLimit('');
@@ -110,15 +110,15 @@ export default function NewStudy() {
                 <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl">
                     <div className="flex flex-col space-y-1.5 p-6">
                         <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
-                            문제집 생성
+                            화상스터디 개설
                         </h3>
                     </div>
                     <div className="p-6 space-y-4">
                         <div className="space-y-2">
                             <TextField
                                 fullWidth
-                                label="문제집 이름"
-                                placeholder="문제집 이름"
+                                label="화상스터디 이름"
+                                placeholder="화상스터디 이름"
                                 value={bookName}
                                 onChange={handleBookNameChange}
                             ></TextField>
@@ -126,8 +126,8 @@ export default function NewStudy() {
                         <div className="space-y-2">
                             <TextField
                                 fullWidth
-                                label="문제집 설명"
-                                placeholder="문제집 설명"
+                                label="화상스터디 설명"
+                                placeholder="화상스터디 설명"
                                 value={bookDescription}
                                 onChange={handleBookDescriptionChange}
                             ></TextField>
@@ -169,64 +169,16 @@ export default function NewStudy() {
                         <div className="space-y-2">
                             <TextField
                                 fullWidth
-                                label="문제집 총점(점)"
-                                placeholder="100"
-                                value={totalPoints}
-                                onChange={handleTotalPointsChange}
+                                label="화상스터디 인원"
+                                placeholder="최대 20명"
+                                value={totalMember}
+                                onChange={handleTotalMemberChange}
                             ></TextField>
-                        </div>
-                        <div className="flex justify-between items-center space-x-2">
-                            <label
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                점수 균등 분배
-                            </label>
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={isChecked}
-                                data-state={isChecked ? "checked" : "unchecked"}
-                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
-                                onClick={toggleSwitch}
-                            >
-                                <span
-                                    className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
-                            </button>
-                        </div>
-                        <div className="space-y-4">
-                            {/* Toggle Button for Time Limit */}
-                            <div className="flex justify-between items-center space-x-2">
-                                <label
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                    제한시간 여부
-                                </label>
-                                <button
-                                    type="button"
-                                    role="switch"
-                                    aria-checked={isTimeLimitEnabled}
-                                    data-state={isTimeLimitEnabled ? "checked" : "unchecked"}
-                                    className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                    onClick={toggleTimeSwitch}
-                                >
-                                    <span
-                                        className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
-                                </button>
-                            </div>
-
-                            {/* Conditional Input Field for Time Limit */}
-                            {isTimeLimitEnabled && (
-                                <TextField
-                                    fullWidth
-                                    label="제한시간 (분)"
-                                    placeholder="100"
-                                    value={timeLimit}
-                                    onChange={handleTimeLimitChange}
-                                ></TextField>
-                            )}
                         </div>
                         <div className="space-y-2">
                             <label
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                문제집 표지
+                                화상스터디 표지
                             </label>
                             <div className="relative">
                                 {/* Upload Button */}
