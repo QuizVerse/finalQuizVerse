@@ -64,6 +64,8 @@ import ReviewModal from "./routes/devtest/ReviewModal";
 import AddClassMemberModal from "./routes/devtest/AddClassMemberModal";
 import AlarmModal from "./routes/devtest/AlarmModal";
 import ChatbotModal from "./routes/devtest/ChatbotModal";
+import NewStudy from "./routes/study/NewStudy";
+import Study from "./routes/study/Study";
 
 const router = createBrowserRouter([
     {
@@ -245,12 +247,17 @@ const router = createBrowserRouter([
     },
     {
         path: "/study",
-        element: <StudyList />,
+        element: <Study />,
         errorElement: <ErrorPage />,
         children : [
             {
                 path: '',
                 element: <StudyList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/study/new',
+                element: <NewStudy />,
                 errorElement: <ErrorPage />,
             },
             {
