@@ -32,7 +32,7 @@ public class QuestionDto {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "question_res", columnDefinition = "json", nullable = false)
-    private List<String> question_res;  // JSON stored as a List<String>
+    private List<ChoiceDto> question_res;  // JSON stored as a List<String>
 
     @Column(name = "question_description", length = 3000)
     private String question_description;

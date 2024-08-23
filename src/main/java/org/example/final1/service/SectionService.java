@@ -5,6 +5,8 @@ import org.example.final1.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SectionService {
     private final SectionRepository sectionRepository;
@@ -18,7 +20,12 @@ public class SectionService {
         return sectionRepository.save(newSection);
     }
 
+    public List<SectionDto> saveSections(List<SectionDto> sortedSection) {
+        return sectionRepository.saveAll(sortedSection);
+    }
+
     public void deleteSection(Long id) {
         sectionRepository.deleteById(id);
     }
+
 }
