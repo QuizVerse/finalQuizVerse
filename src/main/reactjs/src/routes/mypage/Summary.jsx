@@ -6,6 +6,8 @@ import Q from "../../image/Q.jpg";
 import W from "../../image/W.jpg";
 import E from "../../image/E.jpg";
 import R from "../../image/R.jpg";
+import {Link} from "react-router-dom";
+import {Button} from "@mui/material";
 
 export default function Summary() {
   return (
@@ -54,15 +56,17 @@ export default function Summary() {
         <section className="mb-8">
           <h2 className="mb-4 text-2xl font-bold">내가 만든 문제집</h2>
           <div className="grid grid-cols-4 gap-4">
-            <div
+            <Button
                 className="rounded-lg border bg-card text-card-foreground shadow-sm flex items-center justify-center space-x-4"
-                data-v0-t="card"
+                data-v0-t="card" variant={"outlined"}
             >
+              <Link to={"/book/edit"} className={"flex justify-center items-center w-full h-full"}>
               <div className="p-6 flex-1 flex flex-col items-center">
-                <div className="text-lg font-semibold">문제집 추가</div>
-                <div className="text-3xl font-bold">+</div>
+                  <div className="text-lg font-semibold">문제집 추가</div>
+                  <div className="text-3xl font-bold">+</div>
               </div>
-            </div>
+              </Link>
+            </Button>
             <BookCard cardType="B" className={"flex-1"} 
             photo={R}
             createDate={"2024-08-17"} nickname={"닉네임"} 

@@ -26,9 +26,9 @@ export default function CustomInput(props) {
                 )}
             </div>
 
-            {props.captionVisible && (
+            {props.captionText === "" ? "" :
                 <Typography variant="caption" color={props.captionColor}>{props.captionText}</Typography>
-            )}
+            }
 
         </div>
     );
