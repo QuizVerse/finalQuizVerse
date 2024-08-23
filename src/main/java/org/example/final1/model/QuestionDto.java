@@ -32,7 +32,7 @@ public class QuestionDto {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "question_res", columnDefinition = "json", nullable = false)
-    private List<String> question_res;  // JSON stored as a List<String>
+    private List<ChoiceDto> question_res;  // JSON stored as a List<String>
 
     @Column(name = "question_description", length = 3000)
     private String question_description;
@@ -59,7 +59,7 @@ public class QuestionDto {
 
 
     @ManyToOne
-    @JoinColumn(name = "page_id", nullable = false)
+    @JoinColumn(name = "section_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE) // 페이지가 삭제되면 해당 문제도 삭제
-    private PageDto page;
+    private SectionDto section;
 }

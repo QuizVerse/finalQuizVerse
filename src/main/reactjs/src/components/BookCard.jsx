@@ -164,7 +164,7 @@ export default function BookCard(props) {
                 <MenuItem onClick={handleSettingClose}>삭제하기</MenuItem>
             </Menu>
 
-            {/* Setting 버튼 클릭시 보이는 메뉴 */}       
+            {/* 삭제 버튼 클릭시 보이는 Confirm */}
             <CustomConfirm
                 id={12}
                 openConfirm={confirmVisible}
