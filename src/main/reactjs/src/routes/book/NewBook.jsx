@@ -11,7 +11,6 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('');
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
-
     const [bookName, setBookName] = useState('');
     const [bookDescription, setBookDescription] = useState('');
     const [totalPoints, setTotalPoints] = useState('');
@@ -21,7 +20,7 @@ export default function NewBook() {
 
     // Handle changes
     const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
+        setCategory(event.target.value)
     };
 
     const handleVisibilityChange = (event) => {
@@ -53,11 +52,17 @@ export default function NewBook() {
 
     // Submit new book
     const handleSubmit = () => {
+        let selectedCategory = {};
+        categoryList.map((row)=>{
+            if(row.category_id === category) {
+                selectedCategory = row;
+            }
+        })
         const newBookData = {
             "book_title": bookName,
             "book_description": bookDescription,
             "book_status": 0,
-            "book_category": category === '' ? null : category,
+            "category": selectedCategory === '' ? null : selectedCategory,
             "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "book_image": coverImage,
             "book_divide": isChecked ? 1 : 0,
@@ -79,7 +84,7 @@ export default function NewBook() {
     const handleCancel = () => {
         setBookName('');
         setBookDescription('');
-        setCategory('');
+        setCategory({});
         setVisibility('');
         setCoverImage('/placeholder.svg');
         setTotalPoints('');
@@ -154,8 +159,8 @@ export default function NewBook() {
                             <InputLabel id="category-label">카테고리</InputLabel>
                             <Select
                                 labelId="category-label"
-                                value={category}
                                 label="카테고리"
+                                value={category}
                                 onChange={handleCategoryChange}
                             >
                                 {categoryList &&
