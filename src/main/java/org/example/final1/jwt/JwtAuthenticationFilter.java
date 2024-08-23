@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        System.out.println("JwtAuthenticationFilter: 로그인 시도중");
+        //System.out.println("JwtAuthenticationFilter: 로그인 시도중");
         //1.username,password를 받아서
         try {
             /*if (request.getInputStream() == null || request.getInputStream().available() == 0) {
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om=new ObjectMapper();
             UserDto userDto=om.readValue(request.getInputStream(), UserDto.class);
             //json 데이터를 dto에 파싱해서 넣어주는 objectmapper
-            System.out.println(userDto);
+            //System.out.println(userDto);
 
             UsernamePasswordAuthenticationToken authenticationToken=
                     new UsernamePasswordAuthenticationToken(userDto.getUser_email(), userDto.getUser_password());
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //print되면 로그인되었다는 뜻
             PrincipalDetails principalDetails=(PrincipalDetails)authentication.getPrincipal();
 
-            System.out.println("로그인완료됨 "+principalDetails.getUserDto().getUser_email());//로그인 정상적으로 됨
+            //System.out.println("로그인완료됨 "+principalDetails.getUserDto().getUser_email());//로그인 정상적으로 됨
 
             //authentication 객체가 session영역에 저장을 해야하고 그방법이 return해주면됨
             //리턴의 이유는 권한 관리를 security가 대신 해주기 때문에 편하려고 하는거임
@@ -86,7 +86,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 
-        System.out.println("successfulAuthentication실행됨: 인증이 완료되었다는 뜻임.");
+        //System.out.println("successfulAuthentication실행됨: 인증이 완료되었다는 뜻임.");
         PrincipalDetails principalDetails=(PrincipalDetails)authResult.getPrincipal();
         //rsa방식은 아니고, hash암호방식
         //서버만 알고있는 secret키가 있어야함
@@ -99,6 +99,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
         //super.successfulAuthentication(request, response, chain, authResult);
         response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX + jwtToken);//헤더에 담길내용으로 응답되는 형식
+        //System.out.println(jwtToken);
         //jwt토큰 반환
     }
 }
