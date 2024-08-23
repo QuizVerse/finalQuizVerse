@@ -17,12 +17,28 @@ export default function Login() {
 
     axios.post('/login/user/check', formData, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
     })
         .then(res => {
           if (res.status === 200) {
-            navi('/');
+            // 응답 헤더에서 JWT 토큰을 추출합니다.
+            const token = res.headers['Authorization']; // 'Authorization' 헤더에서 JWT 토큰을 가져옵니다.
+
+            if (token) {
+              // 'Bearer ' 문자열을 제거하고 순수한 토큰 값만 추출합니다.
+              const jwtToken = token.split(' ')[1]; // 'Bearer ' 다음에 있는 실제 토큰만 추출
+
+              // 토큰을 localStorage에 저장합니다.
+              localStorage.setItem('token', jwtToken);
+              console.log('토큰응답')
+
+              // 로그인 성공 후 홈 페이지로 이동합니다.
+              navi('/');
+            } else {
+              console.error('토큰이 응답 헤더에 없습니다.');
+              alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
+            }
           }
         })
         .catch(error => {

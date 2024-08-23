@@ -6,7 +6,9 @@ import org.example.final1.config.oauth.PrincipalOauth2UserService;
 import org.example.final1.filter.MyFilter1;
 import org.example.final1.filter.MyFilter3;
 import org.example.final1.jwt.JwtAuthenticationFilter;
+import org.example.final1.jwt.JwtAuthorizationFilter;
 import org.example.final1.model.UserDto;
+import org.example.final1.repository.User.UserDaoInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
@@ -32,7 +35,7 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
-
+    private final UserDaoInter userDaoInter;
     // 시큐리티 필터 체인 -> 로그인 시 가는 경로 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -42,6 +45,7 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/login/user/check"); // 필터가 동작할 경로 설정
 
+        JwtAuthorizationFilter jwtAuthorizationFilter=new JwtAuthorizationFilter(authenticationManager, userDaoInter);
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -56,7 +60,7 @@ public class SecurityConfig {
 
 
                 .addFilter(jwtAuthenticationFilter)//jwtauthenticationfilter걸어줘서 jwt토큰으로 사용자 정보받음
-
+                .addFilter(jwtAuthorizationFilter)
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/mypage/**").authenticated()
