@@ -4,21 +4,20 @@ import {
     FormControl,
     IconButton,
     InputLabel,
-    Menu,
     MenuItem,
     Radio,
     Select,
-    TextField
+    TextField, Typography
 } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DeleteIcon from "@mui/icons-material/Delete";
 import React, {useState} from "react";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import CloseIcon from '@mui/icons-material/Close';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import {useDrag, useDrop} from "react-dnd";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import QuestionButtons from "./QuestionButtons";
 
 const ITEM_TYPE = 'QUESTION';
 
@@ -66,29 +65,12 @@ export default function Question({index, moveQuestion, ...props}) {
 
     drag(drop(ref));
 
-    // More 버튼 관련
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
     const [visibility, setVisibility] = useState('');
     const [answers, setAnswers] = useState([]); // 답안 리스트 상태 관리
     const [questionDesc, setQuestionDesc] = useState(""); // 문제 설명 상태 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 보이기 여부 상태
     const [explanation, setExplanation] = useState(""); // 해설 상태 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
-
-    /**
-     * @description : More 버튼 클릭했을때
-     * */
-    const handleMoreClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    /**
-     * @description : More 닫힐 때
-     * */
-    const handleSettingClose = () => {
-        setAnchorEl(null);
-    };
 
     /**
      * @description : 문제형식 select 메뉴 보이기 여부 조절
@@ -113,46 +95,10 @@ export default function Question({index, moveQuestion, ...props}) {
     };
 
     /**
-     * @description : 문제 복제 버튼 기능 구현
-     */
-    const handleDuplicateQuestion = () => {
-        if (props.onDuplicate) {
-            props.onDuplicate();
-        }
-    };
-
-    /**
-     * @description : 문제 삭제 버튼 기능 구현 - 문제가 하나 밖에 없을 경우에는 삭제 되지 않도록 구현
-     */
-    const handleDeleteQuestion = () => {
-        if (props.onDelete && props.totalQuestions > 1) {
-            props.onDelete();
-        }
-    };
-
-    /**
-     * @description : 문제 설명 입력란 추가 기능
-     */
-    const handleAddDescription = () => {
-        if (!questionDesc) {
-            setQuestionDesc("");
-        }
-        handleSettingClose();
-    };
-
-    /**
      * @description : 문제 설명 삭제 버튼 기능 구현
      */
     const handleDeleteDescription = () => {
         setQuestionDesc("");
-    };
-
-    /**
-     * @description : 문제 해설 입력란 추가 기능
-     */
-    const handleAddExplanation = () => {
-        setShowExplanation(true);
-        handleSettingClose();
     };
 
     /**
@@ -162,28 +108,39 @@ export default function Question({index, moveQuestion, ...props}) {
         setOxSelected(selection);
     };
 
-    /**
-     * @description : 답안 무작위로 섞기 기능
-     */
-    const handleShuffleAnswers = () => {
-        const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
-        setAnswers(shuffledAnswers);
-        handleSettingClose();
+
+    // 질문 접고 펴는 상태
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // 질문 접고 펴는 함수
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
     };
 
+
     return (
-        <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}} className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
+        <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
+             className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
             <div className="flex items-center space-x-2 justify-center cursor-move" ref={ref}>
                 <DragHandleIcon/>
             </div>
+            <div className="flex items-center space-x-2 justify-between">
+                <Typography variant="h5">문제 질문</Typography>
+                <div>
+                    <IconButton onClick={toggleCollapse}>
+                        {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
+                    </IconButton>
+                </div>
+            </div>
+            {!isCollapsed && (
             <div className="flex flex-col gap-4">
                 <div className="flex gap-4">
                     <TextField
                         fullWidth
                         label={"문제 질문"}
                         placeholder="질문을 입력하세요."
-                        variant={"standard"}
-                    />
+                        variant={"standard"}/>
+
                     {/* 문제형식 select 메뉴 */}
                     <FormControl fullWidth>
                         <InputLabel id="visibility-label">문제 형식</InputLabel>
@@ -201,6 +158,7 @@ export default function Question({index, moveQuestion, ...props}) {
                         </Select>
                     </FormControl>
                 </div>
+                {questionDesc && (
                 <div className="flex gap-4">
                     <TextField
                         fullWidth multiline
@@ -217,8 +175,9 @@ export default function Question({index, moveQuestion, ...props}) {
                         <CloseIcon/>
                     </IconButton>
                 </div>
+                )}
                 {visibility === 0 && (
-                    <div>
+                    <div className={"flex flex-col gap-2"}>
                         {answers.map((answer, index) => (
                             <div key={index} className="flex gap-4 items-end">
                                 <Radio/>
@@ -243,7 +202,6 @@ export default function Question({index, moveQuestion, ...props}) {
                             </div>
                         ))}
                         <div className="flex gap-4 items-center">
-                            <Radio/>
                             <Button onClick={handleAddAnswer}>답안 추가</Button>
                         </div>
                     </div>
@@ -252,7 +210,7 @@ export default function Question({index, moveQuestion, ...props}) {
                     <div>
                         {answers.map((answer, index) => (
                             <div key={index} className="flex gap-4 items-end">
-                                <Checkbox />
+                                <Checkbox/>
                                 <TextField
                                     fullWidth multiline
                                     label={"답안"}
@@ -274,7 +232,6 @@ export default function Question({index, moveQuestion, ...props}) {
                             </div>
                         ))}
                         <div className="flex gap-4 items-center">
-                            <Checkbox />
                             <Button onClick={handleAddAnswer}>답안 추가</Button>
                         </div>
                     </div>
@@ -302,15 +259,13 @@ export default function Question({index, moveQuestion, ...props}) {
                     </div>
                 )}
                 {visibility === 3 && (
-                    <div>
-                        <div className="flex gap-4 items-end">
-                            <TextField
-                                fullWidth multiline
-                                label={"단답형 답안"}
-                                placeholder="답안을 입력하세요."
-                                variant={"standard"}
-                            />
-                        </div>
+                    <div className="flex gap-4 items-end">
+                        <TextField
+                            fullWidth multiline
+                            label={"단답형 답안"}
+                            placeholder="답안을 입력하세요."
+                            variant={"standard"}
+                        />
                     </div>
                 )}
                 {showExplanation && (
@@ -323,36 +278,17 @@ export default function Question({index, moveQuestion, ...props}) {
                             value={explanation}
                             onChange={(e) => setExplanation(e.target.value)}
                         />
+                        <IconButton>
+                            <InsertPhotoIcon/>
+                        </IconButton>
+                        <IconButton onClick={handleDeleteDescription}>
+                            <CloseIcon/>
+                        </IconButton>
                     </div>
                 )}
-                <div className="flex gap-4 justify-end">
-                    <IconButton onClick={handleDuplicateQuestion}>
-                        <ContentCopyIcon/>
-                    </IconButton>
-                    <IconButton onClick={handleDeleteQuestion}>
-                        <DeleteIcon/>
-                    </IconButton>
-                    <IconButton onClick={handleMoreClick}>
-                        <MoreVertIcon/>
-                    </IconButton>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleSettingClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}>
-                        {!questionDesc && (
-                            <MenuItem onClick={handleAddDescription}>설명 추가</MenuItem>
-                        )}
-                        <MenuItem onClick={handleShuffleAnswers}>답안 무작위로 섞기</MenuItem>
-                        {!showExplanation && (
-                            <MenuItem onClick={handleAddExplanation}>해설 추가</MenuItem>
-                        )}
-                    </Menu>
-                </div>
+                <QuestionButtons/>
             </div>
+                )}
         </div>
     );
 }

@@ -26,6 +26,7 @@ export default function Edit() {
      */
     const handleDuplicateQuestion = (index) => {
         const newQuestion = {...questions[index], id: questions.length + 1};
+        console.log(questions);
         setQuestions([...questions, newQuestion]);
     };
 
