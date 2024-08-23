@@ -23,10 +23,42 @@ export default function BookList() {
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BookCard cardType={'A'}/>
-            <BookCard cardType={'A'}/>
-            <BookCard cardType={'A'}/>
-            <BookCard cardType={'A'}/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
           </div>
         </section>
         <section className="mb-8">
@@ -38,10 +70,42 @@ export default function BookList() {
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
-            <BookCard/>
+          <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
+            <BookCard cardType="A"
+            nickname="합격률 80%"
+            createDate="2024-08-23"
+            title="2024 정보처리기사 실기"
+            category="문제집/자격증"
+            viewCount="10"
+            questionCount="20"
+            sectionCoune="4"
+            status="여긴status"/>
           </div>
         </section>
       </main>

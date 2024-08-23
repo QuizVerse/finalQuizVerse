@@ -188,7 +188,7 @@ export default function BookCard(props) {
                         <p className="mt-1 text-sm text-gray-600">{props.status}</p>
                     </Link>
 
-                    {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기o*/
+                    {/* A타입 -  문제집 목록o, 카테고리별 문제집o, 클래스 상세 - 클래스 공개 문제집o, 즐겨찾기o*/
                         props.cardType === 'A' ?
                             <div className="flex items-center justify-between mt-4">
                                 <IconButton className="text-red-600" 

@@ -3,11 +3,35 @@
 
 import {Button} from "@mui/material";
 import CustomInput from "../../components/CustomInput";
+import { useState } from "react";
 
 export default function Leave() {
-  const Submit =(e)=>{
+  //탈퇴사유를 저장하기 위한 state
+  const [reason,setReason] = useState("");
+  
+  //폼 제출 처리 함수에요
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  }
+  
+    try {
+      const response = await fetch('/api/leave-reason', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ leave_reason: reason }), // JSON 형식으로 데이터 전송
+      });
+  
+      if (response.ok) {
+        console.log("탈퇴 사유가 성공적으로 저장되었습니다.");
+        setReason(""); // 폼 제출 후 textarea 초기화
+      } else {
+        console.error("탈퇴 사유 저장에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("서버 요청 중 오류가 발생했습니다.", error);
+    }
+  };
 
   return (
       <main className="flex-1 p-8">
@@ -62,13 +86,15 @@ export default function Leave() {
               >
                 탈퇴사유
               </label>
-            <form>
+            <form onSubmit={handleSubmit}>
               <textarea
                 className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1"
                 id="reason"
                 placeholder="탈퇴사유를 입력해주세요"
+                value={reason} //state에서 관리하는 value
+                onChange={(e)=>setReason(e.target.value)} //입력 시 state 업데이트
               ></textarea>
-            <Button>확인</Button>
+            <Button type="submit">확인</Button>
             </form>
             </div>  
           </div>
