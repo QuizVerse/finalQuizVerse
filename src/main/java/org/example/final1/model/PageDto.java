@@ -31,9 +31,4 @@ public class PageDto {
 
     @Column(name = "page_image", length = 255)
     private String page_image;
-
-    @ManyToOne
-    @JoinColumn(name = "book_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private BookDto book;
 }

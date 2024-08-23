@@ -59,7 +59,7 @@ public class QuestionDto {
 
 
     @ManyToOne
-    @JoinColumn(name = "page_id", nullable = false)
+    @JoinColumn(name = "section_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE) // 페이지가 삭제되면 해당 문제도 삭제
-    private PageDto page;
+    private SectionDto section;
 }
