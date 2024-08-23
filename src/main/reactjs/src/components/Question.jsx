@@ -1,225 +1,303 @@
+import {
+    Button,
+    Checkbox,
+    FormControl,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Radio,
+    Select,
+    TextField,
+    Typography
+} from "@mui/material";
+import React, {useState} from "react";
+import DragHandleIcon from '@mui/icons-material/DragHandle';
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import CloseIcon from '@mui/icons-material/Close';
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import {useDrag, useDrop} from "react-dnd";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import QuestionButtons from "./QuestionButtons";
 
-export default function Question() {
+const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
+
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions}) {
+    const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
+
+    // Drop 설정: 다른 질문을 드래그하여 이 위치에 놓을 수 있게 설정
+    const [, drop] = useDrop({
+        accept: ITEM_TYPE,
+        hover(item, monitor) {
+            if (!ref.current) {
+                return;
+            }
+            const dragIndex = item.index;
+            const hoverIndex = index;
+
+            // 드래그 중인 아이템과 호버 중인 아이템이 같으면 아무 작업도 하지 않음
+            if (dragIndex === hoverIndex) {
+                return;
+            }
+
+            const hoverBoundingRect = ref.current?.getBoundingClientRect();
+            const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+            const clientOffset = monitor.getClientOffset();
+            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+            // 아래쪽으로 드래그 중일 때
+            if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+                return;
+            }
+
+            // 위쪽으로 드래그 중일 때
+            if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+                return;
+            }
+
+            moveQuestion(dragIndex, hoverIndex); // 질문의 위치를 변경
+            item.index = hoverIndex; // 드래그 중인 아이템의 인덱스를 업데이트
+        },
+    });
+
+    // Drag 설정: 이 질문을 드래그할 수 있게 설정
+    const [{isDragging}, drag, preview] = useDrag({
+        type: ITEM_TYPE,
+        item: {index},
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    });
+
+    drag(drop(ref)); // 드래그와 드롭을 결합
+
+    // 컴포넌트 상태 관리
+    const [visibility, setVisibility] = useState(''); // 문제 형식 선택
+    const [answers, setAnswers] = useState([]); // 답안 리스트 관리
+    const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 관리
+    const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
+    const [explanation, setExplanation] = useState(""); // 해설 관리
+    const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
+
+    // 문제 형식 변경 핸들러
+    const handleVisibilityChange = (event) => {
+        setVisibility(event.target.value);
+    };
+
+    // 답안 추가 핸들러
+    const handleAddAnswer = () => {
+        setAnswers([...answers, ""]);
+    };
+
+    // 특정 답안 삭제 핸들러
+    const handleDeleteAnswer = (index) => {
+        const newAnswers = answers.filter((_, i) => i !== index);
+        setAnswers(newAnswers);
+    };
+
+    // 문제 설명 삭제 핸들러
+    const handleDeleteDescription = () => {
+        setQuestionDesc(false);
+    };
+
+
+    // 문제 해설 삭제 핸들러
+    const handleDeleteExplanation = () => {
+        setShowExplanation(false);
+    };
+
+
+    // OX 선택 핸들러
+    const handleOxSelect = (selection) => {
+        setOxSelected(selection);
+    };
+
+    // 질문 접기/펼치기 핸들러
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+
+    const [isCollapsed, setIsCollapsed] = useState(false); // 질문 접힘 상태 관리
+
     return (
-        <>
-            <div className="p-4 bg-white rounded-md shadow">
-                <div className="flex justify-between">
-                    <h2 className="text-lg font-bold">선택형 문제1</h2>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="w-6 h-6"
-                    >
-                        <line x1="4" x2="20" y1="12" y2="12"></line>
-                        <line x1="4" x2="20" y1="6" y2="6"></line>
-                        <line x1="4" x2="20" y1="18" y2="18"></line>
-                    </svg>
-                </div>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-sm font-medium">문제 질문</p>
-                            <input
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="질문을 입력하세요."
-                            />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium">문제 형식</p>
-                            <button
-                                type="button"
-                                role="combobox"
-                                aria-controls="radix-:R53daafnnkr:"
-                                aria-expanded="false"
-                                aria-autocomplete="none"
-                                dir="ltr"
-                                data-state="closed"
-                                data-placeholder=""
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <span style="pointer-events:none">선택형</span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                                    aria-hidden="true"
-                                >
-                                    <path d="m6 9 6 6 6-6"></path>
-                                </svg>
-                            </button>
-                            <select
-                                aria-hidden="true"
-                                tabIndex="-1"
-                                style="position:absolute;border:0;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;word-wrap:normal"
-                            >
-                                <option value=""></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium">문제 설명</p>
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                            <div
-                                role="radiogroup"
-                                aria-required="false"
-                                dir="ltr"
-                                className="grid gap-2"
-                                tabIndex="-1"
-                                style="outline:none"
-                            >
-                                <button
-                                    type="button"
-                                    role="radio"
-                                    aria-checked="false"
-                                    data-state="unchecked"
-                                    value="1"
-                                    className="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    id="answer1"
-                                    tabIndex="-1"
-                                    data-radix-collection-item=""
-                                ></button>
-                                <input
-                                    type="radio"
-                                    aria-hidden="true"
-                                    style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
-                                    tabIndex="-1"
-                                    value="1"
-                                />
-                                <input
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="Value"
-                                />
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                                    <circle cx="9" cy="9" r="2"></circle>
-                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <div
-                                role="radiogroup"
-                                aria-required="false"
-                                dir="ltr"
-                                className="grid gap-2"
-                                tabIndex="-1"
-                                style="outline:none"
-                            >
-                                <button
-                                    type="button"
-                                    role="radio"
-                                    aria-checked="false"
-                                    data-state="unchecked"
-                                    value="2"
-                                    className="aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    id="answer2"
-                                    tabIndex="-1"
-                                    data-radix-collection-item=""
-                                ></button>
-                                <input
-                                    type="radio"
-                                    aria-hidden="true"
-                                    style="transform:translateX(-100%);position:absolute;pointer-events:none;opacity:0;margin:0"
-                                    tabIndex="-1"
-                                    value="2"
-                                />
-                                <input
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="Value"
-                                />
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                                    <circle cx="9" cy="9" r="2"></circle>
-                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                                </svg>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="w-6 h-6"
-                                >
-                                    <path d="M18 6 6 18"></path>
-                                    <path d="m6 6 12 12"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <button
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                            답안 추가
-                        </button>
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium">문제 해설</p>
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
-                        />
-                    </div>
+        <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
+             className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
+            <div className="flex items-center space-x-2 justify-center cursor-move" ref={ref}>
+                <DragHandleIcon/> {/* 드래그 핸들 아이콘 */}
+            </div>
+            <div className="flex items-center space-x-2 justify-between">
+                <Typography variant="h5">문제 질문</Typography>
+                <div>
+                    <IconButton onClick={toggleCollapse}>
+                        {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
+                    </IconButton>
                 </div>
             </div>
-        </>
+            {!isCollapsed && (  // 질문이 접혀있지 않을 때만 내용 표시
+                <div className="flex flex-col gap-4">
+                    <div className="flex gap-4">
+                        <TextField
+                            fullWidth
+                            label={"문제 질문"}
+                            placeholder="질문을 입력하세요."
+                            variant={"standard"}/>
+
+                        <FormControl fullWidth>
+                            <InputLabel id="visibility-label">문제 형식</InputLabel>
+                            <Select
+                                labelId="visibility-label"
+                                value={visibility}
+                                label="문제 형식"
+                                variant={"standard"}
+                                onChange={handleVisibilityChange}
+                            >
+                                <MenuItem value={0}>선택형</MenuItem>
+                                <MenuItem value={1}>다중선택형</MenuItem>
+                                <MenuItem value={2}>OX 선택형</MenuItem>
+                                <MenuItem value={3}>단답형</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                    {questionDesc && (  // 문제 설명이 있을 때만 표시
+                        <div className="flex gap-4">
+                            <TextField
+                                fullWidth multiline
+                                label={"문제 설명"}
+                                placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
+                                variant={"standard"}
+                                value={questionDesc}
+                                onChange={(e) => setQuestionDesc(e.target.value)}
+                            />
+                            <IconButton>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={handleDeleteDescription}>
+                                <CloseIcon/>
+                            </IconButton>
+                        </div>
+                    )}
+                    {visibility === 0 && (  // 선택형 문제일 경우
+                        <div className={"flex flex-col gap-2"}>
+                            {answers.map((answer, index) => (
+                                <div key={index} className="flex gap-4 items-end">
+                                    <Radio/>
+                                    <TextField
+                                        fullWidth multiline
+                                        label={"답안"}
+                                        placeholder="답안을 입력하세요."
+                                        variant={"standard"}
+                                        value={answer}
+                                        onChange={(e) => {
+                                            const newAnswers = [...answers];
+                                            newAnswers[index] = e.target.value;
+                                            setAnswers(newAnswers);
+                                        }}
+                                    />
+                                    <IconButton>
+                                        <InsertPhotoIcon/>
+                                    </IconButton>
+                                    <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </div>
+                            ))}
+                            <div className="flex gap-4 items-center">
+                                <Button onClick={handleAddAnswer}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                            </div>
+                        </div>
+                    )}
+                    {visibility === 1 && (  // 다중선택형 문제일 경우
+                        <div className={"flex flex-col gap-2"}>
+                            {answers.map((answer, index) => (
+                                <div key={index} className="flex gap-4 items-end">
+                                    <Checkbox/>
+                                    <TextField
+                                        fullWidth multiline
+                                        label={"답안"}
+                                        placeholder="답안을 입력하세요."
+                                        variant={"standard"}
+                                        value={answer}
+                                        onChange={(e) => {
+                                            const newAnswers = [...answers];
+                                            newAnswers[index] = e.target.value;
+                                            setAnswers(newAnswers);
+                                        }}
+                                    />
+                                    <IconButton>
+                                        <InsertPhotoIcon/>
+                                    </IconButton>
+                                    <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </div>
+                            ))}
+                            <div className="flex gap-4 items-center">
+                                <Button onClick={handleAddAnswer}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                            </div>
+                        </div>
+                    )}
+                    {visibility === 2 && (  // OX 선택형 문제일 경우
+                        <div className={"flex flex-col gap-2"}>
+                            <div className="flex gap-4 items-end">
+                                <Button
+                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
+                                    size={"large"}
+                                    variant={oxSelected === "O" ? "contained" : "outlined"}
+                                    onClick={() => handleOxSelect("O")}
+                                >
+                                    <PanoramaFishEyeIcon fontSize={"large"}/>
+                                </Button>
+                                <Button
+                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
+                                    color={"warning"}
+                                    variant={oxSelected === "X" ? "contained" : "outlined"}
+                                    onClick={() => handleOxSelect("X")}
+                                >
+                                    <CloseIcon fontSize={"large"}/>
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                    {visibility === 3 && (  // 단답형 문제일 경우
+                        <div className={"flex flex-col gap-2"}>
+                            <TextField
+                                fullWidth
+                                label={"답안"}
+                                placeholder="정답을 입력하세요."
+                                variant={"standard"}/>
+                        </div>
+                    )}
+                    {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
+                        <div className="flex gap-4">
+                            <TextField
+                                fullWidth multiline
+                                label={"문제 해설"}
+                                placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
+                                variant={"standard"}
+                                value={explanation}
+                                onChange={(e) => setExplanation(e.target.value)}
+                            />
+                            <IconButton>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={handleDeleteExplanation}>
+                                <CloseIcon/>
+                            </IconButton>
+                        </div>
+                    )}
+                    <QuestionButtons
+                        onDuplicate={onDuplicate} // 질문 복제 핸들러
+                        onDelete={onDelete} // 질문 삭제 핸들러
+                        totalQuestions={totalQuestions} // 전체 질문 수
+                        answers={answers} // 답안 리스트
+                        setAnswers={setAnswers} // 답안 리스트 업데이트 함수
+                        showExplanation={showExplanation} // 해설 입력란 표시 여부
+                        setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
+                        questionDesc={questionDesc} // 문제 설명
+                        setQuestionDesc={setQuestionDesc} // 문제 설명 업데이트 함수
+                    />
+                </div>
+            )}
+        </div>
     );
 }

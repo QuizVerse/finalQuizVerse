@@ -42,7 +42,6 @@ export default function UseCustomInput() {
                 isPassword={true}
                 updatePasswordVisible={clickPasswordVisible}
                 isPasswordVisible={passwordVisible}
-                captionVisible={true}
                 captionText={"sdf"}
             />
 
