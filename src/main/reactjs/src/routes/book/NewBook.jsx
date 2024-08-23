@@ -8,7 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 export default function NewBook() {
     // Dropdown state
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState({
+        category_id:1,
+        category_name:"초등",
+    });
     const [visibility, setVisibility] = useState('');
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
 
@@ -21,7 +24,10 @@ export default function NewBook() {
 
     // Handle changes
     const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
+        categoryList.map((row)=>{
+            if(row.category_id === event.target.value) setCategory(row);
+        })
+        console.log(category);
     };
 
     const handleVisibilityChange = (event) => {
@@ -57,7 +63,7 @@ export default function NewBook() {
             "book_title": bookName,
             "book_description": bookDescription,
             "book_status": 0,
-            "book_category": category === '' ? null : category,
+            "category": category === '' ? null : category,
             "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "book_image": coverImage,
             "book_divide": isChecked ? 1 : 0,
@@ -79,7 +85,7 @@ export default function NewBook() {
     const handleCancel = () => {
         setBookName('');
         setBookDescription('');
-        setCategory('');
+        setCategory({});
         setVisibility('');
         setCoverImage('/placeholder.svg');
         setTotalPoints('');
@@ -154,7 +160,7 @@ export default function NewBook() {
                             <InputLabel id="category-label">카테고리</InputLabel>
                             <Select
                                 labelId="category-label"
-                                value={category}
+                                value={category.category_name}
                                 label="카테고리"
                                 onChange={handleCategoryChange}
                             >
