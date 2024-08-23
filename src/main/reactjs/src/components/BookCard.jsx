@@ -173,7 +173,7 @@ export default function BookCard(props) {
             />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link>
-                    <img src={props.photo} alt="사진왜안들어가" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
+                    <img src={props.photo} alt="사진넣어주세용" style={{width:'60%', margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
                 </Link>
                 
                 <div className="p-4">
@@ -188,7 +188,7 @@ export default function BookCard(props) {
                         <p className="mt-1 text-sm text-gray-600">{props.status}</p>
                     </Link>
 
-                    {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/
+                    {/* A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기o*/
                         props.cardType === 'A' ?
                             <div className="flex items-center justify-between mt-4">
                                 <IconButton className="text-red-600" 
@@ -200,7 +200,7 @@ export default function BookCard(props) {
                             </div> : ""
                     }
 
-                    { /* B타입 - 마이페이지 메인 - 내가 만든 문제집, 나의 출제이력 */
+                    { /* B타입 - 마이페이지 메인o - 내가 만든 문제집o, 나의 출제이력o */
                         props.cardType === 'B' ?
                             <div className="flex items-center justify-between mt-4">
                                 <IconButton className="text-red-600"
@@ -211,7 +211,7 @@ export default function BookCard(props) {
                                         onClick={openAlert}>공유하기</Button>
                             </div> : ""
                     }
-                    {/* C타입 - 오답노트 */
+                    {/* C타입 - 오답노트o */
                         props.cardType === 'C' ?
                         <div className="flex items-center justify-between mt-4">
                             <IconButton className="text-red-600"
