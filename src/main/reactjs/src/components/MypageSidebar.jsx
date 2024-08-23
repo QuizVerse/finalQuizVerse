@@ -68,9 +68,7 @@ export default function MypageSidebar() {
             <div>
                 <h3 className="text-lg font-semibold">
                     <Link to={"wrong"} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItemButton sx={{ pl: 2 }}>
-                                오답노트
-                            </ListItemButton>
+                        <ListItemButton sx={{ pl: 2 }}>오답노트</ListItemButton>
                     </Link>
                 </h3>
             </div>

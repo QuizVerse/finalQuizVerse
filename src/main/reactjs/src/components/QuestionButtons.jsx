@@ -2,86 +2,67 @@ import {IconButton, Menu, MenuItem} from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {useState} from "react";
+import React, {useState} from "react";
 
 export default function QuestionButtons(props) {
+    const [anchorEl, setAnchorEl] = useState(null); // 메뉴 열림 여부를 관리하는 상태
+    const open = Boolean(anchorEl); // 메뉴 열림 상태
 
-    // More 버튼 관련
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const [answers, setAnswers] = useState([]); // 답안 리스트 상태 관리
-    const [questionDesc, setQuestionDesc] = useState(""); // 문제 설명 상태 관리
-    const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 보이기 여부 상태
-
-    /**
-     * @description : More 버튼 클릭했을때
-     * */
+    // '더 보기' 버튼 클릭 시 메뉴 열기
     const handleMoreClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-    /**
-     * @description : More 닫힐 때
-     * */
+    // 메뉴 닫기
     const handleSettingClose = () => {
         setAnchorEl(null);
     };
 
-    /**
-     * @description : 문제 복제 버튼 기능 구현
-     */
+    // 질문 복제 핸들러 호출
     const handleDuplicateQuestion = () => {
         if (props.onDuplicate) {
             props.onDuplicate();
         }
     };
 
-    /**
-     * @description : 문제 삭제 버튼 기능 구현 - 문제가 하나 밖에 없을 경우에는 삭제 되지 않도록 구현
-     */
+    // 질문 삭제 핸들러 호출 (최소 1개의 질문이 남아있어야 함)
     const handleDeleteQuestion = () => {
         if (props.onDelete && props.totalQuestions > 1) {
             props.onDelete();
         }
     };
 
-    /**
-     * @description : 문제 설명 입력란 추가 기능
-     */
+    // 문제 설명 추가 핸들러
     const handleAddDescription = () => {
-        if (!questionDesc) {
-            setQuestionDesc("");
+        if (!props.questionDesc) {
+            props.setQuestionDesc(true); // 문제 설명을 빈 문자열로 초기화하여 추가
         }
-        handleSettingClose();
+        handleSettingClose(); // 메뉴 닫기
     };
 
-    /**
-     * @description : 문제 해설 입력란 추가 기능
-     */
+    // 해설 추가 핸들러
     const handleAddExplanation = () => {
-        setShowExplanation(true);
-        handleSettingClose();
+        props.setShowExplanation(true); // 해설 입력란을 표시
+        handleSettingClose(); // 메뉴 닫기
     };
 
-    /**
-     * @description : 답안 무작위로 섞기 기능
-     */
+    // 답안 섞기 핸들러
     const handleShuffleAnswers = () => {
-        const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
-        setAnswers(shuffledAnswers);
-        handleSettingClose();
+        const shuffledAnswers = [...props.answers].sort(() => Math.random() - 0.5); // 답안을 무작위로 섞음
+        props.setAnswers(shuffledAnswers); // 섞인 답안 리스트로 업데이트
+        handleSettingClose(); // 메뉴 닫기
     };
 
     return (
         <div className="flex gap-4 justify-end">
             <IconButton onClick={handleDuplicateQuestion}>
-                <ContentCopyIcon/>
+                <ContentCopyIcon/> {/* 복제 아이콘 */}
             </IconButton>
             <IconButton onClick={handleDeleteQuestion}>
-                <DeleteIcon/>
+                <DeleteIcon/> {/* 삭제 아이콘 */}
             </IconButton>
             <IconButton onClick={handleMoreClick}>
-                <MoreVertIcon/>
+                <MoreVertIcon/> {/* 더 보기 아이콘 */}
             </IconButton>
             <Menu
                 id="basic-menu"
@@ -91,13 +72,13 @@ export default function QuestionButtons(props) {
                 MenuListProps={{
                     'aria-labelledby': 'basic-button',
                 }}>
-                {!questionDesc && (
-                    <MenuItem onClick={handleAddDescription}>설명 추가</MenuItem>
-                )}
-                <MenuItem onClick={handleShuffleAnswers}>답안 무작위로 섞기</MenuItem>
-                {!showExplanation && (
-                    <MenuItem onClick={handleAddExplanation}>해설 추가</MenuItem>
-                )}
+                {!props.questionDesc && (
+                    <MenuItem onClick={handleAddDescription}>설명 추가</MenuItem> /* 설명 추가 메뉴 */
+                    )}
+                <MenuItem onClick={handleShuffleAnswers}>답안 무작위로 섞기</MenuItem> {/* 답안 섞기 메뉴 */}
+                {!props.showExplanation && (
+                    <MenuItem onClick={handleAddExplanation}>해설 추가</MenuItem> /* 해설 추가 메뉴 */
+                    )}
             </Menu>
         </div>
     );

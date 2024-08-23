@@ -1,43 +1,17 @@
 import { useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { IconButton } from '@mui/material';
 
-// 드래그 앤 드롭에서 사용할 아이템 유형을 정의합니다.
-const ItemType = 'ROW';
-
-// 개별 섹션을 나타내는 컴포넌트로, 드래그 앤 드롭 기능을 제공합니다.
 function DraggableRow({ row, index, moveRow, arrLength }) {
-    // useDrag 훅을 사용하여 이 요소를 드래그 가능하게 만듭니다.
-    const [, ref] = useDrag({
-        type: ItemType,
-        item: { index },
-    });
-
-    // useDrop 훅을 사용하여 이 요소를 드롭 가능한 영역으로 설정합니다.
-    const [, drop] = useDrop({
-        accept: ItemType,
-        hover: (draggedItem) => {
-            if (draggedItem.index !== index) {
-                moveRow(draggedItem.index, index);
-                draggedItem.index = index;
-            }
-        },
-    });
 
     return (
         <div
-            ref={(node) => ref(drop(node))}
             key={row.id}
-            className="flex items-center justify-between p-2 border rounded-md"
+            className="flex items-center justify-between p-4 border rounded-md"
         >
             <div className="flex items-center space-x-2">
-                <IconButton>
-                    <DragIndicatorIcon /> {/* 드래그 핸들 아이콘 */}
-                </IconButton>
                 <div>
                     <div>{row.title || '제목없는 섹션'}</div>
                     <div className="text-sm text-muted-foreground">
@@ -82,7 +56,6 @@ export default function SectionSort({ sortData }) {
     };
 
     return (
-        <DndProvider backend={HTML5Backend}>
             <div className="space-y-4 min-w-[400px]">
                 {rows.map((row, index) => (
                     <DraggableRow
@@ -94,6 +67,5 @@ export default function SectionSort({ sortData }) {
                     />
                 ))}
             </div>
-        </DndProvider>
     );
 }
