@@ -18,13 +18,14 @@ export default function MypageSidebar() {
 
     return (
         <aside className="w-64 p-4 border-r">
-        <div className="flex items-center mb-6">
-            <img src={image1} style={{ width: "50px", borderRadius: "100%", marginRight: "10px" }} alt="QuizVerse Logo" />
-            <span className="text-xl font-bold">QuizVerse</span>
-        </div>
-        <nav className="space-y-4">
-            <Link to={"summary"} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <ListItemText primary={"마이페이지"} primaryTypographyProps={{ fontSize: '19px', fontWeight: 600 }} />
+            <Link to={"/"} className={"flex items-center mb-6"}>
+                <img src={image1} style={{width: "50px", borderRadius: "100%", marginRight: "10px"}}
+                     alt="QuizVerse Logo"/>
+                <span className="text-xl font-bold">QuizVerse</span>
+            </Link>
+            <nav className="space-y-4">
+                <Link to={"summary"} style={{textDecoration: 'none', color: 'inherit'}}>
+                    <ListItemText primary={"마이페이지"} primaryTypographyProps={{ fontSize: '19px', fontWeight: 600 }} />
             </Link>
 
             <h3 className="text-lg font-semibold"><ListItemButton onClick={handleHistoryClick}>

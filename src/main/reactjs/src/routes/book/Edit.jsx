@@ -1,8 +1,13 @@
+import React, {useState} from "react";
 import {Button} from "@mui/material";
 import EditSidebar from "../../components/EditSidebar";
 import Section from "../../components/Section";
 import Question from "../../components/Question";
-import React, {useState} from "react";
+import {DndProvider, useDrag, useDrop} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
+
+// 드래그 아이템 타입을 지정합니다.
+const ITEM_TYPE = 'QUESTION';
 
 export default function Edit() {
     // 상태로 관리되는 질문 리스트
@@ -34,30 +39,44 @@ export default function Edit() {
         }
     };
 
+    /**
+     * @description : 질문 순서 변경 기능
+     */
+    const moveQuestion = (dragIndex, hoverIndex) => {
+        const dragQuestion = questions[dragIndex];
+        const updatedQuestions = [...questions];
+        updatedQuestions.splice(dragIndex, 1);
+        updatedQuestions.splice(hoverIndex, 0, dragQuestion);
+        setQuestions(updatedQuestions);
+    };
+
     return (
-        <main className="p-4 space-y-4">
-            <div className="flex justify-between">
-                <div className="flex space-x-2">
-                    <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
-                    <Button variant={"outlined"} onClick={() => handleAddQuestion(3)}>AI 문제 출제</Button>
-                    <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
+        <DndProvider backend={HTML5Backend}>
+            <main className="p-4 space-y-4">
+                <div className="flex justify-between">
+                    <div className="flex space-x-2">
+                        <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
+                        <Button variant={"outlined"} onClick={() => handleAddQuestion(3)}>AI 문제 출제</Button>
+                        <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
+                    </div>
                 </div>
-            </div>
 
-            <Section/>
+                <Section/>
 
-            {/* 질문 리스트 렌더링 */}
-            {questions.map((question, index) => (
-                <Question
-                    key={question.id}
-                    type={question.type}
-                    totalQuestions={questions.length}
-                    onDuplicate={() => handleDuplicateQuestion(index)}
-                    onDelete={() => handleDeleteQuestion(index)}
-                />
-            ))}
-
-            <EditSidebar/>
-        </main>
+                {/* 질문 리스트 렌더링 */}
+                {questions.map((question, index) => (
+                    <Question
+                        key={question.id}
+                        index={index}
+                        type={question.type}
+                        totalQuestions={questions.length}
+                        onDuplicate={() => handleDuplicateQuestion(index)}
+                        onDelete={() => handleDeleteQuestion(index)}
+                        moveQuestion={moveQuestion}
+                    />
+                ))}
+                <EditSidebar/>
+            </main>
+        </DndProvider>
     );
 }

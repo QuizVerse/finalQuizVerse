@@ -12,14 +12,60 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import {useDrag, useDrop} from "react-dnd";
 
-export default function Question(props) {
+const ITEM_TYPE = 'QUESTION';
+
+export default function Question(props, {index, moveQuestion}) {
+
+    // drag and drop 관련
+    const ref = React.useRef(null);
+
+    const [, drop] = useDrop({
+        accept: ITEM_TYPE,
+        hover(item, monitor) {
+            if (!ref.current) {
+                return;
+            }
+            const dragIndex = item.index;
+            const hoverIndex = index;
+
+            if (dragIndex === hoverIndex) {
+                return;
+            }
+
+            const hoverBoundingRect = ref.current?.getBoundingClientRect();
+            const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+            const clientOffset = monitor.getClientOffset();
+            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+            if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+                return;
+            }
+            if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+                return;
+            }
+
+            moveQuestion(dragIndex, hoverIndex);
+            item.index = hoverIndex;
+        },
+    });
+
+    const [{isDragging}, drag, preview] = useDrag({
+        type: ITEM_TYPE,
+        item: {index},
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    });
+
+    drag(drop(ref));
 
     // More 버튼 관련
     const [anchorEl, setAnchorEl] = useState(null);
@@ -129,8 +175,8 @@ export default function Question(props) {
 
     return (
         <>
-            <div className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
-                <div className="flex items-center space-x-2 justify-center cursor-move">
+            <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}  className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
+                <div className="flex items-center space-x-2 justify-center cursor-move" ref={ref}>
                     <DragHandleIcon/>
                 </div>
                 <div className="flex flex-col gap-4">
