@@ -3,11 +3,11 @@ import {useState} from "react";
 
 
 // 모달 내용 수정 시 아래의 파일로 이동하여 수정
-import CustomConfirm from "../../components/CustomConfirm";
-import CustomAlert from "../../components/CustomAlert";
+import CustomConfirm from "../../components/modal/CustomConfirm";
+import CustomAlert from "../../components/modal/CustomAlert";
 import CustomInput from "../../components/CustomInput";
 import axios from "axios";
-import NewClass from "../../components/NewClass";
+import NewClass from "../../components/modal/NewClass";
 
 /**
  * @description:
