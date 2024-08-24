@@ -5,31 +5,39 @@
   <title>QuizVerse 이메일 인증</title>
 </head>
 <body style="background-color: #ffffff; font-family: Arial, sans-serif; color: #333333; padding: 0; margin: 0;">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="max-width: 600px;">
+
+<!-- Main Container -->
+<table align="center" cellpadding="0" cellspacing="0" border="0" style="width: 100%; background-color: #ffffff;">
+
+  <!-- Header -->
   <tr>
-    <td align="center" style="padding: 10px 0; background-color: #000000;">
-      <img src="cid:quizverseLogo" alt="QuizVerse 로고" style="display:block; max-width: 200px;">
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 20px; background-color: #FFC107; color: #000000;">
-      <h2 style="margin: 0;">QuizVerse에 오신 것을 환영합니다!</h2>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 20px; background-color: #ffffff;">
-      <p>이메일 인증 코드는 다음과 같습니다:</p>
-      <div style="font-size: 24px; font-weight: bold; color: #000000; background-color: #FFC107; padding: 10px 20px;">
-        <span th:text="${authenticationCode}">123456</span>
+    <td style="background-color: #111111; padding: 20px; text-align: center;">
+      <div style="display: inline-block;">
+        <img src="cid:quizverseLogo" alt="QuizVerse 로고" style="display: block;">
       </div>
-      <p>이 코드를 입력하여 이메일 주소를 인증해 주세요.</p>
     </td>
   </tr>
+
+  <!-- Main Content -->
   <tr>
-    <td align="center" style="padding: 10px; background-color: #000000; color: #ffffff;">
-      <p>이메일 인증 요청을 하지 않으셨다면 이 이메일을 무시해 주세요.</p>
+    <td style="background-color: #f4f4f4; padding: 20px; text-align: center;">
+      <h1 style="font-size: 20px; color: #FFC107; margin: 0;">QuizVerse에 오신 것을 환영합니다!</h1>
+      <p style="font-size: 16px; color: #333333; margin: 20px 0;">이메일 인증 코드는 다음과 같습니다:</p>
+      <div style="display: inline-block; font-size: 24px; font-weight: bold; color: #000000; background-color: #FFC107; padding: 10px 20px;">
+        278586
+      </div>
+      <p style="font-size: 16px; color: #333333; margin: 20px 0;">이 코드를 입력하여 이메일 주소를 인증해 주세요.</p>
     </td>
   </tr>
+
+  <!-- Footer -->
+  <tr>
+    <td style="background-color: #111111; padding: 20px; text-align: center; color: #BBBBBB; font-size: 12px;">
+      <p style="margin: 0;">이메일 인증 요청을 하지 않으셨다면 이 이메일을 무시해 주세요.</p>
+    </td>
+  </tr>
+
 </table>
+
 </body>
 </html>
