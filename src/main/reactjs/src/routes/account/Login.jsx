@@ -1,80 +1,30 @@
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
 import axios from "axios";
 
 export default function Login() {
 
-    //console.log('Login component rendered');
     const [user_email, setUser_email] = useState('');
     const [user_password, setUser_password] = useState('');
     const navi = useNavigate();
-    const location = useLocation();
 
-    useEffect(() => {
-        // 쿠키에서 JWT 토큰을 읽어오는 함수
-        const getCookieValue = (name) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        };
-
-        // JWT 토큰을 쿠키에서 가져오기
-        const jwtToken = getCookieValue('token');
-
-        if (jwtToken) {
-            console.log("JWT 토큰:", jwtToken); // 콘솔에 JWT 토큰 출력
-            localStorage.setItem('token', jwtToken); // 로컬 스토리지에 저장 (선택 사항)
-            navi('/'); // 홈 페이지로 리다이렉트
-        } else {
-            console.log("JWT 토큰이 쿠키에 존재하지 않습니다.");
-        }
-    }, [navi]);
-
-    const submitLoginEvent = (e) => {
+    const submitLoginEvent=async (e)=>{
         e.preventDefault();
-
-
-        axios.post(
-            '/login/user/check', // 서버의 로그인 엔드포인트
-            {
-                user_email: user_email,
-                user_password: user_password,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json', // 요청 헤더에 JSON 데이터임을 명시
-                },
-            }
-        )
-            .then(res => {
-                if (res.status === 200) {
-                    console.log('전체 응답:', res);
-                    // 응답 헤더에서 JWT 토큰을 추출합니다.
-                    const token = res.headers['authorization']; // 'Authorization' 헤더에서 JWT 토큰을 가져옴
-
-                    if (token) {
-                        // 'Bearer ' 문자열을 제거하고 순수한 토큰 값만 추출합니다.
-                        const jwtToken = token.split(' ')[1]; // 'Bearer ' 다음에 있는 실제 토큰만 추출
-
-                        // 토큰을 localStorage에 저장합니다.
-                        localStorage.setItem('token', jwtToken);
-                        console.log('JWT 토큰이 응답되었습니다.');
-                        console.log(jwtToken);
-
-                        // 로그인 성공 후 홈 페이지로 이동합니다.
-                        navi('/');
-                    } else {
-                        console.error('응답 헤더에 토큰이 없습니다.');
-                        alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('로그인 중 오류 발생:', error);
-                alert('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+        try {
+            const response=await axios.post('/login/user/check',{
+                user_email,
+                user_password
             });
+            const token=response.headers['authorization'];
+            localStorage.setItem('token',token);
+            navi('/');
+        }
+        catch (error) {
+            console.error('로그인 실패:', error);
+            alert("로그인 실패 오류");
+        }
+    };
 
-    }
     const handleGoogleLogin = () => {
         window.location.href = "http://localhost:9002/oauth2/authorization/google";
     }

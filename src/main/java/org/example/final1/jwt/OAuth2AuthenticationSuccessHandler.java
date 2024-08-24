@@ -36,10 +36,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     jwtCookie.setHttpOnly(false); // JavaScript에서 접근 가능
     jwtCookie.setSecure(false); // HTTPS가 아니어도 전송 (로컬 개발용)
     jwtCookie.setPath("/");
-    jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키의 유효 기간 설정 (예: 7일)
+    jwtCookie.setMaxAge(10 * 60); // 쿠키의 유효 기간 설정 10분
+
 
     response.addCookie(jwtCookie);
 
+    System.out.println(jwtCookie);
     // 클라이언트를 기본 페이지로 리다이렉트
     response.sendRedirect("http://localhost:3000/");
 
