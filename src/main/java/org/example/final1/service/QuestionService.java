@@ -1,5 +1,6 @@
 package org.example.final1.service;
 
+import org.example.final1.model.BookDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,13 @@ public class QuestionService {
 
     public void deleteQuestion(Long id) {
         questionRepository.deleteById(id);
+    }
+
+    public List<QuestionDto> saveQuestions(List<QuestionDto> sortedQuestion) {
+        return questionRepository.saveAll(sortedQuestion);
+    }
+
+    public List<QuestionDto> getAllQuestions(BookDto book) {
+        return questionRepository.findAllByBook(book);
     }
 }
