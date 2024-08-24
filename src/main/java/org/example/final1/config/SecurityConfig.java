@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .loginPage("/account/login") // OAuth2 로그인 페이지 설정
                         //.defaultSuccessUrl("/") // 로그인 성공 후 이동할 기본 페이지
                         .successHandler(new OAuth2AuthenticationSuccessHandler())//oauth의 jwt토큰 발급 필터
+
                         //구글 로그인이 완료된 뒤의 후처리가 필요하다.
                         //1.코드를 받기-> 정상적으로 구글에 로그인했다는 인증
                         //2. 액세스토큰을 받아 시큐리티 서버가 구글 사용자 정보에 접근할수 있는 권한이 생김

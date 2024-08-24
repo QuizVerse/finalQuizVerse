@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
+import Cookies from 'js-cookie';
+
 
 export default function MainHeader() {
 
@@ -8,21 +10,30 @@ export default function MainHeader() {
     const navi = useNavigate();
 
     useEffect(() => {
-        const token=localStorage.getItem('token');
-        if(token){
+        // Check if the token is in localStorage
+        const localStorageToken = localStorage.getItem('token');
+
+        // Check if the token is in cookies
+        const cookieToken = Cookies.get('jwtToken');
+
+        // Determine if the user is logged in
+        if(localStorageToken || cookieToken){
             setIsLoggedIn(true);
         }else{
             setIsLoggedIn(false);
         }
     }, []);
 
-    const handleLogout=()=>{
+    const handleLogout = () => {
+        // Remove token from localStorage
         localStorage.removeItem('token');
+
+        // Remove token from cookies
+        Cookies.remove('jwtToken');
+
         setIsLoggedIn(false);
         navi('/');
     }
-
-
 
 
     return (

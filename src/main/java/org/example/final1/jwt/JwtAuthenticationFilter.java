@@ -5,10 +5,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.config.auth.PrincipalDetails;
+import org.example.final1.model.TokenDto;
 import org.example.final1.model.UserDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +31,7 @@ import java.util.Date;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
-
+    private final JwtTokenProvider jwtTokenProvider;
     // /account/login 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -91,17 +93,35 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         //rsa방식은 아니고, hash암호방식
         //서버만 알고있는 secret키가 있어야함
         //System.out.println("jwt토큰 실행");
-        String jwtToken= JWT.create()
-                .withSubject("quizverse토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))//현재시간+추가시간=만료시간
-                .withClaim("user_id",principalDetails.getUserDto().getUser_id())//withclaim은 넣고싶은 키 value값을 넣는 함수
-                .withClaim("user_email", principalDetails.getUserDto().getUser_email())
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+
+
+        String jwtToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email());
+        String refreshToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email(), JwtProperties.REFRESH_EXPIRATION_TIME);
+
+        // Refresh Token을 데이터베이스에 저장
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setRefreshToken(refreshToken);
+        tokenDto.setUser(principalDetails.getUserDto());
+        tokenDto.setExpiryDate(JwtProperties.REFRESH_EXPIRATION_TIME / 1000);
+
+
+        // Refresh Token을 HttpOnly 쿠키에 저장
+        int refreshTokenExpiryTime = (int) (JwtProperties.REFRESH_EXPIRATION_TIME / 1000); // 초 단위로 변환
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // HTTPS에서만 전송 (배포 환경에서만 적용)
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(refreshTokenExpiryTime); // 쿠키 만료 시간을 Refresh Token 만료 시간과 동일하게 설정
+
+        response.addCookie(refreshTokenCookie);
         //super.successfulAuthentication(request, response, chain, authResult);
         response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX + jwtToken);//헤더에 담길내용으로 응답되는 형식
         //System.out.println(jwtToken);
         //jwt토큰 반환
     }
+
+
+
 }
 
 

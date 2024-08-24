@@ -1,17 +1,22 @@
 package org.example.final1.controller.account;
 
 import org.example.final1.config.auth.PrincipalDetails;
+import org.example.final1.model.UserDto;
+import org.example.final1.service.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
+@RestController
+@RequestMapping("/login")
 public class LoginController {
+    @Autowired
+    private TokenService tokenService;
 
 
     @GetMapping("/test/login")
@@ -48,11 +53,19 @@ public class LoginController {
         return "OAuth 세션정보확인하기";
     }
 
-    @GetMapping("/user")
-    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        System.out.println("principalDetails:"+principalDetails.getUserDto());
-        return "user";
-
+    @GetMapping("/userinfo")
+    public UserDto userinfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        // principalDetails에서 UserDto를 얻어서 반환
+        return principalDetails.getUserDto();
     }
 
+    @PostMapping("/token/refresh")
+    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+        try {
+            String newAccessToken = tokenService.refreshAccessToken(refreshToken);
+            return ResponseEntity.ok(newAccessToken);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body("Invalid refresh token");
+        }
+    }
 }
