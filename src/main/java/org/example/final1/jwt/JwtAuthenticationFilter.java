@@ -1,10 +1,6 @@
 package org.example.final1.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Date;
+
+
 
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter이 필터가 있는데
@@ -34,7 +31,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        //System.out.println("JwtAuthenticationFilter: 로그인 시도중");
+        System.out.println("JwtAuthenticationFilter: 로그인 시도중");
         //1.username,password를 받아서
         try {
             /*if (request.getInputStream() == null || request.getInputStream().available() == 0) {
@@ -51,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om=new ObjectMapper();
             UserDto userDto=om.readValue(request.getInputStream(), UserDto.class);
             //json 데이터를 dto에 파싱해서 넣어주는 objectmapper
-            //System.out.println(userDto);
+            System.out.println(userDto);
 
             UsernamePasswordAuthenticationToken authenticationToken=
                     new UsernamePasswordAuthenticationToken(userDto.getUser_email(), userDto.getUser_password());
@@ -62,7 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //print되면 로그인되었다는 뜻
             PrincipalDetails principalDetails=(PrincipalDetails)authentication.getPrincipal();
 
-            //System.out.println("로그인완료됨 "+principalDetails.getUserDto().getUser_email());//로그인 정상적으로 됨
+            System.out.println("로그인완료됨 "+principalDetails.getUserDto().getUser_email());//로그인 정상적으로 됨
 
             //authentication 객체가 session영역에 저장을 해야하고 그방법이 return해주면됨
             //리턴의 이유는 권한 관리를 security가 대신 해주기 때문에 편하려고 하는거임
@@ -80,36 +77,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         return null;
     }
-    //attemptAuthentication실행 중 인증이 정상적으로 되었으면successfulAuthentication함수가 실행됨
-    //jwt토큰을 만들어서 request 요청한 사용자에게 jwt 토큰을 response해주면됨.
-    //즉 successfulAuthentication실행되었다는건 인증이 완료되었다는 것!
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-
-        //System.out.println("successfulAuthentication실행됨: 인증이 완료되었다는 뜻임.");
-        PrincipalDetails principalDetails=(PrincipalDetails)authResult.getPrincipal();
-        //rsa방식은 아니고, hash암호방식
-        //서버만 알고있는 secret키가 있어야함
-        //System.out.println("jwt토큰 실행");
-        String jwtToken= JWT.create()
-                .withSubject("quizverse토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))//현재시간+추가시간=만료시간
-                .withClaim("user_id",principalDetails.getUserDto().getUser_id())//withclaim은 넣고싶은 키 value값을 넣는 함수
-                .withClaim("user_email", principalDetails.getUserDto().getUser_email())
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-        //super.successfulAuthentication(request, response, chain, authResult);
-        response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX + jwtToken);//헤더에 담길내용으로 응답되는 형식
-        //System.out.println(jwtToken);
-        //jwt토큰 반환
-    }
 }
-
-
-//유저네임, 패스워드 로그인이 정상이면
-//서버쪽에서 세션 id를 생성해서
-//클라이언트 쿠키 세션 id를응답하면 요청할때마다 쿠키값 세션 id를 항상 들고 서버쪽으로 요청하기 때문에
-//서버는 세션 id가 유효한지 판단해서 유효하면 인증이 필요한 페이지로 접근하게 하면된다.
-/*근데 이번 방식은
-유저네임, 패스워드 로그인이 정상이면 jwt 토큰을 생성해서 클라이언트쪽으로 jwt토큰을 응답해준다.
-요청할때마다 jwt토큰을 가지고 요청하면 서버는 jwt토큰이 유효한지를 판단해야하는데
-이걸 해야하는 필터를 만들어주면된다.*/
