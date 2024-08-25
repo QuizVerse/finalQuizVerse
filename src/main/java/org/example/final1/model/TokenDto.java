@@ -27,6 +27,9 @@ public class TokenDto {
     @Column(name = "refresh_token", nullable = false, length = 255)
     private String refreshToken;
 
+    @Column(name = "device_id", nullable = false, length = 255)
+    private String deviceId; // 기기별 관리
+
     @Column(name = "expiry_date", nullable = false)
     private Long expiryDate;
 

@@ -1,5 +1,6 @@
 package org.example.final1.controller.account;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.final1.config.auth.PrincipalDetails;
 import org.example.final1.model.UserDto;
 import org.example.final1.service.TokenService;
@@ -11,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
@@ -53,19 +57,50 @@ public class LoginController {
         return "OAuth 세션정보확인하기";
     }
 
-    @GetMapping("/userinfo")
+/*    @GetMapping("/userinfo")
     public UserDto userinfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         // principalDetails에서 UserDto를 얻어서 반환
+        //System.out.println(principalDetails.getUserDto());
         return principalDetails.getUserDto();
-    }
+    }*/
 
+    // Refresh Token을 사용해 새로운 Access Token을 발급하는 엔드포인트
     @PostMapping("/token/refresh")
-    public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+    public Map<String, String> refreshAccessToken(HttpServletRequest request) {
+        Map<String, String> response = new HashMap<>(); // 응답 데이터를 저장할 Map 생성
+
         try {
+            // 쿠키에서 Refresh Token을 가져옴
+            String refreshToken = null;
+            if (request.getCookies() != null) {
+                for (var cookie : request.getCookies()) {
+                    if (cookie.getName().equals("refreshToken")) { // 쿠키 이름이 "refreshToken"인지 확인
+                        refreshToken = cookie.getValue(); // Refresh Token 값 가져오기
+                    }
+                }
+            }
+            //쿠키에 저장된 refreshtoken가 만료됨
+            if (refreshToken == null) {
+                // Refresh Token이 없으면 오류 메시지 반환
+                response.put("error", "Refresh Token is missing");
+                return response;
+            }
+
+            // TokenService를 사용해 새로운 Access Token 발급
             String newAccessToken = tokenService.refreshAccessToken(refreshToken);
-            return ResponseEntity.ok(newAccessToken);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body("Invalid refresh token");
+
+            if (newAccessToken != null) {
+                // 새로운 Access Token이 발급된 경우 응답에 추가
+                response.put("access_token", newAccessToken);
+            } else {
+                // Refresh Token이 유효하지 않거나 만료된 경우 오류 메시지 반환
+                response.put("error", "Invalid or expired Refresh Token");
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 오류 메시지 반환
+            response.put("error", "An error occurred while refreshing token");
         }
+
+        return response; // 응답 반환
     }
 }

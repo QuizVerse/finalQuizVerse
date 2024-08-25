@@ -1,7 +1,5 @@
 package org.example.final1.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,15 +10,15 @@ import lombok.RequiredArgsConstructor;
 import org.example.final1.config.auth.PrincipalDetails;
 import org.example.final1.model.TokenDto;
 import org.example.final1.model.UserDto;
+import org.example.final1.service.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Date;
+import java.util.UUID;
 
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter이 필터가 있는데
@@ -32,6 +30,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final TokenService tokenService;
     // /account/login 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -98,11 +98,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String jwtToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email());
         String refreshToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email(), JwtProperties.REFRESH_EXPIRATION_TIME);
 
+        // 기기별 식별자 (랜덤 UUID 생성)
+        String deviceId = UUID.randomUUID().toString();
         // Refresh Token을 데이터베이스에 저장
-        TokenDto tokenDto = new TokenDto();
-        tokenDto.setRefreshToken(refreshToken);
-        tokenDto.setUser(principalDetails.getUserDto());
-        tokenDto.setExpiryDate(JwtProperties.REFRESH_EXPIRATION_TIME / 1000);
+        tokenService.saveRefreshToken(refreshToken, principalDetails.getUserDto(), deviceId);
 
 
         // Refresh Token을 HttpOnly 쿠키에 저장

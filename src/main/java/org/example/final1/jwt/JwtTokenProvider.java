@@ -1,8 +1,8 @@
 package org.example.final1.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -15,34 +15,32 @@ public class JwtTokenProvider {
     private final int EXPIRATION_TIME = JwtProperties.EXPIRATION_TIME;
     private final long REFRESH_EXPIRATION_TIME = JwtProperties.REFRESH_EXPIRATION_TIME;
 
-    // JWT 생성 메서드
+    // JWT 생성 메서드 -> access token
     public String createToken(int userId, String userEmail) {
-        return Jwts.builder()
-                .setSubject("quizverse토큰")
-                .claim("user_id", userId)
-                .claim("user_email", userEmail)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
-                .compact();
+        return JWT.create()
+                .withSubject("quizverse토큰")
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .withClaim("user_id", userId)
+                .withClaim("user_email", userEmail)
+                .sign(Algorithm.HMAC512(SECRET_KEY)); // HMAC512 알고리즘 사용
     }
 
-    // JWT 생성 메서드 (만료 시간이 다를 경우)
+    // JWT 생성 메서드 (만료 시간이 다를 경우) -> refresh token
     public String createToken(int userId, String userEmail, long expirationTime) {
-        return Jwts.builder()
-                .setSubject("quizverse토큰")
-                .claim("user_id", userId)
-                .claim("user_email", userEmail)
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
-                .compact();
+        return JWT.create()
+                .withSubject("quizverse토큰")
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                .withClaim("user_id", userId)
+                .withClaim("user_email", userEmail)
+                .sign(Algorithm.HMAC512(SECRET_KEY)); // HMAC512 알고리즘 사용
     }
 
     // JWT 검증 메서드
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .setSigningKey(SECRET_KEY.getBytes())
-                    .parseClaimsJws(token);
+            JWT.require(Algorithm.HMAC512(SECRET_KEY))
+                    .build()
+                    .verify(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -50,22 +48,19 @@ public class JwtTokenProvider {
     }
 
     // JWT에서 클레임 추출 메서드
-    public Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes())
-                .parseClaimsJws(token)
-                .getBody();
+    public DecodedJWT getClaims(String token) {
+        return JWT.require(Algorithm.HMAC512(SECRET_KEY))
+                .build()
+                .verify(token);
     }
 
     // JWT에서 사용자 ID 추출 메서드
     public int getUserId(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("user_id", Integer.class);
+        return getClaims(token).getClaim("user_id").asInt();
     }
 
     // JWT에서 사용자 이메일 추출 메서드
     public String getUserEmail(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("user_email", String.class);
+        return getClaims(token).getClaim("user_email").asString();
     }
 }

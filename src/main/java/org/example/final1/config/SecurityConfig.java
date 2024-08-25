@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.final1.config.oauth.PrincipalOauth2UserService;
 import org.example.final1.jwt.JwtAuthenticationFilter;
 import org.example.final1.jwt.JwtAuthorizationFilter;
+import org.example.final1.jwt.JwtTokenProvider;
 import org.example.final1.jwt.OAuth2AuthenticationSuccessHandler;
 import org.example.final1.repository.User.UserDaoInter;
+import org.example.final1.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,13 +32,15 @@ public class SecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final UserDaoInter userDaoInter;
+    private final TokenService tokenService;
     // 시큐리티 필터 체인 -> 로그인 시 가는 경로 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
         AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
         //jwtauthenticationfilter에서 authenticationmanager를 넣어줘서, 이 매니저를 통해 로그인 인증을 도움받는다.
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager,jwtTokenProvider,tokenService);
         jwtAuthenticationFilter.setFilterProcessesUrl("/login/user/check"); // 필터가 동작할 경로 설정
 
         JwtAuthorizationFilter jwtAuthorizationFilter=new JwtAuthorizationFilter(authenticationManager, userDaoInter);
