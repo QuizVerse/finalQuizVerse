@@ -29,14 +29,14 @@ public class UserService {
 
     }
 
-
-    // 이메일 중복 확인
-    public boolean countByUser_email(String user_email) {
-        return userDaoInter.countByUser_email(user_email) > 0;
-    }
     // email로 가입 여부 확인
     public boolean getEmailcheck(String user_email) {
         return userDaoInter.getEmailcheck(user_email)==1;
+    }
+
+    //회원 탈퇴
+    public void deleteUserById(int user_Id) {
+        userDaoInter.deleteById(user_Id); // user_id로 사용자 삭제
     }
 
 }

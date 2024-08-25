@@ -3,6 +3,50 @@
 
 import {Button} from "@mui/material";
 import CustomInput from "../../components/CustomInput";
+import axios from "axios";
+
+const handleLeaveClick=async()=>{
+  const token=localStorage.getItem("token");
+  if (token) {
+    // 로컬 인증 탈퇴 처리
+    try {
+      const response = await axios.get("/leave/account", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data === "success") {
+        localStorage.removeItem("token");
+        alert("회원 탈퇴가 되었습니다.");
+        window.location.href = "/";
+      } else {
+        alert("삭제 이슈.");
+      }
+    } catch (error) {
+      console.error("삭제이슈 무슨 에러?:", error);
+      alert("오류가 났습니다.");
+    }
+  } else {
+    // OAuth 탈퇴 처리 (쿠키 사용)
+    try {
+      const response = await axios.get("/leave/oauth", {
+        withCredentials: true, // 쿠키를 자동으로 포함
+      });
+
+      if (response.data === "success") {
+        alert("회원 탈퇴가 되었습니다.");
+        window.location.href = "/";
+      } else {
+        alert("삭제 이슈.");
+      }
+    } catch (error) {
+      console.error("삭제이슈 무슨 에러?:", error);
+      alert("오류가 났습니다.");
+    }
+  }
+};
+
 
 export default function Leave() {
   return (
@@ -64,7 +108,7 @@ export default function Leave() {
                 placeholder="탈퇴사유를 입력해주세요"
               ></textarea>
             </div>
-            <Button>확인</Button>
+            <Button onClick={handleLeaveClick}>확인</Button>
           </div>
         </div>
       </main>

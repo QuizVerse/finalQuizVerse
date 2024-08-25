@@ -38,7 +38,7 @@ public class SignupController {
     public String sendAuthenticationCode(@RequestParam("user_email") String user_email) {
 
         // 이메일 존재 여부 확인
-        if (userService.countByUser_email(user_email)) {
+        if (userService.getEmailcheck(user_email)) {
             return "이메일이 존재하는 회원입니다.";
         }
 
