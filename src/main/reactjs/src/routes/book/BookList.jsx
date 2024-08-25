@@ -7,7 +7,7 @@ import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {Link} from "react-router-dom";
 import CustomInput from "../../components/CustomInput";
-import Questionmark from "../../image/Questionmark.jpg";
+import image from "../../image/questionmark";
 
 
 //1 초등 2 중고등 3 취업/자격증 4 컴퓨터 5 기타
