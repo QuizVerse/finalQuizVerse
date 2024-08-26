@@ -4,7 +4,6 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
@@ -26,7 +25,10 @@ export default function Score() {
       {/*  헤더  */}
       <header className="flex items-center justify-between p-4 bg-gray-200 pr-4">
         <div className="flex items-center space-x-4">
-          <KeyboardArrowLeftIcon onClick={() => navigate("/book/detail")} />
+          <KeyboardArrowLeftIcon
+            fontSize="large"
+            onClick={() => navigate("/book/detail")}
+          />
           <div className="flex items-center gap-2 pr-4">
             <img
               className="aspect-square h-full w-full"
@@ -202,7 +204,7 @@ export default function Score() {
                     {question.correct ? (
                       <CheckIcon color="success" />
                     ) : (
-                      <ClearIcon color="warning"></ClearIcon>
+                      <ClearIcon color="warning" />
                     )}
                   </td>
                   <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
