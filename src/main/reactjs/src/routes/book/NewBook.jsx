@@ -54,7 +54,7 @@ export default function NewBook() {
     const handleSubmit = () => {
         let selectedCategory = {};
         categoryList.map((row)=>{
-            if(row.category_id === category) {
+            if(row.categoryId === category) {
                 selectedCategory = row;
             }
         })
@@ -165,7 +165,7 @@ export default function NewBook() {
                             >
                                 {categoryList &&
                                     categoryList.map((row) => (
-                                        <MenuItem key={row.category_id} value={row.category_id}>{row.category_name}</MenuItem>
+                                        <MenuItem key={row.categoryId} value={row.categoryId}>{row.categoryName}</MenuItem>
                                     ))
                                 }
                             </Select>

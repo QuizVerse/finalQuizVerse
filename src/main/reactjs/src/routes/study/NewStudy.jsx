@@ -159,8 +159,8 @@ export default function NewStudy() {
                                 >
                                     {categoryList &&
                                         categoryList.map((row) => (
-                                            <MenuItem key={row.category_id}
-                                                      value={row.category_id}>{row.category_name}</MenuItem>
+                                            <MenuItem key={row.categoryId}
+                                                      value={row.categoryId}>{row.categoryName}</MenuItem>
                                         ))
                                     }
                                 </Select>

@@ -119,8 +119,8 @@ export default function Myclass() {
       method:'post',
       url:'/myclass/newclass',
       data:{
-        "class_name": className,
-        "class_description": classDescription,
+        "className": className,
+        "classDescription": classDescription,
       },
     }).then(res=>{
       console.log(res);
@@ -210,14 +210,14 @@ export default function Myclass() {
                 {currentItems &&
                     currentItems.map((row) => (
                         <TableRow
-                            key={row.class_id}
+                            key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
                         >
                           <TableCell component="th" scope="row">
-                            {row.class_name}
+                            {row.className}
                           </TableCell>
-                          <TableCell>{row.class_description}</TableCell>
-                          <TableCell>{row.class_createdate}</TableCell>
+                          <TableCell>{row.classDescription}</TableCell>
+                          <TableCell>{row.classCreatedate}</TableCell>
                           <TableCell>{row.carbs}</TableCell>
                           <TableCell>{row.protein}</TableCell>
                         </TableRow>
