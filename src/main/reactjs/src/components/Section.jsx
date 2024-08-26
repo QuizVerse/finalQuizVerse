@@ -13,6 +13,7 @@ export default function Section({
                                     index,
                                     title,
                                     description,
+                                    sectionCount,
                                     onDuplicate,
                                     onDelete,
                                     openConfirm,
@@ -88,9 +89,9 @@ export default function Section({
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">섹션 제목</Typography>
+                <Typography variant="h5">{title || "섹션 제목"}</Typography>
                 <div>
-                    <span>1 섹션 / 3 섹션</span>
+                    <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                     </IconButton>

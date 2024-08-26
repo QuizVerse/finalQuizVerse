@@ -41,7 +41,7 @@ function DraggableRow({ row, index, moveRow, arrLength }) {
 }
 
 // 섹션 리스트를 관리하고, 드래그 앤 드롭 기능을 제공하는 메인 컴포넌트입니다.
-export default function SectionSort({ sortData }) {
+export default function SectionSort({ sortData, onSortChange }) {
     const [rows, setRows] = useState(sortData); // 부모 컴포넌트에서 전달된 섹션 리스트의 상태를 관리합니다.
 
     // 섹션의 순서를 변경하는 함수입니다.
@@ -53,6 +53,9 @@ export default function SectionSort({ sortData }) {
         const [movedItem] = updatedRows.splice(fromIndex, 1);
         updatedRows.splice(toIndex, 0, movedItem);
         setRows(updatedRows); // 변경된 섹션 리스트를 상태에 반영합니다.
+        if (onSortChange) {
+            onSortChange(updatedRows); // 콜백 함수 호출하여 부모 컴포넌트에 알림
+        }
     };
 
     return (
