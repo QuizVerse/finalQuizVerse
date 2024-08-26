@@ -40,6 +40,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
     testImplementation 'org.springframework.security:spring-security-test'
 
+     //jwt
+    implementation group: 'com.auth0', name: 'java-jwt', version: '3.19.2'
+
 //oauth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
