@@ -13,10 +13,14 @@ export default function Edit() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
+    // sectionSort Alert state
+    const [sectionSortVisible, setSectionSortVisible] = useState(false);
+
     const [sections, setSections] = useState([
         { id: 1, title: "", description: "", questions: [{ id: 1, type: 3 }] }
     ]);
 
+    // side bar에서 섹션 추가
     const handleAddSection = () => {
         const newSection = {
             id: sections.length + 1,
@@ -27,6 +31,7 @@ export default function Edit() {
         setSections([...sections, newSection]);
     };
 
+    // 섹션 복제
     const handleDuplicateSection = (index) => {
         const duplicatedSection = {
             ...sections[index],
@@ -37,6 +42,7 @@ export default function Edit() {
         openAlert("섹션이 복제되었습니다.");
     };
 
+    // 섹션 삭제
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
             setDeleteConfirmId(14);
@@ -57,7 +63,6 @@ export default function Edit() {
         setSections(updatedSections);
     };
 
-
     /**
      * @description : Alert창 열릴 때
      * */
@@ -71,12 +76,10 @@ export default function Edit() {
      * */
     const closeAlert = () => {
         setAlertVisible(false);
-        setConfirmVisible(false);
+        setSectionSortVisible(false);
     };
 
-
     // confirm state
-    const [confirmVisible, setConfirmVisible] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [deleteConfirmId, setDeleteConfirmId] = useState(0);
     const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
@@ -149,7 +152,7 @@ export default function Edit() {
                             onSortChange={handleSortChange}
                         />
                     }
-                    openAlert={confirmVisible}
+                    openAlert={sectionSortVisible}
                     closeAlert={closeAlert}
                 ></CustomAlert>
 

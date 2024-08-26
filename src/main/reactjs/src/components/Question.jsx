@@ -107,7 +107,6 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
         setShowExplanation(false);
     };
 
-
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
         setOxSelected(selection);
