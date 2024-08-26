@@ -3,6 +3,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, {useState} from "react";
+import {Tooltip} from "@mui/material";
 
 export default function QuestionButtons(props) {
     const [anchorEl, setAnchorEl] = useState(null); // 메뉴 열림 여부를 관리하는 상태
@@ -55,15 +56,21 @@ export default function QuestionButtons(props) {
 
     return (
         <div className="flex gap-4 justify-end">
-            <IconButton onClick={handleDuplicateQuestion}>
-                <ContentCopyIcon/> {/* 복제 아이콘 */}
-            </IconButton>
-            <IconButton onClick={handleDeleteQuestion}>
-                <DeleteIcon/> {/* 삭제 아이콘 */}
-            </IconButton>
-            <IconButton onClick={handleMoreClick}>
-                <MoreVertIcon/> {/* 더 보기 아이콘 */}
-            </IconButton>
+            <Tooltip title="질문 복제">
+                <IconButton onClick={handleDuplicateQuestion}>
+                    <ContentCopyIcon/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="질문 삭제">
+                <IconButton onClick={handleDeleteQuestion}>
+                    <DeleteIcon/>
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="설정 더보기">
+                <IconButton onClick={handleMoreClick}>
+                    <MoreVertIcon/>
+                </IconButton>
+            </Tooltip>
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}

@@ -1,6 +1,7 @@
 package org.example.final1.controller.book;
 
 import lombok.RequiredArgsConstructor;
+import org.example.final1.model.BookDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SectionDto;
 import org.example.final1.service.QuestionService;
@@ -18,6 +19,7 @@ public class EditController {
     private final SectionService sectionService;
     private final QuestionService questionService;
 
+    /** 섹션 관련 */
     // 섹션 생성
     @PostMapping("/section/new")
     public ResponseEntity<SectionDto> insertSection(@RequestBody SectionDto dto) {
@@ -39,6 +41,14 @@ public class EditController {
         return ResponseEntity.noContent().build();
     }
 
+    // 섹션 모두 불러오기
+    @PostMapping("/section/getall")
+    public ResponseEntity<List<SectionDto>> getAllSections(@RequestBody BookDto book) {
+        List<SectionDto> list = sectionService.getAllSections(book);
+        return ResponseEntity.ok(list);
+    }
+
+    /** 질문 관련 */
     // 질문 생성
     @PostMapping("/question/new")
     public ResponseEntity<QuestionDto> insertQuestion(@RequestBody QuestionDto dto) {
@@ -51,6 +61,20 @@ public class EditController {
     public ResponseEntity<Void> deleteQuestion(@PathVariable("id") Long id) {
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 질문 저장
+    @PostMapping("/question/sort")
+    public ResponseEntity<List<QuestionDto>> sortQuestion(@RequestBody List<QuestionDto> questionList) {
+        List<QuestionDto> list = questionService.saveQuestions(questionList);
+        return ResponseEntity.ok(list);
+    }
+
+    // 질문 모두 불러오기
+    @PostMapping("/question/getall")
+    public ResponseEntity<List<QuestionDto>> getAllQuestions(@RequestBody BookDto book) {
+        List<QuestionDto> list = questionService.getAllQuestions(book);
+        return ResponseEntity.ok(list);
     }
 
 }
