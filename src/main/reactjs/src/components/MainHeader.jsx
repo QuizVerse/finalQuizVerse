@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import Cookies from 'js-cookie';
-
+import React from 'react';
 
 export default function MainHeader() {
 
