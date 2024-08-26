@@ -22,29 +22,29 @@ public class StudyDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
-    private int study_id;
+    private int studyId;
 
     @Column(name = "study_title", nullable = false, length = 50)
-    private String study_title;
+    private String studyTitle;
 
     @Column(name = "study_description", length = 255)
-    private String study_description;
+    private String studyDescription;
 
     @Column(name = "study_image", nullable = false, length = 255)
-    private String study_image;
+    private String studyImage;
 
     @Column(name = "study_memberlimit", nullable = false)
-    private int study_memberlimit;
+    private int studyMemberlimit;
 
     @Column(name = "study_status", nullable = false)
-    private short study_status;
+    private short studyStatus;
 
     @Column(name = "study_createdate", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp study_createdate;
+    private Timestamp studyCreatedate;
 
     @Column(name = "study_url", nullable = false, length = 255)
-    private String study_url;
+    private String studyUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

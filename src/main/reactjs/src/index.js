@@ -63,6 +63,9 @@ import ReactDnd from "./routes/devtest/ReactDnd";
 import ReviewModal from "./routes/devtest/ReviewModal";
 import AddClassMemberModal from "./routes/devtest/AddClassMemberModal";
 import AlarmModal from "./routes/devtest/AlarmModal";
+import ChatbotModal from "./routes/devtest/ChatbotModal";
+import NewStudy from "./routes/study/NewStudy";
+import Study from "./routes/study/Study";
 
 const router = createBrowserRouter([
     {
@@ -74,6 +77,7 @@ const router = createBrowserRouter([
             element: <BookList/>
         }]
     },
+
     {   // 개발 중 테스트가 필요한 경우 사용
         path: "/devtest",
         element: <DevTest />,
@@ -115,6 +119,10 @@ const router = createBrowserRouter([
             {
                 path: "/devtest/alarmmodal",
                 element: <AlarmModal/>
+            },
+            {
+                path: "/devtest/chatbotmodal",
+                element: <ChatbotModal/>
             },
         ]
 
@@ -240,12 +248,17 @@ const router = createBrowserRouter([
     },
     {
         path: "/study",
-        element: <StudyList />,
+        element: <Study />,
         errorElement: <ErrorPage />,
         children : [
             {
                 path: '',
                 element: <StudyList />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/study/new',
+                element: <NewStudy />,
                 errorElement: <ErrorPage />,
             },
             {

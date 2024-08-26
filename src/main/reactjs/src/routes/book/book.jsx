@@ -2,7 +2,7 @@ import MainHeader from "../../components/MainHeader";
 import {Outlet} from "react-router-dom";
 import CategoryHeader from "../../components/CategoryHeader";
 
-export default function BookList() {
+export default function Book() {
     return (
         <div className="min-h-screen bg-white">
             <MainHeader/>
