@@ -15,11 +15,13 @@ export default function Section({
                                     description,
                                     onDuplicate,
                                     onDelete,
+                                    openConfirm,
                                     onUpdateSection
                                 }) {
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
 
+    // section 상태
     const [sectionTitle, setSectionTitle] = useState('');
     const [sectionDescription, setSectionDescription] = useState('');
 
@@ -27,39 +29,6 @@ export default function Section({
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
-
-    // confirm state
-    const [confirmVisible, setConfirmVisible] = useState(false);
-
-    /**
-     * @description : Confirm창 열릴 때
-     * */
-    const openConfirm = () => {
-        setConfirmVisible(true);
-    };
-
-    /**
-     * @description : 취소 버튼 클릭시 실행되는 로직
-     * */
-    const clickBtn1 = () => {
-        setConfirmVisible(false);
-    };
-
-    /**
-     * @description : 확인 버튼 클릭시 실행되는 로직
-     * */
-    const clickBtn2 = () => {
-        /**
-         * @TODO: 확인 눌렀을 때 해당 사항 저장되는 로직 추가
-         * */
-        setConfirmVisible(false);
-    };
-
-    const arr = [
-        { id: 0, title: '야호' },
-        { id: 1, title: '야호1' },
-        { id: 2, title: '야호2' },
-    ];
 
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([{id: 1, type: 3}]);
@@ -162,15 +131,6 @@ export default function Section({
                                 <LoopIcon/>
                             </IconButton>
                         </Tooltip>
-
-                        {/* 섹션 재정렬 Confirm */}
-                        <CustomConfirm
-                            id={7}
-                            content={<SectionSort sortData={arr} />}
-                            openConfirm={confirmVisible}
-                            clickBtn1={clickBtn1}
-                            clickBtn2={clickBtn2}
-                        ></CustomConfirm>
                     </div>
                 </div>
             )}

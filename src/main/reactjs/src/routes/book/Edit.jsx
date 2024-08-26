@@ -6,6 +6,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Sidebar } from "lucide-react";
 import EditSidebar from "../../components/EditSidebar";
 import CustomAlert from "../../components/modal/CustomAlert";
+import CustomConfirm from "../../components/modal/CustomConfirm";
+import SectionSort from "../../components/modal/SectionSort";
 export default function Edit() {
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
@@ -70,6 +72,34 @@ export default function Edit() {
         setAlertVisible(false);
     };
 
+
+    // confirm state
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
+    /**
+     * @description : Confirm창 열릴 때
+     * */
+    const openConfirm = () => {
+        setConfirmVisible(true);
+    };
+
+    /**
+     * @description : 취소 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn1 = () => {
+        setConfirmVisible(false);
+    };
+
+    /**
+     * @description : 확인 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn2 = () => {
+        /**
+         * @TODO: 확인 눌렀을 때 해당 사항 저장되는 로직 추가
+         * */
+        setConfirmVisible(false);
+    };
+
     return (
         <DndProvider backend={HTML5Backend}>
             <main className="p-24 space-y-4">
@@ -80,6 +110,7 @@ export default function Edit() {
                         title={section.title}
                         description={section.description}
                         questions={section.questions}
+                        openConfirm={openConfirm}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
@@ -92,6 +123,16 @@ export default function Edit() {
                     openAlert={alertVisible}
                     closeAlert={closeAlert}
                 />
+
+
+                {/* 섹션 재정렬 Confirm */}
+                <CustomConfirm
+                    id={7}
+                    content={<SectionSort sortData={sections} />}
+                    openConfirm={confirmVisible}
+                    clickBtn1={clickBtn1}
+                    clickBtn2={clickBtn2}
+                ></CustomConfirm>
             </main>
         </DndProvider>
     );
