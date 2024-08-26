@@ -63,8 +63,8 @@ export default function UseModal() {
             method:'post',
             url:'/myclass/newclass',
             data:{
-                "class_name": className,
-                "class_description": classDescription,
+                "className": className,
+                "classDescription": classDescription,
             },
         }).then(res=>{
             console.log(res);
