@@ -25,26 +25,26 @@ public class QuestionDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
-    private int question_id;
+    private int questionId;
 
     @Column(name = "question_text", nullable = false, length = 255)
-    private String question_text;
+    private String questionText;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "question_res", columnDefinition = "json", nullable = false)
-    private List<ChoiceDto> question_res;  // JSON stored as a List<String>
+    private List<ChoiceDto> questionRes;  // JSON stored as a List<String>
 
     @Column(name = "question_description", length = 3000)
-    private String question_description;
+    private String questionDescription;
 
     @Column(name = "question_descriptionimage", length = 255)
-    private String question_descriptionimage;
+    private String questionDescriptionimage;
 
     @Column(name = "question_solution", length = 3000)
-    private String question_solution;
+    private String questionSolution;
 
     @Column(name = "question_solutionimage", length = 255)
-    private String question_solutionimage;
+    private String questionSolutionimage;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
@@ -52,10 +52,10 @@ public class QuestionDto {
     private BookDto book;
 
     @Column(name = "question_order", nullable = false)
-    private int question_order;
+    private int questionOrder;
 
     @Column(name = "question_point", nullable = false)
-    private int question_point;
+    private int questionPoint;
 
 
     @ManyToOne

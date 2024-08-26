@@ -16,12 +16,12 @@ public class ChoiceDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "choice_id")
-    private int choice_id;
+    private int choiceId;
 
     @Column(name = "choice_text", nullable = false, length = 255)
-    private String choice_text;
+    private String choiceText;
 
     @Column(name = "choice_image", length = 255)
-    private String choice_image;
+    private String choiceImage;
 
 }

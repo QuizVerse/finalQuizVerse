@@ -1,5 +1,7 @@
 package org.example.final1.service;
 
+import org.example.final1.model.BookDto;
+import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SectionDto;
 import org.example.final1.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,10 @@ public class SectionService {
 
     public void deleteSection(Long id) {
         sectionRepository.deleteById(id);
+    }
+
+    public List<SectionDto> getAllSections(BookDto book) {
+        return sectionRepository.findAllByBook(book);
     }
 
 }

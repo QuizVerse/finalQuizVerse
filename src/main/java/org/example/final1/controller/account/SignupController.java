@@ -38,7 +38,7 @@ public class SignupController {
     public String sendAuthenticationCode(@RequestParam("user_email") String user_email) {
 
         // 이메일 존재 여부 확인
-        if (userService.countByUser_email(user_email)) {
+        if (userService.getEmailcheck(user_email)) {
             return "이메일이 존재하는 회원입니다.";
         }
 
@@ -78,14 +78,14 @@ public class SignupController {
     //비밀번호 암호화 후 저장
     @PostMapping("/user/join")
     public String joinUser(@RequestBody UserDto userDto) {
-        String originPw=userDto.getUser_password();
+        String originPw=userDto.getUserPassword();
         String encodePw=bCryptPasswordEncoder.encode(originPw);
-        userDto.setUser_password(encodePw);
+        userDto.setUserPassword(encodePw);
 
         userService.saveUser(userDto);
 
         // 가입이 완료되면 인증 코드를 제거
-        authenticationCodes.remove(userDto.getUser_email());
+        authenticationCodes.remove(userDto.getUserEmail());
         return "/";
 
 
