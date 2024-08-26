@@ -18,9 +18,9 @@ public class CategoryDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    private Long category_id;
+    private int categoryId;
 
     @Column(name = "category_name", nullable = false, length = 50)
-    private String category_name;
+    private String categoryName;
 
 }

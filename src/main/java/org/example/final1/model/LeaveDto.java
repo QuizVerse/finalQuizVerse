@@ -19,14 +19,13 @@ public class LeaveDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "leave_id")
-    private int leave_id;
+    private int leaveId;
 
     @Column(name = "leave_reason", nullable = false, length = 255)
-    private String leave_reason;
+    private String leaveReason;
 
     @Column(name = "leave_date", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp leave_date;
+    private Timestamp leaveDate;
 
-    
 }

@@ -18,22 +18,23 @@ public class BookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
-    private Long book_Id;
+
+    private int bookId;
 
     @Column(name = "book_image", nullable = false, length = 255)
-    private String book_image;
+    private String bookImage;
 
     @Column(name = "book_title", nullable = false, length = 50)
-    private String book_title;
+    private String bookTitle;
 
     @Column(name = "book_description", nullable = false, length = 255)
-    private String book_description;
+    private String bookDescription;
 
     @Column(name = "book_status", nullable = false)
-    private short book_status;
+    private short bookStatus;
 
     @Column(name = "book_timer", nullable = false)
-    private int book_timer;
+    private int bookTimer;
 
     // Foreign Key reference to UserDTO
     @ManyToOne
@@ -48,8 +49,8 @@ public class BookDto {
     private CategoryDto category;
 
     @Column(name = "book_divide", nullable = false)
-    private short book_divide;
+    private short bookDivide;
 
     @Column(name = "book_totalscore", nullable = false)
-    private int book_totalscore;
+    private int bookTotalscore;
 }

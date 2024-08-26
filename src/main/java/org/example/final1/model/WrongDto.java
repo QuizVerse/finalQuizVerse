@@ -16,7 +16,7 @@ public class WrongDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wrong_id")
-    private int wrong_id;
+    private int wrongId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,8 +27,8 @@ public class WrongDto {
     private SolvedbookDto solvedbook;
 
     @Column(name = "wrong_order", nullable = false)
-    private int wrong_order;
+    private int wrongOrder;
 
     @Column(name = "wrong_repeat", nullable = false)
-    private int wrong_repeat;
+    private int wrongRepeat;
 }
