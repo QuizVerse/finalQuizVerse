@@ -27,9 +27,9 @@ export default function CategoryHeader() {
             <div className="flex flex-wrap items-center justify-center gap-2">
                 {categoryList &&
                     categoryList.map((row) => (
-                        <Button key={row.category_id}
+                        <Button key={row.categoryId}
                             className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
-                            <Link to={'/book/category'}>{row.category_name}</Link>
+                            <Link to={'/book/category'}>{row.categoryName}</Link>
                         </Button>
                     ))
                 }
