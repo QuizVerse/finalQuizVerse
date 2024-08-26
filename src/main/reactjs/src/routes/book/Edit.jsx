@@ -94,10 +94,14 @@ export default function Edit() {
      * @description : 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
-        /**
-         * @TODO: 확인 눌렀을 때 해당 사항 저장되는 로직 추가
-         * */
+
         setConfirmVisible(false);
+    };
+
+
+    const handleSortChange = (newSortData) => {
+        setSections(newSortData);
+        // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
     };
 
     return (
@@ -109,6 +113,7 @@ export default function Edit() {
                         index={index}
                         title={section.title}
                         description={section.description}
+                        sectionCount={sections.length}
                         questions={section.questions}
                         openConfirm={openConfirm}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
@@ -128,7 +133,12 @@ export default function Edit() {
                 {/* 섹션 재정렬 Confirm */}
                 <CustomConfirm
                     id={7}
-                    content={<SectionSort sortData={sections} />}
+                    content={
+                        <SectionSort
+                            sortData={sections}
+                            onSortChange={handleSortChange}
+                        />
+                    }
                     openConfirm={confirmVisible}
                     clickBtn1={clickBtn1}
                     clickBtn2={clickBtn2}
