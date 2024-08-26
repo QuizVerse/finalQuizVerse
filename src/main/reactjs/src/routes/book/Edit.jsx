@@ -121,6 +121,14 @@ export default function Edit() {
     return (
         <DndProvider backend={HTML5Backend}>
             <main className="p-24 space-y-4">
+                <div className="flex justify-end">
+                    <div className="flex space-x-2">
+                        <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
+                        <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
+                        <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
+                    </div>
+                </div>
+
                 {sections.map((section, index) => (
                     <Section
                         key={section.id}
@@ -135,7 +143,7 @@ export default function Edit() {
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
                 ))}
-                <EditSidebar onAddSection={handleAddSection} />
+                <EditSidebar onAddSection={handleAddSection}/>
 
                 <CustomAlert
                     title={alertTitle}
