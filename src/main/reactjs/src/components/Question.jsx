@@ -74,6 +74,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     // 컴포넌트 상태 관리
     const [visibility, setVisibility] = useState(''); // 문제 형식 선택
     const [answers, setAnswers] = useState([]); // 답안 리스트 관리
+    const [questionTitle, setQuestionTitle] = useState(''); // 문제 제목
     const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
@@ -126,7 +127,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                 <DragHandleIcon/> {/* 드래그 핸들 아이콘 */}
             </div>
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">문제 질문</Typography>
+                <Typography variant="h5">{questionTitle || "문제 질문"}</Typography>
                 <div>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
@@ -140,7 +141,10 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             fullWidth
                             label={"문제 질문"}
                             placeholder="질문을 입력하세요."
-                            variant={"standard"}/>
+                            variant={"standard"}
+                            value={questionTitle}
+                            onChange={(e) => setQuestionTitle(e.target.value)}
+                        />
 
                         <FormControl fullWidth>
                             <InputLabel id="visibility-label">문제 형식</InputLabel>

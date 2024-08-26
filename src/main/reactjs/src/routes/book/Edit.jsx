@@ -39,8 +39,9 @@ export default function Edit() {
 
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
-            setSections(sections.filter((_, i) => i !== index));
-            openAlert("섹션이 삭제되었습니다.");
+            setDeleteConfirmId(14);
+            setDeleteSectionIndex(index);
+            openConfirm();
         } else {
             openAlert("삭제할 수 없습니다. 섹션은 최소 하나는 있어야 합니다.");
         }
@@ -70,32 +71,42 @@ export default function Edit() {
      * */
     const closeAlert = () => {
         setAlertVisible(false);
+        setConfirmVisible(false);
     };
 
 
     // confirm state
     const [confirmVisible, setConfirmVisible] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(0);
+    const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     /**
      * @description : Confirm창 열릴 때
      * */
     const openConfirm = () => {
-        setConfirmVisible(true);
+        setDeleteConfirm(true);
     };
 
     /**
      * @description : 취소 버튼 클릭시 실행되는 로직
      * */
     const clickBtn1 = () => {
-        setConfirmVisible(false);
+        setDeleteConfirm(false);
+        setDeleteSectionIndex('');
     };
 
     /**
      * @description : 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
+        setDeleteConfirm(false);
 
-        setConfirmVisible(false);
+        if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
+            setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+        } else if(deleteConfirmId === 15) {
+
+        }
     };
 
 
@@ -129,17 +140,23 @@ export default function Edit() {
                     closeAlert={closeAlert}
                 />
 
-
-                {/* 섹션 재정렬 Confirm */}
-                <CustomConfirm
-                    id={7}
+                {/* 섹션 재정렬 Alert */}
+                <CustomAlert
+                    title={"섹션 재정렬"}
                     content={
                         <SectionSort
                             sortData={sections}
                             onSortChange={handleSortChange}
                         />
                     }
-                    openConfirm={confirmVisible}
+                    openAlert={confirmVisible}
+                    closeAlert={closeAlert}
+                ></CustomAlert>
+
+                {/* 삭제 Confirm */}
+                <CustomConfirm
+                    id={deleteConfirmId} // 섹션삭제 : 14, 문제삭제 : 15
+                    openConfirm={deleteConfirm}
                     clickBtn1={clickBtn1}
                     clickBtn2={clickBtn2}
                 ></CustomConfirm>
