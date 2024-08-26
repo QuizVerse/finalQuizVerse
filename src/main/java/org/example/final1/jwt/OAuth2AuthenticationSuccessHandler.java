@@ -25,10 +25,10 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         UserDto userDto=principalDetails.getUserDto();
 
         String jwtToken = JWT.create()
-                .withSubject(userDto.getUser_email())
+                .withSubject(userDto.getUserEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withClaim("user_id", userDto.getUser_id())
-                .withClaim("user_email", userDto.getUser_email())
+                .withClaim("user_id", userDto.getUserId())
+                .withClaim("user_email", userDto.getUserEmail())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);

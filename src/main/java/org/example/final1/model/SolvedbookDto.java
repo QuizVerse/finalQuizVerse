@@ -18,7 +18,7 @@ public class SolvedbookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "solvedbook_id")
-    private int solvedbook_id;
+    private int solvedbookId;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = true)
@@ -30,11 +30,11 @@ public class SolvedbookDto {
     private UserDto user;
 
     @Column(name = "solvedbook_start", nullable = false)
-    private Timestamp solvedbook_start;
+    private Timestamp solvedbookStart;
 
     @Column(name = "solvedbook_end")
-    private Timestamp solvedbook_end;
+    private Timestamp solvedbookEnd;
 
     @Column(name = "solvedbook_timer", nullable = false, length = 100)
-    private String solvedbook_timer;
+    private String solvedbookTimer;
 }

@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //System.out.println(userDto);
 
             UsernamePasswordAuthenticationToken authenticationToken=
-                    new UsernamePasswordAuthenticationToken(userDto.getUser_email(), userDto.getUser_password());
+                    new UsernamePasswordAuthenticationToken(userDto.getUserEmail(), userDto.getUserPassword());
             //PrincipalDetailsService에서 loaduserbyname실행된 후 정상이면 authentication이 리턴이된다.
             //db에 있는 username과 password가 일치한다.
             Authentication authentication=authenticationManager.authenticate(authenticationToken);
@@ -95,8 +95,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         //System.out.println("jwt토큰 실행");
 
 
-        String jwtToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email());
-        String refreshToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUser_id(), principalDetails.getUserDto().getUser_email(), JwtProperties.REFRESH_EXPIRATION_TIME);
+        String jwtToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUserId(), principalDetails.getUserDto().getUserEmail());
+        String refreshToken = jwtTokenProvider.createToken(principalDetails.getUserDto().getUserId(), principalDetails.getUserDto().getUserEmail(), JwtProperties.REFRESH_EXPIRATION_TIME);
 
         // 기기별 식별자 (랜덤 UUID 생성)
         String deviceId = UUID.randomUUID().toString();

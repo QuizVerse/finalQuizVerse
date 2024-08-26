@@ -21,13 +21,13 @@ public class ClassmemberDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "classmember_id")
-    private int classmember_id;
+    private int classmemberId;
 
     @Column(name = "classmember_role", nullable = false)
-    private short classmember_role;
+    private short classmemberRole;
 
     @Column(name = "classmember_date", nullable = false, updatable = false)
-    private Timestamp classmember_date;
+    private Timestamp classmemberDate;
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)

@@ -19,44 +19,44 @@ public class UserDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int user_id;
+    private int userId;
 
     @Column(name = "user_email", nullable = false, length = 50)
-    private String user_email;
+    private String userEmail;
 
     @Column(name = "user_password", nullable = false, length = 255)
-    private String user_password;
+    private String userPassword;
 
     @Column(name = "user_nickname", nullable = false, length = 100)
-    private String user_nickname;
+    private String userNickname;
 
     @Column(name = "user_image", length = 255)
-    private String user_image;
+    private String userImage;
 
     @Column(name = "user_createdate", nullable = false, updatable = false)
     @CreationTimestamp  //현재시간으로 세팅
-    private Timestamp user_createdate;
+    private Timestamp userCreatedate;
 
     @Column(name = "user_provider", nullable = false, length = 80)
-    private String user_provider;
+    private String userProvider;
 
     @Column(name = "user_providerid", nullable = false, length = 80)
-    private String user_providerid;
+    private String userProviderid;
 
 
     @Column(name = "user_role", nullable = false, length = 50)
-    private String user_role;
+    private String userRole;
 
     @Builder
-    public UserDto(String user_email, String user_password, String user_nickname, String user_image, Timestamp user_createdate, String user_providerid, String user_provider, String user_role) {
-        this.user_email = user_email;
-        this.user_password = user_password;
-        this.user_nickname = user_nickname;
-        this.user_image = user_image;
-        this.user_createdate = user_createdate;
-        this.user_providerid = user_providerid;
-        this.user_provider = user_provider;
-        this.user_role = user_role;
+    public UserDto(String userEmail, String userPassword, String userNickname, String userImage, Timestamp userCreatedate, String userProviderid, String userProvider, String userRole) {
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userNickname = userNickname;
+        this.userImage = userImage;
+        this.userCreatedate = userCreatedate;
+        this.userProviderid = userProviderid;
+        this.userProvider = userProvider;
+        this.userRole = userRole;
     }
 
 }

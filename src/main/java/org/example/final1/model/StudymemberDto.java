@@ -19,14 +19,14 @@ public class StudymemberDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "studymember_id")
-    private int studymember_id;
+    private int studymemberId;
 
     @Column(name = "user_role", nullable = false)
-    private int user_role;
+    private int userRole;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserDto user_id;
+    private UserDto user;
 
     @ManyToOne
     @JoinColumn(name = "study_id", nullable = false)

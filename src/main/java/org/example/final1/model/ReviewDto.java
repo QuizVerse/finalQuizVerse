@@ -34,11 +34,11 @@ public class ReviewDto {
     private BookDto book;
 
     @Column(name = "review_rate", nullable = false)
-    private int review_rate;
+    private int reviewRate;
 
     @Column(name = "review_date", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp review_date;
+    private Timestamp reviewDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

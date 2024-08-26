@@ -60,8 +60,8 @@ public class TokenService {
         TokenDto tokenDto = getTokenByRefreshToken(refreshToken);
 
         if (tokenDto != null && tokenDto.getExpiryDate() > System.currentTimeMillis()) {
-            int userId = tokenDto.getUser().getUser_id();
-            String userEmail = tokenDto.getUser().getUser_email();
+            int userId = tokenDto.getUser().getUserId();
+            String userEmail = tokenDto.getUser().getUserEmail();
             return jwtTokenProvider.createToken(userId, userEmail);
         } else {
             return null; // 토큰이 유효하지 않거나 만료된 경우

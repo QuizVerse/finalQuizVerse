@@ -22,9 +22,9 @@ public class UserService {
     }
     //회원저장
     public void saveUser(UserDto userDto) {
-        userDto.setUser_provider("local");
-        userDto.setUser_providerid(UUID.randomUUID().toString());
-        userDto.setUser_role("ROLE_USER");
+        userDto.setUserProvider("local");
+        userDto.setUserProviderid(UUID.randomUUID().toString());
+        userDto.setUserRole("ROLE_USER");
         userDaoInter.save(userDto);
 
     }

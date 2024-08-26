@@ -11,7 +11,7 @@ public interface TokenRepository extends JpaRepository<TokenDto,Long> {
 
     TokenDto findByUserAndDeviceId(UserDto user, String deviceId);
 
-    TokenDto findByRefreshToken(String refresh_token);
+    TokenDto findByRefreshToken(String refreshToken);
 
     void deleteByRefreshToken(String refreshToken);
 

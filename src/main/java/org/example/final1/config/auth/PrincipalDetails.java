@@ -39,17 +39,17 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     //해당 유저의 권한을 리턴하는 곳
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(userDto.getUser_role()));
+        return Collections.singletonList(new SimpleGrantedAuthority(userDto.getUserRole()));
     }
 
     @Override
     public String getPassword() {
-        return userDto.getUser_password();
+        return userDto.getUserPassword();
     }
 
     @Override
     public String getUsername() {
-        return userDto.getUser_nickname();
+        return userDto.getUserNickname();
     }
 
     @Override
@@ -79,6 +79,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        return userDto.getUser_email();
+        return userDto.getUserEmail();
     }
 }
