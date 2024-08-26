@@ -3,16 +3,18 @@ import { Button } from "@mui/material";
 import Section from "../../components/Section";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {Sidebar} from "lucide-react";
+import { Sidebar } from "lucide-react";
 import EditSidebar from "../../components/EditSidebar";
-
+import CustomAlert from "../../components/modal/CustomAlert";
 export default function Edit() {
-    // 섹션 목록을 상태로 관리
-    const [sections, setSections] = useState([{ id: 1, title: "", description: "", questions: [{ id: 1, type: 3 }] }]);
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
 
-    /**
-     * @description : 섹션 추가 기능
-     */
+    const [sections, setSections] = useState([
+        { id: 1, title: "", description: "", questions: [{ id: 1, type: 3 }] }
+    ]);
+
     const handleAddSection = () => {
         const newSection = {
             id: sections.length + 1,
@@ -23,27 +25,25 @@ export default function Edit() {
         setSections([...sections, newSection]);
     };
 
-    /**
-     * @description : 섹션 복제 기능
-     */
     const handleDuplicateSection = (index) => {
-        const newSection = { ...sections[index], id: sections.length + 1 };
-        setSections([...sections, newSection]);
+        const duplicatedSection = {
+            ...sections[index],
+            id: sections.length + 1,
+            questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
+        };
+        setSections([...sections, duplicatedSection]);
+        openAlert("섹션이 복제되었습니다.");
     };
 
-    /**
-     * @description : 섹션 삭제 기능
-     */
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
-            const newSections = sections.filter((_, i) => i !== index);
-            setSections(newSections);
+            setSections(sections.filter((_, i) => i !== index));
+            openAlert("섹션이 삭제되었습니다.");
+        } else {
+            openAlert("삭제할 수 없습니다. 섹션은 최소 하나는 있어야 합니다.");
         }
     };
 
-    /**
-     * @description : 섹션 제목 및 설명 업데이트
-     */
     const handleUpdateSection = (index, title, description) => {
         const updatedSections = [...sections];
         updatedSections[index] = {
@@ -56,39 +56,23 @@ export default function Edit() {
 
 
     /**
-     * @description : 질문 추가 기능 (마지막 섹션에 추가)
-     */
-    const handleAddQuestion = () => {
-        setSections((prevSections) => {
-            const lastSectionIndex = prevSections.length - 1;
-            const lastSection = prevSections[lastSectionIndex];
-            const newQuestion = {
-                id: lastSection.questions.length + 1,
-                type: 3,
-            };
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (alertTitle) => {
+        setAlertTitle(alertTitle);
+        setAlertVisible(true);
+    };
 
-            const updatedSections = [...prevSections];
-            updatedSections[lastSectionIndex] = {
-                ...lastSection,
-                questions: [...lastSection.questions, newQuestion],
-            };
-
-            return updatedSections;
-        });
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
     };
 
     return (
         <DndProvider backend={HTML5Backend}>
             <main className="p-24 space-y-4">
-                <div className="flex justify-between">
-                    <div className="flex space-x-2">
-                        <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
-                        <Button variant={"outlined"}>AI 문제 출제</Button>
-                        <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
-                    </div>
-                </div>
-
-                {/* 섹션 리스트 렌더링 */}
                 {sections.map((section, index) => (
                     <Section
                         key={section.id}
@@ -96,14 +80,18 @@ export default function Edit() {
                         title={section.title}
                         description={section.description}
                         questions={section.questions}
-                        onDuplicate={() => handleDuplicateSection(index)}
-                        onDelete={() => handleDeleteSection(index)}
+                        onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
+                        onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
                 ))}
+                <EditSidebar onAddSection={handleAddSection} />
 
-                {/* EditSidebar를 추가하여 섹션 및 질문 추가 기능 연결 */}
-                <EditSidebar onAddSection={handleAddSection} onAddQuestion={handleAddQuestion} />
+                <CustomAlert
+                    title={alertTitle}
+                    openAlert={alertVisible}
+                    closeAlert={closeAlert}
+                />
             </main>
         </DndProvider>
     );
