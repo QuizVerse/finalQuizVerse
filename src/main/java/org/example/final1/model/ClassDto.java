@@ -21,17 +21,17 @@ public class ClassDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id")
-    private int class_id;
+    private int classId;
 
     @Column(name = "class_name", nullable = false, length = 50)
-    private String class_name;
+    private String className;
 
     @Column(name = "class_description", nullable = false, length = 255)
-    private String class_description;
+    private String classDescription;
 
     @Column(name = "class_createdate", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp class_createdate;
+    private Timestamp classCreatedate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

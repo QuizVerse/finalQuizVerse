@@ -19,7 +19,7 @@ public class BookmarkDto {
     @Id
     @GeneratedValue(strategy =GenerationType.IDENTITY)
     @Column(name = "bookmark_id")
-    private int bookmark_id;
+    private int bookmarkId;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)

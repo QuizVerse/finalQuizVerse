@@ -18,19 +18,19 @@ public class SectionDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "section_id")
-    private int section_id;
+    private int sectionId;
 
     @Column(name = "section_number", nullable = false)
-    private int section_number;
+    private int sectionNumber;
 
     @Column(name = "section_title", nullable = false, length = 50)
-    private String section_title;
+    private String sectionTitle;
 
     @Column(name = "section_description", length = 255)
-    private String section_description;
+    private String sectionDescription;
 
     @Column(name = "section_image", length = 255)
-    private String section_image;
+    private String sectionImage;
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)

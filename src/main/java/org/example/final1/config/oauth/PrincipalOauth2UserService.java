@@ -96,12 +96,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         if(userDto==null) {
             System.out.println("OAuth이 최초입니다.");
             userDto=UserDto.builder()
-                    .user_email(user_email)
-                    .user_password(user_password)
-                    .user_nickname(user_nickname)
-                    .user_role(user_role)
-                    .user_provider(user_provider)
-                    .user_providerid(user_providerId)
+                    .userEmail(user_email)
+                    .userPassword(user_password)
+                    .userNickname(user_nickname)
+                    .userRole(user_role)
+                    .userProvider(user_provider)
+                    .userProviderid(user_providerId)
                     .build();
             userDaoInter.save(userDto);
 

@@ -20,12 +20,12 @@ public class NoticeDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
-    private int notice_id;
+    private int noticeId;
 
     @Column(name = "notice_text", nullable = false, length = 255)
-    private String notice_text;
+    private String noticeText;
 
     @Column(name = "notice_date", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp notice_date;
+    private Timestamp noticeDate;
 }

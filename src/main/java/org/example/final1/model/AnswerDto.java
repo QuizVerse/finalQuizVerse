@@ -20,7 +20,7 @@ public class AnswerDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
-    private int answer_id;
+    private int answerId;
 
     @ManyToOne
     @JoinColumn(name = "solvedbook_id", nullable = true)
@@ -30,11 +30,11 @@ public class AnswerDto {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "answer_res", columnDefinition = "json")
-    private String answer_res;
+    private String answerRes;
 
     @Column(name = "answer_correct")
-    private Boolean answer_correct;
+    private Boolean answerCorrect;
 
     @Column(name = "answer_order")
-    private int answer_order;
+    private int answerOrder;
 }
