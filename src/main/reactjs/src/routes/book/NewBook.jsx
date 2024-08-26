@@ -8,13 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 export default function NewBook() {
     // Dropdown state
-    const [category, setCategory] = useState({
-        category_id:1,
-        category_name:"초등",
-    });
+    const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('');
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
-
     const [bookName, setBookName] = useState('');
     const [bookDescription, setBookDescription] = useState('');
     const [totalPoints, setTotalPoints] = useState('');
@@ -24,10 +20,7 @@ export default function NewBook() {
 
     // Handle changes
     const handleCategoryChange = (event) => {
-        categoryList.map((row)=>{
-            if(row.category_id === event.target.value) setCategory(row);
-        })
-        console.log(category);
+        setCategory(event.target.value)
     };
 
     const handleVisibilityChange = (event) => {
@@ -59,11 +52,17 @@ export default function NewBook() {
 
     // Submit new book
     const handleSubmit = () => {
+        let selectedCategory = {};
+        categoryList.map((row)=>{
+            if(row.category_id === category) {
+                selectedCategory = row;
+            }
+        })
         const newBookData = {
             "book_title": bookName,
             "book_description": bookDescription,
             "book_status": 0,
-            "category": category === '' ? null : category,
+            "category": selectedCategory === '' ? null : selectedCategory,
             "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "book_image": coverImage,
             "book_divide": isChecked ? 1 : 0,
@@ -160,8 +159,8 @@ export default function NewBook() {
                             <InputLabel id="category-label">카테고리</InputLabel>
                             <Select
                                 labelId="category-label"
-                                value={category.category_name}
                                 label="카테고리"
+                                value={category}
                                 onChange={handleCategoryChange}
                             >
                                 {categoryList &&
