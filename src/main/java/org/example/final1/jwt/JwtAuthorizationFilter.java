@@ -50,15 +50,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
         //jwt토큰을 검증을해서 정상적인 사용자인지 확인
         String jwtToken=request.getHeader(JwtProperties.HEADER_STRING).replace("Bearer ", "");
-        String user_email= JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().
+        String userEmail= JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().
                 verify(jwtToken).
-                getClaim("user_email").
+                getClaim("userEmail").
                 asString();
         //System.out.println(user_email);
         //서명이 정상적으로됨
-        if(user_email!=null) {
-            UserDto userDto=userDaoInter.findByEmail(user_email);
-            System.out.println(user_email);
+        if(userEmail!=null) {
+            UserDto userDto=userDaoInter.findByEmail(userEmail);
+            System.out.println(userEmail);
             //Jwt 토큰 서명을통해서 서명이 정상이면 Authentication객체를 만들어준다.
             PrincipalDetails principalDetails=new PrincipalDetails(userDto);
             Authentication authentication=new UsernamePasswordAuthenticationToken(principalDetails, null,principalDetails.getAuthorities());
