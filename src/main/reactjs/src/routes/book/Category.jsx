@@ -7,11 +7,20 @@ import React, { useState } from 'react';
 
 const ITEMS_PER_PAGE = 10;
 const SPACING = 2;
-
+//여기서 state 하나 더 만들어주고 이 페이지에서 axios를 사용하여 벡엔드에서 데이터를 불러온다
+// ex) state가 변할때마다 axios 요청을 매번 다시 보내줘야 한다
+// ex) 한번에 다 불러오고 필요한거 찾아가도록 해도 된다 map요청 filter 는 category
 // pagenation할 자료
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
 
 export default function Category() {
+  /* category 내역 불러오기
+    1. 카테고리 state 생성
+    2. url이동시 등록되는 cat 변수에서 값을 가져와 category 변수에 등록하기
+    3. useEffect로 axios요청 보내서 카테고리에 해당하는 값들 불러오기
+  */
+
+
 
   // pagenation에 필요한 변수
   const [page, setPage] = useState(1);
@@ -25,9 +34,9 @@ export default function Category() {
   const handleChange = (event, value) => {
     setPage(value);
     window.scrollTo(0, 0);
-    };
+  };
 
-    return (
+  return (
 
   <main className="p-4">
     <section>

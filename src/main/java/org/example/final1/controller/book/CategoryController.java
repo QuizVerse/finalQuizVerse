@@ -1,12 +1,12 @@
 package org.example.final1.controller.book;
 
 
-import com.amazonaws.Response;
 import lombok.RequiredArgsConstructor;
+
+import org.example.final1.model.BookDto;
 import org.example.final1.model.CategoryDto;
-import org.example.final1.model.ClassDto;
+import org.example.final1.service.BookService;
 import org.example.final1.service.CagtegoryService;
-import org.example.final1.service.NewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +19,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CagtegoryService cagtegoryService;
+    private final BookService bookService;
 
     @PostMapping("/new")
     public ResponseEntity<CategoryDto> newCategory(@RequestBody CategoryDto categoryDto) {
@@ -27,9 +28,13 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
-        List<CategoryDto> list = cagtegoryService.findAllCategory();
-        return ResponseEntity.ok(list);
+    public List<BookDto> getAllBookByCategories(
+        @RequestParam("category") String category
+    ) {
+        CategoryDto dto = cagtegoryService.getCategory(category);
+
+        List<BookDto> list = bookService.getAllBookByCategories(dto);
+        return list;
     }
 
 }
