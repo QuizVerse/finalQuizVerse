@@ -58,6 +58,7 @@ export default function Section({
         if (questions.length > 1) {
             const newQuestions = questions.filter((_, i) => i !== index);
             setQuestions(newQuestions);
+
         }
     };
 
