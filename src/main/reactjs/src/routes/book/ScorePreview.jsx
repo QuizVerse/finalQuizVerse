@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import LoadingModal from "../../components/modal/LoadingModal";
 
 // 페이지 컴포넌트 정의
 const PdfPage = ({ answers }) => (
@@ -143,8 +144,14 @@ export default function ScorePreview() {
     correct: true,
   }));
 
+  // 로딩 모달 상태 관리
+  const [loadingVisible, setLoadingVisible] = useState(false);
+
   // pdf 추출 사이즈를 a4로
   const downloadpdf = async () => {
+    // PDF 생성중 로딩 모달을 표시
+    setLoadingVisible(true);
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -169,9 +176,7 @@ export default function ScorePreview() {
       const container = document.createElement("div");
 
       // PdfPage 컴포넌트를 실제 DOM으로 변환
-      // container = div 엘리먼트
       ReactDOM.render(<PdfPage answers={chunk} />, container);
-      // container 내용을 pdf 출력 화면에 추가
       document.body.appendChild(container);
 
       // 페이지를 캔버스로 변환 (해상도 두배로 높여서)
@@ -206,6 +211,9 @@ export default function ScorePreview() {
     }
 
     pdf.save("우태형_정보처리기사 2024 기출문제 1-2_성적표.pdf");
+
+    // PDF 생성 완료 후 로딩 모달을 닫기
+    setLoadingVisible(false);
   };
 
   return (
@@ -226,6 +234,12 @@ export default function ScorePreview() {
           <PdfPage answers={answers} />
         </section>
       </div>
+
+      {/* LoadingModal 모달 */}
+      <LoadingModal
+        open={loadingVisible} 
+        title="PDF 생성중입니다. 잠시만 기다려주세요." 
+      />
     </div>
   );
 }
