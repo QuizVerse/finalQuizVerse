@@ -18,8 +18,8 @@ public class BookListController {
     }
 
     @GetMapping("/category")
-    public ResponseEntity<List<BookDto>> getBooksByCategory(@RequestParam("cat") int cat) {
-        List<BookDto> books = bookService.getBooksByCategory(cat);
+    public ResponseEntity<List<BookDto>> getBooksByCategory(@RequestParam("id") int id) {
+        List<BookDto> books = bookService.getBooksByCategory(id);
         return ResponseEntity.ok(books);
     }
 }
