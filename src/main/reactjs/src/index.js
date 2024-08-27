@@ -180,7 +180,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: "/book/detail",
+                path: "/book/detail/:book_Id",
                 element: <Detail />,
                 errorElement: <ErrorPage />,
             },

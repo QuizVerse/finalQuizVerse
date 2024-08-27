@@ -2,23 +2,23 @@ package org.example.final1.controller.book;
 
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
-import org.example.final1.service.NewService;
+import org.example.final1.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import storage.NcpObjectStorageService;
+
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
-@RequestMapping("/new")
+@RequestMapping("/book")
 @SuppressWarnings("java:S1220")
 public class NewController {
 
-    private final NewService newService;
+    private final BookService bookService;
 
-    @PostMapping("/newbook")
+    @PostMapping("/newbook") // service에서 작성한 것들을 여기서 매핑해서 사용
     public ResponseEntity<BookDto> newBook(@RequestBody BookDto bookDto) {
-        BookDto savedbook = newService.saveBook(bookDto);
+        BookDto savedbook = bookService.createBook(bookDto);
         return ResponseEntity.ok(savedbook);
     }
 

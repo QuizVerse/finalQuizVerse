@@ -18,6 +18,7 @@ export default function NewBook() {
     const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
 
+
     // Handle changes
     const handleCategoryChange = (event) => {
         setCategory(event.target.value)
@@ -59,17 +60,17 @@ export default function NewBook() {
             }
         })
         const newBookData = {
-            "book_title": bookName,
-            "book_description": bookDescription,
-            "book_status": 0,
+            "bookTitle": bookName,
+            "bookDescription": bookDescription,
+            "bookStatus": 0,
             "category": selectedCategory === '' ? null : selectedCategory,
-            "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
-            "book_image": coverImage,
-            "book_divide": isChecked ? 1 : 0,
-            "book_totalgrade": parseInt(totalPoints, 10) || 0
+            "bookTimer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
+            "bookImage": coverImage,
+            "bookDivide": isChecked ? 1 : 0,
+            "bookTotalgrade": parseInt(totalPoints, 10) || 0
         };
 
-        axios.post('/new/newbook', newBookData)
+        axios.post('/book/newbook', newBookData)
             .then((res) => {
                 console.log(res.data);
                 navigate("/book/edit")
