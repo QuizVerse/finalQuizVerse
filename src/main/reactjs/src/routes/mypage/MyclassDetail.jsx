@@ -1,6 +1,8 @@
 // v0 by Vercel.
 // https://v0.dev/t/QGcuOmSrS3M
 
+import BookCard from "../../components/BookCard";
+
 export default function MyclassDetail() {
   return (
       <main className="flex-1 p-6">
@@ -331,202 +333,42 @@ export default function MyclassDetail() {
           </a>
         </div>
         <div className="grid grid-cols-4 gap-4">
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <div className="p-6">
-              <img
-                src="/placeholder.svg"
-                alt="Thumbnail"
-                className="w-full h-48 mb-4"
-                width="200"
-                height="200"
-              />
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
-                    data-v0-t="badge"
-                  >
-                    문제집
-                  </div>
-                  <span className="text-sm text-muted-foreground">2022.04.27</span>
-                </div>
-                <h3 className="text-lg font-semibold">2024 정보처리기사 실기</h3>
-                <p className="text-sm text-muted-foreground">작성 / 저작물</p>
-                <p className="text-sm text-muted-foreground">
-                  조회수 31 | 좋아요 20 | 해설수 2
-                </p>
-                <div className="flex items-center justify-between">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                    공유하기
-                  </button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="w-4 h-4 text-red-500"
-                  >
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <div className="p-6">
-              <img
-                src="/placeholder.svg"
-                alt="Thumbnail"
-                className="w-full h-48 mb-4"
-                width="200"
-                height="200"
-              />
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
-                    data-v0-t="badge"
-                  >
-                    문제집
-                  </div>
-                  <span className="text-sm text-muted-foreground">2022.04.27</span>
-                </div>
-                <h3 className="text-lg font-semibold">2024 정보처리기사 실기</h3>
-                <p className="text-sm text-muted-foreground">작성 / 저작물</p>
-                <p className="text-sm text-muted-foreground">
-                  조회수 31 | 좋아요 20 | 해설수 2
-                </p>
-                <div className="flex items-center justify-between">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                    공유하기
-                  </button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="w-4 h-4 text-red-500"
-                  >
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <div className="p-6">
-              <img
-                src="/placeholder.svg"
-                alt="Thumbnail"
-                className="w-full h-48 mb-4"
-                width="200"
-                height="200"
-              />
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
-                    data-v0-t="badge"
-                  >
-                    문제집
-                  </div>
-                  <span className="text-sm text-muted-foreground">2022.04.27</span>
-                </div>
-                <h3 className="text-lg font-semibold">2024 정보처리기사 실기</h3>
-                <p className="text-sm text-muted-foreground">작성 / 저작물</p>
-                <p className="text-sm text-muted-foreground">
-                  조회수 31 | 좋아요 20 | 해설수 2
-                </p>
-                <div className="flex items-center justify-between">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                    공유하기
-                  </button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="w-4 h-4 text-red-500"
-                  >
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="rounded-lg border bg-card text-card-foreground shadow-sm"
-            data-v0-t="card"
-          >
-            <div className="p-6">
-              <img
-                src="/placeholder.svg"
-                alt="Thumbnail"
-                className="w-full h-48 mb-4"
-                width="200"
-                height="200"
-              />
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div
-                    className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
-                    data-v0-t="badge"
-                  >
-                    문제집
-                  </div>
-                  <span className="text-sm text-muted-foreground">2022.04.27</span>
-                </div>
-                <h3 className="text-lg font-semibold">2024 정보처리기사 실기</h3>
-                <p className="text-sm text-muted-foreground">작성 / 저작물</p>
-                <p className="text-sm text-muted-foreground">
-                  조회수 31 | 좋아요 20 | 해설수 2
-                </p>
-                <div className="flex items-center justify-between">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                    공유하기
-                  </button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="w-4 h-4 text-red-500"
-                  >
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/> 
         </div>
       </main>
   );

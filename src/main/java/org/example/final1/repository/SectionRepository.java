@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Repository
-public interface SectionRepository extends JpaRepository<SectionDto,Long> {
+public interface SectionRepository extends JpaRepository<SectionDto, Integer> {
 
     public List<SectionDto> findAllByBook(BookDto dto);
 }

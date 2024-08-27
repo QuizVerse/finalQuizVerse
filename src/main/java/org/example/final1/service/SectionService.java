@@ -26,7 +26,7 @@ public class SectionService {
         return sectionRepository.saveAll(sortedSection);
     }
 
-    public void deleteSection(Long id) {
+    public void deleteSection(Integer id) {
         sectionRepository.deleteById(id);
     }
 
