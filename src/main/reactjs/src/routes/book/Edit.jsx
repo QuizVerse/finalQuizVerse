@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Button } from "@mui/material";
 import Section from "../../components/Section";
 import { DndProvider } from "react-dnd";
@@ -9,8 +9,36 @@ import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import SectionSort from "../../components/modal/SectionSort";
 import axios from "axios";
+import {useParams} from "react-router-dom";
 
 export default function Edit() {
+
+    const {bookId} = useParams(); //URL에서 book_Id를 가져옴
+    const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
+    const [loading, setLoading] = useState(true); // 로딩 상태 추가
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // 1. bookId에 해당하는 책 데이터를 가져옴
+                const book = await axios.get(`/book/edit/${bookId}`);
+                setBookData(book.data); // 2. bookData를 상태에 저장
+                console.log(book.data)
+
+                // 3. 책 데이터를 기반으로 섹션 데이터를 가져옴
+                const section = await axios.post(`/section/getall`, book.data);
+                setSections(section.data); // 4. 섹션 데이터를 상태에 저장
+
+                setLoading(false); // 5. 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+            } catch (error) {
+                console.error("Error fetching book data:", error);
+                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, [bookId]);
+
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
@@ -19,18 +47,7 @@ export default function Edit() {
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
     const [sections, setSections] = useState([
-        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }], book : {
-                "bookId": 32,
-                "bookImage": "blob:http://localhost:3000/c007277e-f2fc-4027-a852-00c8f83b1b93",
-                "bookTitle": "test",
-                "bookDescription": "ssdf",
-                "bookStatus": 0,
-                "bookTimer": 0,
-                "user": null,
-                "category": null,
-                "bookDivide": 0,
-                "bookTotalscore": 0
-            } }
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }], book : bookData }
     ]);
 
     // side bar에서 섹션 추가
@@ -144,6 +161,13 @@ export default function Edit() {
         })
     };
 
+    if (loading) {
+        return <div>Loading...</div>; // 로딩 중일 때 표시
+    }
+
+    if (!bookData) {
+        return <div>No data found</div>; // 데이터가 없을 때 표시
+    }
 
     return (
         <DndProvider backend={HTML5Backend}>

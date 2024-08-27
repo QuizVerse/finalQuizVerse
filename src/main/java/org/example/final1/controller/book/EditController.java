@@ -5,6 +5,7 @@ import org.example.final1.model.BookDto;
 import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SectionDto;
+import org.example.final1.service.BookService;
 import org.example.final1.service.ChoiceService;
 import org.example.final1.service.QuestionService;
 import org.example.final1.service.SectionService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,17 @@ public class EditController {
     private final SectionService sectionService;
     private final QuestionService questionService;
     private final ChoiceService choiceService;
+    private final BookService bookService;
+
+    @GetMapping("/edit/{id}")
+    public ResponseEntity<BookDto> getBookDetail(@PathVariable("id") int id) {
+        Optional<BookDto> book = bookService.getBookById(id);
+        if (book.isPresent()) {
+            return ResponseEntity.ok(book.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     /** 섹션 관련 */
     // 섹션 생성
