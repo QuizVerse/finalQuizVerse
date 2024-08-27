@@ -27,4 +27,5 @@ public class LeaveDto {
     @Column(name = "leave_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp leaveDate;
+
 }

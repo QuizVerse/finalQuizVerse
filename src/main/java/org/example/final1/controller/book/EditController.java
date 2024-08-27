@@ -39,7 +39,7 @@ public class EditController {
 
     // 섹션 삭제
     @DeleteMapping("/section/delete/{id}")
-    public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteSection(@PathVariable("id") Integer id) {
         sectionService.deleteSection(id);
         return ResponseEntity.noContent().build();
     }
