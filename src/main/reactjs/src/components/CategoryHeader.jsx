@@ -29,7 +29,7 @@ export default function CategoryHeader() {
                     categoryList.map((row) => (
                         <Button key={row.categoryId}
                             className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
-                            <Link to={`/book/category?cat=${row.category_id}`}>{row.category_name}</Link>
+                            <Link to={"/book/category?cat="+row.categoryId}>{row.categoryName}</Link>
                         </Button>
                     ))
                 }
