@@ -25,11 +25,9 @@ public class QuestionService {
         return questionRepository.save(newQuestion);
     }
 
-<<<<<<< HEAD
-    public void deleteQuestion(Integer id) {
-=======
+
     public void deleteQuestion(int id) {
->>>>>>> 6cc1452ff4f3655b9427488bd100458f3dc0876c
+
         questionRepository.deleteById(id);
     }
 

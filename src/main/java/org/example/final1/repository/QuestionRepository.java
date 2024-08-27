@@ -7,10 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
-@Repository
-
 public interface QuestionRepository extends JpaRepository<QuestionDto,Integer> {
-
     public List<QuestionDto> findAllByBook(BookDto dto);
 }
