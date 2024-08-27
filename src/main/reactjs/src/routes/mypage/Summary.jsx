@@ -130,14 +130,14 @@ export default function Summary() {
                 {currentItems &&
                     currentItems.map((row) => (
                         <TableRow
-                            key={row.class_id}
+                            key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
                         >
                           <TableCell component="th" scope="row">
-                            {row.class_name}
+                            {row.className}
                           </TableCell>
-                          <TableCell>{row.class_description}</TableCell>
-                          <TableCell>{row.class_createdate}</TableCell>
+                          <TableCell>{row.classDescription}</TableCell>
+                          <TableCell>{row.classCreatedate}</TableCell>
                           <TableCell>{row.carbs}</TableCell>
                           <TableCell>{row.protein}</TableCell>
                         </TableRow>
