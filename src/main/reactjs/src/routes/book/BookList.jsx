@@ -25,7 +25,7 @@ export default function BookList() {
         // 각 카테고리의 책 목록 가져오기
         const booksResponses = await Promise.all(
           categories.map(category =>
-            axios.get(`/books/category?cat=${category.categoryId}`).then(response => ([
+            axios.get(`/books/category?cat=${category.category_id}`).then(response => ([
               response.data
             ]))
           )
@@ -69,10 +69,10 @@ export default function BookList() {
             </Link>
           </div>
           <div className="grid grid-cols-5 gap-4">
-            {booksByCategory && booksByCategory.filter(book => book.category_name === categories.category_name).map(book => {
+            {booksByCategory && booksByCategory.filter(book => book.categoryName === categories.categoryName).map(book => {
               return(
               <BookCard
-                key={category.categoryIdId}
+                key={category.categoryId}
                 cardType="A"
                 nickname={book.nickname}
                 createDate={book.createDate}
