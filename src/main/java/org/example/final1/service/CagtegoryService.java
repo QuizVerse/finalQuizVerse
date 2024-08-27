@@ -23,10 +23,6 @@ public class CagtegoryService {
         return categoryRepository.save(category);
     }
 
-    public CategoryDto getCategory(String category) {
-        return categoryRepository.findByCategory_name(category).get(0);
-    }
-
     public List<CategoryDto> findAllCategory() {
         return categoryRepository.findAll();
     }

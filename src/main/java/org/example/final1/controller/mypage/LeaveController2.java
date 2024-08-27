@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class LeaveController {
+public class LeaveController2 {
 
     @Autowired
     private LeaveService leaveService;
@@ -21,7 +21,7 @@ public class LeaveController {
     @PostMapping("/leave-reason")
     public ResponseEntity<String> leave(@RequestBody LeaveDto leaveDto) {
         try {
-            leaveService.saveLeaveReason(leaveDto.getLeave_reason());
+            leaveService.saveLeaveReason(leaveDto.getLeaveReason());
             return ResponseEntity.ok("탈퇴 사유가 성공적으로 저장되었습니다.");
         } catch (Exception e) {
             e.printStackTrace(); // 오류 로그 기록

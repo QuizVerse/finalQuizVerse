@@ -36,7 +36,7 @@ public class EditController {
 
     // 섹션 삭제
     @DeleteMapping("/section/delete/{id}")
-    public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteSection(@PathVariable("id") Integer id) {
         sectionService.deleteSection(id);
         return ResponseEntity.noContent().build();
     }
@@ -58,7 +58,7 @@ public class EditController {
 
     // 질문 삭제
     @DeleteMapping("/question/delete/{id}")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteQuestion(@PathVariable("id") Integer id) {
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }

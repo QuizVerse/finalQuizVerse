@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 
-public interface BookRepository extends JpaRepository<BookDto, Long>{
-    public List<BookDto> findByCategory(CategoryDto category);
+public interface BookRepository extends JpaRepository<BookDto, Integer>{
+    List<BookDto> findByCategory(CategoryDto category);
 }

@@ -13,7 +13,7 @@ public class LeaveService {
 
     public void saveLeaveReason(String reason) {
         LeaveDto leaveDto = new LeaveDto();
-        leaveDto.setLeave_reason(reason);
+        leaveDto.setLeaveReason(reason);
         leaveRepository.save(leaveDto);
     }
 }

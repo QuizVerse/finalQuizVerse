@@ -21,7 +21,7 @@ public class QuestionService {
         return questionRepository.save(newQuestion);
     }
 
-    public void deleteQuestion(Long id) {
+    public void deleteQuestion(Integer id) {
         questionRepository.deleteById(id);
     }
 

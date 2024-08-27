@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Repository
-public interface QuestionRepository extends JpaRepository<QuestionDto,Long> {
+public interface QuestionRepository extends JpaRepository<QuestionDto, Integer> {
 
     public List<QuestionDto> findAllByBook(BookDto dto);
 }
