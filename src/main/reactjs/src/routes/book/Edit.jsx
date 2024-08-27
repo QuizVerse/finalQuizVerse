@@ -191,11 +191,13 @@ export default function Edit() {
                         sectionCount={sections.length}
                         questions={section.questions}
                         openConfirm={openConfirm}
+                        section={section}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
-                ))}
+
+                    ))}
                 <EditSidebar onAddSection={handleAddSection}/>
 
                 <CustomAlert

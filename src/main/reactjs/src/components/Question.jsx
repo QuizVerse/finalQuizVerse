@@ -22,7 +22,7 @@ import QuestionButtons from "./QuestionButtons";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description}) {
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
 
     // Drop 설정: 다른 질문을 드래그하여 이 위치에 놓을 수 있게 설정
@@ -75,7 +75,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const [visibility, setVisibility] = useState(''); // 문제 형식 선택
     const [answers, setAnswers] = useState([]); // 답안 리스트 관리
     const [questionTitle, setQuestionTitle] = useState(''); // 문제 제목
-    const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 관리
+    const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
@@ -126,7 +126,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                 <DragHandleIcon/> {/* 드래그 핸들 아이콘 */}
             </div>
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{questionTitle || "문제 질문"}</Typography>
+                <Typography variant="h5">{title || "문제 질문"}</Typography>
                 <div>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
@@ -141,7 +141,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             label={"문제 질문"}
                             placeholder="질문을 입력하세요."
                             variant={"standard"}
-                            value={questionTitle}
+                            value={title}
                             onChange={(e) => setQuestionTitle(e.target.value)}
                         />
 
@@ -168,7 +168,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 label={"문제 설명"}
                                 placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
                                 variant={"standard"}
-                                value={questionDesc}
+                                value={description}
                                 onChange={(e) => setQuestionDesc(e.target.value)}
                             />
                             <IconButton>

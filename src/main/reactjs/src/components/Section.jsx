@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material";
@@ -8,6 +8,7 @@ import LoopIcon from '@mui/icons-material/Loop';
 import CustomConfirm from "./modal/CustomConfirm";
 import SectionSort from "./modal/SectionSort";
 import Question from "./Question";
+import axios from "axios";
 
 export default function Section({
                                     index,
@@ -17,8 +18,12 @@ export default function Section({
                                     onDuplicate,
                                     onDelete,
                                     openConfirm,
-                                    onUpdateSection
+                                    onUpdateSection,
+                                    section
                                 }) {
+
+
+
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -32,7 +37,28 @@ export default function Section({
     };
 
     // 상태로 관리되는 질문 리스트
-    const [questions, setQuestions] = useState([{id: 1, type: 3}]);
+    const [questions, setQuestions] = useState([ {
+        questionText: "What is the capital of France?",
+        questionDescription: "This question is about the capitals of European countries.",
+        questionDescriptionimage: "description_image_url.jpg",
+        questionSolution: "The capital of France is Paris.",
+        questionSolutionimage: "solution_image_url.jpg",
+    }]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                axios.post(`/book/question/getallbysection`, section).then((res)=>{
+                    setQuestions(res.data);
+                });
+
+            } catch (error) {
+                console.error("Error fetching book data:", error);
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, []);
 
     /**
      * @description : 새로운 질문 추가
@@ -141,6 +167,8 @@ export default function Section({
                     key={question.id}
                     index={index}
                     type={question.type}
+                    title={question.questionText}
+                    description={question.questionDescription}
                     totalQuestions={questions.length}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}

@@ -101,6 +101,13 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    // 섹션으로 질문 불러오기
+    @PostMapping("/question/getallbysection")
+    public ResponseEntity<List<QuestionDto>> getAllQuestionsBySection(@RequestBody SectionDto section) {
+        List<QuestionDto> list = questionService.getAllQuestionsBySection(section);
+        return ResponseEntity.ok(list);
+    }
+
     // 질문 모두 불러오기
     @PostMapping("/question/getall")
     public ResponseEntity<List<QuestionDto>> getAllQuestions(@RequestBody BookDto book) {
