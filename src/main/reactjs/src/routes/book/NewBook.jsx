@@ -67,7 +67,8 @@ export default function NewBook() {
             "bookTimer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "bookImage": coverImage,
             "bookDivide": isChecked ? 1 : 0,
-            "bookTotalgrade": parseInt(totalPoints, 10) || 0
+            "bookTotalscore": parseInt(totalPoints, 10) || 0,
+            // "bookCreateDate": creationDate
         };
 
         axios.post('/book/newbook', newBookData)
@@ -111,6 +112,22 @@ export default function NewBook() {
             setCategoryList(res.data);
         })
     }
+    // const getDataList = () => {
+    //     axios.get('/category/list')
+    //         .then(res => {
+    //             setCategoryList(res.data);
+    //         })
+    //         .catch(err => {
+    //             console.error(err);
+    //         });
+    // };
+
+    // // 현재 시간을 ISO 형식으로 반환하는 함수
+    // const getCurrentTime = () => {
+    //     return new Date().toISOString();
+    // };
+    // // 현재 시간을 생성일자로 설정
+    // const creationDate = getCurrentTime();
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
