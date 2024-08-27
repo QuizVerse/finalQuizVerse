@@ -18,7 +18,7 @@ public class BookDetailController {
     private final BookService bookService;
 
     @GetMapping("{id}")
-    public ResponseEntity<BookDto> getBookDetail(@PathVariable Long id) {
+    public ResponseEntity<BookDto> getBookDetail(@PathVariable int id) {
         Optional<BookDto> book = bookService.getBookById(id);
         if (book.isPresent()) {
             return ResponseEntity.ok(book.get());

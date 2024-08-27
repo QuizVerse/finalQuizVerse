@@ -7,9 +7,38 @@ import W from "../../image/W.jpg";
 import E from "../../image/E.jpg";
 import R from "../../image/R.jpg";
 import {Link} from "react-router-dom";
-import {Button} from "@mui/material";
+import {Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import Paper from '@mui/material/Paper';
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+
+const ITEMS_PER_PAGE = 10;
+const SPACING = 2;
 
 export default function Summary() {
+  const [classList,setClassList]=useState([]);
+  const [page, setPage] = useState(1);
+
+  const itemOffset = (page - 1) * ITEMS_PER_PAGE;
+  const currentItems = classList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(classList.length / ITEMS_PER_PAGE);
+  
+  //처음 딱 한번 목록 가져오기
+  useEffect(()=>{
+    getDataList();
+  },[]);
+
+  const getDataList=()=>{
+      axios({
+        method:'get',
+        url:'/myclass/list',
+      }).then(res=>{
+        console.log(res);
+        setClassList(res.data);
+      })
+  }
+
   return (
       <main className="flex-1 p-8">
         <section className="mb-8">
@@ -85,7 +114,39 @@ export default function Summary() {
           </div>
         </section>
         <section>
-          <h2 className="mb-4 text-2xl font-bold">나의 클래스</h2>
+        <TableContainer component={Paper}>
+            <Table sx={{minWidth: 650}} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>이름</TableCell>
+                  <TableCell>구성원수</TableCell>
+                  <TableCell>가입일시</TableCell>
+                  <TableCell>생성일시</TableCell>
+                  <TableCell>상태</
+                  TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {currentItems &&
+                    currentItems.map((row) => (
+                        <TableRow
+                            key={row.classId}
+                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                        >
+                          <TableCell component="th" scope="row">
+                            {row.className}
+                          </TableCell>
+                          <TableCell>{row.classDescription}</TableCell>
+                          <TableCell>{row.classCreatedate}</TableCell>
+                          <TableCell>{row.carbs}</TableCell>
+                          <TableCell>{row.protein}</TableCell>
+                        </TableRow>
+                    ))
+                }
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* <h2 className="mb-4 text-2xl font-bold">나의 클래스</h2>
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">
               <thead className="[&amp;_tr]:border-b">
@@ -163,7 +224,7 @@ export default function Summary() {
               </tr>
               </tbody>
             </table>
-          </div>
+          </div> */}
         </section>
       </main>
   );

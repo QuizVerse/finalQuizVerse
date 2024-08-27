@@ -1,7 +1,11 @@
 package org.example.final1.service;
 
+import java.util.List;
+
 import org.example.final1.model.BookDto;
+import org.example.final1.model.CategoryDto;
 import org.example.final1.repository.BookRepository;
+import org.example.final1.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,18 +16,30 @@ import java.util.Optional;
 @Service
 public class BookService {
 
-    private final BookRepository bookRepository; // Repository를 변수로 불러오기(Dao 와 비슷함)
+    private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired // 스프링이 BookRepository를 자동으로 주입
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
+    public List<BookDto> getBooksByCategory(Integer categoryId) {
+        // 카테고리가 존재하는지 확인
+        CategoryDto category = categoryRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            throw new IllegalArgumentException("Invalid category ID");
+        }
+
+        // 카테고리에 속하는 책들을 조회
+        return bookRepository.findByCategory(category);
     }
 
     public BookDto createBook(BookDto newbook) {
         return bookRepository.save(newbook);
     }
 
-    public Optional<BookDto> getBookById(Long id) {
+    public Optional<BookDto> getBookById(int id) {
         return bookRepository.findById(id);
     }
 

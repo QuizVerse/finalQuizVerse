@@ -24,16 +24,15 @@ export default function MainHeader() {
         }
     }, []);
 
-    const handleLogout = () => {
-        // Remove token from localStorage
-        localStorage.removeItem('token');
+    const handleLogout = async() => {
+        try {
+            const jwtToken=Cookies.get('jwtToken')
 
-        // Remove token from cookies
-        Cookies.remove('jwtToken');
 
-        setIsLoggedIn(false);
-        navi('/');
-    }
+        }catch(error){
+
+        }
+    };
 
 
     return (
