@@ -8,15 +8,21 @@ import EditSidebar from "../../components/EditSidebar";
 import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import SectionSort from "../../components/modal/SectionSort";
+import axios from "axios";
+
 export default function Edit() {
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
+    // sectionSort Alert state
+    const [sectionSortVisible, setSectionSortVisible] = useState(false);
+
     const [sections, setSections] = useState([
-        { id: 1, title: "", description: "", questions: [{ id: 1, type: 3 }] }
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }] }
     ]);
 
+    // side bar에서 섹션 추가
     const handleAddSection = () => {
         const newSection = {
             id: sections.length + 1,
@@ -27,6 +33,7 @@ export default function Edit() {
         setSections([...sections, newSection]);
     };
 
+    // 섹션 복제
     const handleDuplicateSection = (index) => {
         const duplicatedSection = {
             ...sections[index],
@@ -37,10 +44,12 @@ export default function Edit() {
         openAlert("섹션이 복제되었습니다.");
     };
 
+    // 섹션 삭제
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
-            setSections(sections.filter((_, i) => i !== index));
-            openAlert("섹션이 삭제되었습니다.");
+            setDeleteConfirmId(14);
+            setDeleteSectionIndex(index);
+            openConfirm();
         } else {
             openAlert("삭제할 수 없습니다. 섹션은 최소 하나는 있어야 합니다.");
         }
@@ -56,7 +65,6 @@ export default function Edit() {
         setSections(updatedSections);
     };
 
-
     /**
      * @description : Alert창 열릴 때
      * */
@@ -70,32 +78,40 @@ export default function Edit() {
      * */
     const closeAlert = () => {
         setAlertVisible(false);
+        setSectionSortVisible(false);
     };
 
-
     // confirm state
-    const [confirmVisible, setConfirmVisible] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(0);
+    const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     /**
      * @description : Confirm창 열릴 때
      * */
     const openConfirm = () => {
-        setConfirmVisible(true);
+        setDeleteConfirm(true);
     };
 
     /**
      * @description : 취소 버튼 클릭시 실행되는 로직
      * */
     const clickBtn1 = () => {
-        setConfirmVisible(false);
+        setDeleteConfirm(false);
+        setDeleteSectionIndex('');
     };
 
     /**
      * @description : 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
+        setDeleteConfirm(false);
 
-        setConfirmVisible(false);
+        if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
+            setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+        } else if(deleteConfirmId === 15) {
+
+        }
     };
 
 
@@ -104,6 +120,27 @@ export default function Edit() {
         // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
     };
 
+    // 출제하기 버튼 클릭 시 실행되는 로직 추가
+    const handlePublish = () => {
+
+        axios({
+            method:'post',
+            url:'/book/section/saveall',
+            data: sections,
+        }).then(res=>{
+            console.log(res)
+            setSections('');
+        })
+
+        // 섹션과 질문들을 저장하는 로직
+        // 이 부분에서 API 호출이나 필요한 상태 업데이트를 통해 데이터를 저장합니다.
+        // 예시:
+        // api.saveSections(sections)
+        //   .then(response => openAlert("출제가 완료되었습니다."))
+        //   .catch(error => openAlert("출제 중 오류가 발생했습니다."));
+    };
+
+
     return (
         <DndProvider backend={HTML5Backend}>
             <main className="p-24 space-y-4">
@@ -111,7 +148,11 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
                         <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-                        <Button variant={"contained"} onClick={() => console.log("출제하기")}>출제하기</Button>
+
+                        {/**
+                         * @todo : 출제하기 버튼을 누르면 section과 question이 모두 저장되기
+                         */}
+                        <Button variant={"contained"}  onClick={handlePublish}>출제하기</Button>
                     </div>
                 </div>
 
@@ -137,17 +178,23 @@ export default function Edit() {
                     closeAlert={closeAlert}
                 />
 
-
-                {/* 섹션 재정렬 Confirm */}
-                <CustomConfirm
-                    id={7}
+                {/* 섹션 재정렬 Alert */}
+                <CustomAlert
+                    title={"섹션 재정렬"}
                     content={
                         <SectionSort
                             sortData={sections}
                             onSortChange={handleSortChange}
                         />
                     }
-                    openConfirm={confirmVisible}
+                    openAlert={sectionSortVisible}
+                    closeAlert={closeAlert}
+                ></CustomAlert>
+
+                {/* 삭제 Confirm */}
+                <CustomConfirm
+                    id={deleteConfirmId} // 섹션삭제 : 14, 문제삭제 : 15
+                    openConfirm={deleteConfirm}
                     clickBtn1={clickBtn1}
                     clickBtn2={clickBtn2}
                 ></CustomConfirm>
