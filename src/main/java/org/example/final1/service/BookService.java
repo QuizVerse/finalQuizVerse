@@ -6,7 +6,12 @@ import org.example.final1.model.BookDto;
 import org.example.final1.model.CategoryDto;
 import org.example.final1.repository.BookRepository;
 import org.example.final1.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import storage.NcpObjectStorageService;
+
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -29,4 +34,13 @@ public class BookService {
         // 카테고리에 속하는 책들을 조회
         return bookRepository.findByCategory(category);
     }
+
+    public BookDto createBook(BookDto newbook) {
+        return bookRepository.save(newbook);
+    }
+
+    public Optional<BookDto> getBookById(int id) {
+        return bookRepository.findById(id);
+    }
+
 }
