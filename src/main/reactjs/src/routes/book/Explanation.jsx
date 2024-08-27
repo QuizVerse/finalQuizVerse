@@ -1,113 +1,125 @@
 // v0 by Vercel.
 // https://v0.dev/t/eqToGYA3tGX
 
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { useNavigate } from "react-router-dom";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import PanoramaFishEyeOutlinedIcon from "@mui/icons-material/PanoramaFishEyeOutlined";
+import { Button } from "@mui/material";
+import { useState } from "react";
+
 export default function Explanation() {
-    return (
-        <div className="w-full max-w-4xl mx-auto p-4">
-        <header className="flex items-center justify-between border-b pb-2 mb-4">
-            <div className="flex items-center space-x-2">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6"
-            >
-                <path d="m12 19-7-7 7-7"></path>
-                <path d="M19 12H5"></path>
-            </svg>
-            <span className="text-lg font-medium">홍길동</span>
-            </div>
-            <div className="flex items-center space-x-4">
-            <span className="text-sm">16/20 문항</span>
-            <span className="text-sm">80점</span>
-            </div>
-        </header>
-        <main>
-            <section className="mb-8">
-            <div className="flex items-center space-x-2 mb-4">
-                <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 text-lg"
-                data-v0-t="badge"
-                >
-                Q1
-                </div>
-                <h2 className="text-lg font-bold">단답형 문제입니다. 문제 내용이 이렇게 어려운데 풀 수 있습니까?</h2>
-            </div>
-            <p className="mb-4">
-                문제 설명입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-                구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서
-                이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일
-                예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-                구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서
-                이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일
-                예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-            </p>
+  const navigate = useNavigate();
+
+  // 버튼의 show/hide 상태
+  const [showAnswer, setShowAnswer] = useState({
+    myanswer: false,
+    answer: false,
+  });
+
+  // 버튼 눌렀을 때 답안 show 상태
+  const showContent = (btn) => {
+    setShowAnswer((prevState) => ({
+      ...prevState,
+      [btn]: !prevState[btn],
+    }));
+  };
+
+  //  문제 개수를 5개로 지정
+  const questions = Array.from({ length: 5 }, (_, index) => ({
+    Number: `Q${index + 1}.`,
+    que: `제목 ${index + 1}222233333333333`,
+    content: `내용 ${index}22${index}`,
+    correct: true,
+  }));
+
+  return (
+    <div className="w-full  mx-auto p-4">
+      {/* 헤더 */}
+      <header className="flex items-center justify-between p-4 bg-gray-200 pr-4">
+        <div className="flex items-center space-x-4">
+          <KeyboardArrowLeftIcon fontSize="large" onClick={() => navigate("/book/score")} />
+          <div className="flex items-center gap-2 pr-4">
             <img
-                src="/placeholder.svg"
-                alt="Example"
-                className="mx-auto mb-4"
-                width="300"
-                height="200"
+              className="aspect-square h-full w-full"
+              alt="User Avatar"
+              src="/placeholder-user.jpg"
+              style={{ width: "30px", height: "30px" }}
             />
-            <div className="flex space-x-2 mb-4">
-                <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                나의 답안
-                </button>
-                <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-                정답
-                </button>
-            </div>
-            <div className="mb-4">
-                <h3 className="text-lg font-bold">&lt;해설&gt;</h3>
-                <textarea
-                className="flex rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full min-h-[100px]"
-                placeholder="해설내용"
-                ></textarea>
-            </div>
-            </section>
-            <section>
-            <div className="flex items-center space-x-2 mb-4">
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-                >
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-                </svg>
-                <h2 className="text-lg font-bold">단답형 문제입니다. 문제 내용이 이렇게 어려운데 풀 수 있습니까?</h2>
-            </div>
-            <p className="mb-4">
-                문제 설명입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-                구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서
-                이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일
-                예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-                구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서
-                이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일
-                예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다. 구구절절 길어서 이렇게 길게 보일 예정입니다.
-            </p>
-            <img
-                src="/placeholder.svg"
-                alt="Example"
-                className="mx-auto mb-4"
-                width="300"
-                height="200"
-            />
-            </section>
-        </main>
+            <span>홍길동</span>
+          </div>
+
+          <div className="flex items-center gap-2  pr-4">
+            <MenuBookIcon />
+            <span>16/20 문항</span>
+          </div>
+          <div className="flex items-center gap-2  pr-4">
+            <CheckCircleOutlineIcon />
+            <span>80점</span>
+          </div>
         </div>
-    )
+        <h1 className="text-xl font-bold items-end">정보처리기사 기출문제</h1>
+      </header>
+
+      {/* 문제 해설 */}
+      <main>
+        <section className="mb-8">
+          <div className="container mx-auto px-4 mt-8 mb-4">
+            {questions.map((questions, index) => (
+              <div key={index} className="p-4 mb-4 rounded-lg shadow-sm">
+                <div className="flex flex-col space-y-2 mb-4">
+                  <div className="flex items-center space-x-2">
+                    {questions.correct ? (
+                      <PanoramaFishEyeOutlinedIcon
+                        color="success"
+                        fontSize="large"
+                      />
+                    ) : (
+                      <CloseOutlinedIcon color="warning" fontSize="large" />
+                    )}
+
+                    <p className="font-bold text-lg">{questions.Number}</p>
+                    <p className="fibt-bold text-lg">{questions.que}</p>
+                  </div>
+                </div>
+                <p className="text-lg">{questions.content}</p>
+                <img src="./image/E.jpg" alt="explanation-example" />
+                <div className="flex flex-col space-y-4 mt-4">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outlined"
+                      className="w-24"
+                      onClick={() => showContent("myanswer")}
+                    >
+                      나의 답안
+                    </Button>
+                    {showAnswer.myanswer && <div className="pl-4"> 3 </div>}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="contained"
+                      className="w-24"
+                      onClick={() => showContent("answer")}
+                    >
+                      정답
+                    </Button>
+                    {showAnswer.answer && <div className="pl-4">5 </div>}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold py-3">해설</h3>
+                  <textarea
+                    className="flex rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full min-h-[100px]"
+                    placeholder="해설내용"
+                  ></textarea>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
 }
