@@ -21,13 +21,11 @@ export default function Edit() {
         const fetchData = async () => {
             try {
                 // 1. bookId에 해당하는 책 데이터를 가져옴
-                const book = await axios.get(`/book/edit/${bookId}`);
-                setBookData(book.data); // 2. bookData를 상태에 저장
-                console.log(book.data)
-
-                // 3. 책 데이터를 기반으로 섹션 데이터를 가져옴
-                const section = await axios.post(`/section/getall`, book.data);
-                setSections(section.data); // 4. 섹션 데이터를 상태에 저장
+                const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
+                    console.log(res)
+                    setBookData(res.data.book);
+                    setSections(res.data.sections);
+                });
 
                 setLoading(false); // 5. 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
