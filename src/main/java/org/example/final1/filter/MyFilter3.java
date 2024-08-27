@@ -23,10 +23,10 @@ public class MyFilter3 implements Filter{
 
 
         if(req.getMethod().equals("POST")) {
-            System.out.println("POST요청됨");
+           /* System.out.println("POST요청됨");*/
             String headerAuth=req.getHeader("Authorization");
             System.out.println(headerAuth);
-            System.out.println("필터3");
+          /*  System.out.println("필터3");*/
 
 
             if(headerAuth.equals("quizverse")) {
