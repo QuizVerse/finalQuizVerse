@@ -89,7 +89,7 @@ export default function Summary() {
                 className="rounded-lg border bg-card text-card-foreground shadow-sm flex items-center justify-center space-x-4"
                 data-v0-t="card" variant={"outlined"}
             >
-              <Link to={"/book/edit"} className={"flex justify-center items-center w-full h-full"}>
+              <Link to={"/book/new"} className={"flex justify-center items-center w-full h-full"}>
               <div className="p-6 flex-1 flex flex-col items-center">
                   <div className="text-lg font-semibold">문제집 추가</div>
                   <div className="text-3xl font-bold">+</div>

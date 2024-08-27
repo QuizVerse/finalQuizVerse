@@ -19,15 +19,26 @@ export default function Edit() {
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
     const [sections, setSections] = useState([
-        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }] }
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }], book : {
+                "bookId": 32,
+                "bookImage": "blob:http://localhost:3000/c007277e-f2fc-4027-a852-00c8f83b1b93",
+                "bookTitle": "test",
+                "bookDescription": "ssdf",
+                "bookStatus": 0,
+                "bookTimer": 0,
+                "user": null,
+                "category": null,
+                "bookDivide": 0,
+                "bookTotalscore": 0
+            } }
     ]);
 
     // side bar에서 섹션 추가
     const handleAddSection = () => {
         const newSection = {
-            id: sections.length + 1,
-            title: "",
-            description: "",
+            sectionNumber: sections.length + 1,
+            sectionTitle: "",
+            sectionDescription: "",
             questions: [{ id: 1, type: 3 }]
         };
         setSections([...sections, newSection]);
@@ -37,7 +48,7 @@ export default function Edit() {
     const handleDuplicateSection = (index) => {
         const duplicatedSection = {
             ...sections[index],
-            id: sections.length + 1,
+            sectionNumber: sections.length + 1,
             questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
         setSections([...sections, duplicatedSection]);
@@ -59,8 +70,8 @@ export default function Edit() {
         const updatedSections = [...sections];
         updatedSections[index] = {
             ...updatedSections[index],
-            title: title,
-            description: description
+            sectionTitle: title,
+            sectionDescription: description
         };
         setSections(updatedSections);
     };
@@ -131,13 +142,6 @@ export default function Edit() {
             console.log(res)
             setSections('');
         })
-
-        // 섹션과 질문들을 저장하는 로직
-        // 이 부분에서 API 호출이나 필요한 상태 업데이트를 통해 데이터를 저장합니다.
-        // 예시:
-        // api.saveSections(sections)
-        //   .then(response => openAlert("출제가 완료되었습니다."))
-        //   .catch(error => openAlert("출제 중 오류가 발생했습니다."));
     };
 
 
@@ -156,12 +160,12 @@ export default function Edit() {
                     </div>
                 </div>
 
-                {sections.map((section, index) => (
+                {sections && sections.map((section, index) => (
                     <Section
-                        key={section.id}
+                        key={section.sectionNumber}
                         index={index}
-                        title={section.title}
-                        description={section.description}
+                        title={section.sectionTitle}
+                        description={section.sectionDescription}
                         sectionCount={sections.length}
                         questions={section.questions}
                         openConfirm={openConfirm}
