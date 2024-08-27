@@ -3,7 +3,7 @@ package org.example.final1.service;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.CategoryDto;
 import org.example.final1.repository.CategoryRepository;
-import org.example.final1.repository.NewRepository;
+import org.example.final1.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
