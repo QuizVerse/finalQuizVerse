@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import BookCard from "../../components/BookCard";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import Q from "../../image/Q.jpg";
-import W from "../../image/W.jpg";
-import E from "../../image/E.jpg";
-import R from "../../image/R.jpg";
 
 const ITEMS_PER_PAGE = 8; // 페이지당 출력할 아이템 수
 const SPACING = 2;
@@ -13,16 +9,16 @@ const SPACING = 2;
 export default function PublishedBook() {
   // BookCard에 표시될 아이템 데이터 배열
   const items = [
-    { photo: Q, createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
-    { photo: W, createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
-    { photo: E, createDate: "2001-01-30", nickname: "장나영", title: "E", category: "기타 / 메인기타" },
-    { photo: R, createDate: "2000-05-16", nickname: "이시연", title: "R", category: "보컬 / 서브기타" },
-    { photo: R, createDate: "2000-05-16", nickname: "이시연", title: "R", category: "보컬 / 서브기타" },
-    { photo: E, createDate: "2001-01-30", nickname: "장나영", title: "E", category: "기타 / 메인기타" },
-    { photo: W, createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
-    { photo: Q, createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
-    { photo: W, createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
-    { photo: Q, createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
+    { photo: "", createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
+    { photo: "", createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
+    { photo: "", createDate: "2001-01-30", nickname: "장나영", title: "E", category: "기타 / 메인기타" },
+    { photo: "", createDate: "2000-05-16", nickname: "이시연", title: "R", category: "보컬 / 서브기타" },
+    { photo: "", createDate: "2000-05-16", nickname: "이시연", title: "R", category: "보컬 / 서브기타" },
+    { photo: "", createDate: "2001-01-30", nickname: "장나영", title: "E", category: "기타 / 메인기타" },
+    { photo: "", createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
+    { photo: "", createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
+    { photo: "", createDate: "1997-06-02", nickname: "이아희", title: "W", category: "베이스 / 4줄기타" },
+    { photo: "", createDate: "1998-11-01", nickname: "홍지혜", title: "Q", category: "드럼 / 리다" },
   ];
 
   // 페이지 관리

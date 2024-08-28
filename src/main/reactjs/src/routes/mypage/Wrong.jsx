@@ -4,11 +4,7 @@
 import React, { useState } from 'react';
 import { Stack, Pagination } from "@mui/material";
 import BookCard from "../../components/BookCard";
-import Q from "../../image/Q.jpg";
-import W from "../../image/W.jpg";
-import E from "../../image/E.jpg";
-import R from "../../image/R.jpg";
-import K from "../../image/K.jpg";
+
 
 const ITEMS_PER_PAGE = 8; // 한 페이지에 표시할 아이템 수
 const SPACING = 2; // 페이지네이션 버튼 간의 간격
@@ -16,7 +12,7 @@ const SPACING = 2; // 페이지네이션 버튼 간의 간격
 export default function Wrong() {
   // 데이터 배열 생성: 반복되는 이미지와 내용을 포함
   const items = Array.from({ length: 20 }, (_, index) => {
-    const images = [Q, W, E, R, K]; // 반복할 이미지 배열
+    const images = []; // 반복할 이미지 배열
     const titles = ["홍지혜", "이아희", "장나영", "이시연", "규진"];
     const categories = ["카", "테", "고", "리"];
     const nicknames = ["엔믹스", "QWER"];

@@ -12,10 +12,7 @@ export default function EditAi() {
             const message = await CallGpt({
                 prompt: userInput,
             });
-
-            // 문제 데이터를 객체로 변환
-            const parsedData = parseResponse(message);
-            setData(parsedData);
+            const jsonData=parseDataToJson(message);
         } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
         } finally {
@@ -23,20 +20,7 @@ export default function EditAi() {
         }
     };
 
-    // 받은 응답을 문제 객체의 배열로 파싱하는 함수
-    const parseResponse = (message) => {
-        const problemBlocks = message.trim().split("[Title]:").slice(1); // 첫 번째 빈 항목 제거
-        return problemBlocks.map((block, index) => {
-            const lines = block.trim().split("\n").filter(line => line.trim() !== "");
-            const problemData = {};
-            lines.forEach(line => {
-                const [key, ...rest] = line.split(":");
-                problemData[key.trim()] = rest.join(":").trim();
-            });
-            problemData["Number"] = index + 1; // 문제 번호 추가
-            return problemData;
-        });
-    };
+
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -90,25 +74,7 @@ export default function EditAi() {
                         {isLoading ? (
                             <p>로딩 중...</p>
                         ) : (
-                            Array.isArray(data) && data.length > 0 ? (
-                                data.map((question, index) => (
-                                    <div key={index} className="mb-4">
-                                        <h2 className="text-xl font-bold mb-2">{question.Title}</h2>
-                                        <p className="text-gray-600 mb-2">Number: {question.Number}</p>
-                                        <p className="mb-2">{question.Summary}</p>
-                                        <p className="mb-4">{question.Problem}</p>
-                                        <ul className="list-disc pl-5 mb-4">
-                                            {question.Questionnaire && question.Questionnaire.split(" ").map((option, i) => (
-                                                <li key={i}>{option}</li>
-                                            ))}
-                                        </ul>
-                                        <p className="text-green-600"><strong>Answer:</strong> {question.Answer}</p>
-                                        <p className="text-gray-500"><strong>Explanation:</strong> {question.Description}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>올바른 데이터 형식이 아닙니다.</p>
-                            )
+                            <pre className="whitespace-pre-wrap">{data}</pre>
                         )}
                     </div>
                     <div className="mt-4 flex items-start space-x-4">

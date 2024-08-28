@@ -2,12 +2,12 @@ export const CallGpt = async ({ prompt }) => {
     const messages = [
         {
             role: "system",
-            content: `You are an expert exam creator. Based on the provided subject, generate a high school English exam with multiple questions. Each question should be formatted as follows:`,
+            content: `You are an expert exam creator. Based on the provided prompt, generate an exam with multiple questions. Each question should be formatted as follows:`,
         },
         {
             role: "user",
             content: `
-            1. [Title]: After understanding [SUBJECT] separated by """ at the bottom, think about the title of TEST.
+            1. [Title]: After understanding [prompt] separated by """ at the bottom, think about the title of TEST.
             2. [Summary]: Summarize the test content in one sentence.
             3. [Problem]: Questions are presented based on [subject].
             4. [Number]: Write down the problem number.
@@ -25,7 +25,7 @@ export const CallGpt = async ({ prompt }) => {
             [Problem Type]:Problem Type
             [Questionnaire]:Questionnaire
             [Answer]:Answer
-            [Description]:Description
+            [Explanation]:Explanation
             
             Repeat this structure for each question.`,
         },
