@@ -89,7 +89,9 @@ public class EditController {
 
     // 질문 삭제
     @DeleteMapping("/question/delete/{id}")
+
     public ResponseEntity<Void> deleteQuestion(@PathVariable("id") int id) {
+
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
