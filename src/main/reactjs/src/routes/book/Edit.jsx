@@ -45,7 +45,7 @@ export default function Edit() {
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
     const [sections, setSections] = useState([
-        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }], book : bookData }
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", book : bookData }
     ]);
 
     // side bar에서 섹션 추가
@@ -64,7 +64,7 @@ export default function Edit() {
         const duplicatedSection = {
             ...sections[index],
             sectionNumber: sections.length + 1,
-            questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
+            // questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
         setSections([...sections, duplicatedSection]);
         openAlert("섹션이 복제되었습니다.");
@@ -134,14 +134,7 @@ export default function Edit() {
         setDeleteConfirm(false);
 
         if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
-            const id = sections[deleteSectionIndex].sectionId;
             setSections(sections.filter((_, i) => i !== deleteSectionIndex));
-            axios({
-                method:'delete',
-                url:'/book/section/delete/'+id,
-            }).then(res=>{
-                console.log(res)
-            })
         } else if(deleteConfirmId === 15) {
 
         }
@@ -178,7 +171,7 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
                         <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-                        <Button variant={"contained"}  onClick={handlePublish}>출제하기</Button>
+                        <Button variant={"contained"} onClick={handlePublish}>출제하기</Button>
                     </div>
                 </div>
 
@@ -192,6 +185,7 @@ export default function Edit() {
                         questions={section.questions}
                         openConfirm={openConfirm}
                         section={section}
+                        book={bookData}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}

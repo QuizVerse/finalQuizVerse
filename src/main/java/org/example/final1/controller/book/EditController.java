@@ -27,6 +27,8 @@ public class EditController {
     private final ChoiceService choiceService;
     private final BookService bookService;
 
+
+    /** 페이지 관련 */
     @GetMapping("/edit/{id}")
     public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
         Optional<BookDto> bookOpt = bookService.getBookById(id);
@@ -49,6 +51,19 @@ public class EditController {
         }
     }
 
+
+    // 섹션, 질문 모두 저장
+    @PostMapping("/edit/saveall")
+    public ResponseEntity<Map<String, Object>> saveSections(@RequestBody List<SectionDto> sectionList,  @RequestBody List<QuestionDto> questionList) {
+        List<SectionDto> sections = sectionService.saveSections(sectionList);
+        List<QuestionDto> questions = questionService.saveQuestions(questionList);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("sections", sections);
+        response.put("questions", questions);
+
+        return ResponseEntity.ok(response);
+    }
 
     /** 섹션 관련 */
     // 섹션 생성

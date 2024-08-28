@@ -20,17 +20,17 @@ export default function Section({
                                     onDelete,
                                     openConfirm,
                                     onUpdateSection,
-                                    section
+                                    section,
+                                    book
                                 }) {
-
 
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     // section 상태
-    const [sectionTitle, setSectionTitle] = useState('');
-    const [sectionDescription, setSectionDescription] = useState('');
+    // const [sectionTitle, setSectionTitle] = useState('');
+    // const [sectionDescription, setSectionDescription] = useState('');
 
     // 섹션 접고 펴는 함수
     const toggleCollapse = () => {
@@ -66,9 +66,26 @@ export default function Section({
     /**
      * @description : 새로운 질문 추가
      */
-    const handleAddQuestion = (questionType) => {
-        const newQuestion = {id: questions.length + 1, questionType: questionType};
-        setQuestions([...questions, newQuestion]);
+    const handleAddQuestion = () => {
+        const newQuestion = {
+                questionTitle: "",
+                questionDescription: "",
+                questionDescriptionimage: "",
+                questionSolution: "",
+                questionSolutionimage: "",
+                book: book,
+                questionPoint: 0,
+                section: section
+            }
+        ;
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newQuestion,
+        }).then(res=>{
+            console.log(res)
+            setQuestions([...questions, newQuestion]);
+        })
     };
 
     /**
@@ -85,9 +102,15 @@ export default function Section({
      */
     const handleDeleteQuestion = (index) => {
         if (questions.length > 1) {
+            axios({
+                method:'delete',
+                url:'/book/question/delete/'+questions[index].questionId,
+                data: questions[index],
+            }).then(res=>{
+                console.log(res)
+                setQuestions(newQuestions);
+            })
             const newQuestions = questions.filter((_, i) => i !== index);
-            setQuestions(newQuestions);
-
         }
     };
 
@@ -102,19 +125,19 @@ export default function Section({
         setQuestions(updatedQuestions);
     };
 
-    /**
-     * @description : 현재 섹션 복제 기능
-     */
-    const handleDuplicateSection = () => {
-        // 섹션을 복제할 때 질문과 입력된 제목, 설명을 함께 복제
-        const newSection = {
-            questions: [...questions],
-            sectionTitle: sectionTitle,  // 섹션 제목을 복제하거나 새롭게 설정할 수 있음
-            sectionDescription: sectionDescription  // 섹션 설명을 복제하거나 새롭게 설정할 수 있음
-        };
-        console.log("복제된 섹션:", newSection);
-        // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
-    };
+    // /**
+    //  * @description : 현재 섹션 복제 기능
+    //  */
+    // const handleDuplicateSection = () => {
+    //     // 섹션을 복제할 때 질문과 입력된 제목, 설명을 함께 복제
+    //     const newSection = {
+    //         questions: [...questions],
+    //         sectionTitle: title,  // 섹션 제목을 복제하거나 새롭게 설정할 수 있음
+    //         sectionDescription: description  // 섹션 설명을 복제하거나 새롭게 설정할 수 있음
+    //     };
+    //     console.log("복제된 섹션:", newSection);
+    //     // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
+    // };
 
     /**
      * @description : 문제 변경 사항 업데이트
@@ -180,7 +203,6 @@ export default function Section({
                                 <LoopIcon/>
                             </IconButton>
                         </Tooltip>
-
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
                                 <AddIcon />
