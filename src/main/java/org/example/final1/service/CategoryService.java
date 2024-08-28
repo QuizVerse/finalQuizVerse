@@ -1,9 +1,7 @@
 package org.example.final1.service;
 
-import org.example.final1.model.BookDto;
 import org.example.final1.model.CategoryDto;
 import org.example.final1.repository.CategoryRepository;
-import org.example.final1.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,8 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryDto saveCategory(CategoryDto category) {
-        return categoryRepository.save(category);
+    public List<CategoryDto> saveCategories(List<CategoryDto> category) {
+        return categoryRepository.saveAll(category);
     }
 
     public List<CategoryDto> findAllCategory() {
