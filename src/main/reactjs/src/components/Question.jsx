@@ -75,21 +75,21 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
 
     /** 일반 코드 */
     // 컴포넌트 상태 관리
-    const [answers, setAnswers] = useState([]); // 답안 리스트 관리
+    const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
     // 답안 추가 핸들러
-    const handleAddAnswer = () => {
-        setAnswers([...answers, ""]);
+    const handleAddChoice = () => {
+        setChoices([...choices, ""]);
     };
 
     // 특정 답안 삭제 핸들러
-    const handleDeleteAnswer = (index) => {
-        const newAnswers = answers.filter((_, i) => i !== index);
-        setAnswers(newAnswers);
+    const handleDeleteChoice = (index) => {
+        const newChoices = choices.filter((_, i) => i !== index);
+        setChoices(newChoices);
     };
 
     // 문제 설명 삭제 핸들러
@@ -176,7 +176,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                     )}
                     {questionType === 0 && (  // 선택형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
-                            {answers.map((answer, index) => (
+                            {choices.map((choice, index) => (
                                 <div key={index} className="flex gap-4 items-end">
                                     <Radio/>
                                     <TextField
@@ -184,29 +184,29 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                         label={"답안"}
                                         placeholder="답안을 입력하세요."
                                         variant={"standard"}
-                                        value={answer}
+                                        value={choice}
                                         onChange={(e) => {
-                                            const newAnswers = [...answers];
-                                            newAnswers[index] = e.target.value;
-                                            setAnswers(newAnswers);
+                                            const newChoices = [...choices];
+                                            newChoices[index] = e.target.value;
+                                            setChoices(newChoices);
                                         }}
                                     />
                                     <IconButton>
                                         <InsertPhotoIcon/>
                                     </IconButton>
-                                    <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                    <IconButton onClick={() => handleDeleteChoice(index)}>
                                         <CloseIcon/>
                                     </IconButton>
                                 </div>
                             ))}
                             <div className="flex gap-4 items-center">
-                                <Button onClick={handleAddAnswer}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                                <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
                             </div>
                         </div>
                     )}
                     {questionType === 1 && (  // 다중선택형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
-                            {answers.map((answer, index) => (
+                            {choices.map((choice, index) => (
                                 <div key={index} className="flex gap-4 items-end">
                                     <Checkbox/>
                                     <TextField
@@ -214,23 +214,23 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                         label={"답안"}
                                         placeholder="답안을 입력하세요."
                                         variant={"standard"}
-                                        value={answer}
+                                        value={choice}
                                         onChange={(e) => {
-                                            const newAnswers = [...answers];
-                                            newAnswers[index] = e.target.value;
-                                            setAnswers(newAnswers);
+                                            const newChoices = [...choices];
+                                            newChoices[index] = e.target.value;
+                                            setChoices(newChoices);
                                         }}
                                     />
                                     <IconButton>
                                         <InsertPhotoIcon/>
                                     </IconButton>
-                                    <IconButton onClick={() => handleDeleteAnswer(index)}>
+                                    <IconButton onClick={() => handleDeleteChoice(index)}>
                                         <CloseIcon/>
                                     </IconButton>
                                 </div>
                             ))}
                             <div className="flex gap-4 items-center">
-                                <Button onClick={handleAddAnswer}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                                <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
                             </div>
                         </div>
                     )}
@@ -287,8 +287,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                         onDuplicate={onDuplicate} // 질문 복제 핸들러
                         onDelete={onDelete} // 질문 삭제 핸들러
                         totalQuestions={totalQuestions} // 전체 질문 수
-                        answers={answers} // 답안 리스트
-                        setAnswers={setAnswers} // 답안 리스트 업데이트 함수
+                        choices={choices} // 답안 리스트
+                        setChoices={setChoices} // 답안 리스트 업데이트 함수
                         showExplanation={showExplanation} // 해설 입력란 표시 여부
                         setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
                         showDescription={showDescription} // 문제 설명
