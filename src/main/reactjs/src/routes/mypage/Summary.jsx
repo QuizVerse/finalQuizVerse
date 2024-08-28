@@ -2,10 +2,6 @@
 // https://v0.dev/t/AIdkA9Pm9Pa
 
 import BookCard from "../../components/BookCard";
-import Q from "../../image/Q.jpg";
-import W from "../../image/W.jpg";
-import E from "../../image/E.jpg";
-import R from "../../image/R.jpg";
 import {Link} from "react-router-dom";
 import {Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import Paper from '@mui/material/Paper';
@@ -97,17 +93,17 @@ export default function Summary() {
               </Link>
             </Button>
             <BookCard cardType="B" className={"flex-1"} 
-            photo={R}
+            photo={""}
             createDate={"2024-08-17"} nickname={"닉네임"} 
             title={"제목이랍니다"} category={"취업 / 자격증"}
              />
              <BookCard cardType="B" className={"flex-1"} 
-             photo={R}
+             photo={""}
              createDate={"2024-08-18"} nickname={"쿠킹호일"} 
              title={"제목일걸요"} category={"여기는 카테고리"}
               />
               <BookCard cardType="B" className={"flex-1"} 
-              photo={R}
+              photo={""}
               createDate={"2000-05-16"} nickname={"이시연"} 
               title={"R"} category={" 보컬 / 서브기타"}
                />

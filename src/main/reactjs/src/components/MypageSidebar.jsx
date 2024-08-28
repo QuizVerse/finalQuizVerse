@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { List, ListItemButton, ListItemText, Collapse } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import image1 from "../image/Quizverse.png";
+
 
 export default function MypageSidebar() {
     const [openHistory, setOpenHistory] = useState(false);
@@ -19,7 +19,7 @@ export default function MypageSidebar() {
     return (
         <aside className="w-64 p-4 border-r">
             <Link to={"/"} className={"flex items-center mb-6"}>
-                <img src={image1} style={{width: "50px", borderRadius: "100%", marginRight: "10px"}}
+                <img src={""} style={{width: "50px", borderRadius: "100%", marginRight: "10px"}}
                      alt="QuizVerse Logo"/>
                 <span className="text-xl font-bold">QuizVerse</span>
             </Link>
