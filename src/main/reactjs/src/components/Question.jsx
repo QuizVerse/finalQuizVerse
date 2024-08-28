@@ -19,6 +19,7 @@ import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import QuestionButtons from "./QuestionButtons";
+import Choices from "./Choices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
@@ -79,18 +80,6 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
-    const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
-
-    // 답안 추가 핸들러
-    const handleAddChoice = () => {
-        setChoices([...choices, ""]);
-    };
-
-    // 특정 답안 삭제 핸들러
-    const handleDeleteChoice = (index) => {
-        const newChoices = choices.filter((_, i) => i !== index);
-        setChoices(newChoices);
-    };
 
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
@@ -100,11 +89,6 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     // 문제 해설 삭제 핸들러
     const handleDeleteExplanation = () => {
         setShowExplanation(false);
-    };
-
-    // OX 선택 핸들러
-    const handleOxSelect = (selection) => {
-        setOxSelected(selection);
     };
 
     // 질문 접기/펼치기 핸들러
@@ -174,97 +158,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </IconButton>
                         </div>
                     )}
-                    {questionType === 0 && (  // 선택형 문제일 경우
-                        <div className={"flex flex-col gap-2"}>
-                            {choices.map((choice, index) => (
-                                <div key={index} className="flex gap-4 items-end">
-                                    <Radio/>
-                                    <TextField
-                                        fullWidth multiline
-                                        label={"답안"}
-                                        placeholder="답안을 입력하세요."
-                                        variant={"standard"}
-                                        value={choice}
-                                        onChange={(e) => {
-                                            const newChoices = [...choices];
-                                            newChoices[index] = e.target.value;
-                                            setChoices(newChoices);
-                                        }}
-                                    />
-                                    <IconButton>
-                                        <InsertPhotoIcon/>
-                                    </IconButton>
-                                    <IconButton onClick={() => handleDeleteChoice(index)}>
-                                        <CloseIcon/>
-                                    </IconButton>
-                                </div>
-                            ))}
-                            <div className="flex gap-4 items-center">
-                                <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
-                            </div>
-                        </div>
-                    )}
-                    {questionType === 1 && (  // 다중선택형 문제일 경우
-                        <div className={"flex flex-col gap-2"}>
-                            {choices.map((choice, index) => (
-                                <div key={index} className="flex gap-4 items-end">
-                                    <Checkbox/>
-                                    <TextField
-                                        fullWidth multiline
-                                        label={"답안"}
-                                        placeholder="답안을 입력하세요."
-                                        variant={"standard"}
-                                        value={choice}
-                                        onChange={(e) => {
-                                            const newChoices = [...choices];
-                                            newChoices[index] = e.target.value;
-                                            setChoices(newChoices);
-                                        }}
-                                    />
-                                    <IconButton>
-                                        <InsertPhotoIcon/>
-                                    </IconButton>
-                                    <IconButton onClick={() => handleDeleteChoice(index)}>
-                                        <CloseIcon/>
-                                    </IconButton>
-                                </div>
-                            ))}
-                            <div className="flex gap-4 items-center">
-                                <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
-                            </div>
-                        </div>
-                    )}
-                    {questionType === 2 && (  // OX 선택형 문제일 경우
-                        <div className={"flex flex-col gap-2"}>
-                            <div className="flex gap-4 items-end">
-                                <Button
-                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
-                                    size={"large"}
-                                    variant={oxSelected === "O" ? "contained" : "outlined"}
-                                    onClick={() => handleOxSelect("O")}
-                                >
-                                    <PanoramaFishEyeIcon fontSize={"large"}/>
-                                </Button>
-                                <Button
-                                    className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
-                                    color={"warning"}
-                                    variant={oxSelected === "X" ? "contained" : "outlined"}
-                                    onClick={() => handleOxSelect("X")}
-                                >
-                                    <CloseIcon fontSize={"large"}/>
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                    {questionType === 3 && (  // 단답형 문제일 경우
-                        <div className={"flex flex-col gap-2"}>
-                            <TextField
-                                fullWidth
-                                label={"답안"}
-                                placeholder="정답을 입력하세요."
-                                variant={"standard"}/>
-                        </div>
-                    )}
+                    <Choices questionType={questionType}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex gap-4">
                             <TextField
