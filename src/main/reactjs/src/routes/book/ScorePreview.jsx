@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import ReactDOM from "react-dom";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
@@ -8,9 +7,9 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import LoadingModal from "../../components/modal/LoadingModal";
 
-// 페이지 컴포넌트 정의
-const PdfPage = ({ answers }) => (
-  <div >
+// PdfPage 컴포넌트 정의
+const PdfPage = React.forwardRef(({ answers }, ref) => (
+  <div ref={ref} style={{ width: "100%" }}>
     <div className="overflow-x-auto pt-5 py-8">
       <table className="min-w-full">
         <thead>
@@ -129,13 +128,13 @@ const PdfPage = ({ answers }) => (
           </tbody>
         </table>
       </div>
-    </div>햣
+    </div>
   </div>
-);
+));
 
 export default function ScorePreview() {
   const navigate = useNavigate();
-  const printpdf = useRef(null);
+  const printpdfRef = useRef([]);
   const [loadingVisible, setLoadingVisible] = useState(false);
 
   const answers = Array.from({ length: 222 }, (_, index) => ({
@@ -156,6 +155,7 @@ export default function ScorePreview() {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
+    // 문제를 80개씩 나누어서 각 페이지에 렌더링
     const chunks = Array.from(
       { length: Math.ceil(answers.length / 80) },
       (_, i) => answers.slice(i * 80, i * 80 + 80)
@@ -163,11 +163,9 @@ export default function ScorePreview() {
 
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
-      const container = document.createElement("div");
+      const container = printpdfRef.current[i];
 
-      ReactDOM.render(<PdfPage answers={chunk} />, container);
-      document.body.appendChild(container);
-
+      // html2canvas로 캡처
       const canvas = await html2canvas(container, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
 
@@ -187,12 +185,9 @@ export default function ScorePreview() {
         pdfHeight - margin,
         { align: "center" }
       );
-
-      ReactDOM.unmountComponentAtNode(container);
-      document.body.removeChild(container);
     }
 
-    pdf.save("우태형_정보처리기사 2024 기출문제 1-2_성적표.pdf");
+    pdf.save("우태형 정보처리기사 2024 기출문제 1-2 성적표.pdf");
     setLoadingVisible(false);
   };
 
@@ -210,8 +205,20 @@ export default function ScorePreview() {
             메인으로
           </Button>
         </div>
-        <section className="flex flex-col gap-2" ref={printpdf}>
-          <PdfPage answers={answers} />
+        <section className="flex flex-col gap-2">
+          {/* 문제를 80개씩 나누어서 각 페이지에 PdfPage 컴포넌트를 렌더링 */}
+          {Array.from({ length: Math.ceil(answers.length / 80) }).map(
+            (_, pageIndex) => (
+              <div
+                key={pageIndex}
+                ref={(el) => (printpdfRef.current[pageIndex] = el)}
+              >
+                <PdfPage
+                  answers={answers.slice(pageIndex * 80, pageIndex * 80 + 80)}
+                />
+              </div>
+            )
+          )}
         </section>
       </div>
 
