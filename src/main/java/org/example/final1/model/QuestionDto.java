@@ -27,12 +27,11 @@ public class QuestionDto {
     @Column(name = "question_id")
     private int questionId;
 
+    @Column(name = "question_type", nullable = false)
+    private short questionType;
+
     @Column(name = "question_text", nullable = false, length = 255)
     private String questionText;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "question_res", columnDefinition = "json", nullable = false)
-    private List<ChoiceDto> questionRes;  // JSON stored as a List<String>
 
     @Column(name = "question_description", length = 3000)
     private String questionDescription;
@@ -56,7 +55,6 @@ public class QuestionDto {
 
     @Column(name = "question_point", nullable = false)
     private int questionPoint;
-
 
     @ManyToOne
     @JoinColumn(name = "section_id", nullable = false)
