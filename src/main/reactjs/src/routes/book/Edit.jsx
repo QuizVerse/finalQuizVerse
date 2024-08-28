@@ -20,14 +20,14 @@ export default function Edit() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 1. bookId에 해당하는 책 데이터를 가져옴
+                // bookId에 해당하는 책 데이터를 가져옴
                 const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
                     console.log(res)
                     setBookData(res.data.book);
                     setSections(res.data.sections);
                 });
 
-                setLoading(false); // 5. 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
                 console.error("Error fetching book data:", error);
                 setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
@@ -140,7 +140,6 @@ export default function Edit() {
         }
     };
 
-
     const handleSortChange = (newSortData) => {
         setSections(newSortData);
         // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
@@ -148,7 +147,6 @@ export default function Edit() {
 
     // 출제하기 버튼 클릭 시 실행되는 로직 추가
     const handlePublish = () => {
-
         axios({
             method:'post',
             url:'/book/section/saveall',
@@ -174,10 +172,6 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
                         <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-
-                        {/**
-                         * @todo : 출제하기 버튼을 누르면 section과 question이 모두 저장되기
-                         */}
                         <Button variant={"contained"}  onClick={handlePublish}>출제하기</Button>
                     </div>
                 </div>
