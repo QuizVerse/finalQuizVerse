@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CagtegoryService {
+public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
     @Autowired
-    public CagtegoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
