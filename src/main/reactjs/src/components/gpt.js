@@ -1,42 +1,33 @@
-export const CallGpt = async ({prompt}) => {
-    /*
-    curl https://api.openai.com/v1/chat/completions \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $OPENAI_API_KEY" \
-    -d '{
-        "model": "gpt-4o-mini",
-        "messages": [{"role": "user", "content": "Say this is a test!"}],
-        "temperature": 0.7
-    }'
-    */
+export const CallGpt = async ({ prompt }) => {
     const messages = [
         {
             role: "system",
-            content: `You are the examiner responsible for creating exam questions on this topic. Please proceed in the following order.`,
+            content: `You are an expert exam creator. Based on the provided subject, generate a high school English exam with multiple questions. Each question should be formatted as follows:`,
         },
         {
             role: "user",
-            content: `1. [Title]: After understanding [SUBJECT] separated by """ at the bottom, think about the title of TEST.
-                  2. [Summary]: Summarize the test content in one sentence.
-                  3. [Problem]: Questions are presented based on [subject].
-                  4. [Number]: Write down the problem number.
-                  5. [Problem Type]: Describe [Problem Type] based on [Problem].
-                  6. [Question Paper]: A [Question Paper] will be presented based on the relevant problem.
-                  7. [Answer]: The answer to the question is presented.
-                  8. [Explanation]: Explains the answer to the question.
-                  
-                  Translate into Korean and Use the output in the following JSON format:
-                  { 
-                      test: here is [test],
-                      summary: here is [summary],
-                      question: here is [question],
-                      number: here is [number],
-                      question type: here is [question type],
-                      options: here is [options],
-                      answer: here is [answer],
-                      explanation: here is [explanation]
-                  }
-                  [events]:`,
+            content: `
+            1. [Title]: After understanding [SUBJECT] separated by """ at the bottom, think about the title of TEST.
+            2. [Summary]: Summarize the test content in one sentence.
+            3. [Problem]: Questions are presented based on [subject].
+            4. [Number]: Write down the problem number.
+            5. [Problem Type]: Describe [Problem Type] based on [Problem].
+            6. [Question Paper]: A [Question Paper] will be presented based on the relevant problem.
+            7. [Answer]: The answer to the question is presented.
+            8. [Explanation]: Explains the answer to the question.
+            
+            Please output the following format in Korean:
+        
+            [Title]: Title
+            [Summary]:Summary
+            [Number]:Number
+            [Problem]:Problem
+            [Problem Type]:Problem Type
+            [Questionnaire]:Questionnaire
+            [Answer]:Answer
+            [Description]:Description
+            
+            Repeat this structure for each question.`,
         },
         {
             role: "user",
@@ -60,6 +51,5 @@ export const CallGpt = async ({prompt}) => {
     });
 
     const responseData = await response.json();
-    //console.log(responseData);
     return responseData.choices[0].message.content;
 };
