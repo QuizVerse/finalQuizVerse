@@ -18,6 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/new")
+
     public ResponseEntity<List<CategoryDto>> newCategory(@RequestBody List<CategoryDto> categoryDto) {
         List<CategoryDto> saved = categoryService.saveCategories(categoryDto);
         return ResponseEntity.ok(saved);
