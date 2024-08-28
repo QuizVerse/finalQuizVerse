@@ -16,6 +16,7 @@ export default function Choices({question}) {
                 if(questionId === '') return;
                 axios.get(`/book/choice/getall/`+questionId).then((res)=>{
                     setChoices(res.data);
+                    console.log(res.data);
                 });
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -36,12 +37,16 @@ export default function Choices({question}) {
     // 답안 추가 핸들러
     const handleAddChoice = () => {
         const newChoice = {
-
+                choiceId: "",
+                choiceText: "",
+                choiceImage: "",
+                choiceIsanswer: false,
+                question: question
             }
         ;
         axios({
             method:'post',
-            url:'/book/question/new',
+            url:'/book/choice/new',
             data: newChoice,
         }).then(res=>{
             console.log(res)
@@ -52,9 +57,18 @@ export default function Choices({question}) {
 
     // 특정 답안 삭제 핸들러
     const handleDeleteChoice = (index) => {
-        const newChoices = choices.filter((_, i) => i !== index);
-        setChoices(newChoices);
+        if(choices[index].choiceId === "") return;
+        axios({
+            method:'delete',
+            url:'/book/choice/delete/'+choices[index].choiceId,
+            data: choices[index],
+        }).then(res=>{
+            console.log(res)
+            const newChoices = choices.filter((_, i) => i !== index);
+            setChoices(newChoices);
+        })
     };
+
     return (
         <>
             {question.questionType === 0 && (  // 선택형 문제일 경우
@@ -67,13 +81,11 @@ export default function Choices({question}) {
                                 label={"답안"}
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
-                                value={choice}
-                                onChange={(e) => {
-                                    const newChoices = [...choices];
-                                    newChoices[index] = e.target.value;
-                                    setChoices(newChoices);
-                                }}
+                                value={choice.choiceText}
+                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
+                                onChange={(e) => {}}
                             />
+                            {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
                             <IconButton>
                                 <InsertPhotoIcon/>
                             </IconButton>
@@ -97,13 +109,11 @@ export default function Choices({question}) {
                                 label={"답안"}
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
-                                value={choice}
-                                onChange={(e) => {
-                                    const newChoices = [...choices];
-                                    newChoices[index] = e.target.value;
-                                    setChoices(newChoices);
-                                }}
+                                value={choice.choiceText}
+                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
+                                onChange={(e) => {}}
                             />
+                            {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
                             <IconButton>
                                 <InsertPhotoIcon/>
                             </IconButton>
