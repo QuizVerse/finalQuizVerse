@@ -5,8 +5,6 @@ import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material"
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
-import CustomConfirm from "./modal/CustomConfirm";
-import SectionSort from "./modal/SectionSort";
 import Question from "./Question";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
@@ -105,9 +103,9 @@ export default function Section({
                 data: questions[index],
             }).then(res=>{
                 console.log(res)
+                const newQuestions = questions.filter((_, i) => i !== index);
                 setQuestions(newQuestions);
             })
-            const newQuestions = questions.filter((_, i) => i !== index);
         }
     };
 

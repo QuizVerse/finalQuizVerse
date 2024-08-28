@@ -1,11 +1,8 @@
 import {
-    Button,
-    Checkbox,
     FormControl,
     IconButton,
     InputLabel,
     MenuItem,
-    Radio,
     Select,
     TextField,
     Typography
@@ -14,7 +11,6 @@ import React, {useState} from "react";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import CloseIcon from '@mui/icons-material/Close';
-import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
