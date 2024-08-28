@@ -1,15 +1,15 @@
-import React, { useRef } from "react";
-import ReactDOM from "react-dom";
+import React, { useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import LoadingModal from "../../components/modal/LoadingModal";
 
-// 페이지 컴포넌트 정의
-const PdfPage = ({ answers }) => (
-  <div style={{ padding: "10mm", boxSizing: "border-box" }}>
+// PdfPage 컴포넌트 정의
+const PdfPage = React.forwardRef(({ answers }, ref) => (
+  <div ref={ref} style={{ width: "100%" }}>
     <div className="overflow-x-auto pt-5 py-8">
       <table className="min-w-full">
         <thead>
@@ -96,7 +96,6 @@ const PdfPage = ({ answers }) => (
                 );
 
                 return (
-                  // fragment 단위로 묶어서 페이지 넘겨도 나올 수 있도록
                   <React.Fragment key={pageIndex}>
                     <tr>
                       {pageAnswers.map((answer, index) => (
@@ -131,32 +130,32 @@ const PdfPage = ({ answers }) => (
       </div>
     </div>
   </div>
-);
+));
 
 export default function ScorePreview() {
   const navigate = useNavigate();
-  const printpdf = useRef(null);
+  const printpdfRef = useRef([]);
+  const [loadingVisible, setLoadingVisible] = useState(false);
 
-  // 문제 갯수
   const answers = Array.from({ length: 222 }, (_, index) => ({
     number: `${index + 1}번`,
     correct: true,
   }));
 
-  // pdf 추출 사이즈를 a4로
   const downloadpdf = async () => {
+    setLoadingVisible(true);
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
 
-    // 여백
     const margin = 10;
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    // 문제를 80개씩 chunks라는 배열로 나누기
+    // 문제를 80개씩 나누어서 각 페이지에 렌더링
     const chunks = Array.from(
       { length: Math.ceil(answers.length / 80) },
       (_, i) => answers.slice(i * 80, i * 80 + 80)
@@ -164,34 +163,21 @@ export default function ScorePreview() {
 
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
+      const container = printpdfRef.current[i];
 
-      // 아래 변환된 DOM을 받을 div 생성
-      const container = document.createElement("div");
-
-      // PdfPage 컴포넌트를 실제 DOM으로 변환
-      // container = div 엘리먼트
-      ReactDOM.render(<PdfPage answers={chunk} />, container);
-      // container 내용을 pdf 출력 화면에 추가
-      document.body.appendChild(container);
-
-      // 페이지를 캔버스로 변환 (해상도 두배로 높여서)
+      // html2canvas로 캡처
       const canvas = await html2canvas(container, { scale: 2 });
-
       const imgData = canvas.toDataURL("image/png");
+
       const imgWidth = pdfWidth - 2 * margin;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      const imgx = margin;
-      const imgy = margin;
 
       if (i > 0) {
         pdf.addPage();
       }
 
-      // 캔버스에서 생성된 이미지를 PDF 파일에 추가
-      pdf.addImage(imgData, "PNG", imgx, imgy, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
 
-      // 페이지번호 추가
       pdf.setFontSize(10);
       pdf.text(
         `${i + 1} / ${chunks.length}`,
@@ -199,13 +185,10 @@ export default function ScorePreview() {
         pdfHeight - margin,
         { align: "center" }
       );
-
-      // 컨테이너 정리
-      ReactDOM.unmountComponentAtNode(container);
-      document.body.removeChild(container);
     }
 
-    pdf.save("우태형_정보처리기사 2024 기출문제 1-2_성적표.pdf");
+    pdf.save("우태형 정보처리기사 2024 기출문제 1-2 성적표.pdf");
+    setLoadingVisible(false);
   };
 
   return (
@@ -222,10 +205,27 @@ export default function ScorePreview() {
             메인으로
           </Button>
         </div>
-        <section className="flex flex-col gap-2" ref={printpdf}>
-          <PdfPage answers={answers} />
+        <section className="flex flex-col gap-2">
+          {/* 문제를 80개씩 나누어서 각 페이지에 PdfPage 컴포넌트를 렌더링 */}
+          {Array.from({ length: Math.ceil(answers.length / 80) }).map(
+            (_, pageIndex) => (
+              <div
+                key={pageIndex}
+                ref={(el) => (printpdfRef.current[pageIndex] = el)}
+              >
+                <PdfPage
+                  answers={answers.slice(pageIndex * 80, pageIndex * 80 + 80)}
+                />
+              </div>
+            )
+          )}
         </section>
       </div>
+
+      <LoadingModal
+        open={loadingVisible}
+        title="PDF 생성중입니다. 잠시만 기다려주세요."
+      />
     </div>
   );
 }
