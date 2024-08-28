@@ -2,7 +2,6 @@
 // https://v0.dev/t/hx5RoREe1hV
 
 import { Pagination, Stack } from "@mui/material";
-import K from "../../image/K.jpg";
 import BookCard from "../../components/BookCard";
 import React, { useState } from 'react';
 
@@ -14,7 +13,7 @@ const SPACING=2;
 
 export default function Bookmark() {
   const items= Array.from({length:30},(_, index) => ({
-    photo:K,
+    photo:"",
     createDate:`2023-12${12-index}`,//각 항목의 날짜를 조금씩 다르게
     nickname:"엔믹스",
     title:`규진 ${index+1}`,

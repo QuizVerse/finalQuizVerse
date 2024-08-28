@@ -3,7 +3,7 @@ import axios from 'axios';
 import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
-import img from "../../image/questionmark.jpg";
+
 
 export default function BookList() {
   const [booksByCategory, setBooksByCategory] = useState({});
@@ -54,12 +54,7 @@ export default function BookList() {
     <main className="p-16">
       <div className="flex items-center justify-center mb-8">
         <div
-          className="w-full max-w-4xl p-16 text-center bg-gray-200 rounded"
-          style={{
-            backgroundImage: `url(${img})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}>
+          className="w-full max-w-4xl p-16 text-center bg-gray-200 rounded">
           문제집 추천배너
         </div>
       </div>
