@@ -39,11 +39,13 @@ export default function Section({
 
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([ {
-        questionTitle: "What is the capital of France?",
-        questionDescription: "This question is about the capitals of European countries.",
-        questionDescriptionimage: "description_image_url.jpg",
-        questionSolution: "The capital of France is Paris.",
-        questionSolutionimage: "solution_image_url.jpg",
+        questionTitle: "",
+        questionType: 0,
+        questionDescription: "",
+        questionDescriptionimage: "",
+        questionSolution: "",
+        questionSolutionimage: "",
+        questionPoint: 0,
     }]);
 
     useEffect(() => {
@@ -64,8 +66,8 @@ export default function Section({
     /**
      * @description : 새로운 질문 추가
      */
-    const handleAddQuestion = (type) => {
-        const newQuestion = {id: questions.length + 1, type: type};
+    const handleAddQuestion = (questionType) => {
+        const newQuestion = {id: questions.length + 1, questionType: questionType};
         setQuestions([...questions, newQuestion]);
     };
 
@@ -117,14 +119,18 @@ export default function Section({
     /**
      * @description : 문제 변경 사항 업데이트
      */
-    const handleUpdateQuestion = (index, title, description) => {
+    const handleUpdateQuestion = (index, title, description, questionType, solution) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index] = {
             ...updatedQuestions[index],
             questionTitle: title,
-            questionDescription: description
+            questionDescription: description,
+            questionType : questionType,
+            questionSolution : solution,
         };
         setQuestions(updatedQuestions);
+
+        console.log(updatedQuestions);
     };
 
 
@@ -187,14 +193,15 @@ export default function Section({
                 <Question
                     key={question.id}
                     index={index}
-                    type={question.type}
+                    questionType={question.questionType}
                     title={question.questionTitle}
                     description={question.questionDescription}
                     totalQuestions={questions.length}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
-                    onUpdateQuestion={(title, description) => handleUpdateQuestion(index, title, description)}
+                    onUpdateQuestion={(title, description, questionType, solution) =>
+                        handleUpdateQuestion(index, title, description, questionType, solution)}
                 />
             ))}
         </div>
