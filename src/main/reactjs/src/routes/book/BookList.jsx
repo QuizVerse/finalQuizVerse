@@ -4,7 +4,7 @@ import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
 
-
+//굿
 export default function BookList() {
   const [booksByCategory, setBooksByCategory] = useState({});
   const [categories, setCategories] = useState([]);
