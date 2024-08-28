@@ -114,6 +114,18 @@ export default function Section({
         // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
     };
 
+    /**
+     * @description : 문제 변경 사항 업데이트
+     */
+    const handleUpdateQuestion = (index, title, description) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[index] = {
+            ...updatedQuestions[index],
+            questionText: title,
+            questionDescription: description
+        };
+        setQuestions(updatedQuestions);
+    };
 
 
     return (
@@ -182,6 +194,7 @@ export default function Section({
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
+                    onUpdateQuestion={(title, description) => handleUpdateQuestion(index, title, description)}
                 />
             ))}
         </div>

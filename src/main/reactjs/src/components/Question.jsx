@@ -22,7 +22,9 @@ import QuestionButtons from "./QuestionButtons";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, onUpdateQuestion}) {
+
+    /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
 
     // Drop 설정: 다른 질문을 드래그하여 이 위치에 놓을 수 있게 설정
@@ -71,10 +73,11 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
 
     drag(drop(ref)); // 드래그와 드롭을 결합
 
+    /** 일반 코드 */
     // 컴포넌트 상태 관리
     const [visibility, setVisibility] = useState(''); // 문제 형식 선택
     const [answers, setAnswers] = useState([]); // 답안 리스트 관리
-    const [questionTitle, setQuestionTitle] = useState(''); // 문제 제목
+    // const [questionTitle, setQuestionTitle] = useState(''); // 문제 제목
     const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
@@ -142,7 +145,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             placeholder="질문을 입력하세요."
                             variant={"standard"}
                             value={title}
-                            onChange={(e) => setQuestionTitle(e.target.value)}
+                            onChange={(e) => onUpdateQuestion(e.target.value, description)}
                         />
 
                         <FormControl fullWidth>
@@ -169,7 +172,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={description}
-                                onChange={(e) => setQuestionDesc(e.target.value)}
+                                onChange={(e) => onUpdateQuestion(title, e.target.value)}
                             />
                             <IconButton>
                                 <InsertPhotoIcon/>
