@@ -22,7 +22,7 @@ import QuestionButtons from "./QuestionButtons";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, onUpdateQuestion}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, questionType, solution, onUpdateQuestion}) {
 
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
@@ -75,18 +75,11 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
 
     /** 일반 코드 */
     // 컴포넌트 상태 관리
-    const [visibility, setVisibility] = useState(''); // 문제 형식 선택
     const [answers, setAnswers] = useState([]); // 답안 리스트 관리
-    // const [questionTitle, setQuestionTitle] = useState(''); // 문제 제목
-    const [questionDesc, setQuestionDesc] = useState(false); // 문제 설명 표시 여부 관리
+    const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
     const [explanation, setExplanation] = useState(""); // 해설 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
-
-    // 문제 형식 변경 핸들러
-    const handleVisibilityChange = (event) => {
-        setVisibility(event.target.value);
-    };
 
     // 답안 추가 핸들러
     const handleAddAnswer = () => {
@@ -101,9 +94,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
 
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
-        setQuestionDesc(false);
+        setShowDescription(false);
     };
-
 
     // 문제 해설 삭제 핸들러
     const handleDeleteExplanation = () => {
@@ -145,17 +137,17 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             placeholder="질문을 입력하세요."
                             variant={"standard"}
                             value={title}
-                            onChange={(e) => onUpdateQuestion(e.target.value, description)}
+                            onChange={(e) => onUpdateQuestion(e.target.value, description, questionType, solution)}
                         />
 
                         <FormControl fullWidth>
                             <InputLabel id="visibility-label">문제 형식</InputLabel>
                             <Select
                                 labelId="visibility-label"
-                                value={visibility}
+                                value={questionType}
                                 label="문제 형식"
                                 variant={"standard"}
-                                onChange={handleVisibilityChange}
+                                onChange={(e)=> onUpdateQuestion(title, description, e.target.value, solution)}
                             >
                                 <MenuItem value={0}>선택형</MenuItem>
                                 <MenuItem value={1}>다중선택형</MenuItem>
@@ -164,7 +156,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </Select>
                         </FormControl>
                     </div>
-                    {questionDesc && (  // 문제 설명이 있을 때만 표시
+                    {showDescription && (  // 문제 설명이 있을 때만 표시
                         <div className="flex gap-4">
                             <TextField
                                 fullWidth multiline
@@ -172,7 +164,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={description}
-                                onChange={(e) => onUpdateQuestion(title, e.target.value)}
+                                onChange={(e) => onUpdateQuestion(title, e.target.value, questionType, solution)}
                             />
                             <IconButton>
                                 <InsertPhotoIcon/>
@@ -182,7 +174,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </IconButton>
                         </div>
                     )}
-                    {visibility === 0 && (  // 선택형 문제일 경우
+                    {questionType === 0 && (  // 선택형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
                             {answers.map((answer, index) => (
                                 <div key={index} className="flex gap-4 items-end">
@@ -212,7 +204,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    {visibility === 1 && (  // 다중선택형 문제일 경우
+                    {questionType === 1 && (  // 다중선택형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
                             {answers.map((answer, index) => (
                                 <div key={index} className="flex gap-4 items-end">
@@ -242,7 +234,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    {visibility === 2 && (  // OX 선택형 문제일 경우
+                    {questionType === 2 && (  // OX 선택형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
                             <div className="flex gap-4 items-end">
                                 <Button
@@ -264,7 +256,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    {visibility === 3 && (  // 단답형 문제일 경우
+                    {questionType === 3 && (  // 단답형 문제일 경우
                         <div className={"flex flex-col gap-2"}>
                             <TextField
                                 fullWidth
@@ -281,7 +273,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={explanation}
-                                onChange={(e) => setExplanation(e.target.value)}
+                                onChange={(e) => onUpdateQuestion(title, description, questionType, e.target.value)}
                             />
                             <IconButton>
                                 <InsertPhotoIcon/>
@@ -299,8 +291,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                         setAnswers={setAnswers} // 답안 리스트 업데이트 함수
                         showExplanation={showExplanation} // 해설 입력란 표시 여부
                         setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
-                        questionDesc={questionDesc} // 문제 설명
-                        setQuestionDesc={setQuestionDesc} // 문제 설명 업데이트 함수
+                        showDescription={showDescription} // 문제 설명
+                        setShowDescription={setShowDescription} // 문제 설명 업데이트 함수
                     />
                 </div>
             )}

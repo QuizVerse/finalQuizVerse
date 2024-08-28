@@ -153,7 +153,6 @@ export default function Edit() {
             data: sections,
         }).then(res=>{
             console.log(res)
-            setSections('');
         })
     };
 
