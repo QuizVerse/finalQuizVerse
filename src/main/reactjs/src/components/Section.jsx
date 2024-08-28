@@ -51,10 +51,10 @@ export default function Section({
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if(section.sectionId === '') return;
                 axios.post(`/book/question/getallbysection`, section).then((res)=>{
                     setQuestions(res.data);
                 });
-
             } catch (error) {
                 console.error("Error fetching book data:", error);
             }

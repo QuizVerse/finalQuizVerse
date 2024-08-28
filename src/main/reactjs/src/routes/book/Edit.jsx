@@ -3,7 +3,6 @@ import { Button } from "@mui/material";
 import Section from "../../components/Section";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Sidebar } from "lucide-react";
 import EditSidebar from "../../components/EditSidebar";
 import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
@@ -54,7 +53,7 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
-            questions: [{ id: 1, type: 3 }]
+            // questions: [{ id: 1, type: 3 }]
         };
         setSections([...sections, newSection]);
     };
@@ -63,6 +62,7 @@ export default function Edit() {
     const handleDuplicateSection = (index) => {
         const duplicatedSection = {
             ...sections[index],
+            sectionId : "",
             sectionNumber: sections.length + 1,
             // questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
@@ -147,6 +147,7 @@ export default function Edit() {
 
     // 출제하기 버튼 클릭 시 실행되는 로직 추가
     const handlePublish = () => {
+        console.log(sections)
         axios({
             method:'post',
             url:'/book/section/saveall',
