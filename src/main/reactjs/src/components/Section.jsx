@@ -91,7 +91,6 @@ export default function Section({
      */
     const handleDuplicateQuestion = (index) => {
         const newQuestion = {...questions[index], id: questions.length + 1};
-        console.log(questions);
         setQuestions([...questions, newQuestion]);
     };
 
