@@ -2,11 +2,29 @@ import {Button, Checkbox, IconButton, Radio, TextField} from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
 
-export default function Choices({questionType}) {
+export default function Choices({question}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const questionId = question.questionId;
+                if(questionId === '') return;
+                axios.get(`/book/choice/getall/`+questionId).then((res)=>{
+                    setChoices(res.data);
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, []);
+
 
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
@@ -27,7 +45,7 @@ export default function Choices({questionType}) {
     };
     return (
         <>
-            {questionType === 0 && (  // 선택형 문제일 경우
+            {question.questionType === 0 && (  // 선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
                         <div key={index} className="flex gap-4 items-end">
@@ -57,7 +75,7 @@ export default function Choices({questionType}) {
                     </div>
                 </div>
             )}
-            {questionType === 1 && (  // 다중선택형 문제일 경우
+            {question.questionType === 1 && (  // 다중선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
                         <div key={index} className="flex gap-4 items-end">
@@ -87,7 +105,7 @@ export default function Choices({questionType}) {
                     </div>
                 </div>
             )}
-            {questionType === 2 && (  // OX 선택형 문제일 경우
+            {question.questionType === 2 && (  // OX 선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     <div className="flex gap-4 items-end">
                         <Button
@@ -109,7 +127,7 @@ export default function Choices({questionType}) {
                     </div>
                 </div>
             )}
-            {questionType === 3 && (  // 단답형 문제일 경우
+            {question.questionType === 3 && (  // 단답형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     <TextField
                         fullWidth
