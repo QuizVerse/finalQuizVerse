@@ -213,7 +213,7 @@ export default function Section({
             )}
             {questions.map((question, index) => (
                 <Question
-                    key={question.id}
+                    key={index}
                     index={index}
                     questionType={question.questionType}
                     title={question.questionTitle}

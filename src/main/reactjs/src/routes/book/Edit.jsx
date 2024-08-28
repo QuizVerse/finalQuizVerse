@@ -178,7 +178,7 @@ export default function Edit() {
 
                 {sections && sections.map((section, index) => (
                     <Section
-                        key={section.sectionNumber}
+                        key={index}
                         index={index}
                         title={section.sectionTitle}
                         description={section.sectionDescription}
