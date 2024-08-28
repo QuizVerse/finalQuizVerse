@@ -140,9 +140,11 @@ public class EditController {
     }
 
     // ChoiceDto 조회
-    @PutMapping("/question/{id}/update-res")
-    public void updateQuestionRes(@PathVariable int id) {
-        questionService.updateQuestionRes(id);
+    @GetMapping("/choice/getall/{questionId}")
+    public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
+        List<ChoiceDto> list = choiceService.getAllChoices(questionId);
+
+        return ResponseEntity.ok(list);
     }
 
 }

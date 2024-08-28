@@ -35,6 +35,7 @@ export default function Section({
 
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([ {
+        questionId: "",
         questionTitle: "",
         questionType: 0,
         questionDescription: "",
@@ -64,6 +65,7 @@ export default function Section({
      */
     const handleAddQuestion = () => {
         const newQuestion = {
+                questionId:"",
                 questionTitle: "",
                 questionDescription: "",
                 questionDescriptionimage: "",
@@ -202,6 +204,7 @@ export default function Section({
                     title={question.questionTitle}
                     description={question.questionDescription}
                     totalQuestions={questions.length}
+                    question={question}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}

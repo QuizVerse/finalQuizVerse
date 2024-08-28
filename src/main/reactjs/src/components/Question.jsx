@@ -23,7 +23,7 @@ import Choices from "./Choices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, questionType, solution, onUpdateQuestion}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, questionType, solution, question, onUpdateQuestion}) {
 
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
@@ -158,7 +158,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </IconButton>
                         </div>
                     )}
-                    <Choices questionType={questionType}/>
+                    <Choices questionType={questionType} question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex gap-4">
                             <TextField
