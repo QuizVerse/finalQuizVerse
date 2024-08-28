@@ -1,0 +1,123 @@
+import {Button, Checkbox, IconButton, Radio, TextField} from "@mui/material";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import CloseIcon from "@mui/icons-material/Close";
+import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
+import React, {useState} from "react";
+
+export default function Choices({questionType}) {
+
+    const [choices, setChoices] = useState([]); // 답안 리스트 관리
+
+    // OX 선택 핸들러
+    const handleOxSelect = (selection) => {
+        setOxSelected(selection);
+    };
+
+    const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
+
+    // 답안 추가 핸들러
+    const handleAddChoice = () => {
+        setChoices([...choices, ""]);
+    };
+
+    // 특정 답안 삭제 핸들러
+    const handleDeleteChoice = (index) => {
+        const newChoices = choices.filter((_, i) => i !== index);
+        setChoices(newChoices);
+    };
+    return (
+        <>
+            {questionType === 0 && (  // 선택형 문제일 경우
+                <div className={"flex flex-col gap-2"}>
+                    {choices.map((choice, index) => (
+                        <div key={index} className="flex gap-4 items-end">
+                            <Radio/>
+                            <TextField
+                                fullWidth multiline
+                                label={"답안"}
+                                placeholder="답안을 입력하세요."
+                                variant={"standard"}
+                                value={choice}
+                                onChange={(e) => {
+                                    const newChoices = [...choices];
+                                    newChoices[index] = e.target.value;
+                                    setChoices(newChoices);
+                                }}
+                            />
+                            <IconButton>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={() => handleDeleteChoice(index)}>
+                                <CloseIcon/>
+                            </IconButton>
+                        </div>
+                    ))}
+                    <div className="flex gap-4 items-center">
+                        <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                    </div>
+                </div>
+            )}
+            {questionType === 1 && (  // 다중선택형 문제일 경우
+                <div className={"flex flex-col gap-2"}>
+                    {choices.map((choice, index) => (
+                        <div key={index} className="flex gap-4 items-end">
+                            <Checkbox/>
+                            <TextField
+                                fullWidth multiline
+                                label={"답안"}
+                                placeholder="답안을 입력하세요."
+                                variant={"standard"}
+                                value={choice}
+                                onChange={(e) => {
+                                    const newChoices = [...choices];
+                                    newChoices[index] = e.target.value;
+                                    setChoices(newChoices);
+                                }}
+                            />
+                            <IconButton>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={() => handleDeleteChoice(index)}>
+                                <CloseIcon/>
+                            </IconButton>
+                        </div>
+                    ))}
+                    <div className="flex gap-4 items-center">
+                        <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                    </div>
+                </div>
+            )}
+            {questionType === 2 && (  // OX 선택형 문제일 경우
+                <div className={"flex flex-col gap-2"}>
+                    <div className="flex gap-4 items-end">
+                        <Button
+                            className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
+                            size={"large"}
+                            variant={oxSelected === "O" ? "contained" : "outlined"}
+                            onClick={() => handleOxSelect("O")}
+                        >
+                            <PanoramaFishEyeIcon fontSize={"large"}/>
+                        </Button>
+                        <Button
+                            className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
+                            color={"warning"}
+                            variant={oxSelected === "X" ? "contained" : "outlined"}
+                            onClick={() => handleOxSelect("X")}
+                        >
+                            <CloseIcon fontSize={"large"}/>
+                        </Button>
+                    </div>
+                </div>
+            )}
+            {questionType === 3 && (  // 단답형 문제일 경우
+                <div className={"flex flex-col gap-2"}>
+                    <TextField
+                        fullWidth
+                        label={"답안"}
+                        placeholder="정답을 입력하세요."
+                        variant={"standard"}/>
+                </div>
+            )}
+        </>
+    );
+}
