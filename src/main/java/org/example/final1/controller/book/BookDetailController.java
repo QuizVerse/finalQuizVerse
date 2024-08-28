@@ -21,6 +21,7 @@ public class BookDetailController {
     public ResponseEntity<BookDto> getBookDetail(@PathVariable("id") int id) {
         Optional<BookDto> book = bookService.getBookById(id);
         if (book.isPresent()) {
+            System.out.println("있음");
             return ResponseEntity.ok(book.get());
         } else {
             return ResponseEntity.notFound().build();
