@@ -134,7 +134,14 @@ export default function Edit() {
         setDeleteConfirm(false);
 
         if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
+            const id = sections[deleteSectionIndex].sectionId;
             setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+            axios({
+                method:'delete',
+                url:'/book/section/delete/'+id,
+            }).then(res=>{
+                console.log(res)
+            })
         } else if(deleteConfirmId === 15) {
 
         }
