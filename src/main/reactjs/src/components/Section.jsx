@@ -9,6 +9,7 @@ import CustomConfirm from "./modal/CustomConfirm";
 import SectionSort from "./modal/SectionSort";
 import Question from "./Question";
 import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function Section({
                                     index,
@@ -113,6 +114,8 @@ export default function Section({
         // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
     };
 
+
+
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
@@ -157,6 +160,12 @@ export default function Section({
                         <Tooltip title="섹션 재정렬">
                             <IconButton onClick={openConfirm}>
                                 <LoopIcon/>
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="질문 추가">
+                            <IconButton onClick={handleAddQuestion}>
+                                <AddIcon />
                             </IconButton>
                         </Tooltip>
                     </div>
