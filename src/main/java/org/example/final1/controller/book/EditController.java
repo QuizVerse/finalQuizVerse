@@ -132,6 +132,13 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    // Choice 저장
+    @PostMapping("/choice/new")
+    public ResponseEntity<ChoiceDto> saveChoices(@RequestBody ChoiceDto choice) {
+        ChoiceDto saved = choiceService.saveChoice(choice);
+        return ResponseEntity.ok(saved);
+    }
+
     // Choices 저장
     @PostMapping("/choice/saveall")
     public ResponseEntity<List<ChoiceDto>> saveChoices(@RequestBody List<ChoiceDto> choices) {

@@ -35,7 +35,19 @@ export default function Choices({question}) {
 
     // 답안 추가 핸들러
     const handleAddChoice = () => {
-        setChoices([...choices, ""]);
+        const newChoice = {
+
+            }
+        ;
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newChoice,
+        }).then(res=>{
+            console.log(res)
+            setChoices([...choices, newChoice]);
+        })
+
     };
 
     // 특정 답안 삭제 핸들러
