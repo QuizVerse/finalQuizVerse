@@ -39,7 +39,7 @@ export default function Section({
 
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([ {
-        questionText: "What is the capital of France?",
+        questionTitle: "What is the capital of France?",
         questionDescription: "This question is about the capitals of European countries.",
         questionDescriptionimage: "description_image_url.jpg",
         questionSolution: "The capital of France is Paris.",
@@ -121,7 +121,7 @@ export default function Section({
         const updatedQuestions = [...questions];
         updatedQuestions[index] = {
             ...updatedQuestions[index],
-            questionText: title,
+            questionTitle: title,
             questionDescription: description
         };
         setQuestions(updatedQuestions);
@@ -188,7 +188,7 @@ export default function Section({
                     key={question.id}
                     index={index}
                     type={question.type}
-                    title={question.questionText}
+                    title={question.questionTitle}
                     description={question.questionDescription}
                     totalQuestions={questions.length}
                     onDuplicate={() => handleDuplicateQuestion(index)}
