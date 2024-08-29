@@ -59,14 +59,7 @@ export default function Section({
                 section: section
             }
         ;
-        axios({
-            method:'post',
-            url:'/book/question/new',
-            data: newQuestion,
-        }).then(res=>{
-            console.log(res)
-            setQuestions([...questions, newQuestion]);
-        })
+        setQuestions([...questions, newQuestion]);
     };
 
     /**
@@ -82,15 +75,8 @@ export default function Section({
      */
     const handleDeleteQuestion = (index) => {
         if (questions.length > 1) {
-            axios({
-                method:'delete',
-                url:'/book/question/delete/'+questions[index].questionId,
-                data: questions[index],
-            }).then(res=>{
-                console.log(res)
-                const newQuestions = questions.filter((_, i) => i !== index);
-                setQuestions(newQuestions);
-            })
+            const newQuestions = questions.filter((_, i) => i !== index);
+            setQuestions(newQuestions);
         }
     };
 
