@@ -21,7 +21,9 @@ export default function Edit() {
             try {
                 // bookId에 해당하는 책 데이터를 가져옴
                 const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
+                    console.log(res)
                     setBookData(res.data.book);
+                    setSections(res.data.sections);
                 });
 
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
@@ -51,6 +53,7 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
+            // questions: [{ id: 1, type: 3 }]
         };
         setSections([...sections, newSection]);
     };
@@ -61,6 +64,7 @@ export default function Edit() {
             ...sections[index],
             sectionId : "",
             sectionNumber: sections.length + 1,
+            // questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
         setSections([...sections, duplicatedSection]);
         openAlert("섹션이 복제되었습니다.");

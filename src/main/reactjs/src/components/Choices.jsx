@@ -1,37 +1,12 @@
-import {Button, Checkbox, IconButton, Radio, TextField} from "@mui/material";
+import {Button, Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, TextField} from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 
 export default function Choices({question}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const questionId = question.questionId;
-                if(questionId === '') return;
-                axios.get(`/book/choice/getall/`+questionId).then((res)=>{
-                    setChoices(res.data);
-                    console.log(res.data);
-                });
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
-        fetchData(); // 데이터를 가져오는 함수 호출
-    }, []);
-
-
-    // OX 선택 핸들러
-    const handleOxSelect = (selection) => {
-        setOxSelected(selection);
-    };
-
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
     // 답안 추가 핸들러
@@ -44,29 +19,16 @@ export default function Choices({question}) {
                 question: question
             }
         ;
-        axios({
-            method:'post',
-            url:'/book/choice/new',
-            data: newChoice,
-        }).then(res=>{
-            console.log(res)
-            setChoices([...choices, newChoice]);
-        })
 
+        setChoices([...choices, newChoice]);
     };
 
     // 특정 답안 삭제 핸들러
     const handleDeleteChoice = (index) => {
         if(choices[index].choiceId === "") return;
-        axios({
-            method:'delete',
-            url:'/book/choice/delete/'+choices[index].choiceId,
-            data: choices[index],
-        }).then(res=>{
-            console.log(res)
-            const newChoices = choices.filter((_, i) => i !== index);
-            setChoices(newChoices);
-        })
+
+        const newChoices = choices.filter((_, i) => i !== index);
+        setChoices(newChoices);
     };
 
     // Image Upload
@@ -84,22 +46,70 @@ export default function Choices({question}) {
         }
     };
 
+
+    // OX 선택 핸들러
+    const handleOxSelect = (selection) => {
+        const updatedChoices = {
+            choiceText : selection
+        };
+        setChoices([updatedChoices]);
+        setOxSelected(selection);
+    };
+
+    // 선택형 답안 업데이트
+    const updateChoices = (e, index) => {
+        const updatedChoices = [...choices];
+        updatedChoices[index].choiceText = e.target.value;
+        setChoices(updatedChoices);
+        console.log(choices);
+    };
+
+    // 다중선택형 답안 업데이트
+    const updateCheckBox = (index) => {
+        const updatedChoices = [...choices];
+        updatedChoices[index].choiceIsanswer ?
+            updatedChoices[index].choiceIsanswer = false
+            : updatedChoices[index].choiceIsanswer =true;
+        setChoices(updatedChoices);
+        console.log(choices);
+    };
+
+
+    // 선택형 답안 업데이트
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event) => {
+        const val = event.target.value;
+        setValue(val);
+        const updatedChoices = [...choices];
+        updatedChoices.forEach((e, index)=>{
+            index == val ? e.choiceIsanswer = true : e.choiceIsanswer = false;
+        })
+        setChoices(updatedChoices);
+    };
+
+
     return (
         <>
             {question.questionType === 0 && (  // 선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
+                    <RadioGroup
+                        aria-labelledby="demo-controlled-radio-buttons-group"
+                        name="controlled-radio-buttons-group"
+                        value={value}
+                        onChange={handleChange}
+                    >
                     {choices.map((choice, index) => (
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex gap-4 items-end">
-                                <Radio/>
+                                <FormControlLabel value={index} control={<Radio/>} label=""/>
                                 <TextField
                                     fullWidth multiline
                                     label={"답안"}
                                     placeholder="답안을 입력하세요."
                                     variant={"standard"}
                                     value={choice.choiceText}
-                                    onChange={(e) => {
-                                    }}
+                                    onChange={(e) => {updateChoices(e, index)}}
                                 />
                                 <IconButton onClick={() => document.getElementById('file-input').click()}>
                                     <InsertPhotoIcon/>
@@ -130,6 +140,7 @@ export default function Choices({question}) {
                             </div>
                         </div>
                     ))}
+                    </RadioGroup>
                     <div className="flex gap-4 items-center">
                         <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
                     </div>
@@ -139,14 +150,17 @@ export default function Choices({question}) {
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
                         <div key={index} className="flex gap-4 items-end">
-                            <Checkbox/>
+                            <Checkbox
+                                checked={choice.choiceIsanswer}
+                                value={choice.choiceIsanswer}
+                                onClick={()=>updateCheckBox(index)}/>
                             <TextField
                                 fullWidth multiline
                                 label={"답안"}
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                onChange={(e) => {}}
+                                onChange={(e) => {updateChoices(e, index)}}
                             />
 
                             <IconButton onClick={() => document.getElementById('file-input').click()}>
@@ -190,7 +204,14 @@ export default function Choices({question}) {
                         fullWidth
                         label={"답안"}
                         placeholder="정답을 입력하세요."
-                        variant={"standard"}/>
+                        variant={"standard"}
+                        onChange={(e) => {
+                            const updatedChoices = {
+                                choiceText : e.target.value
+                            };
+                            setChoices([updatedChoices]);
+                        }}
+                    />
                 </div>
             )}
         </>
