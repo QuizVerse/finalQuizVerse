@@ -42,6 +42,14 @@ export default function Detail() {
     return <div>No data found</div>; // 데이터가 없을 때 표시
   }
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    // 날짜를 'YYYY-MM-DD' 형식으로 변환
+    const formattedDate = new Date(dateString).toLocaleDateString('ko-KR', options).replace(/\./g, '-').replace(/ /g, '');
+    return formattedDate.endsWith('-') ? formattedDate.slice(0, -1) : formattedDate; // 끝에 '-'가 있다면 제거
+  };
+
+
   return (
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
@@ -51,7 +59,7 @@ export default function Detail() {
               <Card>
                 <CardMedia
                     component="img"
-                    image={bookData.book_image}
+                    image={bookData.bookImage}
                     alt="Book Image"
                     sx={{ height: 'auto', maxHeight: 600, width: '100%', objectFit: 'contain' }} // 이미지를 버튼의 높이만큼 조정
                 />
@@ -61,19 +69,19 @@ export default function Detail() {
             <Grid item xs={12} md={6}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Typography variant="h4" component="div" sx={{ fontWeight: 'bold' }}>
-                  {bookData.book_title}
+                  {bookData.bookTitle}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                  출제자 {bookData.user ? bookData.user.user_nickname : "알 수 없음"}
+                  출제자: {bookData.user ? bookData.user.userNickname : "알 수 없음"}
                 </Typography>
-                {/*<Typography variant="body2" color="text.secondary">*/}
-                {/*  출제일자 {bookData.book_createdate || "알 수 없음"}*/}
-                {/*</Typography>*/}
+                <Typography variant="body1" color="text.secondary">
+                  출제일자: {bookData.bookCreatedate ? formatDate(bookData.bookCreatedate) : "알 수 없음"}
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  카테고리: {bookData.category ? bookData.category.category_name : "기타"}
+                  카테고리: {bookData.category ? bookData.category.categoryName : "기타"}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 2 }}>
-                  {bookData.book_description || "알 수 없음"}
+                  {bookData.bookDescription || "알 수 없음"}
                 </Typography>
 
 
@@ -85,7 +93,7 @@ export default function Detail() {
                         color="primary"
                         sx={{ borderRadius: '16px', fontSize: '0.875rem', padding: '5px 10px' }}
                     />
-                    <Typography variant="body1">{bookData.book_totalscore}</Typography>
+                    <Typography variant="body1">{bookData.bookTotalscore}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip
@@ -93,7 +101,7 @@ export default function Detail() {
                         color="primary"
                         sx={{ borderRadius: '16px', fontSize: '0.875rem', padding: '5px 10px' }}
                     />
-                    <Typography variant="body1">{bookData.book_timer === 0 ? "제한 없음" : bookData.book_timer + " 분"}</Typography> {/* book_timer 필드 사용 */}
+                    <Typography variant="body1">{bookData.bookTimer === 0 ? "제한 없음" : bookData.bookTimer + " 분"}</Typography> {/* book_timer 필드 사용 */}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip
@@ -101,7 +109,7 @@ export default function Detail() {
                         color="primary"
                         sx={{ borderRadius: '16px', fontSize: '0.875rem', padding: '5px 10px' }}
                     />
-                    <Typography variant="body1">{bookData.book_status === 0 ? "비공개" : "공개"}</Typography> {/* book_status 필드 사용 */}
+                    <Typography variant="body1">{bookData.bookStatus === 0 ? "비공개" : "공개"}</Typography> {/* book_status 필드 사용 */}
                   </Box>
                 </Box>
 

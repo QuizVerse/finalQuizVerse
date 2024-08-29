@@ -3,7 +3,6 @@ import { Button } from "@mui/material";
 import Section from "../../components/Section";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Sidebar } from "lucide-react";
 import EditSidebar from "../../components/EditSidebar";
 import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
@@ -20,14 +19,14 @@ export default function Edit() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 1. bookId에 해당하는 책 데이터를 가져옴
+                // bookId에 해당하는 책 데이터를 가져옴
                 const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
                     console.log(res)
                     setBookData(res.data.book);
                     setSections(res.data.sections);
                 });
 
-                setLoading(false); // 5. 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
                 console.error("Error fetching book data:", error);
                 setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
@@ -45,7 +44,7 @@ export default function Edit() {
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
     const [sections, setSections] = useState([
-        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", questions: [{ id: 1, type: 3 }], book : bookData }
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", book : bookData }
     ]);
 
     // side bar에서 섹션 추가
@@ -54,7 +53,7 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
-            questions: [{ id: 1, type: 3 }]
+            // questions: [{ id: 1, type: 3 }]
         };
         setSections([...sections, newSection]);
     };
@@ -63,8 +62,9 @@ export default function Edit() {
     const handleDuplicateSection = (index) => {
         const duplicatedSection = {
             ...sections[index],
+            sectionId : "",
             sectionNumber: sections.length + 1,
-            questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
+            // questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
         setSections([...sections, duplicatedSection]);
         openAlert("섹션이 복제되었습니다.");
@@ -140,7 +140,6 @@ export default function Edit() {
         }
     };
 
-
     const handleSortChange = (newSortData) => {
         setSections(newSortData);
         // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
@@ -148,14 +147,13 @@ export default function Edit() {
 
     // 출제하기 버튼 클릭 시 실행되는 로직 추가
     const handlePublish = () => {
-
+        console.log(sections)
         axios({
             method:'post',
             url:'/book/section/saveall',
             data: sections,
         }).then(res=>{
             console.log(res)
-            setSections('');
         })
     };
 
@@ -174,17 +172,13 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
                         <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-
-                        {/**
-                         * @todo : 출제하기 버튼을 누르면 section과 question이 모두 저장되기
-                         */}
-                        <Button variant={"contained"}  onClick={handlePublish}>출제하기</Button>
+                        <Button variant={"contained"} onClick={handlePublish}>출제하기</Button>
                     </div>
                 </div>
 
                 {sections && sections.map((section, index) => (
                     <Section
-                        key={section.sectionNumber}
+                        key={index}
                         index={index}
                         title={section.sectionTitle}
                         description={section.sectionDescription}
@@ -192,6 +186,7 @@ export default function Edit() {
                         questions={section.questions}
                         openConfirm={openConfirm}
                         section={section}
+                        book={bookData}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
