@@ -43,21 +43,6 @@ export default function Section({
         questionPoint: 0,
     }]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if(section.sectionId === '') return;
-                axios.post(`/book/question/getallbysection`, section).then((res)=>{
-                    setQuestions(res.data);
-                });
-            } catch (error) {
-                console.error("Error fetching book data:", error);
-            }
-        };
-
-        fetchData(); // 데이터를 가져오는 함수 호출
-    }, []);
-
     /**
      * @description : 새로운 질문 추가
      */
