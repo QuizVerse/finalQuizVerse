@@ -22,8 +22,16 @@ public class ChoiceService {
         this.choiceRepository = choiceRepository;
     }
 
+    public ChoiceDto saveChoice(ChoiceDto choice) {
+        return choiceRepository.save(choice);
+    }
+
     public List<ChoiceDto> saveChoices(List<ChoiceDto> choices) {
         return choiceRepository.saveAll(choices);
+    }
+
+    public List<ChoiceDto> getAllChoices(int questionId) {
+        return choiceRepository.findByQuestionQuestionId(questionId);
     }
 
 }
