@@ -69,29 +69,65 @@ export default function Choices({question}) {
         })
     };
 
+    // Image Upload
+    const handleFileChange = (event, index) => {
+        const file = event.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+
+            const updatedChoices = [...choices];
+            updatedChoices[index] = {
+                ...updatedChoices[index],
+                choiceImage: imageUrl,
+            };
+            setChoices(updatedChoices);
+        }
+    };
+
     return (
         <>
             {question.questionType === 0 && (  // 선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
-                        <div key={index} className="flex gap-4 items-end">
-                            <Radio/>
-                            <TextField
-                                fullWidth multiline
-                                label={"답안"}
-                                placeholder="답안을 입력하세요."
-                                variant={"standard"}
-                                value={choice.choiceText}
-                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
-                                onChange={(e) => {}}
-                            />
-                            {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
-                            <IconButton>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={() => handleDeleteChoice(index)}>
-                                <CloseIcon/>
-                            </IconButton>
+                        <div key={index} className="flex flex-col gap-4">
+                            <div className="flex gap-4 items-end">
+                                <Radio/>
+                                <TextField
+                                    fullWidth multiline
+                                    label={"답안"}
+                                    placeholder="답안을 입력하세요."
+                                    variant={"standard"}
+                                    value={choice.choiceText}
+                                    onChange={(e) => {
+                                    }}
+                                />
+                                <IconButton onClick={() => document.getElementById('file-input').click()}>
+                                    <InsertPhotoIcon/>
+                                </IconButton>
+                                <IconButton onClick={() => handleDeleteChoice(index)}>
+                                    <CloseIcon/>
+                                </IconButton>
+                            </div>
+                            <div className={"flex justify-center"}>
+                                {/* Image Preview */}
+                                {choice.choiceImage !== "" ?
+                                    <img
+                                        src={choice.choiceImage}
+                                        alt="Cover"
+                                        className="w-36 h-36 object-cover"
+                                        width="150"
+                                        height="150"
+                                    /> : ""}
+                                {/* Hidden File Input */}
+                                <input
+                                    type="file"
+                                    id="file-input"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        handleFileChange(e, index)}
+                                    style={{display: 'none'}} // Hide the file input
+                                />
+                            </div>
                         </div>
                     ))}
                     <div className="flex gap-4 items-center">
@@ -110,11 +146,10 @@ export default function Choices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
                                 onChange={(e) => {}}
                             />
-                            {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
-                            <IconButton>
+
+                            <IconButton onClick={() => document.getElementById('file-input').click()}>
                                 <InsertPhotoIcon/>
                             </IconButton>
                             <IconButton onClick={() => handleDeleteChoice(index)}>
