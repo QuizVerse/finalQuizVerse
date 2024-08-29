@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="tb_book")
@@ -18,6 +21,7 @@ public class BookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
+
     private int bookId;
 
     @Column(name = "book_image", nullable = false, length = 255)
@@ -34,6 +38,10 @@ public class BookDto {
 
     @Column(name = "book_timer", nullable = false)
     private int bookTimer;
+
+    @Column(name = "book_createdate", updatable = false)
+    @CreationTimestamp
+    private Timestamp bookCreatedate;
 
     // Foreign Key reference to UserDTO
     @ManyToOne
@@ -52,4 +60,5 @@ public class BookDto {
 
     @Column(name = "book_totalscore", nullable = false)
     private int bookTotalscore;
+
 }

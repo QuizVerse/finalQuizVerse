@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import Cookies from 'js-cookie';
-
+import React from 'react';
 
 export default function MainHeader() {
 
@@ -24,16 +24,15 @@ export default function MainHeader() {
         }
     }, []);
 
-    const handleLogout = () => {
-        // Remove token from localStorage
-        localStorage.removeItem('token');
+    const handleLogout = async() => {
+        try {
+            const jwtToken=Cookies.get('jwtToken')
 
-        // Remove token from cookies
-        Cookies.remove('jwtToken');
 
-        setIsLoggedIn(false);
-        navi('/');
-    }
+        }catch(error){
+
+        }
+    };
 
 
     return (

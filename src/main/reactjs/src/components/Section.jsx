@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material";
@@ -8,6 +8,8 @@ import LoopIcon from '@mui/icons-material/Loop';
 import CustomConfirm from "./modal/CustomConfirm";
 import SectionSort from "./modal/SectionSort";
 import Question from "./Question";
+import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function Section({
                                     index,
@@ -17,8 +19,12 @@ export default function Section({
                                     onDuplicate,
                                     onDelete,
                                     openConfirm,
-                                    onUpdateSection
+                                    onUpdateSection,
+                                    section
                                 }) {
+
+
+
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -32,7 +38,28 @@ export default function Section({
     };
 
     // 상태로 관리되는 질문 리스트
-    const [questions, setQuestions] = useState([{id: 1, type: 3}]);
+    const [questions, setQuestions] = useState([ {
+        questionTitle: "What is the capital of France?",
+        questionDescription: "This question is about the capitals of European countries.",
+        questionDescriptionimage: "description_image_url.jpg",
+        questionSolution: "The capital of France is Paris.",
+        questionSolutionimage: "solution_image_url.jpg",
+    }]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                axios.post(`/book/question/getallbysection`, section).then((res)=>{
+                    setQuestions(res.data);
+                });
+
+            } catch (error) {
+                console.error("Error fetching book data:", error);
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, []);
 
     /**
      * @description : 새로운 질문 추가
@@ -58,6 +85,7 @@ export default function Section({
         if (questions.length > 1) {
             const newQuestions = questions.filter((_, i) => i !== index);
             setQuestions(newQuestions);
+
         }
     };
 
@@ -85,6 +113,20 @@ export default function Section({
         console.log("복제된 섹션:", newSection);
         // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
     };
+
+    /**
+     * @description : 문제 변경 사항 업데이트
+     */
+    const handleUpdateQuestion = (index, title, description) => {
+        const updatedQuestions = [...questions];
+        updatedQuestions[index] = {
+            ...updatedQuestions[index],
+            questionTitle: title,
+            questionDescription: description
+        };
+        setQuestions(updatedQuestions);
+    };
+
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
@@ -132,6 +174,12 @@ export default function Section({
                                 <LoopIcon/>
                             </IconButton>
                         </Tooltip>
+
+                        <Tooltip title="질문 추가">
+                            <IconButton onClick={handleAddQuestion}>
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
                     </div>
                 </div>
             )}
@@ -140,10 +188,13 @@ export default function Section({
                     key={question.id}
                     index={index}
                     type={question.type}
+                    title={question.questionTitle}
+                    description={question.questionDescription}
                     totalQuestions={questions.length}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
+                    onUpdateQuestion={(title, description) => handleUpdateQuestion(index, title, description)}
                 />
             ))}
         </div>

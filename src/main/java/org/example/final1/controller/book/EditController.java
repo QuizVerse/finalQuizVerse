@@ -2,14 +2,20 @@ package org.example.final1.controller.book;
 
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
+import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SectionDto;
+import org.example.final1.service.BookService;
+import org.example.final1.service.ChoiceService;
 import org.example.final1.service.QuestionService;
 import org.example.final1.service.SectionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +24,31 @@ public class EditController {
 
     private final SectionService sectionService;
     private final QuestionService questionService;
+    private final ChoiceService choiceService;
+    private final BookService bookService;
+
+    @GetMapping("/edit/{id}")
+    public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
+        Optional<BookDto> bookOpt = bookService.getBookById(id);
+        if (bookOpt.isPresent()) {
+            BookDto book = bookOpt.get();
+
+            // Fetch sections, questions, and choices related to the book
+            List<SectionDto> sections = sectionService.getAllSections(book);
+//            List<QuestionDto> questions = questionService.getAllQuestions(book);
+
+            // Create the response map
+            Map<String, Object> response = new HashMap<>();
+            response.put("book", book);
+            response.put("sections", sections);
+//            response.put("questions", questions);
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     /** 섹션 관련 */
     // 섹션 생성
@@ -27,16 +58,16 @@ public class EditController {
         return ResponseEntity.ok(saved);
     }
 
-    // 섹션 정렬
-    @PostMapping("/section/sort")
-    public ResponseEntity<List<SectionDto>> sortSection(@RequestBody List<SectionDto> sectionList) {
+    // 섹션 리스트 저장
+    @PostMapping("/section/saveall")
+    public ResponseEntity<List<SectionDto>> saveSections(@RequestBody List<SectionDto> sectionList) {
         List<SectionDto> list = sectionService.saveSections(sectionList);
         return ResponseEntity.ok(list);
     }
 
     // 섹션 삭제
     @DeleteMapping("/section/delete/{id}")
-    public ResponseEntity<Void> deleteSection(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteSection(@PathVariable("id") Integer id) {
         sectionService.deleteSection(id);
         return ResponseEntity.noContent().build();
     }
@@ -58,15 +89,24 @@ public class EditController {
 
     // 질문 삭제
     @DeleteMapping("/question/delete/{id}")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable("id") Long id) {
+
+    public ResponseEntity<Void> deleteQuestion(@PathVariable("id") int id) {
+
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
 
-    // 질문 저장
-    @PostMapping("/question/sort")
-    public ResponseEntity<List<QuestionDto>> sortQuestion(@RequestBody List<QuestionDto> questionList) {
+    // 질문 리스트 저장
+    @PostMapping("/question/saveall")
+    public ResponseEntity<List<QuestionDto>> saveQuestions(@RequestBody List<QuestionDto> questionList) {
         List<QuestionDto> list = questionService.saveQuestions(questionList);
+        return ResponseEntity.ok(list);
+    }
+
+    // 섹션으로 질문 불러오기
+    @PostMapping("/question/getallbysection")
+    public ResponseEntity<List<QuestionDto>> getAllQuestionsBySection(@RequestBody SectionDto section) {
+        List<QuestionDto> list = questionService.getAllQuestionsBySection(section);
         return ResponseEntity.ok(list);
     }
 
@@ -75,6 +115,19 @@ public class EditController {
     public ResponseEntity<List<QuestionDto>> getAllQuestions(@RequestBody BookDto book) {
         List<QuestionDto> list = questionService.getAllQuestions(book);
         return ResponseEntity.ok(list);
+    }
+
+    // Choices 저장
+    @PostMapping("/choice/saveall")
+    public ResponseEntity<List<ChoiceDto>> saveChoices(@RequestBody List<ChoiceDto> choices) {
+        List<ChoiceDto> list = choiceService.saveChoices(choices);
+        return ResponseEntity.ok(list);
+    }
+
+    // ChoiceDto 조회
+    @PutMapping("/question/{id}/update-res")
+    public void updateQuestionRes(@PathVariable int id) {
+        questionService.updateQuestionRes(id);
     }
 
 }

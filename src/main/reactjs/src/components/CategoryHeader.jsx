@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 
 export default function CategoryHeader() {
     const [categoryList,setCategoryList]=useState([]);
-
+    //axio get으로 보내서 url
     //처음 딱 한번 목록 가져오기
     useEffect(()=>{
         getDataList();
@@ -29,7 +29,7 @@ export default function CategoryHeader() {
                     categoryList.map((row) => (
                         <Button key={row.categoryId}
                             className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
-                            <Link to={'/book/category'}>{row.categoryName}</Link>
+                            <Link to={"/book/category?cat="+row.categoryId}>{row.categoryName}</Link>
                         </Button>
                     ))
                 }

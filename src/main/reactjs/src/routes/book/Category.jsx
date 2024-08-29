@@ -1,224 +1,94 @@
 // v0 by Vercel.
 // https://v0.dev/t/Onu9RySa1RJ
 
+import { Pagination, Stack } from "@mui/material";
+import BookCard from "../../components/BookCard";
+import React, { useState } from 'react';
+
+const ITEMS_PER_PAGE = 10;
+const SPACING = 2;
+//여기서 state 하나 더 만들어주고 이 페이지에서 axios를 사용하여 벡엔드에서 데이터를 불러온다
+// ex) state가 변할때마다 axios 요청을 매번 다시 보내줘야 한다
+// ex) 한번에 다 불러오고 필요한거 찾아가도록 해도 된다 map요청 filter 는 category
+// pagenation할 자료
+const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
 
 export default function Category() {
-    return (
+  /* category 내역 불러오기
+    1. 카테고리 state 생성
+    2. url이동시 등록되는 cat 변수에서 값을 가져와 category 변수에 등록하기
+    3. useEffect로 axios요청 보내서 카테고리에 해당하는 값들 불러오기
+  */
+
+
+
+  // pagenation에 필요한 변수
+  const [page, setPage] = useState(1);
+  const itemOffset = (page - 1) * ITEMS_PER_PAGE;
+  const currentItems = items.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(items.length / ITEMS_PER_PAGE);
+
+  /**
+   * @description : pagenation에 필요한 함수
+  * */
+  const handleChange = (event, value) => {
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  return (
 
   <main className="p-4">
     <section>
       <h2 className="mb-4 text-xl font-bold">취업/자격증 문제집 Top 5</h2>
       <div className="grid grid-cols-5 gap-4 mb-8">
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+       
+          <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        
       </div>
     </section>
     <section>
@@ -260,445 +130,91 @@ export default function Category() {
         </select>
       </div>
       <div className="grid grid-cols-5 gap-4">
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-          <img
-            src="/placeholder.svg"
-            alt="Placeholder"
-            className="w-full h-48 object-cover"
-            width="200"
-            height="200"
-          />
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <div
-                className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                data-v0-t="badge"
-              >
-                합격률 80%
-              </div>
-              <span className="text-sm text-muted-foreground">2022.04.27</span>
-            </div>
-            <h3 className="mb-2 text-lg font-bold">2024 정보처리기사 실기</h3>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 / 자격증</p>
-            <p className="mb-2 text-sm text-muted-foreground">문제집 2권 / 해설 2권</p>
-            <div className="flex items-center justify-between">
-              <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                공유하기
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="w-6 h-6 text-red-500"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
+      <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
+        <BookCard cardType="A"
+        nickname="합격률 80%"
+        createDate="2024-08-23"
+        title="2024 정보처리기사 실기"
+        category="문제집/자격증"
+        viewCount="10"
+        questionCount="20"
+        sectionCoune="4"
+        status="여긴status"/>
       </div>
     </section>
-    <div className="flex justify-center mt-8">
-      <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-        1
-      </button>
-      <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-        2
-      </button>
-      <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-        3
-      </button>
-      <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-        4
-      </button>
-      <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-        5
-      </button>
-    </div>
+    <div className={"flex justify-center mt-4"}>
+        <Stack spacing={SPACING}>
+          <Pagination
+              count={pageCount}
+              page={page}
+              onChange={handleChange}
+              showFirstButton
+              showLastButton
+          />
+        </Stack>
+      </div>
   </main>
 
     )

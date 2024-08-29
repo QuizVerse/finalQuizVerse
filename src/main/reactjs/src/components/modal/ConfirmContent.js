@@ -96,7 +96,21 @@ const confirmContent = [
         content: "문제에 대해 한줄평을 남겨주세요!",
         btn1Text: "다음에 하기",
         btn2Text: "제출하기",
-    }
+    },
+    {
+        id: 14,
+        title: "섹션을 삭제하시겠습니까?",
+        content: "섹션을 삭제하면 복구할 수 없습니다.",
+        btn1Text: "",
+        btn2Text: "",
+    },
+    {
+        id: 15,
+        title: "문제를 삭제하시겠습니까?",
+        content: "문제를 삭제하면 복구할 수 없습니다.",
+        btn1Text: "",
+        btn2Text: "",
+    },
 ]
 
 export default confirmContent;

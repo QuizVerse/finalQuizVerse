@@ -180,7 +180,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: "/book/detail",
+                path: "/book/detail/:book_Id",
                 element: <Detail />,
                 errorElement: <ErrorPage />,
             },
@@ -194,8 +194,13 @@ const router = createBrowserRouter([
                 element: <NewBook />,
                 errorElement: <ErrorPage />,
             },
+            // {
+            //     path: "/book/edit",
+            //     element: <Edit />,
+            //     errorElement: <ErrorPage />,
+            // },
             {
-                path: "/book/edit",
+                path: "/book/edit/:bookId",
                 element: <Edit />,
                 errorElement: <ErrorPage />,
             },
