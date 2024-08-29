@@ -6,6 +6,7 @@ import axios from 'axios';
 import {Button, MenuItem, Select, InputLabel, FormControl, TextField, Switch, IconButton} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
+
 export default function NewBook() {
     // Dropdown state
     const [category, setCategory] = useState('');
@@ -17,30 +18,53 @@ export default function NewBook() {
     const [isChecked, setIsChecked] = useState(false);
     const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
+    const [user, setUser] = useState(null); //사용자 정보 저장
+    const navigate = useNavigate();
+    const [categoryList,setCategoryList]=useState([]);
 
+    // 사용자 정보 가져오기
+    useEffect(() => {
+        if (user === null) {
+            axios.get('/user/me')
+                .then(response => {
+                    if (response.data) {
+                        setUser(response.data); // 사용자 정보 저장
+                    } else {
+                        console.error('User data is not available');
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to fetch user info:', err);
+                });
+        }
+    }, []); // userId가 아닌 user로 상태 변경 감지
+
+
+    //처음 딱 한번 목록 가져오기
+    useEffect(()=>{
+        getDataList();
+    },[]);
+
+    const getDataList = () => {
+        axios.get('/category/list')
+            .then(res => {
+                setCategoryList(res.data);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    };
 
     // Handle changes
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value)
-    };
-
-    const handleVisibilityChange = (event) => {
-        setVisibility(event.target.value);
-    };
-
+    const handleCategoryChange = (event) => setCategory(event.target.value);
+    const handleVisibilityChange = (event) => setVisibility(event.target.value);
     const handleBookNameChange = (e) => setBookName(e.target.value);
     const handleBookDescriptionChange = (e) => setBookDescription(e.target.value);
     const handleTotalPointsChange = (e) => setTotalPoints(e.target.value);
     const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
+    const toggleSwitch = () => setIsChecked(prevState => !prevState);
+    const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
 
-    const toggleSwitch = () => {
-        setIsChecked(prevState => !prevState);
-    };
-
-    // Time Limit Toggle 함수 추가
-    const toggleTimeSwitch = () => {
-        setIsTimeLimitEnabled(prevState => !prevState);
-    };
 
     // Image Upload
     const handleFileChange = (event) => {
@@ -53,28 +77,39 @@ export default function NewBook() {
 
     // Submit new book
     const handleSubmit = () => {
+        if (!user || !user.userId) {
+            console.error('User not authenticated. Please log in.');
+            return; // 유저가 없으면 함수 종료
+        }
         let selectedCategory = {};
-        categoryList.map((row)=>{
+        categoryList.forEach((row)=>{
             if(row.categoryId === category) {
                 selectedCategory = row;
             }
         })
+
         const newBookData = {
             "bookTitle": bookName,
             "bookDescription": bookDescription,
-            "bookStatus": 0,
+            "bookStatus": 0, //전체공개: 0, 클래스공개: 1, 비공개 2
             "category": selectedCategory === '' ? null : selectedCategory,
             "bookTimer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
             "bookImage": coverImage,
             "bookDivide": isChecked ? 1 : 0,
             "bookTotalscore": parseInt(totalPoints, 10) || 0,
-            // "bookCreateDate": creationDate
+            "user": { // 사용자 정보 추가
+                "userId": user.userId,
+            }
         };
 
-        axios.post('/book/newbook', newBookData)
+        axios.post('/book/newbook', newBookData, {
+            headers: {
+                'User-Id': user.userId // User-Id 헤더에 userId 설정
+            }
+        })
             .then((res) => {
                 console.log(res.data);
-                navigate("/book/edit")
+                navigate("/book/edit");
             })
             .catch((err) => {
                 console.error(err);
@@ -82,7 +117,6 @@ export default function NewBook() {
     };
 
     // Cancel button logic
-    const navigate = useNavigate();
     const handleCancel = () => {
         setBookName('');
         setBookDescription('');
@@ -96,38 +130,7 @@ export default function NewBook() {
         navigate(-1);
     };
 
-    const [categoryList,setCategoryList]=useState([]);
 
-    //처음 딱 한번 목록 가져오기
-    useEffect(()=>{
-        getDataList();
-    },[]);
-
-    const getDataList=()=>{
-        axios({
-            method:'get',
-            url:'/category/list',
-        }).then(res=>{
-            console.log(res);
-            setCategoryList(res.data);
-        })
-    }
-    // const getDataList = () => {
-    //     axios.get('/category/list')
-    //         .then(res => {
-    //             setCategoryList(res.data);
-    //         })
-    //         .catch(err => {
-    //             console.error(err);
-    //         });
-    // };
-
-    // // 현재 시간을 ISO 형식으로 반환하는 함수
-    // const getCurrentTime = () => {
-    //     return new Date().toISOString();
-    // };
-    // // 현재 시간을 생성일자로 설정
-    // const creationDate = getCurrentTime();
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
