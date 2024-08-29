@@ -82,8 +82,6 @@ export default function Choices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
-                                onChange={(e) => {}}
                             />
                             {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
                             <IconButton>
@@ -110,8 +108,7 @@ export default function Choices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                {/** @todo: 값이 바뀌면 업데이트 되게 하기 */}
-                                onChange={(e) => {}}
+
                             />
                             {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
                             <IconButton>
