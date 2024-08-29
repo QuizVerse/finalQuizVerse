@@ -5,11 +5,12 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import ReactDOM from "react-dom";
 import LoadingModal from "../../components/modal/LoadingModal";
 
 // PdfPage 컴포넌트 정의
 const PdfPage = React.forwardRef(({ answers }, ref) => (
-  <div ref={ref} style={{ width: "100%" }}>
+  <div style={{ width: "100%" }} ref={ref}>
     <div className="overflow-x-auto pt-5 py-8">
       <table className="min-w-full">
         <thead>
@@ -83,10 +84,11 @@ const PdfPage = React.forwardRef(({ answers }, ref) => (
         </tbody>
       </table>
     </div>
+
     <div className="mb-4">
       <h2 className="text-lg font-semibold mb-2 pt-8">정오답 표</h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300">
+        <table className="w-full bg-white border border-gray-300">
           <tbody className="border">
             {Array.from({ length: Math.ceil(answers.length / 10) }).map(
               (_, pageIndex) => {
@@ -101,7 +103,8 @@ const PdfPage = React.forwardRef(({ answers }, ref) => (
                       {pageAnswers.map((answer, index) => (
                         <td
                           key={`number-${index}`}
-                          className="text-center text-lg bg-gray-100 font-semibold py-3 border border-gray-300"
+                          style={{ width: "10%" }}
+                          className="text-center text-base bg-gray-100 font-semibold py-3 border border-gray-300"
                         >
                           {answer.number}
                         </td>
@@ -111,6 +114,7 @@ const PdfPage = React.forwardRef(({ answers }, ref) => (
                       {pageAnswers.map((answer, index) => (
                         <td
                           key={`correct-${index}`}
+                          style={{ width: "10%" }}
                           className="text-center py-3 border border-gray-300"
                         >
                           {answer.correct ? (
@@ -137,7 +141,7 @@ export default function ScorePreview() {
   const printpdfRef = useRef([]);
   const [loadingVisible, setLoadingVisible] = useState(false);
 
-  const answers = Array.from({ length: 222 }, (_, index) => ({
+  const answers = Array.from({ length: 100 }, (_, index) => ({
     number: `${index + 1}번`,
     correct: true,
   }));
@@ -151,9 +155,9 @@ export default function ScorePreview() {
       format: "a4",
     });
 
-    const margin = 10;
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const margin = 5; // 여백 설정
+    const pdfWidth = pdf.internal.pageSize.getWidth(); // PDF 페이지 너비
+    const pdfHeight = pdf.internal.pageSize.getHeight(); // PDF 페이지 높이
 
     // 문제를 80개씩 나누어서 각 페이지에 렌더링
     const chunks = Array.from(
@@ -163,28 +167,66 @@ export default function ScorePreview() {
 
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
-      const container = printpdfRef.current[i];
+      const container = document.createElement("div");
+      container.style.position = "absolute";
+      container.style.top = "-10000px";
+      container.style.left = "-10000px";
+      container.style.width = `${pdfWidth}mm`;
+      document.body.appendChild(container);
 
-      // html2canvas로 캡처
-      const canvas = await html2canvas(container, { scale: 2 });
+      // pdfpage 컴포넌트 내용을 div(container)에 넣기
+      ReactDOM.render(<PdfPage answers={chunk} />, container);
+
+      // html2canvas 를 이용해서 div의 내용을 캡쳐
+      const canvas = await html2canvas(container, {
+        scale: 2, // 스케일을 1로 설정하여 해상도 조정
+        useCORS: true,
+      });
+
+      // 이미지 사이즈 조절
       const imgData = canvas.toDataURL("image/png");
+      let imgWidth = pdfWidth - 2 * margin; // 여백을 제외한 PDF 페이지 너비
+      let imgHeight = (canvas.height * imgWidth) / canvas.width; // 비율 유지
 
-      const imgWidth = pdfWidth - 2 * margin;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // 이미지 높이를 페이지 높이에 맞추기
+      if (imgHeight > pdfHeight - 2 * margin) {
+        const scalingFactor = (pdfHeight - 2 * margin) / imgHeight;
+        imgWidth *= scalingFactor; // 비율에 맞춰 너비 조정
+        imgHeight = pdfHeight - 2 * margin; // 높이를 페이지 높이에 맞추기
+      }
+
+      // 이미지 너비를 페이지 너비에 맞추기
+      if (imgWidth > pdfWidth - 2 * margin) {
+        imgWidth = pdfWidth - 2 * margin;
+        imgHeight = (canvas.height * imgWidth) / canvas.width;
+      }
+
+      // 이미지 사이즈를 90%로 조절
+      imgWidth *= 0.9;
+      imgHeight *= 0.9;
+
+      const x = (pdfWidth - imgWidth) / 2;
 
       if (i > 0) {
         pdf.addPage();
       }
 
-      pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
+      // 이미지를 PDF에 추가
+      pdf.addImage(imgData, "PNG", x, margin, imgWidth, imgHeight);
 
+      // 페이지 번호 추가
       pdf.setFontSize(10);
       pdf.text(
         `${i + 1} / ${chunks.length}`,
         pdfWidth / 2,
         pdfHeight - margin,
-        { align: "center" }
+        {
+          align: "center",
+        }
       );
+
+      ReactDOM.unmountComponentAtNode(container);
+      document.body.removeChild(container);
     }
 
     pdf.save("우태형 정보처리기사 2024 기출문제 1-2 성적표.pdf");
@@ -206,22 +248,9 @@ export default function ScorePreview() {
           </Button>
         </div>
         <section className="flex flex-col gap-2">
-          {/* 문제를 80개씩 나누어서 각 페이지에 PdfPage 컴포넌트를 렌더링 */}
-          {Array.from({ length: Math.ceil(answers.length / 80) }).map(
-            (_, pageIndex) => (
-              <div
-                key={pageIndex}
-                ref={(el) => (printpdfRef.current[pageIndex] = el)}
-              >
-                <PdfPage
-                  answers={answers.slice(pageIndex * 80, pageIndex * 80 + 80)}
-                />
-              </div>
-            )
-          )}
+          <PdfPage answers={answers} />
         </section>
       </div>
-
       <LoadingModal
         open={loadingVisible}
         title="PDF 생성중입니다. 잠시만 기다려주세요."
