@@ -1,9 +1,6 @@
-// // v0 by Vercel.
-// // https://v0.dev/t/rQwPfCM4VGo
-
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Button, MenuItem, Select, InputLabel, FormControl, TextField, Switch, IconButton} from "@mui/material";
+import { Button, MenuItem, Select, InputLabel, FormControl, TextField, Switch, IconButton } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 
@@ -17,36 +14,31 @@ export default function NewBook() {
     const [totalPoints, setTotalPoints] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [timeLimit, setTimeLimit] = useState('');
-    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
-    const [user, setUser] = useState(null); //사용자 정보 저장
+    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false);
     const navigate = useNavigate();
-    const [categoryList,setCategoryList]=useState([]);
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
-    const [error, setError] = useState(null); // 에러 상태 추가
+    const [categoryList, setCategoryList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
+    //사진
+    // const [list, setlist]=useState([]);
+    // const storage = " https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
+    // const dataList=(){
+    //     axios.get("")
+    //         .then(res=>{
+    //             setlist(res.data);
+    //         })
+    // }
 
-    // 사용자 정보 가져오기
     useEffect(() => {
-        if (user === null) {
-            axios.get('/book/user/info')
-                .then(response => {
-                    if (response.data) {
-                        setUser(response.data); // 사용자 정보 저장
-                    } else {
-                        console.error('User data is not available');
-                    }
-                })
-                .catch(err => {
-                    console.error('Failed to fetch user info:', err);
-                });
-        }
-    }, []); // userId가 아닌 user로 상태 변경 감지
+        dataList();
+    }, []);
 
 
-    //처음 딱 한번 목록 가져오기
-    useEffect(()=>{
+    // 카테고리 목록 가져오기
+    useEffect(() => {
         getDataList();
-    },[]);
+    }, []);
 
     const getDataList = () => {
         axios.get('/category/list')
@@ -68,7 +60,6 @@ export default function NewBook() {
     const toggleSwitch = () => setIsChecked(prevState => !prevState);
     const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
 
-
     // Image Upload
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -80,30 +71,9 @@ export default function NewBook() {
 
     // Submit new book
     const handleSubmit = () => {
-        if (!user || !user.userId) {
-            setError('User not authenticated. Please log in.');
-            return; // 유저가 없으면 함수 종료
-        }
-
         setLoading(true);
         setError(null);
-
         let selectedCategory = categoryList.find(row => row.categoryId === category) || {};
-
-
-        // const newBookData = {
-        //     "bookTitle": bookName,
-        //     "bookDescription": bookDescription,
-        //     "bookStatus": 0, //전체공개: 0, 클래스공개: 1, 비공개 2
-        //     "category": selectedCategory === '' ? null : selectedCategory,
-        //     "bookTimer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
-        //     "bookImage": coverImage,
-        //     "bookDivide": isChecked ? 1 : 0,
-        //     "bookTotalscore": parseInt(totalPoints, 10) || 0,
-        //     "user": { // 사용자 정보 추가
-        //         "userId": user.userId,
-        //     }
-        // };
         const newBookData = {
             bookTitle: bookName,
             bookDescription: bookDescription,
@@ -113,21 +83,15 @@ export default function NewBook() {
             bookImage: coverImage,
             bookDivide: isChecked ? 1 : 0,
             bookTotalscore: parseInt(totalPoints, 10) || 0,
-            user: {
-                userId: user.userId,
-            }
         };
 
-        axios.post('/book/newbook', newBookData, {
-            headers: {
-                'User-Id': user.userId
-            }
-        })
+        axios.post('/book/newbook', newBookData)
             .then((res) => {
-                console.log(res.data);
+                console.log("Data saved successfully, navigating to /book/edit");
                 navigate("/book/edit");
             })
             .catch((err) => {
+                console.log("머가 단단히 잘못되었다..");
                 console.error(err);
                 setError('Failed to create new book');
             })
@@ -135,6 +99,7 @@ export default function NewBook() {
                 setLoading(false);
             });
     };
+
 
     // Cancel button logic
     const handleCancel = () => {
@@ -150,12 +115,9 @@ export default function NewBook() {
         navigate(-1);
     };
 
-
-
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
-
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl">
                 <div className="flex flex-col space-y-1.5 p-6">
                     <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
                         문제집 생성
@@ -274,7 +236,7 @@ export default function NewBook() {
                             {/* Upload Button */}
                             <div className={"flex justify-end"}>
                                 <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                    <CreateIcon/>
+                                    <CreateIcon />
                                 </IconButton>
                             </div>
 
