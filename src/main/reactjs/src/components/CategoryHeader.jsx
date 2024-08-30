@@ -34,7 +34,7 @@ export default function CategoryHeader() {
                     ))
                 }
                 <Button className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
-                    <Link to={'/book/category'}>전체보기</Link>
+                    <Link to={'/book/list'}>전체보기</Link>
                 </Button>
             </div>
             <SearchInput/>
