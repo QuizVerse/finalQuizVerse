@@ -85,7 +85,6 @@ export default function Edit() {
     // 섹션 삭제
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
-            setDeleteConfirmId(14);
             setDeleteSectionIndex(index);
             openConfirm();
         } else {
@@ -138,7 +137,6 @@ export default function Edit() {
 
     // confirm state
     const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteConfirmId, setDeleteConfirmId] = useState(0);
     const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     /**
@@ -162,22 +160,17 @@ export default function Edit() {
     const clickBtn2 = () => {
         setDeleteConfirm(false);
         const section = sections[deleteSectionIndex];
-        if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
-            axios({
-                method:'delete',
-                url:'/book/section/delete/'+section.sectionId,
-            }).then(res=>{
-                console.log(res);
-                setSections(sections.filter((_, i) => i !== deleteSectionIndex));
-            })
-        } else if(deleteConfirmId === 15) {
-
-        }
+        axios({
+            method: 'delete',
+            url: '/book/section/delete/' + section.sectionId,
+        }).then(res => {
+            console.log(res);
+            setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+        })
     };
 
     const handleSortChange = (newSortData) => {
         setSections(newSortData);
-        // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
     };
 
     // 출제하기 버튼 클릭 시 실행되는 로직 추가
@@ -219,7 +212,6 @@ export default function Edit() {
                         description={section.sectionDescription}
                         sectionCount={sections.length}
                         questions={section.questions}
-                        openConfirm={openConfirm}
                         section={section}
                         book={bookData}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
@@ -249,7 +241,7 @@ export default function Edit() {
 
                 {/* 삭제 Confirm */}
                 <CustomConfirm
-                    id={deleteConfirmId} // 섹션삭제 : 14, 문제삭제 : 15
+                    id={14} // 섹션삭제 : 14, 문제삭제 : 15
                     openConfirm={deleteConfirm}
                     clickBtn1={clickBtn1}
                     clickBtn2={clickBtn2}
