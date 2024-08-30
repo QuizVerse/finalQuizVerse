@@ -4,7 +4,7 @@ import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
 
-//굿
+
 export default function BookList() {
   const [booksByCategory, setBooksByCategory] = useState({});
   const [categories, setCategories] = useState([]);
@@ -62,7 +62,7 @@ export default function BookList() {
         <section className="mb-8" key={category.categoryId}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
-            <Link className="text-gray-600 flex gap-2 items-center" to={`/category/${category.categoryId}`}>
+            <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
               전체보기
               <ArrowForwardIosIcon fontSize={'8px'} />
             </Link>
