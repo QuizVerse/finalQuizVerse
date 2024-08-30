@@ -162,7 +162,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 label={"문제 해설"}
                                 placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
                                 variant={"standard"}
-                                value={explanation}
+                                value={solution}
                                 onChange={(e) => onUpdateQuestion(title, description, questionType, e.target.value)}
                             />
                             <IconButton>
