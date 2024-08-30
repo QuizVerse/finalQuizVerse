@@ -33,8 +33,8 @@ export default function QuestionButtons(props) {
 
     // 문제 설명 추가 핸들러
     const handleAddDescription = () => {
-        if (!props.questionDesc) {
-            props.setQuestionDesc(true); // 문제 설명을 빈 문자열로 초기화하여 추가
+        if (!props.showDescription) {
+            props.setShowDescription(true); // 문제 설명을 빈 문자열로 초기화하여 추가
         }
         handleSettingClose(); // 메뉴 닫기
     };
