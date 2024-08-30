@@ -22,6 +22,7 @@ public class JwtTokenProvider {
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .withClaim("user_id", userId)
                 .withClaim("user_email", userEmail)
+
                 .sign(Algorithm.HMAC512(SECRET_KEY)); // HMAC512 알고리즘 사용
     }
 

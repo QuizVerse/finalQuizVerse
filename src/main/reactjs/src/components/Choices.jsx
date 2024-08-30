@@ -161,6 +161,7 @@ export default function Choices({question}) {
                                 variant={"standard"}
                                 value={choice.choiceText}
                                 onChange={(e) => {updateChoices(e, index)}}
+
                             />
 
                             <IconButton onClick={() => document.getElementById('file-input').click()}>

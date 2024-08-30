@@ -1,5 +1,6 @@
 package org.example.final1.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.example.final1.model.UserDto;
@@ -37,6 +38,12 @@ public class UserService {
     //회원 탈퇴
     public void deleteUserById(int user_Id) {
         userDaoInter.deleteById(user_Id); // user_id로 사용자 삭제
+    }
+
+
+    //사용자 dto얻기
+    public UserDto getUserById(int user_Id) {
+        return userDaoInter.getById(user_Id);
     }
 
 }
