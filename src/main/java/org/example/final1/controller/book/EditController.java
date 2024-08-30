@@ -36,33 +36,17 @@ public class EditController {
             BookDto book = bookOpt.get();
 
             // Fetch sections, questions, and choices related to the book
-//            List<SectionDto> sections = sectionService.getAllSections(book);
-//            List<QuestionDto> questions = questionService.getAllQuestions(book);
+            List<SectionDto> sections = sectionService.getAllSections(book);
 
             // Create the response map
             Map<String, Object> response = new HashMap<>();
             response.put("book", book);
-//            response.put("sections", sections);
-//            response.put("questions", questions);
+            response.put("sections", sections);
 
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-
-    // 섹션, 질문 모두 저장
-    @PostMapping("/edit/saveall")
-    public ResponseEntity<Map<String, Object>> saveSections(@RequestBody List<SectionDto> sectionList,  @RequestBody List<QuestionDto> questionList) {
-        List<SectionDto> sections = sectionService.saveSections(sectionList);
-        List<QuestionDto> questions = questionService.saveQuestions(questionList);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("sections", sections);
-        response.put("questions", questions);
-
-        return ResponseEntity.ok(response);
     }
 
     /** 섹션 관련 */
@@ -104,9 +88,7 @@ public class EditController {
 
     // 질문 삭제
     @DeleteMapping("/question/delete/{id}")
-
     public ResponseEntity<Void> deleteQuestion(@PathVariable("id") int id) {
-
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
@@ -157,7 +139,6 @@ public class EditController {
     @GetMapping("/choice/getall/{questionId}")
     public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
         List<ChoiceDto> list = choiceService.getAllChoices(questionId);
-
         return ResponseEntity.ok(list);
     }
 

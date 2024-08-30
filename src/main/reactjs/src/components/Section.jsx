@@ -27,6 +27,11 @@ export default function Section({
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
 
+    // 섹션 접고 펴는 함수
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+
     // confirm state
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState(0);
@@ -35,13 +40,19 @@ export default function Section({
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
-    // 섹션 접고 펴는 함수
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([]);
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        axios.post('/book/question/getall', section)
+        .then(res => {
+            setQuestions(res.data);
+        })
+        .catch(error => {
+            console.error("Error fetching book data:", error);
+        });
+    }, []);
 
     /**
      * @description : 새로운 질문 추가

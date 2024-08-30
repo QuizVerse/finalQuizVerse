@@ -16,23 +16,9 @@ export default function Edit() {
     const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // bookId에 해당하는 책 데이터를 가져옴
-                const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
-                    setBookData(res.data.book);
-                });
-
-                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
-            } catch (error) {
-                console.error("Error fetching book data:", error);
-                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
-            }
-        };
-
-        fetchData(); // 데이터를 가져오는 함수 호출
-    }, [bookId]);
+    // confirm state
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
@@ -42,6 +28,26 @@ export default function Edit() {
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
     const [sections, setSections] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // bookId에 해당하는 책 데이터를 가져옴
+                axios.get(`/book/edit/${bookId}`)
+                    .then((res)=>{
+                    setBookData(res.data.book);
+                    setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+                });
+
+            } catch (error) {
+                console.error("Error fetching book data:", error);
+                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, [bookId]);
+
 
     // side bar에서 섹션 추가
     const handleAddSection = () => {
@@ -134,10 +140,6 @@ export default function Edit() {
         setAlertVisible(false);
         setSectionSortVisible(false);
     };
-
-    // confirm state
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     /**
      * @description : Confirm창 열릴 때
