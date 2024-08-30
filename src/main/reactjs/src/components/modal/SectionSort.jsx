@@ -8,12 +8,12 @@ function DraggableRow({ row, index, moveRow, arrLength }) {
 
     return (
         <div
-            key={row.id}
+            key={row.sectionId}
             className="flex items-center justify-between p-4 border rounded-md"
         >
             <div className="flex items-center space-x-2">
                 <div>
-                    <div>{row.title || '제목없는 섹션'}</div>
+                    <div>{row.sectionTitle || '제목없는 섹션'}</div>
                     <div className="text-sm text-muted-foreground">
                         {index + 1} 섹션 / {arrLength} 섹션
                     </div>

@@ -171,19 +171,25 @@ export default function Edit() {
 
     const handleSortChange = (newSortData) => {
         setSections(newSortData);
+        newSortData.forEach((e, index) => e.sectionNumber = index);
     };
 
-    // 출제하기 버튼 클릭 시 실행되는 로직 추가
-    const handlePublish = () => {
-        console.log(sections)
-        axios({
-            method:'post',
-            url:'/book/section/saveall',
-            data: sections,
-        }).then(res=>{
-            console.log(res)
-        })
-    };
+    // // 출제하기 버튼 클릭 시 실행되는 로직 추가
+    // const handlePublish = () => {
+    //     console.log(sections)
+    //     axios({
+    //         method:'post',
+    //         url:'/book/section/saveall',
+    //         data: sections,
+    //     }).then(res=>{
+    //         console.log(res)
+    //     })
+    // };
+
+    // 섹션 재정렬 모달 켜기
+    const openSortSection = () => {
+        setSectionSortVisible(true);
+    }
 
     if (loading) {
         return <div>Loading...</div>; // 로딩 중일 때 표시
@@ -200,7 +206,9 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
                         <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-                        <Button variant={"contained"} onClick={handlePublish}>출제하기</Button>
+                        <Button variant={"contained"}
+                                // onClick={handlePublish}
+                        >출제하기</Button>
                     </div>
                 </div>
 
@@ -219,7 +227,7 @@ export default function Edit() {
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
                 ))}
-                <EditSidebar onAddSection={handleAddSection}/>
+                <EditSidebar onAddSection={handleAddSection} onSortSection={openSortSection}/>
 
                 <CustomAlert
                     title={alertTitle}

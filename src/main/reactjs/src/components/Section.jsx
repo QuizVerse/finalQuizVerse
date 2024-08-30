@@ -251,11 +251,7 @@ export default function Section({
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="섹션 재정렬">
-                            <IconButton onClick={openConfirm}>
-                                <LoopIcon/>
-                            </IconButton>
-                        </Tooltip>
+
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
                                 <AddIcon />
