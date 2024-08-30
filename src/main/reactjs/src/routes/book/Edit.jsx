@@ -93,6 +93,23 @@ export default function Edit() {
         }
     };
 
+    // sections 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            axios.post('/book/section/saveall', sections)
+                .then(res => {
+                    console.log('섹션이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('섹션 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        // 컴포넌트가 언마운트되거나 sections가 변경되기 전에 타이머를 클리어
+        return () => clearTimeout(timer);
+    }, [sections]);
+
+
     const handleUpdateSection = (index, title, description) => {
         const updatedSections = [...sections];
         updatedSections[index] = {
