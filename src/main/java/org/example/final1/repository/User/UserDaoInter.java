@@ -28,4 +28,5 @@ public interface UserDaoInter extends JpaRepository<UserDto, Integer> {
 
     UserDto findByUserId(Integer userId);
 
+    UserDto findByUserNickname(String userNickname);
 }

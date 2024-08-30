@@ -42,8 +42,12 @@ public class UserService {
 
 
     //사용자 dto얻기
-    public UserDto getUserById(int user_Id) {
-        return userDaoInter.findByUserId(user_Id);
+    public UserDto getUserById(int user_Id) {return userDaoInter.findByUserId(user_Id);}
+
+
+    //사용자 닉네임으로 dto얻기
+    public UserDto findByUserNickname(String userNickname) {
+        return userDaoInter.findByUserNickname(userNickname);
     }
 
 }
