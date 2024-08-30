@@ -100,6 +100,7 @@ export default function Choices({question}) {
                         onChange={handleChange}
                     >
                     {choices.map((choice, index) => (
+<<<<<<< HEAD
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex gap-4 items-end">
                                 <FormControlLabel value={index} control={<Radio/>} label=""/>
@@ -138,6 +139,24 @@ export default function Choices({question}) {
                                     style={{display: 'none'}} // Hide the file input
                                 />
                             </div>
+=======
+                        <div key={index} className="flex gap-4 items-end">
+                            <Radio/>
+                            <TextField
+                                fullWidth multiline
+                                label={"답안"}
+                                placeholder="답안을 입력하세요."
+                                variant={"standard"}
+                                value={choice.choiceText}
+                            />
+                            {/** @todo: 사진추가 버튼 누르면 사진 추가되게 */}
+                            <IconButton>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={() => handleDeleteChoice(index)}>
+                                <CloseIcon/>
+                            </IconButton>
+>>>>>>> a5ff69b (userId 하는중)
                         </div>
                     ))}
                     </RadioGroup>
@@ -160,7 +179,11 @@ export default function Choices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
+<<<<<<< HEAD
                                 onChange={(e) => {updateChoices(e, index)}}
+=======
+
+>>>>>>> a5ff69b (userId 하는중)
                             />
 
                             <IconButton onClick={() => document.getElementById('file-input').click()}>
