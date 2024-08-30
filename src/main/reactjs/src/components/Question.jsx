@@ -75,7 +75,6 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     // 컴포넌트 상태 관리
-    const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
 
@@ -95,11 +94,6 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
-
-    // questionType이 변경될 때 choices를 초기화
-    useEffect(() => {
-        setChoices([]);
-    }, [question.questionType]);
 
     return (
         <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
@@ -182,9 +176,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    <Choices question={question}
-                             choices={choices}
-                             setChoices={setChoices}/>
+                    <Choices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">
@@ -228,8 +220,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                 onDuplicate={onDuplicate} // 질문 복제 핸들러
                 onDelete={onDelete} // 질문 삭제 핸들러
                 totalQuestions={totalQuestions} // 전체 질문 수
-                choices={choices} // 답안 리스트
-                setChoices={setChoices} // 답안 리스트 업데이트 함수
+                // choices={choices} // 답안 리스트
+                // setChoices={setChoices} // 답안 리스트 업데이트 함수
                 showExplanation={showExplanation} // 해설 입력란 표시 여부
                 setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
                 showDescription={showDescription} // 문제 설명

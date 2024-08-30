@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import CustomAlert from "./modal/CustomAlert";
 
-export default function Choices({question, onTypeChange}) {
+export default function Choices({question}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
