@@ -7,7 +7,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import CloseIcon from '@mui/icons-material/Close';
@@ -96,6 +96,10 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
         setIsCollapsed(!isCollapsed);
     };
 
+    // questionType이 변경될 때 choices를 초기화
+    useEffect(() => {
+        setChoices([]);
+    }, [question.questionType]);
 
     return (
         <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
@@ -178,7 +182,9 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    <Choices question={question} />
+                    <Choices question={question}
+                             choices={choices}
+                             setChoices={setChoices}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">

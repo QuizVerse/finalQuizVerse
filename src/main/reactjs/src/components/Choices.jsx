@@ -18,6 +18,12 @@ export default function Choices({question, onTypeChange}) {
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState(0);
 
+    useEffect(() => {
+        // questionType이 변경될 때마다 choices를 초기화
+        setChoices([]);
+        setOxSelected("");
+    }, [question.questionType]);
+
     /**
      * @description : Alert창 열릴 때
      * */
@@ -104,13 +110,16 @@ export default function Choices({question, onTypeChange}) {
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
         const updatedChoices = {
-            choiceText : selection
+            choiceText : selection,
+            choiceImage: "",
+            choiceIsanswer: false,
+            question: question
         };
         setChoices([updatedChoices]);
         setOxSelected(selection);
     };
 
-    // 선택형 답안 업데이트
+    // 선택형 답안 텍스트 업데이트
     const updateChoices = (e, index) => {
         const updatedChoices = [...choices];
         updatedChoices[index].choiceText = e.target.value;
@@ -127,7 +136,7 @@ export default function Choices({question, onTypeChange}) {
     };
 
 
-    // 선택형 답안 업데이트
+    // 선택형 답안 radio 업데이트
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event) => {
@@ -140,6 +149,15 @@ export default function Choices({question, onTypeChange}) {
         setChoices(updatedChoices);
     };
 
+    const updateShortAnswer = (e) => {
+        const updated = {
+            choiceText : e.target.value,
+            choiceImage: "",
+            choiceIsanswer: false,
+            question: question
+        }
+        setChoices([updated]);
+    }
 
     return (
         <>
@@ -258,12 +276,7 @@ export default function Choices({question, onTypeChange}) {
                         label={"답안"}
                         placeholder="정답을 입력하세요."
                         variant={"standard"}
-                        onChange={(e) => {
-                            const updatedChoices = {
-                                choiceText : e.target.value
-                            };
-                            setChoices([updatedChoices]);
-                        }}
+                        onChange={(e) => updateShortAnswer(e)}
                     />
                 </div>
             )}
