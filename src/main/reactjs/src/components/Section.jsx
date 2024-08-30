@@ -73,7 +73,7 @@ export default function Section({
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const newQuestion = {...questions[index]};
+        const newQuestion = {...questions[index], questionId : ""};
 
         axios({
             method:'post',
