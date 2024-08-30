@@ -82,18 +82,19 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
         setShowDescription(false);
+        onUpdateQuestion({questionDescription: "", questionDescriptionimage: ""});
     };
 
     // 문제 해설 삭제 핸들러
     const handleDeleteExplanation = () => {
         setShowExplanation(false);
+        onUpdateQuestion({questionSolution: "", questionSolutionimage: ""});
     };
 
     // 질문 접기/펼치기 핸들러
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
-
 
 
     return (
