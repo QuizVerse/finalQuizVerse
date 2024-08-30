@@ -31,7 +31,7 @@ public class ReviewDto {
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)//해당 문제집이 삭제되면 리뷰삭제
-    private BookDto book;
+    private BookDto bookId;
 
     @Column(name = "review_rate", nullable = false)
     private int reviewRate;
