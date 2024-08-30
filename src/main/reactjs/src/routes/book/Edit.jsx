@@ -41,9 +41,7 @@ export default function Edit() {
     // sectionSort Alert state
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
-    const [sections, setSections] = useState([
-        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", book : bookData }
-    ]);
+    const [sections, setSections] = useState([]);
 
     // side bar에서 섹션 추가
     const handleAddSection = () => {
@@ -51,8 +49,18 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
+            book: bookData
         };
-        setSections([...sections, newSection]);
+
+        axios({
+            method:'post',
+            url:'/book/section/new',
+            data: newSection
+        }).then(res=>{
+            console.log(res.data);
+            setSections([...sections, res.data]);
+        })
+
     };
 
     // 섹션 복제
@@ -62,8 +70,16 @@ export default function Edit() {
             sectionId : "",
             sectionNumber: sections.length + 1,
         };
-        setSections([...sections, duplicatedSection]);
-        openAlert("섹션이 복제되었습니다.");
+
+        axios({
+            method:'post',
+            url:'/book/section/new',
+            data: duplicatedSection
+        }).then(res=>{
+            console.log(res.data);
+            setSections([...sections, res.data]);
+            openAlert("섹션이 복제되었습니다.");
+        })
     };
 
     // 섹션 삭제
@@ -128,9 +144,15 @@ export default function Edit() {
      * */
     const clickBtn2 = () => {
         setDeleteConfirm(false);
-
+        const section = sections[deleteSectionIndex];
         if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
-            setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+            axios({
+                method:'delete',
+                url:'/book/section/delete/'+section.sectionId,
+            }).then(res=>{
+                console.log(res);
+                setSections(sections.filter((_, i) => i !== deleteSectionIndex));
+            })
         } else if(deleteConfirmId === 15) {
 
         }
@@ -187,8 +209,7 @@ export default function Edit() {
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
-
-                    ))}
+                ))}
                 <EditSidebar onAddSection={handleAddSection}/>
 
                 <CustomAlert
@@ -203,8 +224,7 @@ export default function Edit() {
                     content={
                         <SectionSort
                             sortData={sections}
-                            onSortChange={handleSortChange}
-                        />
+                            onSortChange={handleSortChange}/>
                     }
                     openAlert={sectionSortVisible}
                     closeAlert={closeAlert}
