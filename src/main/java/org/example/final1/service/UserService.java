@@ -43,7 +43,7 @@ public class UserService {
 
     //사용자 dto얻기
     public UserDto getUserById(int user_Id) {
-        return userDaoInter.getById(user_Id);
+        return userDaoInter.findByUserId(user_Id);
     }
 
 }

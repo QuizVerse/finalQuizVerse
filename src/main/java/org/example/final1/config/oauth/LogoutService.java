@@ -1,38 +1,28 @@
 package org.example.final1.config.oauth;
 
 
-import org.example.final1.repository.User.UserDaoInter;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class LogoutService {
 
-    private final UserDaoInter userDaoInter;
+    @Value("${kakao.logout.url}")
+    private String kakaoLogoutUrl;
 
-    @Autowired
-    public LogoutService(UserDaoInter userDaoInter) {
-        this.userDaoInter = userDaoInter;
+    @Value("${kakao.client.id}")
+    private String kakaoclientId;
+
+    @Value("${kakao.logout.redirect.uri}")
+    private String kakaologoutRedirectUri;
+
+    public String logoutFromKakao() {
+        String url = kakaoLogoutUrl + "?client_id=" + kakaoclientId + "&logout_redirect_uri=" + kakaologoutRedirectUri;
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
+
+        return response;
     }
-
-    public String findUserProviderByUserId(Integer userId) {
-        String provider =userDaoInter.findUserProviderByUserId(userId);
-
-        if(provider == "kakao"){
-            
-        } else if (provider == "naver") {
-
-
-        } else {
-
-        }
-
-        return userDaoInter.findUserProviderByUserId(userId);
-    }
-
 
 }
