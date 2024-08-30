@@ -71,11 +71,13 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     drag(drop(ref)); // 드래그와 드롭을 결합
 
     /** 일반 코드 */
+    // 질문 접힘 상태 관리
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
     // 컴포넌트 상태 관리
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
     const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
-    const [explanation, setExplanation] = useState(""); // 해설 관리
 
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
@@ -92,7 +94,19 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
         setIsCollapsed(!isCollapsed);
     };
 
-    const [isCollapsed, setIsCollapsed] = useState(false); // 질문 접힘 상태 관리
+    // Image Upload
+    const handleFileChange = (event, index) => {
+        const file = event.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+
+            question = {
+                ...question,
+                questionSolutionimage: imageUrl,
+            };
+        }
+    };
+
 
     return (
         <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
@@ -117,7 +131,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             placeholder="질문을 입력하세요."
                             variant={"standard"}
                             value={title}
-                            onChange={(e) => onUpdateQuestion(e.target.value, description, questionType, solution)}
+                            onChange={(e) => onUpdateQuestion({questionTitle: e.target.value})}
                         />
 
                         <FormControl fullWidth>
@@ -127,7 +141,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 value={questionType}
                                 label="문제 형식"
                                 variant={"standard"}
-                                onChange={(e)=> onUpdateQuestion(title, description, e.target.value, solution)}
+                                onChange={(e) => onUpdateQuestion({questionType: e.target.value})}
                             >
                                 <MenuItem value={0}>선택형</MenuItem>
                                 <MenuItem value={1}>다중선택형</MenuItem>
@@ -144,7 +158,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={description}
-                                onChange={(e) => onUpdateQuestion(title, e.target.value, questionType, solution)}
+                                onChange={(e) => onUpdateQuestion({questionDescription: e.target.value})}
                             />
                             <IconButton>
                                 <InsertPhotoIcon/>
@@ -156,6 +170,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                     )}
                     <Choices questionType={questionType} question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
+                    <div className="flex flex-col gap-4">
                         <div className="flex gap-4">
                             <TextField
                                 fullWidth multiline
@@ -163,29 +178,52 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={solution}
-                                onChange={(e) => onUpdateQuestion(title, description, questionType, e.target.value)}
+                                onChange={(e) => onUpdateQuestion({questionSolution: e.target.value})}
                             />
-                            <IconButton>
+                            <IconButton onClick={() => document.getElementById('file-input').click()}>
                                 <InsertPhotoIcon/>
                             </IconButton>
                             <IconButton onClick={handleDeleteExplanation}>
                                 <CloseIcon/>
                             </IconButton>
                         </div>
-                    )}
-                    <QuestionButtons
-                        onDuplicate={onDuplicate} // 질문 복제 핸들러
-                        onDelete={onDelete} // 질문 삭제 핸들러
-                        totalQuestions={totalQuestions} // 전체 질문 수
-                        choices={choices} // 답안 리스트
-                        setChoices={setChoices} // 답안 리스트 업데이트 함수
-                        showExplanation={showExplanation} // 해설 입력란 표시 여부
-                        setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
-                        showDescription={showDescription} // 문제 설명
-                        setShowDescription={setShowDescription} // 문제 설명 업데이트 함수
-                    />
-                </div>
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {question.questionSolutionimage !== "" ?
+                                <img
+                                    src={question.questionSolutionimage}
+                                    alt="Cover"
+                                    className="w-36 h-36 object-cover"
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id="file-input"
+                                accept="image/*"
+                                onChange={(e) =>
+                                    handleFileChange(e, index)}
+                                style={{display: 'none'}} // Hide the file input
+                            />
+                        </div>
+                    </div>
             )}
+            <QuestionButtons
+                onDuplicate={onDuplicate} // 질문 복제 핸들러
+                onDelete={onDelete} // 질문 삭제 핸들러
+                totalQuestions={totalQuestions} // 전체 질문 수
+                choices={choices} // 답안 리스트
+                setChoices={setChoices} // 답안 리스트 업데이트 함수
+                showExplanation={showExplanation} // 해설 입력란 표시 여부
+                setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
+                showDescription={showDescription} // 문제 설명
+                setShowDescription={setShowDescription} // 문제 설명 업데이트 함수
+            />
         </div>
-    );
+    )
+}
+</div>
+)
+    ;
 }

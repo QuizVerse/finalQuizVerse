@@ -138,14 +138,11 @@ export default function Section({
     /**
      * @description : 문제 변경 사항 업데이트
      */
-    const handleUpdateQuestion = (index, title, description, questionType, solution) => {
+    const handleUpdateQuestion = (index, updated) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index] = {
             ...updatedQuestions[index],
-            questionTitle: title,
-            questionDescription: description,
-            questionType : questionType,
-            questionSolution : solution,
+            ...updated
         };
         setQuestions(updatedQuestions);
 
