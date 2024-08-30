@@ -8,6 +8,8 @@ import LoopIcon from '@mui/icons-material/Loop';
 import Question from "./Question";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
+import CustomConfirm from "./modal/CustomConfirm";
+import CustomAlert from "./modal/CustomAlert";
 
 export default function Section({
                                     index,
@@ -16,7 +18,6 @@ export default function Section({
                                     sectionCount,
                                     onDuplicate,
                                     onDelete,
-                                    openConfirm,
                                     onUpdateSection,
                                     section,
                                     book
@@ -25,6 +26,14 @@ export default function Section({
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // confirm state
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
 
     // 섹션 접고 펴는 함수
     const toggleCollapse = () => {
@@ -48,26 +57,41 @@ export default function Section({
      */
     const handleAddQuestion = () => {
         const newQuestion = {
-                questionId:"",
                 questionTitle: "",
+                questionType:0,
                 questionDescription: "",
                 questionDescriptionimage: "",
                 questionSolution: "",
                 questionSolutionimage: "",
+                questionOrder: questions.length + 1,
                 book: book,
                 questionPoint: 0,
                 section: section
-            }
-        ;
-        setQuestions([...questions, newQuestion]);
+            };
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newQuestion
+        }).then(res=>{
+            console.log(res.data);
+            setQuestions([...questions, res.data]);
+        })
     };
 
     /**
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const newQuestion = {...questions[index], id: questions.length + 1};
-        setQuestions([...questions, newQuestion]);
+        const newQuestion = {...questions[index]};
+
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newQuestion
+        }).then(res=>{
+            console.log(res.data);
+            setQuestions([...questions, res.data]);
+        })
     };
 
     /**
@@ -75,8 +99,10 @@ export default function Section({
      */
     const handleDeleteQuestion = (index) => {
         if (questions.length > 1) {
-            const newQuestions = questions.filter((_, i) => i !== index);
-            setQuestions(newQuestions);
+            setDeleteIndex(index);
+            openConfirm();
+        } else {
+            openAlert("삭제할 수 없습니다. 질문은 최소 하나는 있어야 합니다.");
         }
     };
 
@@ -91,6 +117,21 @@ export default function Section({
         setQuestions(updatedQuestions);
     };
 
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            axios.post('/book/question/saveall', questions)
+                .then(res => {
+                    console.log('질문이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('질문 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [questions]);
 
     /**
      * @description : 문제 변경 사항 업데이트
@@ -107,6 +148,56 @@ export default function Section({
         setQuestions(updatedQuestions);
 
         console.log(updatedQuestions);
+    };
+
+
+    /**
+     * @description : 취소 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn1 = () => {
+        setDeleteConfirm(false);
+        setDeleteIndex('');
+    };
+
+    /**
+     * @description : 확인 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn2 = () => {
+        setDeleteConfirm(false);
+        const question = questions[deleteIndex];
+        if (questions.length > 1) {
+            axios({
+                method:'delete',
+                url:'/book/question/delete/'+question.sectionId,
+            }).then(res=>{
+                console.log(res);
+                setQuestions(questions.filter((_, i) => i !== deleteIndex));
+            })
+        } else {
+
+        }
+    };
+
+    /**
+     * @description : Confirm창 열릴 때
+     * */
+    const openConfirm = () => {
+        setDeleteConfirm(true);
+    };
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (alertTitle) => {
+        setAlertTitle(alertTitle);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
     };
 
 
@@ -173,6 +264,7 @@ export default function Section({
                     description={question.questionDescription}
                     totalQuestions={questions.length}
                     question={question}
+                    openConfirm={openConfirm}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
@@ -180,6 +272,20 @@ export default function Section({
                         handleUpdateQuestion(index, title, description, questionType, solution)}
                 />
             ))}
+
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
+
+            {/* 삭제 Confirm */}
+            <CustomConfirm
+                id={15}
+                openConfirm={deleteConfirm}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
+            ></CustomConfirm>
         </div>
     );
 }

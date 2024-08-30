@@ -28,9 +28,7 @@ export default function QuestionButtons(props) {
 
     // 질문 삭제 핸들러 호출 (최소 1개의 질문이 남아있어야 함)
     const handleDeleteQuestion = () => {
-        if (props.onDelete && props.totalQuestions > 1) {
-            props.onDelete();
-        }
+        props.onDelete();
     };
 
     // 문제 설명 추가 핸들러

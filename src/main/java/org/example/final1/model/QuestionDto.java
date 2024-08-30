@@ -50,8 +50,8 @@ public class QuestionDto {
     @OnDelete(action = OnDeleteAction.CASCADE) // 문제집이 삭제되면 해당 문제도 삭제
     private BookDto book;
     
-//    @Column(name = "question_order", nullable = false)
-//    private int questionOrder;
+    @Column(name = "question_order", nullable = false)
+    private int questionOrder;
 
     @Column(name = "question_point", nullable = false) // 문제 배점
     private int questionPoint;
