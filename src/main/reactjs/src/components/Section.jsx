@@ -54,7 +54,7 @@ export default function Section({
                 questionDescriptionimage: "",
                 questionSolution: "",
                 questionSolutionimage: "",
-                questionOrder: questions.length + 1,
+                questionOrder: 0,
                 book: book,
                 questionPoint: 0,
                 section: section
@@ -73,7 +73,10 @@ export default function Section({
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const newQuestion = {...questions[index], questionId : ""};
+        const newQuestion = {
+            ...questions[index],
+            questionId : "",
+        };
 
         axios({
             method:'post',
@@ -112,6 +115,7 @@ export default function Section({
     // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
     useEffect(() => {
         const timer = setTimeout(() => {
+            questions.forEach((e, index) => e.questionOrder = index+1);
             axios.post('/book/question/saveall', questions)
                 .then(res => {
                     console.log('질문이 저장되었습니다:', res);
