@@ -41,18 +41,7 @@ export default function Section({
     };
 
     // 상태로 관리되는 질문 리스트
-    const [questions, setQuestions] = useState([ {
-        questionTitle: "",
-        questionType:0,
-        questionDescription: "",
-        questionDescriptionimage: "",
-        questionSolution: "",
-        questionSolutionimage: "",
-        questionOrder: 0,
-        book: book,
-        questionPoint: 0,
-        section: section
-    }]);
+    const [questions, setQuestions] = useState([]);
 
     /**
      * @description : 새로운 질문 추가

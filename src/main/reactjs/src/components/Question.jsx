@@ -178,7 +178,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             </div>
                         </div>
                     )}
-                    <Choices questionType={question.questionType} question={question}/>
+                    <Choices question={question} />
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">

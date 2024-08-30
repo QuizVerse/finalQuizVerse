@@ -34,4 +34,7 @@ public class ChoiceService {
         return choiceRepository.findByQuestionQuestionId(questionId);
     }
 
+    public void deleteChoice(Integer id) {
+        choiceRepository.deleteById(id);
+    }
 }

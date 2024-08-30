@@ -133,6 +133,13 @@ public class EditController {
     }
 
     // Choice 저장
+    @DeleteMapping("/choice/delete/{id}")
+    public ResponseEntity<Void> deleteChoice(@PathVariable("id") Integer id) {
+        choiceService.deleteChoice(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Choice 삭제
     @PostMapping("/choice/new")
     public ResponseEntity<ChoiceDto> saveChoices(@RequestBody ChoiceDto choice) {
         ChoiceDto saved = choiceService.saveChoice(choice);

@@ -3,32 +3,72 @@ import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
+import axios from "axios";
+import CustomAlert from "./modal/CustomAlert";
 
-export default function Choices({question}) {
+export default function Choices({question, onTypeChange}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+
+    // confirm state
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (alertTitle) => {
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
     // 답안 추가 핸들러
     const handleAddChoice = () => {
-        const newChoice = {
-                choiceId: "",
-                choiceText: "",
-                choiceImage: "",
-                choiceIsanswer: false,
-                question: question
-            }
-        ;
+        if (choices.length < 6) {
+            console.log(question);
+            const newChoice = {
+                    choiceText: "",
+                    choiceImage: "",
+                    choiceIsanswer: false,
+                    question: question
+                }
+            ;
+            axios({
+                method:'post',
+                url:'/book/choice/new',
+                data: newChoice
+            }).then(res=>{
+                console.log(res.data);
+                setChoices([...choices, res.data]);
+            })
+        } else {
+            openAlert();
+        }
 
-        setChoices([...choices, newChoice]);
     };
 
     // 특정 답안 삭제 핸들러
     const handleDeleteChoice = (index) => {
-        if(choices[index].choiceId === "") return;
-
-        const newChoices = choices.filter((_, i) => i !== index);
-        setChoices(newChoices);
+        const choiceId = choices[index].choiceId;
+        if(choiceId === "") return;
+        axios({
+            method:'delete',
+            url:'/book/choice/delete/'+choiceId,
+        }).then(res=>{
+            console.log(res);
+            const newChoices = choices.filter((_, i) => i !== index);
+            setChoices(newChoices);
+        })
     };
 
     // Image Upload
@@ -46,6 +86,20 @@ export default function Choices({question}) {
         }
     };
 
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            axios.post('/book/choice/saveall', choices)
+                .then(res => {
+                    console.log('답안이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('답안 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [choices]);
 
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
@@ -61,7 +115,6 @@ export default function Choices({question}) {
         const updatedChoices = [...choices];
         updatedChoices[index].choiceText = e.target.value;
         setChoices(updatedChoices);
-        console.log(choices);
     };
 
     // 다중선택형 답안 업데이트
@@ -71,7 +124,6 @@ export default function Choices({question}) {
             updatedChoices[index].choiceIsanswer = false
             : updatedChoices[index].choiceIsanswer =true;
         setChoices(updatedChoices);
-        console.log(choices);
     };
 
 
@@ -83,7 +135,7 @@ export default function Choices({question}) {
         setValue(val);
         const updatedChoices = [...choices];
         updatedChoices.forEach((e, index)=>{
-            index == val ? e.choiceIsanswer = true : e.choiceIsanswer = false;
+            index === Number(val) ? e.choiceIsanswer = true : e.choiceIsanswer = false;
         })
         setChoices(updatedChoices);
     };
@@ -111,7 +163,7 @@ export default function Choices({question}) {
                                     value={choice.choiceText}
                                     onChange={(e) => {updateChoices(e, index)}}
                                 />
-                                <IconButton onClick={() => document.getElementById('file-input').click()}>
+                                <IconButton onClick={() => document.getElementById('choice-input-'+index).click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={() => handleDeleteChoice(index)}>
@@ -131,7 +183,7 @@ export default function Choices({question}) {
                                 {/* Hidden File Input */}
                                 <input
                                     type="file"
-                                    id="file-input"
+                                    id={'choice-input-'+index}
                                     accept="image/*"
                                     onChange={(e) =>
                                         handleFileChange(e, index)}
@@ -215,6 +267,12 @@ export default function Choices({question}) {
                     />
                 </div>
             )}
+
+            <CustomAlert
+                id={8} // 답안 개수 초과 alert
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
         </>
     );
 }
