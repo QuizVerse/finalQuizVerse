@@ -199,6 +199,27 @@ export default function Section({
         setAlertVisible(false);
     };
 
+    // Image Upload
+    const handleFileChange = (event, index, inputType) => {
+        const file = event.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            const updated = [...questions];
+            if(inputType === "solution"){
+                updated[index] = {
+                    ...updated[index],
+                    questionSolutionimage: imageUrl,
+                };
+                setQuestions(updated);
+            } else {
+                updated[index] = {
+                    ...updated[index],
+                    questionDescriptionimage: imageUrl,
+                };
+                setQuestions(updated);
+            }
+        }
+    };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
@@ -267,8 +288,8 @@ export default function Section({
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
-                    onUpdateQuestion={(title, description, questionType, solution) =>
-                        handleUpdateQuestion(index, title, description, questionType, solution)}
+                    onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
+                    onUploadImage={(e,inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
 
