@@ -27,19 +27,14 @@ export default function Choices({question}) {
     // 화면 로딩될 때
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                console.log("question.questionId", question.questionId);
-                // bookId에 해당하는 책 데이터를 가져옴
-                axios.get('/book/choice/getall/'+question.questionId)
-                    .then(res => {
-                        setChoices(res.data);
-                    })
-                    .catch(error => {
-                        console.error("Error fetching question data:", error);
-                    });
-            } catch (error) {
-                console.error("Error fetching book data:", error);
-            }
+            // questionId에 해당하는 choice 데이터를 가져옴
+            axios.get('/book/choice/getall/'+question.questionId)
+                .then(res => {
+                    setChoices(res.data);
+                })
+                .catch(error => {
+                    console.error("Error fetching question data:", error);
+                })
         };
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);

@@ -45,27 +45,21 @@ export default function Section({
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([]);
 
+
     // 화면 로딩될 때
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                console.log("section", section.sectionId);
-                // bookId에 해당하는 책 데이터를 가져옴
-                axios.get('/book/question/getall/'+section.sectionId)
-                    .then(res => {
-                        setQuestions(res.data);
-                        console.log("questions",res.data)
-                        setLoading(false);
-                    })
-                    .catch(error => {
-                        console.error("Error fetching question data:", error);
-                    });
-            } catch (error) {
-                setLoading(true);
-                console.error("Error fetching book data:", error);
-            }
+            // sectionId에 해당하는 질문 데이터를 가져옴
+            axios.get('/book/question/getall/'+section.sectionId)
+                .then(res => {
+                    setQuestions(res.data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setLoading(true);
+                    console.error("Error fetching book data:", error);
+                })
         };
-
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
 
@@ -99,6 +93,21 @@ export default function Section({
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
+        const questionId = questions[index].questionId;
+        getDuplicateChoices(index, questionId);
+    };
+
+    const getDuplicateChoices = (index, questionId) => {
+        axios({
+            method:'get',
+            url:'/book/choice/getall/'+questionId,
+        }).then(res=>{
+            console.log("뭐가 문제지",res.data)
+            newDuplicatedQuestion(index, res.data);
+        })
+    };
+
+    const newDuplicatedQuestion = (index, choices) => {
         const newQuestion = {
             ...questions[index],
             questionId : "",
@@ -109,10 +118,24 @@ export default function Section({
             url:'/book/question/new',
             data: newQuestion
         }).then(res=>{
-            console.log(res.data);
             setQuestions([...questions, res.data]);
+            saveDuplicateChoices(res.data, choices);
+        })
+    }
+
+    const saveDuplicateChoices = (newQuestion, choices) => {
+        const finalChoice = choices.map(e => e.question = newQuestion);
+        console.log("finalChoice", finalChoice);
+        axios({
+            method:'post',
+            url:'/book/choice/saveall',
+            data: choices,
+        }).then(res=>{
+            console.log("복제된 choice", res.data);
         })
     };
+
+
 
     /**
      * @description : 특정 질문 삭제 기능
