@@ -63,6 +63,23 @@ export default function Section({
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
 
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            questions.forEach((e, index) => e.questionOrder = index+1);
+            axios.post('/book/question/saveall', questions)
+                .then(res => {
+                    console.log('질문이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('질문 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [questions]);
+
     /**
      * @description : 새로운 질문 추가
      */
@@ -102,7 +119,6 @@ export default function Section({
             method:'get',
             url:'/book/choice/getall/'+questionId,
         }).then(res=>{
-            console.log("뭐가 문제지",res.data)
             newDuplicatedQuestion(index, res.data);
         })
     };
@@ -112,20 +128,17 @@ export default function Section({
             ...questions[index],
             questionId : "",
         };
-
         axios({
             method:'post',
             url:'/book/question/new',
             data: newQuestion
         }).then(res=>{
             setQuestions([...questions, res.data]);
-            saveDuplicateChoices(res.data, choices);
+            saveDuplicateChoices(choices);
         })
     }
 
-    const saveDuplicateChoices = (newQuestion, choices) => {
-        const finalChoice = choices.map(e => e.question = newQuestion);
-        console.log("finalChoice", finalChoice);
+    const saveDuplicateChoices = (choices) => {
         axios({
             method:'post',
             url:'/book/choice/saveall',
@@ -159,23 +172,6 @@ export default function Section({
         updatedQuestions.splice(hoverIndex, 0, dragQuestion);
         setQuestions(updatedQuestions);
     };
-
-
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            questions.forEach((e, index) => e.questionOrder = index+1);
-            axios.post('/book/question/saveall', questions)
-                .then(res => {
-                    console.log('질문이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('질문 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        return () => clearTimeout(timer);
-    }, [questions]);
 
     /**
      * @description : 문제 변경 사항 업데이트
