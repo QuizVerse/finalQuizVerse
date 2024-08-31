@@ -18,16 +18,51 @@ export default function Choices({question}) {
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState(0);
 
+    // questionType이 변경될 때마다 choices를 초기화
     useEffect(() => {
-        // questionType이 변경될 때마다 choices를 초기화
         setChoices([]);
         setOxSelected("");
     }, [question.questionType]);
 
+    // 화면 로딩될 때
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log("question.questionId", question.questionId);
+                // bookId에 해당하는 책 데이터를 가져옴
+                axios.get('/book/choice/getall/'+question.questionId)
+                    .then(res => {
+                        setChoices(res.data);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching question data:", error);
+                    });
+            } catch (error) {
+                console.error("Error fetching book data:", error);
+            }
+        };
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, []);
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            axios.post('/book/choice/saveall', choices)
+                .then(res => {
+                    console.log('답안이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('답안 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [choices]);
+
     /**
      * @description : Alert창 열릴 때
      * */
-    const openAlert = (alertTitle) => {
+    const openAlert = () => {
         setAlertVisible(true);
     };
 
@@ -91,21 +126,6 @@ export default function Choices({question}) {
             setChoices(updatedChoices);
         }
     };
-
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            axios.post('/book/choice/saveall', choices)
-                .then(res => {
-                    console.log('답안이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('답안 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        return () => clearTimeout(timer);
-    }, [choices]);
 
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
