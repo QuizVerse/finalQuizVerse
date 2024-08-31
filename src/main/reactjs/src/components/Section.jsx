@@ -45,6 +45,9 @@ export default function Section({
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([]);
 
+    //.env 의 변수를 가져오는 방법
+    const storage=process.env.REACT_APP_STORAGE;
+
 
     // 화면 로딩될 때
     useEffect(() => {
@@ -110,20 +113,6 @@ export default function Section({
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const questionId = questions[index].questionId;
-        getDuplicateChoices(index, questionId);
-    };
-
-    const getDuplicateChoices = (index, questionId) => {
-        axios({
-            method:'get',
-            url:'/book/choice/getall/'+questionId,
-        }).then(res=>{
-            newDuplicatedQuestion(index, res.data);
-        })
-    };
-
-    const newDuplicatedQuestion = (index, choices) => {
         const newQuestion = {
             ...questions[index],
             questionId : "",
@@ -132,22 +121,10 @@ export default function Section({
             method:'post',
             url:'/book/question/new',
             data: newQuestion
-        }).then(res=>{
+        }).then(res=> {
             setQuestions([...questions, res.data]);
-            saveDuplicateChoices(choices);
-        })
-    }
-
-    const saveDuplicateChoices = (choices) => {
-        axios({
-            method:'post',
-            url:'/book/choice/saveall',
-            data: choices,
-        }).then(res=>{
-            console.log("복제된 choice", res.data);
         })
     };
-
 
 
     /**
@@ -240,23 +217,32 @@ export default function Section({
     // Image Upload
     const handleFileChange = (event, index, inputType) => {
         const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
+
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
+
+        axios({
+            method:'post',
+            url:'/book/edit/upload',
+            data:uploadForm,
+            headers:{'Content-Type':'multipart/form-data'},
+        }).then(res=>{
+            console.log("saved picture", res.data);
             const updated = [...questions];
             if(inputType === "solution"){
                 updated[index] = {
                     ...updated[index],
-                    questionSolutionimage: imageUrl,
+                    questionSolutionimage: res.data.photo,
                 };
                 setQuestions(updated);
             } else {
                 updated[index] = {
                     ...updated[index],
-                    questionDescriptionimage: imageUrl,
+                    questionDescriptionimage: res.data.photo,
                 };
                 setQuestions(updated);
             }
-        }
+        })
     };
 
     return (

@@ -159,7 +159,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 {/* Image Preview */}
                                 {question.questionDescriptionimage !== "" ?
                                     <img
-                                        src={question.questionDescriptionimage}
+                                        src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionDescriptionimage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -199,7 +199,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={question.questionSolutionimage}
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"

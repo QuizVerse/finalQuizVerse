@@ -11,6 +11,8 @@ import org.example.final1.service.QuestionService;
 import org.example.final1.service.SectionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.example.final1.storage.NcpObjectStorageService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,22 @@ public class EditController {
     private final QuestionService questionService;
     private final ChoiceService choiceService;
     private final BookService bookService;
+    final NcpObjectStorageService storageService;
+
+    private String bucketName="bitcamp701-129";
+    private String folderName="book";
+
+    //사진만 먼저 업로드
+    @PostMapping("/edit/upload")
+    public Map<String, String> uploadPhoto(@RequestParam("upload") MultipartFile upload)
+    {
+        System.out.println("photo upload>>"+upload.getOriginalFilename());
+        //스토리지에 업로드후 업로드된 파일명 반환
+        String photo=storageService.uploadFile(bucketName, folderName, upload);
+        Map<String, String> map=new HashMap<>();
+        map.put("photo", photo);
+        return map;
+    }
 
 
     /** 페이지 관련 */
@@ -107,6 +125,7 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    /** 답안 관련 */
     // Choice 저장
     @DeleteMapping("/choice/delete/{id}")
     public ResponseEntity<Void> deleteChoice(@PathVariable("id") Integer id) {
