@@ -36,7 +36,7 @@ public class EditController {
             BookDto book = bookOpt.get();
 
             // Fetch sections, questions, and choices related to the book
-            List<SectionDto> sections = sectionService.getAllSections(book);
+            List<SectionDto> sections = sectionService.getAllSections(book.getBookId());
 
             // Create the response map
             Map<String, Object> response = new HashMap<>();
@@ -72,9 +72,9 @@ public class EditController {
     }
 
     // 섹션 모두 불러오기
-    @PostMapping("/section/getall")
-    public ResponseEntity<List<SectionDto>> getAllSections(@RequestBody BookDto book) {
-        List<SectionDto> list = sectionService.getAllSections(book);
+    @GetMapping("/section/getall/{id}")
+    public ResponseEntity<List<SectionDto>> getAllSections(@PathVariable("id") int bookId) {
+        List<SectionDto> list = sectionService.getAllSections(bookId);
         return ResponseEntity.ok(list);
     }
 
@@ -101,16 +101,9 @@ public class EditController {
     }
 
     // 섹션으로 질문 불러오기
-    @PostMapping("/question/getallbysection")
-    public ResponseEntity<List<QuestionDto>> getAllQuestionsBySection(@RequestBody SectionDto section) {
-        List<QuestionDto> list = questionService.getAllQuestionsBySection(section);
-        return ResponseEntity.ok(list);
-    }
-
-    // 질문 모두 불러오기
-    @PostMapping("/question/getall")
-    public ResponseEntity<List<QuestionDto>> getAllQuestions(@RequestBody BookDto book) {
-        List<QuestionDto> list = questionService.getAllQuestions(book);
+    @GetMapping("/question/getall/{id}")
+    public ResponseEntity<List<QuestionDto>> getAllQuestionsBySection(@PathVariable("id") int sectionId) {
+        List<QuestionDto> list = questionService.getAllQuestions(sectionId);
         return ResponseEntity.ok(list);
     }
 

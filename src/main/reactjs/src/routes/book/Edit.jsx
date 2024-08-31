@@ -36,11 +36,11 @@ export default function Edit() {
                 axios.get(`/book/edit/${bookId}`)
                     .then((res)=>{
                     setBookData(res.data.book);
-                    setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+                    setSections(res.data.sections);
                 });
-
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
-                console.error("Error fetching book data:", error);
+                console.error("Error fetching book, section data:", error);
                 setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
             }
         };
@@ -224,6 +224,8 @@ export default function Edit() {
                         questions={section.questions}
                         section={section}
                         book={bookData}
+                        loading={loading}
+                        setLoading={setLoading}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}

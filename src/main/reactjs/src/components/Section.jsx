@@ -20,7 +20,9 @@ export default function Section({
                                     onDelete,
                                     onUpdateSection,
                                     section,
-                                    book
+                                    book,
+                                    loading,
+                                    setLoading
                                 }) {
 
 
@@ -43,15 +45,28 @@ export default function Section({
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([]);
 
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    // 화면 로딩될 때
     useEffect(() => {
-        axios.post('/book/question/getall', section)
-        .then(res => {
-            setQuestions(res.data);
-        })
-        .catch(error => {
-            console.error("Error fetching book data:", error);
-        });
+        const fetchData = async () => {
+            try {
+                console.log("section", section.sectionId);
+                // bookId에 해당하는 책 데이터를 가져옴
+                axios.get('/book/question/getall/'+section.sectionId)
+                    .then(res => {
+                        setQuestions(res.data);
+                        console.log("questions",res.data)
+                        setLoading(false);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching question data:", error);
+                    });
+            } catch (error) {
+                setLoading(true);
+                console.error("Error fetching book data:", error);
+            }
+        };
+
+        fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
 
     /**

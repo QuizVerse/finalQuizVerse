@@ -36,12 +36,8 @@ public class QuestionService {
         return questionRepository.saveAll(sortedQuestion);
     }
 
-    public List<QuestionDto> getAllQuestions(BookDto book) {
-        return questionRepository.findAllByBook(book);
-    }
-
-    public List<QuestionDto> getAllQuestionsBySection(SectionDto section) {
-        return questionRepository.findAllBySection(section);
+    public List<QuestionDto> getAllQuestions(int sectionId) {
+        return questionRepository.findAllBySectionSectionId(sectionId);
     }
 
     public void updateQuestionRes(int questionId) {
