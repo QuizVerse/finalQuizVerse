@@ -75,8 +75,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     // 컴포넌트 상태 관리
-    const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
-    const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
+    const [showDescription, setShowDescription] = useState(question.questionDescription !== "" || question.questionDescriptionimage !== ""); // 문제 설명 표시 여부 관리
+    const [showExplanation, setShowExplanation] = useState(question.questionSolution !== "" || question.questionSolutionimage !== ""); // 해설 입력란 표시 여부 관리
 
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
@@ -148,7 +148,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                     value={question.questionDescription}
                                     onChange={(e) => onUpdateQuestion({questionDescription: e.target.value})}
                                 />
-                                <IconButton onClick={() => document.getElementById('description-image').click()}>
+                                <IconButton onClick={() => document.getElementById('description-image-'+question.questionId).click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={handleDeleteDescription}>
@@ -168,7 +168,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 {/* Hidden File Input */}
                                 <input
                                     type="file"
-                                    id="description-image"
+                                    id={'description-image-'+question.questionId}
                                     accept="image/*"
                                     onChange={(e) => onUploadImage(e, "description")}
                                     style={{display: 'none'}} // Hide the file input
@@ -188,7 +188,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                     value={question.questionSolution}
                                     onChange={(e) => onUpdateQuestion({questionSolution: e.target.value})}
                                 />
-                                <IconButton onClick={() => document.getElementById('solution-image').click()}>
+                                <IconButton onClick={() => document.getElementById('solution-image-'+question.questionId).click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={handleDeleteExplanation}>
@@ -208,7 +208,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             {/* Hidden File Input */}
                             <input
                                 type="file"
-                                id="solution-image"
+                                id={'solution-image-'+question.questionId}
                                 accept="image/*"
                                 onChange={(e) => onUploadImage(e, "solution")}
                                 style={{display: 'none'}} // Hide the file input

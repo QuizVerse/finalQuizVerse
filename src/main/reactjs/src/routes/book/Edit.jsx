@@ -55,6 +55,7 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
+            sectionImage: "",
             book: bookData
         };
 
@@ -193,6 +194,30 @@ export default function Edit() {
         setSectionSortVisible(true);
     }
 
+
+    // Image Upload
+    const handleFileChange = (event, index) => {
+        const file = event.target.files[0];
+
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
+
+        axios({
+            method:'post',
+            url:'/book/edit/upload',
+            data:uploadForm,
+            headers:{'Content-Type':'multipart/form-data'},
+        }).then(res=>{
+            console.log("saved picture", res.data);
+            const updated = [...sections];
+            updated[index] = {
+                ...updated[index],
+                sectionImage: res.data.photo,
+            }
+            setSections(updated);
+        })
+    };
+
     if (loading) {
         return <div>Loading...</div>; // 로딩 중일 때 표시
     }
@@ -226,6 +251,7 @@ export default function Edit() {
                         book={bookData}
                         loading={loading}
                         setLoading={setLoading}
+                        onUploadImage={(e, inputType) => handleFileChange(e, index)}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}

@@ -196,7 +196,7 @@ export default function Choices({question}) {
                                     value={choice.choiceText}
                                     onChange={(e) => {updateChoices(e, index)}}
                                 />
-                                <IconButton onClick={() => document.getElementById('choice-input-'+index).click()}>
+                                <IconButton onClick={() => document.getElementById('choice-input-'+choice.choiceId).click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={() => handleDeleteChoice(index)}>
@@ -216,7 +216,7 @@ export default function Choices({question}) {
                                 {/* Hidden File Input */}
                                 <input
                                     type="file"
-                                    id={'choice-input-'+index}
+                                    id={'choice-input-'+choice.choiceId}
                                     accept="image/*"
                                     onChange={(e) =>
                                         handleFileChange(e, index)}

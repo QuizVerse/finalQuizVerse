@@ -10,6 +10,8 @@ import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import CustomConfirm from "./modal/CustomConfirm";
 import CustomAlert from "./modal/CustomAlert";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Section({
                                     index,
@@ -22,7 +24,8 @@ export default function Section({
                                     section,
                                     book,
                                     loading,
-                                    setLoading
+                                    setLoading,
+                                    onUploadImage
                                 }) {
 
 
@@ -266,15 +269,41 @@ export default function Section({
                         value={title}
                         onChange={(e) => onUpdateSection(e.target.value, description)}
                     />
-                    <TextField
-                        fullWidth
-                        multiline
-                        label={"섹션 설명"}
-                        placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
-                        variant={"standard"}
-                        value={description}
-                        onChange={(e) => onUpdateSection(title, e.target.value)}
-                    />
+                    <div className="flex flex-col gap-4">
+                        <div className="flex gap-4">
+                            <TextField
+                                fullWidth multiline
+                                label={"섹션 설명"}
+                                placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
+                                variant={"standard"}
+                                value={description}
+                                onChange={(e) => onUpdateSection(title, e.target.value)}
+                            />
+                            <IconButton
+                                onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                        </div>
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {section.sectionImage !== "" ?
+                                <img
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
+                                    alt="Cover"
+                                    className="w-36 h-36 object-cover"
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id={'description-image-' + section.sectionId}
+                                accept="image/*"
+                                onChange={(e) => onUploadImage(e, "description")}
+                                style={{display: 'none'}} // Hide the file input
+                            />
+                        </div>
+                    </div>
                     <div className="flex gap-4 justify-end">
                         <Tooltip title="섹션 복사">
                             <IconButton onClick={onDuplicate}>
@@ -286,10 +315,9 @@ export default function Section({
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
-
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
-                                <AddIcon />
+                                <AddIcon/>
                             </IconButton>
                         </Tooltip>
                     </div>
@@ -309,7 +337,7 @@ export default function Section({
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
                     onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
-                    onUploadImage={(e,inputType) => handleFileChange(e, index, inputType)}
+                    onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
 
