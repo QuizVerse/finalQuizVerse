@@ -214,8 +214,10 @@ export default function Myclass() {
                 </TableRow>
               </TableHead>
               <TableBody>
+
                 {currentItems &&
                     currentItems.map((row) => (
+
                         <TableRow
                             key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -225,10 +227,10 @@ export default function Myclass() {
                           <TableCell component="th" scope="row">
                             {row.className}
                           </TableCell>
-                          <TableCell>{row.classDescription}</TableCell>
-                          <TableCell>{row.classCreatedate}</TableCell>
-                          <TableCell>{row.carbs}</TableCell>
-                          <TableCell>{row.protein}</TableCell>
+                          <TableCell>{row.memberCount}</TableCell>
+                          <TableCell>{row.joinDate ? new Date(row.joinDate).toLocaleString() : '-'}</TableCell>
+                          <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
+                          <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
                         </TableRow>
                     ))
                 }

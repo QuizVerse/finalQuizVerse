@@ -21,6 +21,9 @@ import java.util.Map;
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
+    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/loopy.png";
+
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -104,6 +107,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .userRole(user_role)
                     .userProvider(user_provider)
                     .userProviderid(user_providerId)
+                    .userImage(DEFAULT_USER_IMAGE_URL)
                     .userAccessToken(accessToken)
                     .build();
             userDaoInter.save(userDto);
