@@ -1,4 +1,4 @@
-package storage;
+package org.example.final1.storage;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

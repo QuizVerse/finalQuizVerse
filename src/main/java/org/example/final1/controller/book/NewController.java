@@ -9,7 +9,7 @@ import org.example.final1.service.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import storage.NcpObjectStorageService;
+import org.example.final1.storage.NcpObjectStorageService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class NewController {
     private final BookService bookService;
     private final JwtService jwtService;
 
-    private NcpObjectStorageService ncpObjectStorageService;
+    private final NcpObjectStorageService ncpObjectStorageService;
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
 
