@@ -1,7 +1,47 @@
 // v0 by Vercel.
 // https://v0.dev/t/oLrBdD72t9Y
 
+import axios from "axios";
+import {useState} from "react";
+
 export default function ChangePassword() {
+  const [user_email, setUser_email] = useState('');
+  const [auth_code, setAuth_code] = useState('');
+  const [emailcheck, setEmailcheck] = useState(false);
+
+  // 인증번호 보내기 및 재발송 이벤트
+  const sendEmail = () => {
+    let url = `/change/user/password?user_email=${encodeURIComponent(user_email)}`;
+    axios.get(url)
+        .then(res => {
+          if (res.data === 'success') {
+            alert("인증 코드가 이메일로 발송되었습니다.");
+          }
+          else {
+            alert("이메일 전송 실패");
+          }
+        })
+        .catch(error => {
+          console.error("Error sending email:", error);
+          alert("이메일 전송 중 오류가 발생했습니다.");
+        });
+  };
+
+  // 이메일 인증 코드 맞는지 확인 이벤트
+  const checkEmail = () => {
+    let url = `/signup/user/emailcheck?user_email=${encodeURIComponent(user_email)}&auth_code=${auth_code}`;
+    axios.get(url)
+        .then(res => {
+          if (res.data === 'success') {
+            setEmailcheck(true);
+            alert("이메일 인증이 성공적으로 완료되었습니다.");
+          } else {
+            setEmailcheck(false);
+            alert("인증 코드가 일치하지 않습니다.");
+          }
+        });
+  }
+
     return (
         <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md" data-v0-t="card">
@@ -23,9 +63,12 @@ export default function ChangePassword() {
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       id="email"
                       placeholder="이메일"
+                      onChange={(e) => setUser_email(e.target.value)}
                   />
                   <button
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                      onClick={sendEmail}
+                  >
                     인증코드 발송
                   </button>
                 </div>
@@ -42,9 +85,14 @@ export default function ChangePassword() {
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       id="auth-code"
                       placeholder="인증 코드"
+                      value={auth_code} // 사용자 입력 코드
+                      onChange={(e) => setAuth_code(e.target.value)} // 입력 값 상태로 업데이트
                   />
                   <button
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                      type="button"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-shrink-0"
+                      onClick={checkEmail}
+                  >
                     확인
                   </button>
                 </div>
