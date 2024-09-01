@@ -27,38 +27,6 @@ public class NewController {
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
 
-//    /**
-//     * 새로운 책을 생성하는 엔드포인트
-//     *
-//     * @param bookDto 생성할 책의 정보가 담긴 DTO
-//     * @param request HTTP 요청 객체로, JWT 토큰이 포함되어야 함
-//     * @return 생성된 책의 정보와 함께 HTTP 200 응답 반환
-//     */
-//    @PostMapping("/newbook")
-//    public ResponseEntity<BookDto> newBook(@RequestBody BookDto bookDto, HttpServletRequest request) {
-//        // JWT 토큰에서 사용자 정보 가져오기
-//        UserDto userDto = jwtService.getUserFromJwt(request);
-//        if (userDto == null) {
-//            return ResponseEntity.status(401).build(); // 유효하지 않은 JWT 토큰 처리
-//        }
-//
-//        // 책 정보를 사용자 정보와 결합하여 설정
-//        bookDto.setUser(userDto);
-//        BookDto savedBook = bookService.createBook(bookDto);
-//        return ResponseEntity.ok(savedBook);
-//    }
-//
-//    //사진만 먼저 업로드
-//    @PostMapping("/upload")
-//    public Map<String, String> uploadPhoto(@RequestParam("upload") MultipartFile upload)
-//    {
-//        System.out.println("photo upload>>"+upload.getOriginalFilename());
-//        //스토리지에 업로드후 업로드된 파일명 반환
-//        String bookphoto=ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
-//        Map<String, String> map=new HashMap<>();
-//        map.put("bookphoto", bookphoto);
-//        return map;
-//    }
     /**
      * 새로운 책을 생성하고 사진을 업로드하는 엔드포인트
      *
