@@ -16,5 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/book")
 public class ReviewController {
 
+    private final ReviewService reviewService;
+
+    // 새로운 리뷰 추가
+    @PostMapping("/review")
+    public ResponseEntity<ReviewDto> addReview(@RequestBody ReviewDto reviewDto) {
+        ReviewDto savedReview = reviewService.saveReview(reviewDto);
+        return ResponseEntity.ok(savedReview);
+    }
 
 }

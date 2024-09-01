@@ -33,7 +33,7 @@ public class BookDetailController {
     }
 
     // Review Detail
-    @GetMapping("/review/{id}")
+    @GetMapping("/review/")
     public ResponseEntity<List<ReviewDto>> getReviewsByBookId(@PathVariable("id") int id) {
         List<ReviewDto> reviews = reviewService.getReviewsByBookId(id);
         if (reviews.isEmpty()) {

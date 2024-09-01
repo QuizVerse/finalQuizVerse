@@ -21,4 +21,8 @@ public class ReviewService {
         return reviewRepository.findByBookId_BookId(bookId);
     }
 
+    // 리뷰 저장
+    public ReviewDto saveReview(ReviewDto reviewDto) {
+        return reviewRepository.save(reviewDto);
+    }
 }
