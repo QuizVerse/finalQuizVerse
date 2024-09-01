@@ -9,6 +9,11 @@ export default function Detail() {
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [error, setError] = useState(null); // 에러 상태 추가
+
+  //사진
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
+
 
   const toggleMoreReviews = () => {
     setShowMoreReviews(!showMoreReviews);
@@ -27,12 +32,17 @@ export default function Detail() {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching book data:", error);
+        setError("데이터를 가져오는 중 문제가 발생했습니다. 다시 시도해주세요."); // 에러 메시지 설정
         setLoading(false);
       }
     };
 
     fetchBookData(); //데이터를 가져오는 함수 호출
   }, [book_Id]);
+
+  if (error) {
+    return <div>{error}</div>; // 에러가 있을 때 표시
+  }
 
   if (loading) {
     return <div>Loading...</div>; // 로딩 중일 때 표시
@@ -59,9 +69,9 @@ export default function Detail() {
               <Card>
                 <CardMedia
                     component="img"
-                    image={bookData.bookImage}
+                    image={`${photopath}/${bookData.bookImage}`} // 전체 경로를 조합하여 이미지 경로 설정
                     alt="Book Image"
-                    sx={{ height: 'auto', maxHeight: 600, width: '100%', objectFit: 'contain' }} // 이미지를 버튼의 높이만큼 조정
+                    sx={{ height: 'auto', maxHeight: 600, width: '100%', objectFit: 'contain' }}
                 />
               </Card>
             </Grid>
