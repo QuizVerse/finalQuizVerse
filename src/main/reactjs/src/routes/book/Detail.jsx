@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // React Router를 사용해 URL 파라미터를 받아옴
+import {useNavigate, useParams} from "react-router-dom"; // React Router를 사용해 URL 파라미터를 받아옴
 import axios from "axios";
 import {
   Typography,
@@ -18,13 +18,12 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 export default function Detail() {
-
+  const navigate = useNavigate();
   const { book_Id } = useParams(); // URL에서 book_Id를 가져옴
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
-  const navigate = useNavigate();
 
 
   const toggleMoreReviews = () => {
@@ -199,7 +198,7 @@ export default function Detail() {
               </Box>
 
               <Button
-              onClick={navigate('/book/test')}
+                  onClick={()=> navigate(`/book/test/${book_Id}`)}
                 variant="contained"
                 color="primary"
                 sx={{ mt: 4, height: 56 }}

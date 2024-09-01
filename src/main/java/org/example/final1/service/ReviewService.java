@@ -16,6 +16,7 @@ public class ReviewService {
     @NonNull
     private ReviewRepository reviewRepository;
 
+    // bookid로 해당 문제집의 리뷰 불러오기
     public List<ReviewDto> getReviewsByBookId(int bookId) {
         return reviewRepository.findByBookId_BookId(bookId);
     }

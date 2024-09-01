@@ -1,13 +1,44 @@
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Review from "../../components/modal/Review";
+import axios from "axios";
 
 export default function ParentComponent() {
+  const [username, setUsername] = useState(""); // 사용자 이름 저장할 상태 변수
   const [confirmVisible, setConfirmVisible] = useState(false);
   const navigate = useNavigate();
-  const [bookId, setBookId] = useState(12); // 예를 들어 12로 설정
+  const {bookId} = useParams(); // bookId 가져올 변수
+  const [bookData, setBookdata] = useState(null); // 문제집 정보 저장할 변수
+
+  useEffect(()=> {
+    const BookInfo = async () => {
+      try {
+        const response = await axios.get(`/book/test/${bookId}`);
+        setBookdata(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log("book info error : " , error);
+      }
+    };
+    const UserInfo = async () => {
+      try {
+        const response = await axios.get("/user/info");
+        setUsername(response.data.userNickname); // 사용자 이름 저장
+      } catch (error) {
+        console.log("User info error: ", error);
+      }
+    };
+
+    BookInfo();
+    UserInfo();
+
+  }, [bookId]);
+
+  if (!bookData) {
+    return <div>No data found</div>; // 데이터가 없을 때 표시
+  }
 
   const openConfirm = () => {
     setConfirmVisible(true);
@@ -39,10 +70,10 @@ export default function ParentComponent() {
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-lg">10/50 문항 | 10 섹션</span>
-          <span className="text-lg">500점</span>
+          <span className="text-lg">총 {bookData.bookTotalscore}점</span>
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-lg font-semibold">퀴즈 제목을 넣으면 돼요</span>
+          <span className="text-lg font-semibold">{bookData.bookTitle}</span>
           <Button variant="contained" onClick={openConfirm}>
             시험종료
           </Button>
