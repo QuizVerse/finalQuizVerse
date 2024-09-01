@@ -1,6 +1,7 @@
 package org.example.final1.controller.mypage;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.ClassDto;
 import org.example.final1.model.ClassmemberDto;
@@ -10,6 +11,8 @@ import org.example.final1.repository.ClassmemberRepository;
 import org.example.final1.service.ClassService;
 import org.example.final1.service.ClassmemberService;
 import org.example.final1.service.JwtService;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,7 +96,7 @@ public class MyclassController {
                     Map<String, Object> classInfo = new HashMap<>();
 
 
-                    classInfo.put("classId",classDto.getClassId());
+                    classInfo.put("classId", classDto.getClassId());
                     classInfo.put("className", classDto.getClassName());
                     classInfo.put("memberCount", memberCount);
 
@@ -101,7 +104,7 @@ public class MyclassController {
                     String formattedDate = isoFormat.format(classDto.getClassCreatedate());
 
                     classInfo.put("formattedDate", formattedDate);
-                    System.out.println( classDto.getClassCreatedate());
+                    System.out.println(classDto.getClassCreatedate());
                     classInfo.put("joinDate", joinDate);
                     classInfo.put("memberRole", memberRole);
 
@@ -142,11 +145,106 @@ public class MyclassController {
 
     @PostMapping("/delete/members")
     public ResponseEntity<String> deleteMembers(@RequestBody List<Integer> ids) {
+        //System.out.println(ids);
         classmemberRepository.deleteAllById(ids);
         return ResponseEntity.ok("Members deleted successfully");
     }
 
+    @GetMapping("/{classId}/leave")
+    public ResponseEntity<String> leaveClass(@PathVariable Integer classId, HttpServletRequest request) {
 
+        UserDto userDto = jwtService.getUserFromJwt(request);
+        if (userDto != null) {
+            Integer userId = userDto.getUserId();
 
+            Optional<ClassmemberDto> classmemberDto = classmemberRepository.findByClass1_ClassIdAndUser_UserId(classId, userId);
 
+            if (classmemberDto.isPresent()) {
+                classmemberRepository.delete(classmemberDto.get());
+                return ResponseEntity.ok("success"); // 성공적으로 삭제한 경우 "success" 반환
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Class member not found"); // 해당 클래스 멤버가 없는 경우 적절한 메시지 반환
+            }
+        } else {
+            throw new RuntimeException("Invalid or missing JWT token"); // JWT가 유효하지 않거나 누락된 경우 예외 발생
+        }
+    }
+
+    @GetMapping("/{classId}/userrole")
+    public ResponseEntity<Short> roleMembers(@PathVariable Integer classId, HttpServletRequest request) {
+        // JWT로부터 사용자 정보를 가져옴
+        UserDto userDto = jwtService.getUserFromJwt(request);
+
+        if (userDto != null) {
+            Integer userId = userDto.getUserId();
+
+            // 특정 classId와 userId에 해당하는 클래스 멤버를 찾음
+            Optional<ClassmemberDto> classmemberDto = classmemberRepository.findByClass1_ClassIdAndUser_UserId(classId, userId);
+
+            if (classmemberDto.isPresent()) {
+                // Optional에서 실제 ClassmemberDto 객체를 꺼내고 역할을 가져옴
+
+                short role = classmemberDto.get().getClassmemberRole();
+                System.out.println(role);
+                return ResponseEntity.ok(role);  // 역할을 반환
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body((short)-1);  // 클래스 멤버를 찾지 못했을 경우
+            }
+        } else {
+            throw new RuntimeException("Invalid or missing JWT token");  // JWT가 유효하지 않거나 누락된 경우
+        }
+    }
+
+    @PostMapping("/{classId}/changeLeader")
+    @Transactional
+    public ResponseEntity<String> changeLeader(
+            @PathVariable Integer classId,
+            @RequestBody Map<String, Integer> request,
+            HttpServletRequest httpServletRequest) {
+
+        Integer newLeaderId = request.get("newLeaderId");
+        UserDto userDto = jwtService.getUserFromJwt(httpServletRequest);
+
+        if (userDto != null) {
+            Integer userId = userDto.getUserId();
+
+            // 현재 방장 역할을 갖고 있는 클래스 멤버를 찾음
+            Optional<ClassmemberDto> currentLeaderOpt = classmemberRepository.findByClass1_ClassIdAndUser_UserId(classId, userId);
+
+            // 새로운 방장으로 설정할 멤버를 찾음
+            Optional<ClassmemberDto> newLeaderOpt = classmemberRepository.findById(newLeaderId);
+
+            if (currentLeaderOpt.isPresent() && newLeaderOpt.isPresent()) {
+                ClassmemberDto currentLeader = currentLeaderOpt.get();
+                ClassmemberDto newLeader = newLeaderOpt.get();
+
+                // 현재 리더의 역할을 멤버로 변경 (예: 2)
+                currentLeader.setClassmemberRole((short) 2);
+                classmemberRepository.save(currentLeader);
+
+                // 새로운 리더의 역할을 방장으로 변경 (1)
+                newLeader.setClassmemberRole((short) 1);
+                classmemberRepository.save(newLeader);
+
+                return ResponseEntity.ok("Leader changed successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Leader or new leader not found");
+            }
+        } else {
+            throw new RuntimeException("Invalid or missing JWT token");
+        }
+    }
+    @Transactional
+    @GetMapping("/{classId}/delete")
+    public ResponseEntity<String> deleteClass(@PathVariable Integer classId){
+        try {
+            classRepository.deleteById(classId);
+            System.out.println("시작이젤무서워 미루니");
+            return ResponseEntity.ok("Delete class successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
+
+
