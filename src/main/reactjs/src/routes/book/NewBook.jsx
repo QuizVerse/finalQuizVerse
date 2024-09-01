@@ -1,38 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, MenuItem, Select, InputLabel, FormControl, TextField, Switch, IconButton } from "@mui/material";
+import {
+    Button,
+    MenuItem,
+    Select,
+    InputLabel,
+    FormControl,
+    TextField,
+    Switch,
+    IconButton,
+    ImageList
+} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 
 export default function NewBook() {
     // Dropdown state
     const [category, setCategory] = useState('');
-    const [visibility, setVisibility] = useState('');
-    const [coverImage, setCoverImage] = useState('/placeholder.svg');
-    const [bookName, setBookName] = useState('');
-    const [bookDescription, setBookDescription] = useState('');
-    const [totalPoints, setTotalPoints] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
-    const [timeLimit, setTimeLimit] = useState('');
-    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false);
+    const [visibility, setVisibility] = useState('전체 공개');
+    const [coverImage, setCoverImage] = useState('');
+    // const [coverImage, setCoverImage] = useState('/placeholder.svg');
+    const [bookName, setBookName] = useState('사진테스트');
+    const [bookDescription, setBookDescription] = useState('제발');
+    const [totalPoints, setTotalPoints] = useState('100');
+    const [isChecked, setIsChecked] = useState(true);
+    const [timeLimit, setTimeLimit] = useState('10');
+    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(true);
     const navigate = useNavigate();
     const [categoryList, setCategoryList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    //사진
-    // const [list, setlist]=useState([]);
-    // const storage = " https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
-    // const dataList=(){
-    //     axios.get("")
-    //         .then(res=>{
-    //             setlist(res.data);
-    //         })
-    // }
+    //사진 업로드
+    const [bookphoto, setBookphoto] = useState('');
+    const photopath="https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
-    useEffect(() => {
-        dataList();
-    }, []);
+
+    const photoUploadEvent = (e) => {
+        const uploadFilename = e.target.files[0];
+        const uploadForm = new FormData();
+        uploadForm.append("upload", uploadFilename);
+
+        // 로컬 파일 URL을 생성하여 미리보기 설정
+        const localImageUrl = URL.createObjectURL(uploadFilename);
+        setCoverImage(localImageUrl);
+
+        axios.post('/book/upload', uploadForm, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
+            .then(res => {
+                if (res.data && res.data.bookphoto) {
+                    setBookphoto(res.data.bookphoto); // 서버 응답에서 사진 파일명 설정
+                    // 실제 서버에 업로드된 파일을 미리보기로 설정합니다.
+                    setCoverImage(`${photopath}/${res.data.bookphoto}`);
+                } else {
+                    console.error("서버 응답에 bookphoto가 없습니다.");
+                    setError('파일 업로드에 실패했습니다.');
+                }
+            })
+            .catch(err => {
+                console.error("File upload failed:", err); // 콘솔에 에러를 출력
+                setError('파일 업로드에 실패했습니다.'); // 사용자에게 에러 메시지를 표시
+            });
+    };
+
+
 
 
     // 카테고리 목록 가져오기
@@ -60,15 +92,6 @@ export default function NewBook() {
     const toggleSwitch = () => setIsChecked(prevState => !prevState);
     const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
 
-    // Image Upload
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setCoverImage(imageUrl);
-        }
-    };
-
     // Submit new book
     const handleSubmit = () => {
         setLoading(true);
@@ -83,6 +106,7 @@ export default function NewBook() {
             bookImage: coverImage,
             bookDivide: isChecked ? 1 : 0,
             bookTotalscore: parseInt(totalPoints, 10) || 0,
+            bookphoto: bookphoto
         };
 
         axios.post('/book/newbook', newBookData)
@@ -107,7 +131,8 @@ export default function NewBook() {
         setBookDescription('');
         setCategory({});
         setVisibility('');
-        setCoverImage('/placeholder.svg');
+        setCoverImage('');
+        // setCoverImage('/placeholder.svg');
         setTotalPoints('');
         setIsChecked(false);
         setIsTimeLimitEnabled(false);
@@ -239,12 +264,11 @@ export default function NewBook() {
                                     <CreateIcon />
                                 </IconButton>
                             </div>
-
                             <div className={"flex justify-center"}>
                                 {/* Image Preview */}
                                 <img
                                     src={coverImage}
-                                    alt="Cover"
+                                    alt="CoverImage"
                                     className="w-36 h-36 object-cover"
                                     width="150"
                                     height="150"
@@ -254,7 +278,7 @@ export default function NewBook() {
                                     type="file"
                                     id="file-input"
                                     accept="image/*"
-                                    onChange={handleFileChange}
+                                    onChange={photoUploadEvent}
                                     style={{ display: 'none' }} // Hide the file input
                                 />
                             </div>
