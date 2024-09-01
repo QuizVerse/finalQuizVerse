@@ -3,7 +3,7 @@
 
 import BookCard from "../../components/BookCard";
 import {Link} from "react-router-dom";
-import {Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Button, Pagination, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import Paper from '@mui/material/Paper';
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -33,6 +33,11 @@ export default function Summary() {
         console.log(res);
         setClassList(res.data);
       })
+  }
+  
+  const handleChange = (event, value) => {
+    setPage(value);
+    window.scrollTo(0, 0);
   }
 
   return (
@@ -142,6 +147,17 @@ export default function Summary() {
               </TableBody>
             </Table>
           </TableContainer>
+          <div className={"flex justify-center mt-4"}>
+          <Stack spacing={SPACING}>
+            <Pagination
+                count={pageCount}
+                page={page}
+                onChange={handleChange}
+                showFirstButton
+                showLastButton
+            />
+          </Stack>
+        </div>
           {/* <h2 className="mb-4 text-2xl font-bold">나의 클래스</h2>
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">

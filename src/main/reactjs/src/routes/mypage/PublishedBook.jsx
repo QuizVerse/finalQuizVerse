@@ -2,7 +2,27 @@ import React, { useState } from 'react';
 import BookCard from "../../components/BookCard";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { Button, MenuItem, TextField } from '@mui/material';
 
+//필터
+const conditions = [
+  {
+    value: 'popular',
+    label: '인기순',
+  },
+  {
+    value: 'recent',
+    label: '최신순',
+  },
+  {
+    value: 'old',
+    label: '오래된순',
+  },
+  {
+    value: 'title',
+    label: '제목순',
+  },
+];
 const ITEMS_PER_PAGE = 8; // 페이지당 출력할 아이템 수
 const SPACING = 2;
 
@@ -39,62 +59,28 @@ export default function PublishedBook() {
     <main className="flex-1 p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">나의 출제이력</h1>
-        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-          문제집 출제하기
-        </button>
+        
       </div>
       <div className="flex items-center mb-6 space-x-4">
-        <input
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
-          placeholder="Name, email, etc..."
-        />
-        <button
-          type="button"
-          role="combobox"
-          aria-controls="radix-:Rilufnnkr:"
-          aria-expanded="false"
-          aria-autocomplete="none"
-          dir="ltr"
-          data-state="closed"
-          data-placeholder=""
-          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <span>등록일순</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-            aria-hidden="true"
+      <input
+            className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
+            placeholder="Name, email, etc..."
+          />
+      <TextField
+              id="outlined-select-currency"
+              select
+              defaultValue="popular"
           >
-            <path d="m6 9 6 6 6-6"></path>
-          </svg>
-        </button>
-        <select aria-hidden="true" tabindex="-1">
-          <option value=""></option>
-        </select>
-        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 p-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="w-5 h-5"
-          >
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-        </button>
+            {conditions &&
+                conditions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+            ))}
+          </TextField>
+          <Button variant='contained'>
+            문제출제하기
+          </Button>
       </div>
 
       {/* BookCard 출력 */}
