@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SectionService {
@@ -30,8 +31,13 @@ public class SectionService {
         sectionRepository.deleteById(id);
     }
 
-    public List<SectionDto> getAllSections(BookDto book) {
-        return sectionRepository.findAllByBook(book);
+    public List<SectionDto> getAllSections(int bookId) {
+        return sectionRepository.findAllByBookBookId(bookId);
+    }
+
+    // 섹션 아이디로 섹션 하나의 정보 받아오기
+    public Optional<SectionDto> getSection(int id) {
+        return sectionRepository.findById(id);
     }
 
 }

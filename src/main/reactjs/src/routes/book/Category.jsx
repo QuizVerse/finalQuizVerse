@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-
-//필터
+// 필터 옵션 정의
 const conditions = [
   {
     value: 'popular',
@@ -16,14 +15,11 @@ const conditions = [
     label: '최신순',
   },
   {
-    value: 'old',
-    label: '오래된순',
-  },
-  {
     value: 'title',
-    label: '제목순',
+    label: '가나다순',
   },
 ];
+
 const ITEMS_PER_PAGE = 10;  // 한 페이지당 보여줄 아이템 수
 const SPACING = 2;  // 페이지네이션 사이의 간격
 
@@ -36,6 +32,7 @@ export default function Category() {
 
   // 페이지네이션에 필요한 변수
   const [page, setPage] = useState(1);
+  const [sortCondition, setSortCondition] = useState('popular');  // 정렬 기준 상태 추가
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
 
   useEffect(() => {
@@ -47,7 +44,18 @@ export default function Category() {
 
         if (catId) {
           const response = await axios.get(`/books/category?id=${catId}`);
-          setBooks(response.data);
+          let booksData = response.data;
+
+          // 정렬 조건에 따라 책 목록 정렬
+          if (sortCondition === 'recent') {
+            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+          } else if (sortCondition === 'title') {
+            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
+          } else if (sortCondition === 'popular') {
+            booksData = booksData.sort((a, b) => b.bookViewCount - a.bookViewCount);
+          }
+
+          setBooks(booksData);
         }
       } catch (error) {
         setError(error);
@@ -57,7 +65,7 @@ export default function Category() {
     };
 
     fetchBooks();
-  }, [location.search]);
+  }, [location.search, sortCondition]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -74,36 +82,44 @@ export default function Category() {
     window.scrollTo(0, 0);  // 페이지 이동 시 화면을 상단으로 스크롤
   };
 
+  /**
+   * @description : 정렬 기준 변경 함수
+   */
+  const handleSortChange = (event) => {
+    setSortCondition(event.target.value);
+  };
+
   return (
     <main className="p-4">
       <div className="flex items-center mb-6 space-x-4">
-      <TextField
-              id="outlined-select-currency"
-              select
-              defaultValue="popular"
-          >
-            {conditions &&
-                conditions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
+        <TextField
+          id="outlined-select-currency"
+          select
+          value={sortCondition}  // 정렬 기준 상태를 사용
+          onChange={handleSortChange}  // 정렬 기준 변경 시 호출되는 함수
+        >
+          {conditions &&
+            conditions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
             ))}
-          </TextField>
+        </TextField>
       </div>
-      <section>
+      <section className="grid grid-cols-5 gap-4">
         {currentItems.length > 0 ? (
-          currentItems.map(item => (
-            <div key={item.bookId}>
+          currentItems.map(book => (
+            <div key={book.bookId}>
               <BookCard
                 cardType="A"
-                nickname={item.user?.nickname || 'Unknown'}
-                createDate={item.bookCreatedate}
-                title={item.bookTitle}
-                category={item.category?.categoryName || 'Unknown'}
-                viewCount={item.bookViewCount}
-                questionCount={item.bookQuestionCount}
-                sectionCount={item.bookSectionCount}
-                status={item.bookStatus}
+                nickname={book.user?.nickname || 'Unknown'}
+                createDate={book.bookCreatedate}
+                title={book.bookTitle}
+                category={book.category?.categoryName || 'Unknown'}
+                viewCount={book.bookViewCount}
+                questionCount={book.bookQuestionCount}
+                sectionCount={book.bookSectionCount}
+                status={book.bookStatus}
               />
             </div>
           ))
