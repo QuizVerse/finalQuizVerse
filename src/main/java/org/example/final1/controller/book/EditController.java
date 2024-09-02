@@ -67,6 +67,27 @@ public class EditController {
         }
     }
 
+//    @PostMapping("/edit/save/temporary")
+//    public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
+//        Optional<BookDto> bookOpt = bookService.getBookById(id);
+//        if (bookOpt.isPresent()) {
+//            BookDto book = bookOpt.get();
+//
+//            // Fetch sections, questions, and choices related to the book
+//            List<SectionDto> sections = sectionService.getAllSections(book.getBookId());
+//
+//            // Create the response map
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("book", book);
+//            response.put("sections", sections);
+//
+//            return ResponseEntity.ok(response);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+
+
     /** 섹션 관련 */
     // 섹션 생성
     @PostMapping("/section/new")
