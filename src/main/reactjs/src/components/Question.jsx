@@ -193,7 +193,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 </IconButton>
                                 <IconButton onClick={handleDeleteExplanation}>
                                 <CloseIcon/>
-                            </IconButton>
+                                </IconButton>
                         </div>
                         <div className={"flex justify-center"}>
                             {/* Image Preview */}

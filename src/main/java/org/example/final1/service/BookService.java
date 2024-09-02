@@ -1,13 +1,13 @@
 package org.example.final1.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.example.final1.model.BookDto;
 import org.example.final1.repository.BookRepository;
 import org.example.final1.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -20,7 +20,7 @@ public class BookService {
 
     public List<BookDto> getBooksByCategory(Integer categoryId) {
         // 카테고리 ID에 해당하는 책 목록을 가져옵니다.
-        var books = bookRepository.findByCategoryCategoryId(categoryId);
+        List<BookDto> books = bookRepository.findByCategoryCategoryId(categoryId);
         return books;
     }
 
@@ -37,12 +37,12 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
+    public List<BookDto> searchBooks(String keyword) {
+        return bookRepository.searchByTitleOrDescription(keyword);
+    }
     public BookDto getBookByBookId(int id) {
         return bookRepository.findByBookId(id);
     }
 
-    public List<BookDto> searchBooks(String keyword) {
-        return bookRepository.searchByTitleOrDescription(keyword);
-    }
 }
 

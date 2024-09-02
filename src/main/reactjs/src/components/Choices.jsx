@@ -110,15 +110,24 @@ export default function Choices({question}) {
     // Image Upload
     const handleFileChange = (event, index) => {
         const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
 
-            const updatedChoices = [...choices];
-            updatedChoices[index] = {
-                ...updatedChoices[index],
-                choiceImage: imageUrl,
-            };
-            setChoices(updatedChoices);
+        if (file) {
+            axios({
+                method:'post',
+                url:'/book/edit/upload',
+                data:uploadForm,
+                headers:{'Content-Type':'multipart/form-data'},
+            }).then(res=>{
+                console.log("saved picture", res.data);
+                const updated = [...choices];
+                    updated[index] = {
+                        ...updated[index],
+                        choiceImage: res.data.photo,
+                    };
+                    setChoices(updated);
+            })
         }
     };
 
