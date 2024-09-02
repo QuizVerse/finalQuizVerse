@@ -220,12 +220,12 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/score',
+                path: '/book/score/:bookId',
                 element: <Score />,
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/scorepreview',
+                path: '/book/scorepreview/:bookId',
                 element: <ScorePreview />,
                 errorElement: <ErrorPage />,
             },
