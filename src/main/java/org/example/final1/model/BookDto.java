@@ -1,5 +1,7 @@
 package org.example.final1.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +19,7 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +47,14 @@ public class BookDto {
     private Timestamp bookCreatedate;
 
     // Foreign Key reference to UserDTO
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     //사용자가 탈퇴할시 없는 사용자라고 뜨게 해주기!
     private UserDto user;
 
     // Foreign Key reference to CategoryDTO
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = true)
     //카테고리가 삭제되었을시 기타라고 해주기
@@ -60,5 +65,8 @@ public class BookDto {
 
     @Column(name = "book_totalscore", nullable = false)
     private int bookTotalscore;
+
+    @Column(name = "book_ispublished", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean bookIspublished = false;
 
 }

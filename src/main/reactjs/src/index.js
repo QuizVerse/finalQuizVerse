@@ -194,11 +194,11 @@ const router = createBrowserRouter([
                 element: <NewBook />,
                 errorElement: <ErrorPage />,
             },
-            // {
-            //     path: "/book/edit",
-            //     element: <Edit />,
-            //     errorElement: <ErrorPage />,
-            // },
+            {
+                path: "/book/edit",
+                element: <Edit />,
+                errorElement: <ErrorPage />,
+            },
             {
                 path: "/book/edit/:bookId",
                 element: <Edit />,
@@ -215,17 +215,17 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/test',
+                path: '/book/test/:bookId',
                 element: <Test />,
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/score',
+                path: '/book/score/:bookId',
                 element: <Score />,
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/scorepreview',
+                path: '/book/scorepreview/:bookId',
                 element: <ScorePreview />,
                 errorElement: <ErrorPage />,
             },
@@ -320,7 +320,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/mypage/myclass/detail',
+                path: '/mypage/myclass/detail/:classId',
                 element: <MyclassDetail />,
                 errorElement: <ErrorPage />,
             },
@@ -351,7 +351,7 @@ const router = createBrowserRouter([
             },
         ]
     }
-      
+
 
 ]);
 

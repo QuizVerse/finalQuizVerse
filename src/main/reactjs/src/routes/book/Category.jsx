@@ -1,233 +1,143 @@
-// v0 by Vercel.
-// https://v0.dev/t/Onu9RySa1RJ
-
-import { Pagination, Stack } from "@mui/material";
+import { MenuItem, Pagination, Stack, TextField } from "@mui/material";
 import BookCard from "../../components/BookCard";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
-const ITEMS_PER_PAGE = 10;
-const SPACING = 2;
-//여기서 state 하나 더 만들어주고 이 페이지에서 axios를 사용하여 벡엔드에서 데이터를 불러온다
-// ex) state가 변할때마다 axios 요청을 매번 다시 보내줘야 한다
-// ex) 한번에 다 불러오고 필요한거 찾아가도록 해도 된다 map요청 filter 는 category
-// pagenation할 자료
-const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
+// 필터 옵션 정의
+const conditions = [
+  {
+    value: 'popular',
+    label: '인기순',
+  },
+  {
+    value: 'recent',
+    label: '최신순',
+  },
+  {
+    value: 'title',
+    label: '가나다순',
+  },
+];
+
+const ITEMS_PER_PAGE = 10;  // 한 페이지당 보여줄 아이템 수
+const SPACING = 2;  // 페이지네이션 사이의 간격
 
 export default function Category() {
-  /* category 내역 불러오기
-    1. 카테고리 state 생성
-    2. url이동시 등록되는 cat 변수에서 값을 가져와 category 변수에 등록하기
-    3. useEffect로 axios요청 보내서 카테고리에 해당하는 값들 불러오기
-  */
+  const location = useLocation();
+  const [categoryId, setCategoryId] = useState('');  // 현재 카테고리 ID 상태
+  const [books, setBooks] = useState([]);  // 카테고리에 해당하는 책 목록
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-
-
-  // pagenation에 필요한 변수
+  // 페이지네이션에 필요한 변수
   const [page, setPage] = useState(1);
+  const [sortCondition, setSortCondition] = useState('popular');  // 정렬 기준 상태 추가
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
-  const currentItems = items.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
-  const pageCount = Math.ceil(items.length / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const params = new URLSearchParams(location.search);
+        const catId = params.get('cat') || '';  // URL에서 cat 파라미터 가져오기
+        setCategoryId(catId);
+
+        if (catId) {
+          const response = await axios.get(`/books/category?id=${catId}`);
+          let booksData = response.data;
+
+          // 정렬 조건에 따라 책 목록 정렬
+          if (sortCondition === 'recent') {
+            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+          } else if (sortCondition === 'title') {
+            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
+          } else if (sortCondition === 'popular') {
+            booksData = booksData.sort((a, b) => b.bookViewCount - a.bookViewCount);
+          }
+
+          setBooks(booksData);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, [location.search, sortCondition]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  // 페이지네이션 계산
+  const currentItems = books.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(books.length / ITEMS_PER_PAGE);
 
   /**
-   * @description : pagenation에 필요한 함수
-  * */
+   * @description : 페이지네이션에 필요한 함수
+   */
   const handleChange = (event, value) => {
     setPage(value);
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0);  // 페이지 이동 시 화면을 상단으로 스크롤
+  };
+
+  /**
+   * @description : 정렬 기준 변경 함수
+   */
+  const handleSortChange = (event) => {
+    setSortCondition(event.target.value);
   };
 
   return (
-
-  <main className="p-4">
-    <section>
-      <h2 className="mb-4 text-xl font-bold">취업/자격증 문제집 Top 5</h2>
-      <div className="grid grid-cols-5 gap-4 mb-8">
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-       
-          <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        
-      </div>
-    </section>
-    <section>
-      <h2 className="mb-4 text-xl font-bold">취업/자격증 문제집</h2>
-      <div className="flex items-center justify-between mb-4">
-        <button
-          type="button"
-          role="combobox"
-          aria-controls="radix-:R2jlufnnkr:"
-          aria-expanded="false"
-          aria-autocomplete="none"
-          dir="ltr"
-          data-state="closed"
-          data-placeholder=""
-          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          id="filter"
+    <main className="p-4">
+      <div className="flex items-center mb-6 space-x-4">
+        <TextField
+          id="outlined-select-currency"
+          select
+          value={sortCondition}  // 정렬 기준 상태를 사용
+          onChange={handleSortChange}  // 정렬 기준 변경 시 호출되는 함수
         >
-          <span >필터</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-            aria-hidden="true"
-          >
-            <path d="m6 9 6 6 6-6"></path>
-          </svg>
-        </button>
-        <select
-          aria-hidden="true"
-          tabindex="-1">
-          <option value=""></option>
-        </select>
+          {conditions &&
+            conditions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+        </TextField>
       </div>
-      <div className="grid grid-cols-5 gap-4">
-      <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-        <BookCard cardType="A"
-        nickname="합격률 80%"
-        createDate="2024-08-23"
-        title="2024 정보처리기사 실기"
-        category="문제집/자격증"
-        viewCount="10"
-        questionCount="20"
-        sectionCoune="4"
-        status="여긴status"/>
-      </div>
-    </section>
-    <div className={"flex justify-center mt-4"}>
+      <section className="grid grid-cols-5 gap-4">
+        {currentItems.length > 0 ? (
+          currentItems.map(book => (
+            <div key={book.bookId}>
+              <BookCard
+                cardType="A"
+                nickname={book.user?.nickname || 'Unknown'}
+                createDate={book.bookCreatedate}
+                title={book.bookTitle}
+                category={book.category?.categoryName || 'Unknown'}
+                viewCount={book.bookViewCount}
+                questionCount={book.bookQuestionCount}
+                sectionCount={book.bookSectionCount}
+                status={book.bookStatus}
+              />
+            </div>
+          ))
+        ) : (
+          <div>No books available</div>
+        )}
+      </section>
+      <div className="flex justify-center mt-4">
         <Stack spacing={SPACING}>
           <Pagination
-              count={pageCount}
-              page={page}
-              onChange={handleChange}
-              showFirstButton
-              showLastButton
+            count={pageCount}  // 전체 페이지 수
+            page={page}  // 현재 페이지 번호
+            onChange={handleChange}  // 페이지 변경 시 호출되는 함수
+            showFirstButton  // 첫 페이지로 이동 버튼 표시
+            showLastButton  // 마지막 페이지로 이동 버튼 표시
           />
         </Stack>
       </div>
-  </main>
-
-    )
+    </main>
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-

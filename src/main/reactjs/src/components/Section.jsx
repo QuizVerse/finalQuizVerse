@@ -5,12 +5,14 @@ import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material"
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
-import CustomConfirm from "./modal/CustomConfirm";
-import SectionSort from "./modal/SectionSort";
 import Question from "./Question";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
-
+import CustomConfirm from "./modal/CustomConfirm";
+import CustomAlert from "./modal/CustomAlert";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import CloseIcon from "@mui/icons-material/Close";
+import DescriptionIcon from '@mui/icons-material/Description';
 export default function Section({
                                     index,
                                     title,
@@ -18,74 +20,124 @@ export default function Section({
                                     sectionCount,
                                     onDuplicate,
                                     onDelete,
-                                    openConfirm,
                                     onUpdateSection,
-                                    section
+                                    section,
+                                    book,
+                                    loading,
+                                    setLoading,
+                                    onUploadImage
                                 }) {
-
 
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
-
-    // section 상태
-    const [sectionTitle, setSectionTitle] = useState('');
-    const [sectionDescription, setSectionDescription] = useState('');
 
     // 섹션 접고 펴는 함수
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
 
-    // 상태로 관리되는 질문 리스트
-    const [questions, setQuestions] = useState([ {
-        questionTitle: "What is the capital of France?",
-        questionDescription: "This question is about the capitals of European countries.",
-        questionDescriptionimage: "description_image_url.jpg",
-        questionSolution: "The capital of France is Paris.",
-        questionSolutionimage: "solution_image_url.jpg",
-    }]);
+    // confirm state
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
 
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    // 상태로 관리되는 질문 리스트
+    const [questions, setQuestions] = useState([]);
+
+    // 섹션 설명 표시 여부 관리
+    const [showDescription, setShowDescription] = useState(section.sectionDescription !== "" || section.sectionImage !== "");
+
+    // 화면 로딩될 때
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                axios.post(`/book/question/getallbysection`, section).then((res)=>{
+            // sectionId에 해당하는 질문 데이터를 가져옴
+            axios.get('/book/question/getall/'+section.sectionId)
+                .then(res => {
                     setQuestions(res.data);
-                });
-
-            } catch (error) {
-                console.error("Error fetching book data:", error);
-            }
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setLoading(true);
+                    console.error("Error fetching book data:", error);
+                })
         };
-
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
+
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            questions.forEach((e, index) => e.questionOrder = index+1);
+            axios.post('/book/question/saveall', questions)
+                .then(res => {
+                    console.log('질문이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('질문 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [questions]);
 
     /**
      * @description : 새로운 질문 추가
      */
-    const handleAddQuestion = (type) => {
-        const newQuestion = {id: questions.length + 1, type: type};
-        setQuestions([...questions, newQuestion]);
+    const handleAddQuestion = () => {
+        const newQuestion = {
+                questionTitle: "",
+                questionType:0,
+                questionDescription: "",
+                questionDescriptionimage: "",
+                questionSolution: "",
+                questionSolutionimage: "",
+                questionOrder: 0,
+                book: book,
+                questionPoint: 0,
+                section: section
+            };
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newQuestion
+        }).then(res=>{
+            console.log(res.data);
+            setQuestions([...questions, res.data]);
+        })
     };
 
     /**
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const newQuestion = {...questions[index], id: questions.length + 1};
-        console.log(questions);
-        setQuestions([...questions, newQuestion]);
+        const newQuestion = {
+            ...questions[index],
+            questionId : "",
+        };
+        axios({
+            method:'post',
+            url:'/book/question/new',
+            data: newQuestion
+        }).then(res=> {
+            setQuestions([...questions, res.data]);
+        })
     };
+
 
     /**
      * @description : 특정 질문 삭제 기능
      */
     const handleDeleteQuestion = (index) => {
         if (questions.length > 1) {
-            const newQuestions = questions.filter((_, i) => i !== index);
-            setQuestions(newQuestions);
-
+            setDeleteIndex(index);
+            openConfirm();
+        } else {
+            openAlert("삭제할 수 없습니다. 질문은 최소 하나는 있어야 합니다.");
         }
     };
 
@@ -101,32 +153,111 @@ export default function Section({
     };
 
     /**
-     * @description : 현재 섹션 복제 기능
-     */
-    const handleDuplicateSection = () => {
-        // 섹션을 복제할 때 질문과 입력된 제목, 설명을 함께 복제
-        const newSection = {
-            questions: [...questions],
-            sectionTitle: sectionTitle,  // 섹션 제목을 복제하거나 새롭게 설정할 수 있음
-            sectionDescription: sectionDescription  // 섹션 설명을 복제하거나 새롭게 설정할 수 있음
-        };
-        console.log("복제된 섹션:", newSection);
-        // 실제로 섹션을 복제하는 로직은 상위 컴포넌트에서 수행될 수 있음
-    };
-
-    /**
      * @description : 문제 변경 사항 업데이트
      */
-    const handleUpdateQuestion = (index, title, description) => {
+    const handleUpdateQuestion = (index, updated) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index] = {
             ...updatedQuestions[index],
-            questionTitle: title,
-            questionDescription: description
+            ...updated
         };
         setQuestions(updatedQuestions);
+
+        console.log(updatedQuestions);
     };
 
+
+    /**
+     * @description : 취소 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn1 = () => {
+        setDeleteConfirm(false);
+        setDeleteIndex('');
+    };
+
+    /**
+     * @description : 확인 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn2 = () => {
+        setDeleteConfirm(false);
+        const question = questions[deleteIndex];
+        if (questions.length > 1) {
+            axios({
+                method:'delete',
+                url:'/book/question/delete/'+question.questionId,
+            }).then(res=>{
+                console.log(res);
+                setQuestions(questions.filter((_, i) => i !== deleteIndex));
+            })
+        } else {
+
+        }
+    };
+
+    /**
+     * @description : Confirm창 열릴 때
+     * */
+    const openConfirm = () => {
+        setDeleteConfirm(true);
+    };
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (alertTitle) => {
+        setAlertTitle(alertTitle);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
+    // Image Upload
+    const handleFileChange = (event, index, inputType) => {
+        const file = event.target.files[0];
+
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
+
+        axios({
+            method:'post',
+            url:'/book/edit/upload',
+            data:uploadForm,
+            headers:{'Content-Type':'multipart/form-data'},
+        }).then(res=>{
+            console.log("saved picture", res.data);
+            const updated = [...questions];
+            if(inputType === "solution"){
+                updated[index] = {
+                    ...updated[index],
+                    questionSolutionimage: res.data.photo,
+                };
+                setQuestions(updated);
+            } else {
+                updated[index] = {
+                    ...updated[index],
+                    questionDescriptionimage: res.data.photo,
+                };
+                setQuestions(updated);
+            }
+        })
+    };
+
+    // 섹션 설명 추가 핸들러
+    const handleAddDescription = () => {
+        setShowDescription(true);
+    };
+
+
+    // 섹션 설명 삭제 핸들러
+    const handleDeleteDescription = () => {
+        setShowDescription(false);
+        onUpdateSection({sectionImage: "", sectionDescription: ""});
+    };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
@@ -147,17 +278,48 @@ export default function Section({
                         placeholder="질문을 입력하세요."
                         variant={"standard"}
                         value={title}
-                        onChange={(e) => onUpdateSection(e.target.value, description)}
+                        onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
                     />
-                    <TextField
-                        fullWidth
-                        multiline
-                        label={"섹션 설명"}
-                        placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
-                        variant={"standard"}
-                        value={description}
-                        onChange={(e) => onUpdateSection(title, e.target.value)}
-                    />
+                    <div className="flex flex-col gap-4">
+                        {showDescription && (
+                            <div className="flex gap-4">
+                            <TextField
+                                fullWidth multiline
+                                label={"섹션 설명"}
+                                placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
+                                variant={"standard"}
+                                value={description}
+                                onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
+                            />
+                            <IconButton
+                                onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                            <IconButton onClick={handleDeleteDescription}>
+                                <CloseIcon/>
+                            </IconButton>
+                        </div>
+                        )}
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {section.sectionImage !== "" ?
+                                <img
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
+                                    alt="Cover"
+                                    className="w-36 h-36 object-cover"
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id={'description-image-' + section.sectionId}
+                                accept="image/*"
+                                onChange={(e) => onUploadImage(e, "description")}
+                                style={{display: 'none'}} // Hide the file input
+                            />
+                        </div>
+                    </div>
                     <div className="flex gap-4 justify-end">
                         <Tooltip title="섹션 복사">
                             <IconButton onClick={onDuplicate}>
@@ -169,15 +331,16 @@ export default function Section({
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="섹션 재정렬">
-                            <IconButton onClick={openConfirm}>
-                                <LoopIcon/>
+                        {!showDescription && (
+                        <Tooltip title="섹션 설명 추가">
+                            <IconButton onClick={handleAddDescription}>
+                                <DescriptionIcon/>
                             </IconButton>
                         </Tooltip>
-
+                        )}
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
-                                <AddIcon />
+                                <AddIcon/>
                             </IconButton>
                         </Tooltip>
                     </div>
@@ -185,18 +348,35 @@ export default function Section({
             )}
             {questions.map((question, index) => (
                 <Question
-                    key={question.id}
+                    key={index}
                     index={index}
-                    type={question.type}
+                    questionType={question.questionType}
                     title={question.questionTitle}
                     description={question.questionDescription}
                     totalQuestions={questions.length}
+                    question={question}
+                    openConfirm={openConfirm}
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
-                    onUpdateQuestion={(title, description) => handleUpdateQuestion(index, title, description)}
+                    onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
+                    onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
+
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
+
+            {/* 삭제 Confirm */}
+            <CustomConfirm
+                id={15}
+                openConfirm={deleteConfirm}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
+            ></CustomConfirm>
         </div>
     );
 }

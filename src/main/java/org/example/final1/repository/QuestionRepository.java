@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<QuestionDto,Integer> {
-    public List<QuestionDto> findAllByBook(BookDto dto);
-    public List<QuestionDto> findAllBySection(SectionDto section);
+    public List<QuestionDto> findAllBySectionSectionId(int sectionId);
 }

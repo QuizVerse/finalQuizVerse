@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@livekit/components-core": "^0.11.2",
+    "@livekit/components-react": "^2.4.3",
+    "@livekit/components-styles": "^1.0.12",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.7",
@@ -16,7 +19,11 @@
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "jspdf": "^2.5.1",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
     "lucide-react": "^0.427.0",
+    "livekit-client": "^2.5.0",
+    "livekit-server-sdk": "^2.6.0",
     "react": "^18.3.1",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dnd": "^16.0.1",
@@ -26,7 +33,22 @@
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.12",
+    "swiper": "^11.1.11",
+    "socket.io-client": "^4.7.5",
     "web-vitals": "^2.1.4"
+    
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.0.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-react-hooks": "^4.6.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.0.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-react-hooks": "^4.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

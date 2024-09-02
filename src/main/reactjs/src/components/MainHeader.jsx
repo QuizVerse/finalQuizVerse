@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import Cookies from 'js-cookie';
 import React from 'react';
+import axios from "axios";
 
 export default function MainHeader() {
 
@@ -26,12 +27,31 @@ export default function MainHeader() {
 
     const handleLogout = async() => {
         try {
-            const jwtToken=Cookies.get('jwtToken')
+            //로컬 회원
+            if(localStorage.getItem('token')){
+                localStorage.removeItem('token');
+            }
+            //소셜회원
+            else{
+                const jwtToken=Cookies.get('jwtToken')
+
+                await axios.get('/login/oauth/logout',{
+
+                    headers:{
+                        'Authorization':`${jwtToken}`
+                    }
+                });
+
+                console.log(jwtToken);
+                Cookies.remove('jwtToken');
+            }
 
 
         }catch(error){
 
         }
+        setIsLoggedIn(false);
+        navi('/');
     };
 
 

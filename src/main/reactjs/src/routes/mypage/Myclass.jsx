@@ -19,6 +19,7 @@ import NewClass from "../../components/modal/NewClass";
 import axios from "axios";
 import CustomAlert from "../../components/modal/CustomAlert";
 import Paper from '@mui/material/Paper';
+import {useNavigate} from "react-router-dom";
 
 const conditions = [
   {
@@ -44,6 +45,8 @@ const SPACING = 2;
 
 export default function Myclass() {
 
+  const navi=useNavigate();
+
   const [alertVisible, setAlertVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [className, setClassName] = useState("");
@@ -66,12 +69,16 @@ export default function Myclass() {
   const getDataList=()=>{
       axios({
         method:'get',
-        url:'/myclass/list',
+        url:'/myclass/index',
       }).then(res=>{
         console.log(res);
         setClassList(res.data);
       })
   }
+
+  const classClick=(classId)=>{
+    navi(`/mypage/myclass/detail/${classId}`);
+  };
 
   /**
    * @description : Confirm창 열릴 때
@@ -150,6 +157,10 @@ export default function Myclass() {
 
         <h1 className="mb-6 text-2xl font-bold">나의 클래스</h1>
         <div className="flex items-center mb-4 space-x-4">
+        <input
+            className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
+            placeholder="Name, email, etc..."
+          />
           <TextField
               id="outlined-select-currency"
               select
@@ -207,19 +218,23 @@ export default function Myclass() {
                 </TableRow>
               </TableHead>
               <TableBody>
+
                 {currentItems &&
                     currentItems.map((row) => (
+
                         <TableRow
                             key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                            onClick={()=>classClick(row.classId)}
+                            style={{cursor:"pointer"}}
                         >
                           <TableCell component="th" scope="row">
                             {row.className}
                           </TableCell>
-                          <TableCell>{row.classDescription}</TableCell>
-                          <TableCell>{row.classCreatedate}</TableCell>
-                          <TableCell>{row.carbs}</TableCell>
-                          <TableCell>{row.protein}</TableCell>
+                          <TableCell>{row.memberCount}</TableCell>
+                          <TableCell>{row.joinDate ? new Date(row.joinDate).toLocaleString() : '-'}</TableCell>
+                          <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
+                          <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
                         </TableRow>
                     ))
                 }

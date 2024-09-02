@@ -2,9 +2,30 @@
 // https://v0.dev/t/3SShzm6vJSF
 
 import React, { useState } from 'react';
-import { Stack, Pagination } from "@mui/material";
+import { Stack, Pagination, TextField, MenuItem } from "@mui/material";
 import BookCard from "../../components/BookCard";
 
+
+
+//필터
+const conditions = [
+  {
+    value: 'popular',
+    label: '인기순',
+  },
+  {
+    value: 'recent',
+    label: '최신순',
+  },
+  {
+    value: 'old',
+    label: '오래된순',
+  },
+  {
+    value: 'title',
+    label: '가나다순',
+  },
+];
 
 const ITEMS_PER_PAGE = 8; // 한 페이지에 표시할 아이템 수
 const SPACING = 2; // 페이지네이션 버튼 간의 간격
@@ -48,35 +69,18 @@ export default function Wrong() {
           className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
           placeholder="Name, email, etc..."
         />
-        <button
-          type="button"
-          role="combobox"
-          aria-controls="radix-:Rilufnnkr:"
-          aria-expanded="false"
-          aria-autocomplete="none"
-          dir="ltr"
-          data-state="closed"
-          data-placeholder=""
-          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label="Filter"
-        >
-          <span>등록일순</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-            aria-hidden="true"
+        <TextField
+              id="outlined-select-currency"
+              select
+              defaultValue="popular"
           >
-            <path d="m6 9 6 6 6-6"></path>
-          </svg>
-        </button>
+            {conditions &&
+                conditions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+            ))}
+          </TextField>
         <select
           aria-hidden="true"
           tabindex="-1"

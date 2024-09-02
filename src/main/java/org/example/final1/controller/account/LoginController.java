@@ -2,15 +2,16 @@ package org.example.final1.controller.account;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.final1.config.auth.PrincipalDetails;
+import org.example.final1.config.oauth.LogoutService;
+import org.example.final1.jwt.JwtTokenProvider;
 import org.example.final1.model.UserDto;
+import org.example.final1.service.JwtService;
 import org.example.final1.service.TokenService;
+import org.example.final1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,6 +22,13 @@ import java.util.Map;
 public class LoginController {
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private LogoutService logoutService;
+    @Autowired
+    private JwtService jwtService;
+
 
 
     @GetMapping("/test/login")
@@ -102,5 +110,24 @@ public class LoginController {
         }
 
         return response; // 응답 반환
+    }
+
+    @GetMapping("/oauth/logout")
+    public String oauthLogout(HttpServletRequest request) {
+        // 여기서 토큰을 가지고 로그아웃 처리 로직을 구현합니다.
+        // 예: 토큰 유효성 검사, 토큰 무효화, 사용자 로그아웃 처리 등
+        //jwt로 사용자의 정보를 받은후, 걔 id에서 provider로 카카오네이버구글인지 따지고, 주소로 보내줘야됨
+
+        UserDto userDto = jwtService.getUserFromJwt(request);
+
+        if (userDto != null && "kakao".equals(userDto.getUserProvider())) {
+            // Kakao 로그아웃 처리
+            return logoutService.logoutFromKakao();
+        } else {
+            return "Logout failed. User not found or provider not supported.";
+        }
+
+
+
     }
 }

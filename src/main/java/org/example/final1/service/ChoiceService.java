@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChoiceService {
@@ -22,8 +23,25 @@ public class ChoiceService {
         this.choiceRepository = choiceRepository;
     }
 
+    public ChoiceDto saveChoice(ChoiceDto choice) {
+        return choiceRepository.save(choice);
+    }
+
     public List<ChoiceDto> saveChoices(List<ChoiceDto> choices) {
         return choiceRepository.saveAll(choices);
+    }
+
+    public List<ChoiceDto> getAllChoices(int questionId) {
+        return choiceRepository.findByQuestionQuestionId(questionId);
+    }
+
+    public void deleteChoice(Integer id) {
+        choiceRepository.deleteById(id);
+    }
+
+    // 답안 아이디로 답안 하나의 정보 받아오기
+    public Optional<ChoiceDto> getChoice(int id) {
+        return choiceRepository.findById(id);
     }
 
 }

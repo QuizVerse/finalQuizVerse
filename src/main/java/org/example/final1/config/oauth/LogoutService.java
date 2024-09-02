@@ -1,46 +1,28 @@
 package org.example.final1.config.oauth;
 
 
-import org.example.final1.config.oauth.provider.GoogleUserInfo;
-import org.example.final1.config.oauth.provider.KakaoUserInfo;
-import org.example.final1.config.oauth.provider.NaverUserInfo;
-import org.example.final1.config.oauth.provider.OAuth2UserInfo;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
+import org.springframework.web.client.RestTemplate;
 
 @Service
-public class LogoutService extends DefaultOAuth2UserService {
+public class LogoutService {
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-        OAuth2UserInfo oAuth2UserInfo = null;
+    @Value("${kakao.logout.url}")
+    private String kakaoLogoutUrl;
 
-        // Determine which provider is being used
-        if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
-            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
-            OAuth2AccessToken oAuthAcess=userRequest.getAccessToken();
-        } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
-            oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
-            OAuth2AccessToken oAuthAcess=userRequest.getAccessToken();
-        } else if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
-            oAuth2UserInfo = new KakaoUserInfo(oAuth2User.getAttributes());
-            OAuth2AccessToken oAuthAcess=userRequest.getAccessToken();
-        }else{
-            return null;
-        }
+    @Value("${kakao.client.id}")
+    private String kakaoclientId;
 
+    @Value("${kakao.logout.redirect.uri}")
+    private String kakaologoutRedirectUri;
 
+    public String logoutFromKakao() {
+        String url = kakaoLogoutUrl + "?client_id=" + kakaoclientId + "&logout_redirect_uri=" + kakaologoutRedirectUri;
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
 
-
-
-        return oAuth2User;
+        return response;
     }
+
 }

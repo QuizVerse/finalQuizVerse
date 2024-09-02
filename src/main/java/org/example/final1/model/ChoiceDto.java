@@ -26,6 +26,9 @@ public class ChoiceDto {
     @Column(name = "choice_image", length = 255)
     private String choiceImage;
 
+    @Column(name = "choice_isanswer")
+    private Boolean choiceIsanswer;
+
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE) // 문제가 삭제되면 해당 문제도 삭제
