@@ -8,6 +8,8 @@ export default function Signup() {
     const [user_nickname, setUser_nickname] = useState('');
     const [user_passwordcheck, setUser_passwordcheck] = useState('');
     const [auth_code, setAuth_code] = useState(''); // 사용자 입력 인증 코드
+    const[timeLeft,setTimeLeft]=useState(180);
+    const [timerRunning,setTimerRunning]=useState(false);
 
     const navi = useNavigate();
 
@@ -32,6 +34,38 @@ export default function Signup() {
         return lengthCheck && charCheck;
     };
 
+
+    // 타이머 관리
+    useEffect(() => {
+        if (timerRunning && timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+
+            return () => clearInterval(timerId); // 클린업 함수로 타이머 종료
+        } else if (timeLeft === 0) {
+            alert("인증 시간이 만료되었습니다. 다시 시도해 주세요.");
+            setTimerRunning(false);
+            setTimeLeft(180); // 타이머 초기화
+
+            let url = `/signup/user/deletecode?user_email=${encodeURIComponent(user_email)}`;
+
+            axios.get(url)
+                .then(res => {
+                    if (res.data === 'success') {
+                        console.log("인증 코드가 성공적으로 삭제되었습니다.");
+                    } else {
+                        console.error("인증 코드 삭제 실패.");
+                    }
+                })
+                .catch(error => {
+                    console.error("인증 코드 삭제 중 오류 발생:", error);
+                })
+
+        }
+    }, [timeLeft, timerRunning]);
+
+
 // 인증번호 보내기 및 재발송 이벤트
     const sendEmail = () => {
         let url = `/signup/user/send?user_email=${encodeURIComponent(user_email)}`;
@@ -39,6 +73,8 @@ export default function Signup() {
             .then(res => {
                 if (res.data === 'success') {
                     alert("인증 코드가 이메일로 발송되었습니다.");
+                    setTimerRunning(true); // 타이머 시작
+                    setTimeLeft(180); // 타이머를 다시 3분으로 초기화
                 } else if (res.data === '이메일이 존재하는 회원입니다.') {
                     alert("이미 존재하는 이메일입니다. 다른 이메일을 사용하세요.");
                 } else {
@@ -53,6 +89,7 @@ export default function Signup() {
 
     // 이메일 인증 코드 맞는지 확인 이벤트
     const checkEmail = () => {
+
         let url = `/signup/user/emailcheck?user_email=${encodeURIComponent(user_email)}&auth_code=${auth_code}`;
         axios.get(url)
             .then(res => {
@@ -64,6 +101,12 @@ export default function Signup() {
                     alert("인증 코드가 일치하지 않습니다.");
                 }
             });
+    }
+// 타이머 표시용 포맷
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     // 닉네임 중복 확인 이벤트
@@ -200,7 +243,7 @@ export default function Signup() {
                             value={auth_code} // 사용자 입력 코드
                             onChange={(e) => setAuth_code(e.target.value)} // 입력 값 상태로 업데이트
                         />
-                        <p className="text-xs text-gray-500">인증 유효 시간 : 03:00</p>
+                        <p className="text-xs text-muted-foreground">인증 제한 시간: {formatTime(timeLeft)}</p>
                     </div>
                     <button
                         type="button"

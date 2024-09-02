@@ -66,6 +66,18 @@ public class SignupController {
         }
     }
 
+    @GetMapping("/user/deletecode")
+    public String deleteAuntenticationCode(@RequestParam("user_email")String user_email){
+        if(authenticationCodes.containsKey(user_email)){
+            authenticationCodes.remove(user_email);
+            return "success";
+
+        }else{
+            return "fail";
+        }
+    }
+
+
 
     //닉네임 중복체크
     @GetMapping("/user/nicknamecheck")
