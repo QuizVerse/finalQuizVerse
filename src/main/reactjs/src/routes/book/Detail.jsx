@@ -75,10 +75,9 @@ export default function Detail() {
       try {
         const response = await axios.get(`/book/review/${book_Id}`); // 리뷰 엔드포인트 호출
         setReviewData(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log("review error", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -90,9 +89,9 @@ export default function Detail() {
     return <div>{error}</div>; // 에러가 있을 때 표시
   }
 
-  if (loading) {
-    return <div>Loading...</div>; // 로딩 중일 때 표시
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>; // 로딩 중일 때 표시
+  // }
 
   if (!bookData) {
     return <div>No data found</div>; // 데이터가 없을 때 표시
@@ -136,7 +135,7 @@ export default function Detail() {
                 {bookData.bookTitle}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                출제자:{" "}
+                출제자:
                 {bookData.user ? bookData.user.userNickname : "알 수 없음"}
               </Typography>
               <Typography variant="body1" color="text.secondary">
