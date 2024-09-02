@@ -55,7 +55,7 @@ public class NewController {
 
         // 책 정보를 사용자 정보와 결합하여 설정
         bookDto.setUser(userDto);
-        BookDto savedBook = bookService.createBook(bookDto);
+        BookDto savedBook = bookService.saveBook(bookDto);
 
         // 결과 반환
         Map<String, Object> response = new HashMap<>();
