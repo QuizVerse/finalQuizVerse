@@ -1,13 +1,63 @@
-// v0 by Vercel.
-// https://v0.dev/t/oLrBdD72t9Y
-
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function ChangePassword() {
   const [user_email, setUser_email] = useState('');
   const [auth_code, setAuth_code] = useState('');
   const [emailcheck, setEmailcheck] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [user_password, setUser_password] = useState('');
+  const [user_passwordcheck, setUser_passwordcheck] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
+
+  // 비밀번호 유효성 검사
+  const validatePassword = (password) => {
+    const lengthCheck = password.length >= 8 && password.length <= 20;
+    const typeCheck = /^(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[!@#$%^&*])|(?=.*\d)(?=.*[!@#$%^&*])/.test(password);
+    return lengthCheck && typeCheck;
+  };
+
+  // 비밀번호 및 비밀번호 확인 입력이 변경될 때마다 메시지 업데이트
+  useEffect(() => {
+    if (user_password !== user_passwordcheck) {
+      setPasswordMessage('* 비밀번호가 일치하지 않습니다. 다시 입력해주세요');
+    } else if (!validatePassword(user_password)) {
+      setPasswordMessage('* 비밀번호 양식 형식을 맞춰주세요.');
+    } else {
+      setPasswordMessage('* 사용 가능한 비밀번호입니다.');
+    }
+  }, [user_password, user_passwordcheck]);
+
+  // 타이머 관리
+  useEffect(() => {
+    if (timerRunning && timeLeft > 0) {
+      const timerId = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+
+      return () => clearInterval(timerId); // 클린업 함수로 타이머 종료
+    } else if (timeLeft === 0) {
+      alert("인증 시간이 만료되었습니다. 다시 시도해 주세요.");
+
+      setTimerRunning(false);
+      setTimeLeft(180); // 타이머 초기화
+      let url = `/change/user/deletecode?user_email=${encodeURIComponent(user_email)}`;
+
+      axios.get(url)
+          .then(res => {
+            if (res.data === 'success') {
+              console.log("인증 코드가 성공적으로 삭제되었습니다.");
+            } else {
+              console.error("인증 코드 삭제 실패.");
+            }
+          })
+          .catch(error => {
+            console.error("인증 코드 삭제 중 오류 발생:", error);
+          });
+
+    }
+  }, [timeLeft, timerRunning]);
 
   // 인증번호 보내기 및 재발송 이벤트
   const sendEmail = () => {
@@ -16,6 +66,8 @@ export default function ChangePassword() {
         .then(res => {
           if (res.data === 'success') {
             alert("인증 코드가 이메일로 발송되었습니다.");
+            setTimerRunning(true); // 타이머 시작
+            setTimeLeft(180); // 타이머를 다시 3분으로 초기화
           }
           else {
             alert("이메일 전송 실패");
@@ -29,12 +81,13 @@ export default function ChangePassword() {
 
   // 이메일 인증 코드 맞는지 확인 이벤트
   const checkEmail = () => {
-    let url = `/signup/user/emailcheck?user_email=${encodeURIComponent(user_email)}&auth_code=${auth_code}`;
+    let url = `/change/user/emailcheck?user_email=${encodeURIComponent(user_email)}&auth_code=${auth_code}`;
     axios.get(url)
         .then(res => {
           if (res.data === 'success') {
             setEmailcheck(true);
             alert("이메일 인증이 성공적으로 완료되었습니다.");
+            setTimerRunning(false); // 인증 성공 시 타이머 중지
           } else {
             setEmailcheck(false);
             alert("인증 코드가 일치하지 않습니다.");
@@ -42,9 +95,51 @@ export default function ChangePassword() {
         });
   }
 
-    return (
-        <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md" data-v0-t="card">
+  // 타이머 표시용 포맷
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  const handleSubmit=(e)=>{
+    e.preventDefault();//폼제출시 페이지 리로드를 방지한다.
+    if(!emailcheck){
+      alert("이메일 인증을 먼저 완료해주세요.");
+      return;
+    }
+    if (user_password !== user_passwordcheck) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    if (!validatePassword(user_password)) {
+      alert("비밀번호 형식이 올바르지 않습니다.");
+      return;
+    }
+
+    // 서버로 데이터 전송
+    axios.post('/change/user/updatepassword', {
+      user_email,
+      user_password
+    })
+        .then(res => {
+          if (res.data === 'success') {
+            alert("비밀번호가 성공적으로 변경되었습니다.");
+          } else {
+            alert("비밀번호 변경 실패.");
+          }
+        })
+        .catch(error => {
+          console.error("비밀번호 변경 중 오류 발생:", error);
+          alert("비밀번호 변경 중 오류가 발생했습니다.");
+        });
+  };
+
+
+  return (
+      <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-md" data-v0-t="card">
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-1.5 p-6">
               <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
                 비밀번호 재설정
@@ -96,7 +191,7 @@ export default function ChangePassword() {
                     확인
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">인증 제한 시간: 03:00</p>
+                <p className="text-xs text-muted-foreground">인증 제한 시간: {formatTime(timeLeft)}</p>
               </div>
               <div className="space-y-2">
                 <label
@@ -111,6 +206,8 @@ export default function ChangePassword() {
                       type="password"
                       id="password"
                       placeholder="비밀번호"
+                      value={user_password}
+                      onChange={(e) => setUser_password(e.target.value)}
                   />
                   <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -143,6 +240,8 @@ export default function ChangePassword() {
                       type="password"
                       id="password-check"
                       placeholder="비밀번호 확인"
+                      value={user_passwordcheck}
+                      onChange={(e) => setUser_passwordcheck(e.target.value)}
                   />
                   <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -160,12 +259,9 @@ export default function ChangePassword() {
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
                 </div>
-                <p className="text-xs text-red-500">* 비밀번호가 일치하지 않습니다. 다시 입력해주세요</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs text-red-500">* 비밀번호 양식 형식을 맞춰주세요.</p>
-                <p className="text-xs text-red-500">* 사용 가능한 비밀번호입니다.</p>
-                <p className="text-xs text-green-500">* 비밀번호가 일치합니다.</p>
+                <p className={`text-xs ${passwordMessage.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
+                  {passwordMessage}
+                </p>
               </div>
             </div>
             <div className="flex items-center p-6">
@@ -174,7 +270,10 @@ export default function ChangePassword() {
                 확인
               </button>
             </div>
-          </div>
-        </main>
-    );
+
+          </form>
+
+        </div>
+      </main>
+  );
 }
