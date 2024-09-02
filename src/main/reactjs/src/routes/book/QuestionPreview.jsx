@@ -34,7 +34,7 @@ export default function QuestionPreview() {
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
-                        viewBox="0 0 24 24"
+                        viewBox="0 0 24 0"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -80,17 +80,17 @@ export default function QuestionPreview() {
                     <table className="min-w-full border-collapse">
                         <thead>
                         <tr className="bg-gray-100">
-                            <th className="border p-2 sticky left-0 bg-gray-100">문항번호</th>
+                            <th className="border p-2 sticky left-0 bg-gray-100 z-10 min-w-max">문항번호</th>
                             {scores.map((_, index) => (
                                 <th key={index} className="border p-2">{`${index + 1}번`}</th>
                             ))}
-                            <th className="border p-2 sticky right-16 bg-gray-100">현재 배점 합계</th>
-                            <th className="border p-2 sticky right-0 bg-gray-100">총점</th>
+                            <th className="border p-2 sticky right-16 bg-gray-100 z-10 min-w-max">현재 배점 합계</th>
+                            <th className="border p-2 sticky right-0 bg-gray-100 z-10 min-w-max">총점</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td className="border p-2 sticky left-0 bg-white">배점</td>
+                            <td className="border p-2 sticky left-0 bg-white z-10 min-w-max">배점</td>
                             {scores.map((score, index) => (
                                 <td key={index} className="border p-2">
                                     <div className="flex items-center justify-center">
@@ -106,8 +106,8 @@ export default function QuestionPreview() {
                                     </div>
                                 </td>
                             ))}
-                            <td className="border p-2 text-red-500 sticky right-16 bg-white">{totalScore.toFixed(1)}점</td>
-                            <td className="border p-2 text-blue-500 sticky right-0 bg-white">{targetTotal}점</td>
+                            <td className="border p-2 text-red-500 sticky right-16 bg-white z-10 min-w-max">{totalScore.toFixed(1)}점</td>
+                            <td className="border p-2 text-blue-500 sticky right-0 bg-white z-10 min-w-max">{targetTotal}점</td>
                         </tr>
                         </tbody>
                     </table>
