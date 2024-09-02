@@ -177,18 +177,11 @@ export default function QuestionPreview() {
                         <PreviewSection
                             key={index}
                             index={index}
-                            title={section.sectionTitle}
-                            description={section.sectionDescription}
                             sectionCount={sections.length}
-                            questions={section.questions}
                             section={section}
                             book={bookData}
                             loading={loading}
                             setLoading={setLoading}
-                            // onUploadImage={(e, inputType) => handleFileChange(e, index)}
-                            // onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
-                            // onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
-                            // onUpdateSection={(updated) => handleUpdateSection(index, updated)}
                         />
                     ))}
                 </div>

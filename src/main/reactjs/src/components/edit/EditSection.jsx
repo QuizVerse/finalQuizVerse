@@ -262,7 +262,7 @@ export default function EditSection({
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{title || "섹션 제목"}</Typography>
+                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>
                     <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
@@ -277,7 +277,7 @@ export default function EditSection({
                         label={"섹션 제목"}
                         placeholder="질문을 입력하세요."
                         variant={"standard"}
-                        value={title}
+                        value={section.sectionTitle}
                         onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
                     />
                     <div className="flex flex-col gap-4">
@@ -288,7 +288,7 @@ export default function EditSection({
                                 label={"섹션 설명"}
                                 placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
                                 variant={"standard"}
-                                value={description}
+                                value={section.sectionDescription}
                                 onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
                             />
                             <IconButton

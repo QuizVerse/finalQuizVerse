@@ -204,7 +204,7 @@ export default function PreviewSection({
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{title || "섹션 제목"}</Typography>
+                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>
                     <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
@@ -214,10 +214,10 @@ export default function PreviewSection({
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <Typography>{title}</Typography>
+                    <Typography>{section.sectionTitle}</Typography>
                     <div className="flex flex-col gap-4">
                         {showDescription && (
-                            <Typography>{description}</Typography>
+                            <Typography>{section.sectionDescription}</Typography>
                         )}
                         <div className={"flex justify-center"}>
                             {/* Image Preview */}
