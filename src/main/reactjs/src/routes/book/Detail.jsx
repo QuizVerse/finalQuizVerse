@@ -24,6 +24,10 @@ export default function Detail() {
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [error, setError] = useState(null); // 에러 상태 추가
+
+  //사진
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
 
   const toggleMoreReviews = () => {
@@ -82,6 +86,10 @@ export default function Detail() {
     fetchReviewData(); // 리뷰 데이터 가져오기 호출
   }, [book_Id]);
 
+  if (error) {
+    return <div>{error}</div>; // 에러가 있을 때 표시
+  }
+
   if (loading) {
     return <div>Loading...</div>; // 로딩 중일 때 표시
   }
@@ -101,25 +109,22 @@ export default function Detail() {
       : formattedDate;
   };
 
+
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardMedia
-                component="img"
-                image={bookData.bookImage}
-                alt="Book Image"
-                sx={{
-                  height: "auto",
-                  maxHeight: 600,
-                  width: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </Card>
-          </Grid>
+      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
+          <Grid container spacing={2} justifyContent="center">
+            {/* 왼편 이미지 */}
+            <Grid item xs={12} md={4}>
+              <Card>
+                <CardMedia
+                    component="img"
+                    image={`${photopath}/${bookData.bookImage}`} // 전체 경로를 조합하여 이미지 경로 설정
+                    alt="Book Image"
+                    sx={{ height: 'auto', maxHeight: 600, width: '100%', objectFit: 'contain' }}
+                />
+              </Card>
+            </Grid>
 
           <Grid item xs={12} md={6}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

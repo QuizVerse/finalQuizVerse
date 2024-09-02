@@ -194,11 +194,11 @@ const router = createBrowserRouter([
                 element: <NewBook />,
                 errorElement: <ErrorPage />,
             },
-            // {
-            //     path: "/book/edit",
-            //     element: <Edit />,
-            //     errorElement: <ErrorPage />,
-            // },
+            {
+                path: "/book/edit",
+                element: <Edit />,
+                errorElement: <ErrorPage />,
+            },
             {
                 path: "/book/edit/:bookId",
                 element: <Edit />,
