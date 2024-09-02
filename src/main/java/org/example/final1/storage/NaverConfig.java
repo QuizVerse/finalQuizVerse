@@ -1,4 +1,4 @@
-package storage;
+package org.example.final1.storage;
 
 import lombok.Getter;
 import lombok.Setter;

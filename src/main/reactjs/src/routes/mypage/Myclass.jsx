@@ -19,6 +19,7 @@ import NewClass from "../../components/modal/NewClass";
 import axios from "axios";
 import CustomAlert from "../../components/modal/CustomAlert";
 import Paper from '@mui/material/Paper';
+import {useNavigate} from "react-router-dom";
 
 const conditions = [
   {
@@ -44,6 +45,8 @@ const SPACING = 2;
 
 export default function Myclass() {
 
+  const navi=useNavigate();
+
   const [alertVisible, setAlertVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [className, setClassName] = useState("");
@@ -66,12 +69,16 @@ export default function Myclass() {
   const getDataList=()=>{
       axios({
         method:'get',
-        url:'/myclass/list',
+        url:'/myclass/index',
       }).then(res=>{
         console.log(res);
         setClassList(res.data);
       })
   }
+
+  const classClick=(classId)=>{
+    navi(`/mypage/myclass/detail/${classId}`);
+  };
 
   /**
    * @description : Confirm창 열릴 때
@@ -211,19 +218,23 @@ export default function Myclass() {
                 </TableRow>
               </TableHead>
               <TableBody>
+
                 {currentItems &&
                     currentItems.map((row) => (
+
                         <TableRow
                             key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                            onClick={()=>classClick(row.classId)}
+                            style={{cursor:"pointer"}}
                         >
                           <TableCell component="th" scope="row">
                             {row.className}
                           </TableCell>
-                          <TableCell>{row.classDescription}</TableCell>
-                          <TableCell>{row.classCreatedate}</TableCell>
-                          <TableCell>{row.carbs}</TableCell>
-                          <TableCell>{row.protein}</TableCell>
+                          <TableCell>{row.memberCount}</TableCell>
+                          <TableCell>{row.joinDate ? new Date(row.joinDate).toLocaleString() : '-'}</TableCell>
+                          <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
+                          <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
                         </TableRow>
                     ))
                 }

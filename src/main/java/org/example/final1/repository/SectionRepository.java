@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface SectionRepository extends JpaRepository<SectionDto, Integer> {
 
-    public List<SectionDto> findAllByBook(BookDto dto);
+    public List<SectionDto> findAllByBookBookId(int bookId);
 }
