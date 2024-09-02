@@ -210,7 +210,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/questionpreview',
+                path: '/book/questionpreview/:bookId',
                 element: <QuestionPreview />,
                 errorElement: <ErrorPage />,
             },
