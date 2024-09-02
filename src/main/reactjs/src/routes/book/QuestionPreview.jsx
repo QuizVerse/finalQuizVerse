@@ -26,6 +26,19 @@ export default function QuestionPreview() {
     // 총점 계산
     const totalScore = scores.reduce((acc, curr) => acc + curr, 0);
 
+    // 현재 배점 합계와 총점이 일치하는지 확인
+    const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
+
+    // 제출 버튼 클릭 핸들러
+    const handleSubmit = () => {
+        if (scores.some(score => score === 0)) {
+            alert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
+        } else {
+            // 제출 논리를 여기에 추가 (예: API 호출)
+            alert("모든 문제에 대해 배점이 완료되었습니다. 제출을 진행합니다.");
+        }
+    };
+
     return (
         <div className="w-full max-w-5xl mx-auto p-4">
             <header className="flex items-center justify-between py-2 border-b">
@@ -34,7 +47,7 @@ export default function QuestionPreview() {
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
-                        viewBox="0 0 24 0"
+                        viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -67,7 +80,10 @@ export default function QuestionPreview() {
                         총 17 문항 | 총 10 섹션 | 총 {targetTotal} 점
                     </span>
                 </div>
-                <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 h-10 px-4 py-2 bg-yellow-500 text-white">
+                <button
+                    onClick={handleSubmit} // 제출 핸들러 추가
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 h-10 px-4 py-2 bg-yellow-500 text-white"
+                >
                     출제하기
                 </button>
             </header>
@@ -80,17 +96,23 @@ export default function QuestionPreview() {
                     <table className="min-w-full border-collapse">
                         <thead>
                         <tr className="bg-gray-100">
-                            <th className="border p-2 sticky left-0 bg-gray-100 z-10 min-w-max">문항번호</th>
+                            <th className="border p-2 sticky left-0 bg-gray-100 z-10 min-w-[100px] whitespace-nowrap">
+                                문항번호
+                            </th>
                             {scores.map((_, index) => (
                                 <th key={index} className="border p-2">{`${index + 1}번`}</th>
                             ))}
-                            <th className="border p-2 sticky right-16 bg-gray-100 z-10 min-w-max">현재 배점 합계</th>
-                            <th className="border p-2 sticky right-0 bg-gray-100 z-10 min-w-max">총점</th>
+                            <th className="border p-2 sticky right-20 bg-gray-100 z-10 min-w-[120px] whitespace-nowrap text-center">
+                                현재 배점 합계
+                            </th>
+                            <th className="border p-2 sticky right-0 bg-gray-100 z-10 min-w-[80px] whitespace-nowrap text-center">
+                                총점
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td className="border p-2 sticky left-0 bg-white z-10 min-w-max">배점</td>
+                            <td className="border p-2 sticky left-0 bg-white z-10 min-w-[100px] text-center">배점</td>
                             {scores.map((score, index) => (
                                 <td key={index} className="border p-2">
                                     <div className="flex items-center justify-center">
@@ -106,8 +128,12 @@ export default function QuestionPreview() {
                                     </div>
                                 </td>
                             ))}
-                            <td className="border p-2 text-red-500 sticky right-16 bg-white z-10 min-w-max">{totalScore.toFixed(1)}점</td>
-                            <td className="border p-2 text-blue-500 sticky right-0 bg-white z-10 min-w-max">{targetTotal}점</td>
+                            <td className={`border p-2 sticky right-20 bg-white z-10 min-w-[120px] text-center ${isTotalEqual ? 'text-blue-500' : 'text-red-500'}`}>
+                                {totalScore.toFixed(1)}점
+                            </td>
+                            <td className="border p-2 text-blue-500 sticky right-0 bg-white z-10 min-w-[80px] text-center">
+                                {targetTotal}점
+                            </td>
                         </tr>
                         </tbody>
                     </table>
