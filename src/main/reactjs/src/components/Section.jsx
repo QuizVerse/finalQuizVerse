@@ -10,6 +10,8 @@ import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
 import CustomConfirm from "./modal/CustomConfirm";
 import CustomAlert from "./modal/CustomAlert";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Section({
                                     index,
@@ -20,12 +22,20 @@ export default function Section({
                                     onDelete,
                                     onUpdateSection,
                                     section,
-                                    book
+                                    book,
+                                    loading,
+                                    setLoading,
+                                    onUploadImage
                                 }) {
 
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // 섹션 접고 펴는 함수
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
 
     // confirm state
     const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -35,24 +45,46 @@ export default function Section({
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
-    // 섹션 접고 펴는 함수
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-
     // 상태로 관리되는 질문 리스트
-    const [questions, setQuestions] = useState([ {
-        questionTitle: "",
-        questionType:0,
-        questionDescription: "",
-        questionDescriptionimage: "",
-        questionSolution: "",
-        questionSolutionimage: "",
-        questionOrder: 0,
-        book: book,
-        questionPoint: 0,
-        section: section
-    }]);
+    const [questions, setQuestions] = useState([]);
+
+    //.env 의 변수를 가져오는 방법
+    const storage=process.env.REACT_APP_STORAGE;
+
+
+    // 화면 로딩될 때
+    useEffect(() => {
+        const fetchData = async () => {
+            // sectionId에 해당하는 질문 데이터를 가져옴
+            axios.get('/book/question/getall/'+section.sectionId)
+                .then(res => {
+                    setQuestions(res.data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setLoading(true);
+                    console.error("Error fetching book data:", error);
+                })
+        };
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, []);
+
+
+    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            questions.forEach((e, index) => e.questionOrder = index+1);
+            axios.post('/book/question/saveall', questions)
+                .then(res => {
+                    console.log('질문이 저장되었습니다:', res);
+                })
+                .catch(error => {
+                    console.error('질문 저장 중 오류가 발생했습니다:', error);
+                });
+        }, 1000); // 1초 뒤에 저장
+
+        return () => clearTimeout(timer);
+    }, [questions]);
 
     /**
      * @description : 새로운 질문 추가
@@ -65,7 +97,7 @@ export default function Section({
                 questionDescriptionimage: "",
                 questionSolution: "",
                 questionSolutionimage: "",
-                questionOrder: questions.length + 1,
+                questionOrder: 0,
                 book: book,
                 questionPoint: 0,
                 section: section
@@ -84,17 +116,19 @@ export default function Section({
      * @description : 질문 복제 기능
      */
     const handleDuplicateQuestion = (index) => {
-        const newQuestion = {...questions[index]};
-
+        const newQuestion = {
+            ...questions[index],
+            questionId : "",
+        };
         axios({
             method:'post',
             url:'/book/question/new',
             data: newQuestion
-        }).then(res=>{
-            console.log(res.data);
+        }).then(res=> {
             setQuestions([...questions, res.data]);
         })
     };
+
 
     /**
      * @description : 특정 질문 삭제 기능
@@ -118,22 +152,6 @@ export default function Section({
         updatedQuestions.splice(hoverIndex, 0, dragQuestion);
         setQuestions(updatedQuestions);
     };
-
-
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            axios.post('/book/question/saveall', questions)
-                .then(res => {
-                    console.log('질문이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('질문 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        return () => clearTimeout(timer);
-    }, [questions]);
 
     /**
      * @description : 문제 변경 사항 업데이트
@@ -199,6 +217,36 @@ export default function Section({
         setAlertVisible(false);
     };
 
+    // Image Upload
+    const handleFileChange = (event, index, inputType) => {
+        const file = event.target.files[0];
+
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
+
+        axios({
+            method:'post',
+            url:'/book/edit/upload',
+            data:uploadForm,
+            headers:{'Content-Type':'multipart/form-data'},
+        }).then(res=>{
+            console.log("saved picture", res.data);
+            const updated = [...questions];
+            if(inputType === "solution"){
+                updated[index] = {
+                    ...updated[index],
+                    questionSolutionimage: res.data.photo,
+                };
+                setQuestions(updated);
+            } else {
+                updated[index] = {
+                    ...updated[index],
+                    questionDescriptionimage: res.data.photo,
+                };
+                setQuestions(updated);
+            }
+        })
+    };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
@@ -221,15 +269,41 @@ export default function Section({
                         value={title}
                         onChange={(e) => onUpdateSection(e.target.value, description)}
                     />
-                    <TextField
-                        fullWidth
-                        multiline
-                        label={"섹션 설명"}
-                        placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
-                        variant={"standard"}
-                        value={description}
-                        onChange={(e) => onUpdateSection(title, e.target.value)}
-                    />
+                    <div className="flex flex-col gap-4">
+                        <div className="flex gap-4">
+                            <TextField
+                                fullWidth multiline
+                                label={"섹션 설명"}
+                                placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
+                                variant={"standard"}
+                                value={description}
+                                onChange={(e) => onUpdateSection(title, e.target.value)}
+                            />
+                            <IconButton
+                                onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
+                                <InsertPhotoIcon/>
+                            </IconButton>
+                        </div>
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {section.sectionImage !== "" ?
+                                <img
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
+                                    alt="Cover"
+                                    className="w-36 h-36 object-cover"
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id={'description-image-' + section.sectionId}
+                                accept="image/*"
+                                onChange={(e) => onUploadImage(e, "description")}
+                                style={{display: 'none'}} // Hide the file input
+                            />
+                        </div>
+                    </div>
                     <div className="flex gap-4 justify-end">
                         <Tooltip title="섹션 복사">
                             <IconButton onClick={onDuplicate}>
@@ -241,14 +315,9 @@ export default function Section({
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="섹션 재정렬">
-                            <IconButton onClick={openConfirm}>
-                                <LoopIcon/>
-                            </IconButton>
-                        </Tooltip>
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
-                                <AddIcon />
+                                <AddIcon/>
                             </IconButton>
                         </Tooltip>
                     </div>
@@ -267,8 +336,8 @@ export default function Section({
                     onDuplicate={() => handleDuplicateQuestion(index)}
                     onDelete={() => handleDeleteQuestion(index)}
                     moveQuestion={moveQuestion}
-                    onUpdateQuestion={(title, description, questionType, solution) =>
-                        handleUpdateQuestion(index, title, description, questionType, solution)}
+                    onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
+                    onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
 

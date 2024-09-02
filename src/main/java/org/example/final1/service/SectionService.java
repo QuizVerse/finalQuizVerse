@@ -30,8 +30,8 @@ public class SectionService {
         sectionRepository.deleteById(id);
     }
 
-    public List<SectionDto> getAllSections(BookDto book) {
-        return sectionRepository.findAllByBook(book);
+    public List<SectionDto> getAllSections(int bookId) {
+        return sectionRepository.findAllByBookBookId(bookId);
     }
 
 }

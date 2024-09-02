@@ -7,7 +7,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import CloseIcon from '@mui/icons-material/Close';
@@ -19,7 +19,7 @@ import Choices from "./Choices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, title, description, questionType, solution, question, onUpdateQuestion}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
 
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
@@ -75,38 +75,25 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     // 컴포넌트 상태 관리
-    const [choices, setChoices] = useState([]); // 답안 리스트 관리
-    const [showDescription, setShowDescription] = useState(false); // 문제 설명 표시 여부 관리
-    const [showExplanation, setShowExplanation] = useState(false); // 해설 입력란 표시 여부 관리
+    const [showDescription, setShowDescription] = useState(question.questionDescription !== "" || question.questionDescriptionimage !== ""); // 문제 설명 표시 여부 관리
+    const [showExplanation, setShowExplanation] = useState(question.questionSolution !== "" || question.questionSolutionimage !== ""); // 해설 입력란 표시 여부 관리
 
     // 문제 설명 삭제 핸들러
     const handleDeleteDescription = () => {
         setShowDescription(false);
+        onUpdateQuestion({questionDescription: "", questionDescriptionimage: ""});
     };
 
     // 문제 해설 삭제 핸들러
     const handleDeleteExplanation = () => {
         setShowExplanation(false);
+        onUpdateQuestion({questionSolution: "", questionSolutionimage: ""});
     };
 
     // 질문 접기/펼치기 핸들러
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
-
-    // Image Upload
-    const handleFileChange = (event, index) => {
-        const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-
-            question = {
-                ...question,
-                questionSolutionimage: imageUrl,
-            };
-        }
-    };
-
 
     return (
         <div ref={preview} style={{opacity: isDragging ? 0.5 : 1}}
@@ -115,7 +102,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                 <DragHandleIcon/> {/* 드래그 핸들 아이콘 */}
             </div>
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{title || "문제 질문"}</Typography>
+                <Typography variant="h5">{question.questionTitle || "문제 질문"}</Typography>
                 <div>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
@@ -130,7 +117,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             label={"문제 질문"}
                             placeholder="질문을 입력하세요."
                             variant={"standard"}
-                            value={title}
+                            value={question.questionTitle}
                             onChange={(e) => onUpdateQuestion({questionTitle: e.target.value})}
                         />
 
@@ -138,7 +125,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             <InputLabel id="visibility-label">문제 형식</InputLabel>
                             <Select
                                 labelId="visibility-label"
-                                value={questionType}
+                                value={question.questionType}
                                 label="문제 형식"
                                 variant={"standard"}
                                 onChange={(e) => onUpdateQuestion({questionType: e.target.value})}
@@ -151,39 +138,60 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                         </FormControl>
                     </div>
                     {showDescription && (  // 문제 설명이 있을 때만 표시
-                        <div className="flex gap-4">
-                            <TextField
-                                fullWidth multiline
-                                label={"문제 설명"}
-                                placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
-                                variant={"standard"}
-                                value={description}
-                                onChange={(e) => onUpdateQuestion({questionDescription: e.target.value})}
-                            />
-                            <IconButton>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={handleDeleteDescription}>
-                                <CloseIcon/>
-                            </IconButton>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex gap-4">
+                                <TextField
+                                    fullWidth multiline
+                                    label={"문제 설명"}
+                                    placeholder="여러줄로 문제 설명을 입력할 수 있습니다."
+                                    variant={"standard"}
+                                    value={question.questionDescription}
+                                    onChange={(e) => onUpdateQuestion({questionDescription: e.target.value})}
+                                />
+                                <IconButton onClick={() => document.getElementById('description-image-'+question.questionId).click()}>
+                                    <InsertPhotoIcon/>
+                                </IconButton>
+                                <IconButton onClick={handleDeleteDescription}>
+                                    <CloseIcon/>
+                                </IconButton>
+                            </div>
+                            <div className={"flex justify-center"}>
+                                {/* Image Preview */}
+                                {question.questionDescriptionimage !== "" ?
+                                    <img
+                                        src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionDescriptionimage}
+                                        alt="Cover"
+                                        className="w-36 h-36 object-cover"
+                                        width="150"
+                                        height="150"
+                                    /> : ""}
+                                {/* Hidden File Input */}
+                                <input
+                                    type="file"
+                                    id={'description-image-'+question.questionId}
+                                    accept="image/*"
+                                    onChange={(e) => onUploadImage(e, "description")}
+                                    style={{display: 'none'}} // Hide the file input
+                                />
+                            </div>
                         </div>
                     )}
-                    <Choices questionType={questionType} question={question}/>
+                    <Choices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
-                    <div className="flex flex-col gap-4">
-                        <div className="flex gap-4">
-                            <TextField
-                                fullWidth multiline
-                                label={"문제 해설"}
-                                placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
-                                variant={"standard"}
-                                value={solution}
-                                onChange={(e) => onUpdateQuestion({questionSolution: e.target.value})}
-                            />
-                            <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={handleDeleteExplanation}>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex gap-4">
+                                <TextField
+                                    fullWidth multiline
+                                    label={"문제 해설"}
+                                    placeholder="여러줄로 문제 해설을 입력할 수 있습니다."
+                                    variant={"standard"}
+                                    value={question.questionSolution}
+                                    onChange={(e) => onUpdateQuestion({questionSolution: e.target.value})}
+                                />
+                                <IconButton onClick={() => document.getElementById('solution-image-'+question.questionId).click()}>
+                                    <InsertPhotoIcon/>
+                                </IconButton>
+                                <IconButton onClick={handleDeleteExplanation}>
                                 <CloseIcon/>
                             </IconButton>
                         </div>
@@ -191,7 +199,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={question.questionSolutionimage}
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"
@@ -200,10 +208,9 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             {/* Hidden File Input */}
                             <input
                                 type="file"
-                                id="file-input"
+                                id={'solution-image-'+question.questionId}
                                 accept="image/*"
-                                onChange={(e) =>
-                                    handleFileChange(e, index)}
+                                onChange={(e) => onUploadImage(e, "solution")}
                                 style={{display: 'none'}} // Hide the file input
                             />
                         </div>
@@ -213,8 +220,8 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                 onDuplicate={onDuplicate} // 질문 복제 핸들러
                 onDelete={onDelete} // 질문 삭제 핸들러
                 totalQuestions={totalQuestions} // 전체 질문 수
-                choices={choices} // 답안 리스트
-                setChoices={setChoices} // 답안 리스트 업데이트 함수
+                // choices={choices} // 답안 리스트
+                // setChoices={setChoices} // 답안 리스트 업데이트 함수
                 showExplanation={showExplanation} // 해설 입력란 표시 여부
                 setShowExplanation={setShowExplanation} // 해설 입력란 표시 여부 업데이트 함수
                 showDescription={showDescription} // 문제 설명
