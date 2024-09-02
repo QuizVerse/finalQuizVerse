@@ -47,7 +47,7 @@ public class UserDto {
     @Column(name = "user_role", nullable = false, length = 50)
     private String userRole;
 
-    @Column(name = "user_accesstoken", nullable = false, length = 255)
+    @Column(name = "user_accesstoken", nullable = true, length = 255)
     private String userAccessToken;
 
 
