@@ -188,7 +188,6 @@
                                         <div className="mt-2">
                                         <div
                                                 className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                                                {/*{book.nickname} · {formatDate(book.createDate)}*/}
                                                 {book.user ? book.user.userNickname : "알 수 없음"} · {formatDate(book.bookCreatedate)}
                                             </div>
                                             <h3 className="mt-2 text-lg font-bold">{book.title}</h3>
