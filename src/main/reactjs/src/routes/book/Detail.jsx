@@ -89,9 +89,9 @@ export default function Detail() {
     return <div>{error}</div>; // 에러가 있을 때 표시
   }
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // 로딩 중일 때 표시
-  // }
+  if (loading) {
+    return <div>Loading...</div>; // 로딩 중일 때 표시
+  }
 
   if (!bookData) {
     return <div>No data found</div>; // 데이터가 없을 때 표시

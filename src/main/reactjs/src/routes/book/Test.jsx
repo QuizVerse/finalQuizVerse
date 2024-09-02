@@ -11,6 +11,7 @@ export default function ParentComponent() {
   const navigate = useNavigate();
   const {bookId} = useParams(); // bookId 가져올 변수
   const [bookData, setBookData] = useState(null); // 문제집 정보 저장할 변수
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
   useEffect(()=> {
     const fetchData = async () => {
@@ -36,6 +37,7 @@ export default function ParentComponent() {
     return <div>No data found</div>; // 데이터가 없을 때 표시
   }
 
+
   const openConfirm = () => {
     setConfirmVisible(true);
   };
@@ -47,13 +49,13 @@ export default function ParentComponent() {
   const passbtn = () => {
     // 버튼1 클릭 시의 행동
     closeConfirm();
-    navigate("/book/score");
+    navigate(`/book/score/${bookId}`);
   };
 
   const submitbtn = () => {
     // 버튼2 클릭 시의 행동
     closeConfirm();
-    navigate("/book/score");
+    navigate(`/book/score/${bookId}`);
   };
 
   return (

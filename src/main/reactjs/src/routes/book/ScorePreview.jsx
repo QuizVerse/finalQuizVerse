@@ -140,6 +140,7 @@ export default function ScorePreview() {
   const navigate = useNavigate();
   const printpdfRef = useRef([]);
   const [loadingVisible, setLoadingVisible] = useState(false);
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
   const answers = Array.from({ length: 100 }, (_, index) => ({
     number: `${index + 1}번`,
@@ -154,6 +155,9 @@ export default function ScorePreview() {
       unit: "mm",
       format: "a4",
     });
+    if (loading) {
+      return <div>Loading...</div>; // 로딩 중일 때 표시
+    }
 
     const margin = 5; // 여백 설정
     const pdfWidth = pdf.internal.pageSize.getWidth(); // PDF 페이지 너비
