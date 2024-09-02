@@ -100,12 +100,12 @@ export default function Detail() {
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const formattedDate = new Date(dateString)
-      .toLocaleDateString("ko-KR", options)
-      .replace(/\./g, "-")
-      .replace(/ /g, "");
+        .toLocaleDateString("ko-KR", options)
+        .replace(/\./g, "-")
+        .replace(/ /g, "");
     return formattedDate.endsWith("-")
-      ? formattedDate.slice(0, -1)
-      : formattedDate;
+        ? formattedDate.slice(0, -1)
+        : formattedDate;
   };
 
 
