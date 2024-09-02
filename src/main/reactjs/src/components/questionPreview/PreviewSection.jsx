@@ -13,6 +13,7 @@ import CustomAlert from "../modal/CustomAlert";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import DescriptionIcon from '@mui/icons-material/Description';
+
 export default function PreviewSection({
                                     index,
                                     title,
@@ -68,48 +69,6 @@ export default function PreviewSection({
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
 
-
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            questions.forEach((e, index) => e.questionOrder = index+1);
-            axios.post('/book/question/saveall', questions)
-                .then(res => {
-                    console.log('질문이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('질문 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        return () => clearTimeout(timer);
-    }, [questions]);
-
-    /**
-     * @description : 새로운 질문 추가
-     */
-    const handleAddQuestion = () => {
-        const newQuestion = {
-                questionTitle: "",
-                questionType:0,
-                questionDescription: "",
-                questionDescriptionimage: "",
-                questionSolution: "",
-                questionSolutionimage: "",
-                questionOrder: 0,
-                book: book,
-                questionPoint: 0,
-                section: section
-            };
-        axios({
-            method:'post',
-            url:'/book/question/new',
-            data: newQuestion
-        }).then(res=>{
-            console.log(res.data);
-            setQuestions([...questions, res.data]);
-        })
-    };
 
     /**
      * @description : 질문 복제 기능
@@ -247,17 +206,6 @@ export default function PreviewSection({
         })
     };
 
-    // 섹션 설명 추가 핸들러
-    const handleAddDescription = () => {
-        setShowDescription(true);
-    };
-
-
-    // 섹션 설명 삭제 핸들러
-    const handleDeleteDescription = () => {
-        setShowDescription(false);
-        onUpdateSection({sectionImage: "", sectionDescription: ""});
-    };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
@@ -272,33 +220,10 @@ export default function PreviewSection({
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <TextField
-                        fullWidth
-                        label={"섹션 제목"}
-                        placeholder="질문을 입력하세요."
-                        variant={"standard"}
-                        value={title}
-                        onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
-                    />
+                    <Typography>{title}</Typography>
                     <div className="flex flex-col gap-4">
                         {showDescription && (
-                            <div className="flex gap-4">
-                            <TextField
-                                fullWidth multiline
-                                label={"섹션 설명"}
-                                placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
-                                variant={"standard"}
-                                value={description}
-                                onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
-                            />
-                            <IconButton
-                                onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={handleDeleteDescription}>
-                                <CloseIcon/>
-                            </IconButton>
-                        </div>
+                            <Typography>{description}</Typography>
                         )}
                         <div className={"flex justify-center"}>
                             {/* Image Preview */}
@@ -308,39 +233,7 @@ export default function PreviewSection({
                                     alt={section.sectionDescription}
                                     className="w-36 h-36 object-cover"
                                 /> : ""}
-                            {/* Hidden File Input */}
-                            <input
-                                type="file"
-                                id={'description-image-' + section.sectionId}
-                                accept="image/*"
-                                onChange={(e) => onUploadImage(e, "description")}
-                                style={{display: 'none'}} // Hide the file input
-                            />
                         </div>
-                    </div>
-                    <div className="flex gap-4 justify-end">
-                        <Tooltip title="섹션 복사">
-                            <IconButton onClick={onDuplicate}>
-                                <ContentCopyIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="섹션 삭제">
-                            <IconButton onClick={onDelete}>
-                                <DeleteIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        {!showDescription && (
-                        <Tooltip title="섹션 설명 추가">
-                            <IconButton onClick={handleAddDescription}>
-                                <DescriptionIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        )}
-                        <Tooltip title="질문 추가">
-                            <IconButton onClick={handleAddQuestion}>
-                                <AddIcon/>
-                            </IconButton>
-                        </Tooltip>
                     </div>
                 </div>
             )}

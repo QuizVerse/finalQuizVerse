@@ -31,6 +31,11 @@ export default function EditChoices({question}) {
             axios.get('/book/choice/getall/'+question.questionId)
                 .then(res => {
                     setChoices(res.data);
+                    if(res.data[0].choiceText === "O") {
+                        setOxSelected("O");
+                    } else if(res.data[0].choiceText === "X") {
+                        setOxSelected("X");
+                    }
                 })
                 .catch(error => {
                     console.error("Error fetching question data:", error);
@@ -254,9 +259,7 @@ export default function EditChoices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                onChange={(e) => {updateChoices(e, index)}}
-
-                            />
+                                onChange={(e) => {updateChoices(e, index)}}/>
 
                             <IconButton onClick={() => document.getElementById('file-input').click()}>
                                 <InsertPhotoIcon/>
@@ -300,6 +303,7 @@ export default function EditChoices({question}) {
                         label={"답안"}
                         placeholder="정답을 입력하세요."
                         variant={"standard"}
+                        value={choices[0].choiceText}
                         onChange={(e) => updateShortAnswer(e)}
                     />
                 </div>

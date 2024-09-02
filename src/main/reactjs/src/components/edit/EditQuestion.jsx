@@ -15,7 +15,7 @@ import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import QuestionButtons from "../QuestionButtons";
-import Choices from "./EditChoices";
+import EditChoices from "./EditChoices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
@@ -176,7 +176,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                             </div>
                         </div>
                     )}
-                    <Choices question={question}/>
+                    <EditChoices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">

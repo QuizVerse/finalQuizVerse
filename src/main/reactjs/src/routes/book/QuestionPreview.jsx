@@ -18,9 +18,16 @@ import {
     Alert
 } from "@mui/material";
 import CustomAlert from "../../components/modal/CustomAlert";
+import EditSection from "../../components/edit/EditSection";
+import {Preview} from "@mui/icons-material";
+import PreviewSection from "../../components/questionPreview/PreviewSection";
 
 export default function QuestionPreview() {
-    const { book_Id } = useParams(); // URL에서 book_Id를 가져옴
+    // 데이터 관련 변수
+    const {bookId} = useParams(); //URL에서 book_Id를 가져옴
+    const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
+    const [sections, setSections] = useState([]);
+
     const [scores, setScores] = useState([1,2,3,34,5,5,6,6,7,8,3,33,4,5,6,21,1,1,34,5,435,345,43,54,5,5]);
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [targetTotal, setTargetTotal] = useState(100);
@@ -32,25 +39,25 @@ export default function QuestionPreview() {
     const [alertTitle, setAlertTitle] = useState("");
 
 
+
+    // bookId에 해당하는 책 데이터를 가져옴
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/book/detail/${book_Id}`); // 책 정보 엔드포인트 호출
-                const questionData = response.data;
-
-                setScores(Array(questionData.length).fill(0)); // 문제 수에 맞춰 초기 점수 배열 설정
-                setTotalQuestions(questionData.length); // 총 문제 수 설정
-                setTargetTotal(questionData.totalScore); // 총점 목표 설정 (예시: 서버에서 받는 경우)
-
-                setLoading(false); // 로딩 완료
+                axios.get(`/book/edit/${bookId}`)
+                    .then((res)=>{
+                        setBookData(res.data.book);
+                        setSections(res.data.sections);
+                    });
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
-                setError("데이터를 불러오는 중 에러가 발생했습니다.");
-                setLoading(false);
+                console.error("Error fetching book, section data:", error);
+                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
             }
         };
 
-        fetchData();
-    }, []);
+        fetchData(); // 데이터를 가져오는 함수 호출
+    }, [bookId]);
 
     const handleScoreInput = (index, newScore) => {
         const updatedScores = [...scores];
@@ -94,21 +101,21 @@ export default function QuestionPreview() {
     };
 
 
-    // if (loading) {
-    //     return (
-    //         <Box display="flex" justifyContent="center" mt={4}>
-    //             <CircularProgress />
-    //         </Box>
-    //     );
-    // }
-    //
-    // if (error) {
-    //     return (
-    //         <Box display="flex" justifyContent="center" mt={4}>
-    //             <Alert severity="error">{error}</Alert>
-    //         </Box>
-    //     );
-    // }
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" mt={4}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box display="flex" justifyContent="center" mt={4}>
+                <Alert severity="error">{error}</Alert>
+            </Box>
+        );
+    }
 
     return (
         <>
@@ -152,14 +159,14 @@ export default function QuestionPreview() {
                                                 onChange={(e) => handleScoreInput(index, e.target.value)}
                                                 size="small"
                                                 variant="standard"
-                                                inputProps={{ style: { textAlign: 'center' } }}
+                                                inputProps={{style: {textAlign: 'center'}}}
                                             />
                                         </TableCell>
                                     ))}
-                                    <TableCell align="center" style={{ color: isTotalEqual ? 'blue' : 'red' }}>
+                                    <TableCell align="center" style={{color: isTotalEqual ? 'blue' : 'red'}}>
                                         {totalScore.toFixed(1)}점
                                     </TableCell>
-                                    <TableCell align="center" style={{ color: 'blue' }}>
+                                    <TableCell align="center" style={{color: 'blue'}}>
                                         {targetTotal}점
                                     </TableCell>
                                 </TableRow>
@@ -167,8 +174,26 @@ export default function QuestionPreview() {
                         </Table>
                     </TableContainer>
                 </Box>
-
-
+                <div className="space-y-4">
+                    {sections && sections.map((section, index) => (
+                        <PreviewSection
+                            key={index}
+                            index={index}
+                            title={section.sectionTitle}
+                            description={section.sectionDescription}
+                            sectionCount={sections.length}
+                            questions={section.questions}
+                            section={section}
+                            book={bookData}
+                            loading={loading}
+                            setLoading={setLoading}
+                            // onUploadImage={(e, inputType) => handleFileChange(e, index)}
+                            // onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
+                            // onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
+                            // onUpdateSection={(updated) => handleUpdateSection(index, updated)}
+                        />
+                    ))}
+                </div>
             </Container>
 
             {/*alert*/}
