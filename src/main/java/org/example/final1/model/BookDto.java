@@ -47,7 +47,7 @@ public class BookDto {
     private Timestamp bookCreatedate;
 
     // Foreign Key reference to UserDTO
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     //사용자가 탈퇴할시 없는 사용자라고 뜨게 해주기!
