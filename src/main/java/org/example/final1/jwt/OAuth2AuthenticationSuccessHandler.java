@@ -39,7 +39,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         jwtCookie.setHttpOnly(false); // Prevents JavaScript access (XSS protection)
         jwtCookie.setSecure(true); // Ensure the cookie is sent over HTTPS only (set this in production)
         jwtCookie.setPath("/"); // Cookie is accessible throughout the application
-        jwtCookie.setMaxAge(10 * 60 ); // Set the cookie to expire in 7 days
+        jwtCookie.setMaxAge(7 * 24 * 60 * 60); // Set the cookie to expire in 7 days
 
         // Add the cookie to the response
         response.addCookie(jwtCookie);
