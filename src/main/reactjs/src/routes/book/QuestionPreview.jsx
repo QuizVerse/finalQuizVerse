@@ -17,14 +17,20 @@ import {
     CircularProgress,
     Alert
 } from "@mui/material";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 export default function QuestionPreview() {
     const { book_Id } = useParams(); // URL에서 book_Id를 가져옴
-    const [scores, setScores] = useState([]);
+    const [scores, setScores] = useState([1,2,3,34,5,5,6,6,7,8,3,33,4,5,6,21,1,1,34,5,435,345,43,54,5,5]);
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [targetTotal, setTargetTotal] = useState(100);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,7 +62,7 @@ export default function QuestionPreview() {
         if (currentTotal <= targetTotal) {
             setScores(updatedScores);
         } else {
-            alert("총 점수가 목표 점수를 초과할 수 없습니다.");
+            openAlert("총 점수가 목표 점수를 초과할 수 없습니다.");
         }
     };
 
@@ -65,86 +71,112 @@ export default function QuestionPreview() {
 
     const handleSubmit = () => {
         if (scores.some((score) => score === 0)) {
-            alert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
+            openAlert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
         } else {
-            alert("모든 문제에 대해 배점이 완료되었습니다. 제출을 진행합니다.");
+            openAlert("모든 문제에 대해 배점이 완료되었습니다. 제출을 진행합니다.");
         }
     };
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" mt={4}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    /** 모달 관련 함수 */
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (alertTitle) => {
+        setAlertTitle(alertTitle);
+        setAlertVisible(true);
+    };
 
-    if (error) {
-        return (
-            <Box display="flex" justifyContent="center" mt={4}>
-                <Alert severity="error">{error}</Alert>
-            </Box>
-        );
-    }
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
+
+    // if (loading) {
+    //     return (
+    //         <Box display="flex" justifyContent="center" mt={4}>
+    //             <CircularProgress />
+    //         </Box>
+    //     );
+    // }
+    //
+    // if (error) {
+    //     return (
+    //         <Box display="flex" justifyContent="center" mt={4}>
+    //             <Alert severity="error">{error}</Alert>
+    //         </Box>
+    //     );
+    // }
 
     return (
-        <Container maxWidth="lg">
-            <Box display="flex" justifyContent="space-between" py={2} borderBottom={1}>
-                <Typography variant="h6">홍길동</Typography>
-                <Typography variant="h6">
-                    총 {totalQuestions} 문항 | 총 {targetTotal} 점
-                </Typography>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    color="primary"
-                    sx={{ backgroundColor: 'yellow', color: 'black' }}
-                >
-                    출제하기
-                </Button>
-            </Box>
-            <Box mt={4} textAlign="center">
-                <Typography variant="h5" mb={2}>문제 미리보기</Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>문항번호</TableCell>
-                                {scores.map((_, index) => (
-                                    <TableCell key={index}>{`${index + 1}번`}</TableCell>
-                                ))}
-                                <TableCell align="center">현재 배점 합계</TableCell>
-                                <TableCell align="center">총점</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell align="center">배점</TableCell>
-                                {scores.map((score, index) => (
-                                    <TableCell key={index} align="center">
-                                        <TextField
-                                            type="number"
-                                            step="0.1"
-                                            min="0"
-                                            value={score}
-                                            onChange={(e) => handleScoreInput(index, e.target.value)}
-                                            size="small"
-                                            variant="outlined"
-                                            inputProps={{ style: { textAlign: 'center' } }}
-                                        />
+        <>
+            <Container maxWidth="lg">
+                <Box display="flex" justifyContent="space-between" py={2} borderBottom={1}>
+                    <Typography variant="h6">홍길동</Typography>
+                    <Typography variant="h6">
+                        총 {totalQuestions} 문항 | 총 {targetTotal} 점
+                    </Typography>
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
+                        color="primary">
+                        출제하기
+                    </Button>
+                </Box>
+                <Box mt={4} textAlign="center">
+                    <Typography variant="h5" mb={2}>문제 미리보기</Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>문항번호</TableCell>
+                                    {scores.map((_, index) => (
+                                        <TableCell key={index}>{`${index + 1}번`}</TableCell>
+                                    ))}
+                                    <TableCell align="center">현재 배점 합계</TableCell>
+                                    <TableCell align="center">총점</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell align="center">배점</TableCell>
+                                    {scores.map((score, index) => (
+                                        <TableCell key={index} align="center">
+                                            <TextField
+                                                type="number"
+                                                step="0.1"
+                                                min="0"
+                                                value={score}
+                                                onChange={(e) => handleScoreInput(index, e.target.value)}
+                                                size="small"
+                                                variant="standard"
+                                                inputProps={{ style: { textAlign: 'center' } }}
+                                            />
+                                        </TableCell>
+                                    ))}
+                                    <TableCell align="center" style={{ color: isTotalEqual ? 'blue' : 'red' }}>
+                                        {totalScore.toFixed(1)}점
                                     </TableCell>
-                                ))}
-                                <TableCell align="center" style={{ color: isTotalEqual ? 'blue' : 'red' }}>
-                                    {totalScore.toFixed(1)}점
-                                </TableCell>
-                                <TableCell align="center" style={{ color: 'blue' }}>
-                                    {targetTotal}점
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-        </Container>
+                                    <TableCell align="center" style={{ color: 'blue' }}>
+                                        {targetTotal}점
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+
+
+            </Container>
+
+            {/*alert*/}
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
+        </>
     );
 }

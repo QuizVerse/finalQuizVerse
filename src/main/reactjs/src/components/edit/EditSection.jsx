@@ -5,15 +5,15 @@ import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material"
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
-import Question from "./Question";
+import EditQuestion from "./EditQuestion";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
-import CustomConfirm from "./modal/CustomConfirm";
-import CustomAlert from "./modal/CustomAlert";
+import CustomConfirm from "../modal/CustomConfirm";
+import CustomAlert from "../modal/CustomAlert";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import DescriptionIcon from '@mui/icons-material/Description';
-export default function Section({
+export default function EditSection({
                                     index,
                                     title,
                                     description,
@@ -345,7 +345,7 @@ export default function Section({
                 </div>
             )}
             {questions.map((question, index) => (
-                <Question
+                <EditQuestion
                     key={index}
                     index={index}
                     questionType={question.questionType}

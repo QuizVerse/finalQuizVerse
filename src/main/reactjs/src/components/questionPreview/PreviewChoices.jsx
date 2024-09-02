@@ -4,9 +4,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import CustomAlert from "./modal/CustomAlert";
+import CustomAlert from "../modal/CustomAlert";
 
-export default function Choices({question}) {
+export default function PreviewChoices({question}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
