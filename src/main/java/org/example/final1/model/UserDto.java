@@ -47,8 +47,12 @@ public class UserDto {
     @Column(name = "user_role", nullable = false, length = 50)
     private String userRole;
 
+    @Column(name = "user_accesstoken", nullable = false, length = 255)
+    private String userAccessToken;
+
+
     @Builder
-    public UserDto(String userEmail, String userPassword, String userNickname, String userImage, Timestamp userCreatedate, String userProviderid, String userProvider, String userRole) {
+    public UserDto(String userEmail, String userPassword, String userNickname, String userImage, Timestamp userCreatedate, String userProviderid, String userProvider, String userRole,String userAccessToken) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userNickname = userNickname;
@@ -57,6 +61,7 @@ public class UserDto {
         this.userProviderid = userProviderid;
         this.userProvider = userProvider;
         this.userRole = userRole;
+        this.userAccessToken = userAccessToken;
     }
 
 }
