@@ -30,7 +30,7 @@ configureUrls();
 function configureUrls() {
   if (!APPLICATION_SERVER_URL) {
       if (window.location.hostname === "localhost") {
-          APPLICATION_SERVER_URL = "http://localhost:6080/";
+          APPLICATION_SERVER_URL = "http://localhost:9002/";
       } else {
           APPLICATION_SERVER_URL = "https://" + window.location.hostname + ":6443/";
       }
@@ -266,7 +266,7 @@ export default function StudyRoom() {
 
   useEffect(() => {
       //const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
-      const ws = new WebSocket('wss://localhost:6080/ws/chat');
+      const ws = new WebSocket('wss://localhost:9002/ws/chat');
       
       ws.onopen = () => {
       console.log('웹소켓 연결이 설정되었습니다.');
