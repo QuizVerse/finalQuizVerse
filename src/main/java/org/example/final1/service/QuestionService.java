@@ -1,5 +1,6 @@
 package org.example.final1.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
@@ -10,17 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionService {
     private final QuestionRepository questionRepository;
-    private final ChoiceRepository choiceRepository;
-
-    @Autowired
-    public QuestionService(QuestionRepository questionRepository, ChoiceRepository choiceRepository ) {
-        this.questionRepository = questionRepository;
-        this.choiceRepository = choiceRepository;
-    }
 
     public QuestionDto saveQuestion(QuestionDto newQuestion) {
         return questionRepository.save(newQuestion);
@@ -28,7 +24,6 @@ public class QuestionService {
 
 
     public void deleteQuestion(int id) {
-
         questionRepository.deleteById(id);
     }
 
@@ -36,12 +31,13 @@ public class QuestionService {
         return questionRepository.saveAll(sortedQuestion);
     }
 
-    public List<QuestionDto> getAllQuestions(BookDto book) {
-        return questionRepository.findAllByBook(book);
+    // 질문 하나의 정보 받아오기
+    public Optional<QuestionDto> getQuestion(int questionId) {
+        return questionRepository.findById(questionId);
     }
 
-    public List<QuestionDto> getAllQuestionsBySection(SectionDto section) {
-        return questionRepository.findAllBySection(section);
+    public List<QuestionDto> getAllQuestions(int sectionId) {
+        return questionRepository.findAllBySectionSectionId(sectionId);
     }
 
     public void updateQuestionRes(int questionId) {
