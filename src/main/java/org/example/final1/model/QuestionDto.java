@@ -54,7 +54,7 @@ public class QuestionDto {
     private int questionOrder;
 
     @Column(name = "question_point", nullable = false) // 문제 배점
-    private int questionPoint;
+    private double questionPoint;
 
     @ManyToOne
     @JoinColumn(name = "section_id", nullable = false)
