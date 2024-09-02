@@ -14,10 +14,6 @@ export default function EditChoices({question}) {
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
 
-    // confirm state
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(0);
-
     // questionType이 변경될 때마다 choices를 초기화
     useEffect(() => {
         setChoices([]);

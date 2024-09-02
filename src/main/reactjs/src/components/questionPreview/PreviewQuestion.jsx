@@ -1,21 +1,10 @@
 import {
-    FormControl,
     IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
-import DragHandleIcon from '@mui/icons-material/DragHandle';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import CloseIcon from '@mui/icons-material/Close';
-import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import QuestionButtons from "../QuestionButtons";
-import Choices from "./PreviewChoices";
 import PreviewChoices from "./PreviewChoices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의

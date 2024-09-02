@@ -1,18 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LoopIcon from '@mui/icons-material/Loop';
+import {IconButton, Typography} from "@mui/material";
 import PreviewQuestion from "./PreviewQuestion";
 import axios from "axios";
-import AddIcon from "@mui/icons-material/Add";
 import CustomConfirm from "../modal/CustomConfirm";
 import CustomAlert from "../modal/CustomAlert";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
-import CloseIcon from "@mui/icons-material/Close";
-import DescriptionIcon from '@mui/icons-material/Description';
+
 
 export default function PreviewSection({
                                     index,

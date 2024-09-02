@@ -18,8 +18,6 @@ import {
     Alert
 } from "@mui/material";
 import CustomAlert from "../../components/modal/CustomAlert";
-import EditSection from "../../components/edit/EditSection";
-import {Preview} from "@mui/icons-material";
 import PreviewSection from "../../components/questionPreview/PreviewSection";
 
 export default function QuestionPreview() {

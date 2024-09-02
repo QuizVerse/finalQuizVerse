@@ -1,5 +1,4 @@
-import {Button, Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, TextField, Typography} from "@mui/material";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import {Button, Checkbox, FormControlLabel, Radio, RadioGroup, Typography} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
