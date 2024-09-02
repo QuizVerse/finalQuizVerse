@@ -10,29 +10,25 @@ export default function ParentComponent() {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const navigate = useNavigate();
   const {bookId} = useParams(); // bookId 가져올 변수
-  const [bookData, setBookdata] = useState(null); // 문제집 정보 저장할 변수
+  const [bookData, setBookData] = useState(null); // 문제집 정보 저장할 변수
 
   useEffect(()=> {
-    const BookInfo = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`/book/test/${bookId}`);
-        setBookdata(response.data);
-        console.log(response.data);
+        // 책 정보 가져오기
+        const bookResponse = await axios.get(`/book/test/${bookId}`);
+        setBookData(bookResponse.data);
+
+        // 사용자 정보 가져오기
+        const userResponse = await axios.get(`/book/username`); 
+        setUsername(userResponse.data.userNickname); // 사용자 이름 저장
+        console.log(userResponse.data.userNickname);
       } catch (error) {
-        console.log("book info error : " , error);
-      }
-    };
-    const UserInfo = async () => {
-      try {
-        const response = await axios.get("/user/info");
-        setUsername(response.data.userNickname); // 사용자 이름 저장
-      } catch (error) {
-        console.log("User info error: ", error);
+        console.error("Error fetching data: ", error);
       }
     };
 
-    BookInfo();
-    UserInfo();
+    fetchData();
 
   }, [bookId]);
 
@@ -56,7 +52,6 @@ export default function ParentComponent() {
 
   const submitbtn = () => {
     // 버튼2 클릭 시의 행동
-    // 여기서 ReviewModal 내의 handleSubmit이 처리됩니다.
     closeConfirm();
     navigate("/book/score");
   };
@@ -66,7 +61,7 @@ export default function ParentComponent() {
       <header className="flex items-center justify-between w-full max-w-5xl p-4 bg-white shadow-md">
         <div className="flex items-center space-x-4">
           <DensityMediumOutlinedIcon />
-          <span className="text-lg font-semibold">홍길동</span>
+          <span className="text-lg font-semibold">{username}</span>
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-lg">10/50 문항 | 10 섹션</span>
