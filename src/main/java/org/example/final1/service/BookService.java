@@ -29,8 +29,10 @@ public class BookService {
         this.categoryRepository = categoryRepository;
     }
 
-    public BookDto createBook(BookDto newbook) {
-        return bookRepository.save(newbook);
+    // 책을 저장하거나 업데이트하는 메소드
+    public BookDto saveBook(BookDto bookDto) {
+        // bookDto를 데이터베이스에 저장
+        return bookRepository.save(bookDto);
     }
 
     public Optional<BookDto> getBookById(int id) {

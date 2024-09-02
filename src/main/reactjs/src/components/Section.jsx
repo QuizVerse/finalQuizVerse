@@ -305,10 +305,8 @@ export default function Section({
                             {section.sectionImage !== "" ?
                                 <img
                                     src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
-                                    alt="Cover"
+                                    alt={section.sectionDescription}
                                     className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
                                 /> : ""}
                             {/* Hidden File Input */}
                             <input
