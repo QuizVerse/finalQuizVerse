@@ -54,7 +54,7 @@ public class BookDto {
     private UserDto user;
 
     // Foreign Key reference to CategoryDTO
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = true)
     //카테고리가 삭제되었을시 기타라고 해주기

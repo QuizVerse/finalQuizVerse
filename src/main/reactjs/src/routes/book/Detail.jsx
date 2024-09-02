@@ -75,9 +75,10 @@ export default function Detail() {
       try {
         const response = await axios.get(`/book/review/${book_Id}`); // 리뷰 엔드포인트 호출
         setReviewData(response.data);
-        console.log(response.data);
       } catch (error) {
         console.log("review error", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -100,12 +101,12 @@ export default function Detail() {
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const formattedDate = new Date(dateString)
-      .toLocaleDateString("ko-KR", options)
-      .replace(/\./g, "-")
-      .replace(/ /g, "");
+        .toLocaleDateString("ko-KR", options)
+        .replace(/\./g, "-")
+        .replace(/ /g, "");
     return formattedDate.endsWith("-")
-      ? formattedDate.slice(0, -1)
-      : formattedDate;
+        ? formattedDate.slice(0, -1)
+        : formattedDate;
   };
 
 
