@@ -3,7 +3,12 @@ import axios from 'axios';
 import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
-
+// 스와이퍼
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default function BookList() {
   const [booksByCategory, setBooksByCategory] = useState({});
@@ -53,10 +58,21 @@ export default function BookList() {
   return (
     <main className="p-16">
       <div className="flex items-center justify-center mb-8">
-        <div
-          className="w-full max-w-4xl p-16 text-center bg-gray-200 rounded">
-          문제집 추천배너
-        </div>
+        <Swiper
+          cssMode={true}
+          navigation={true}
+          pagination={true}
+          mousewheel={true}
+          keyboard={true}
+          modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+          className="mySwiper"
+        >
+          <SwiperSlide>Slide 1</SwiperSlide>
+          <SwiperSlide>Slide 2</SwiperSlide>
+          <SwiperSlide>Slide 3</SwiperSlide>
+          <SwiperSlide>Slide 4</SwiperSlide>
+          <SwiperSlide>Slide 5</SwiperSlide>
+        </Swiper>
       </div>
       {categories.map(category => (
         <section className="mb-8" key={category.categoryId}>
@@ -64,13 +80,14 @@ export default function BookList() {
             <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
             <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
               전체보기
-              <ArrowForwardIosIcon fontSize={'8px'} />
+              <ArrowForwardIosIcon fontSize={'small'} />
             </Link>
           </div>
           <div className="grid grid-cols-5 gap-4">
-            {booksByCategory[category.categoryId]?.map(book => (
+            {booksByCategory[category.categoryId]?.slice(0, 5).map(book => (
               <BookCard
                 key={book.bookId}
+                bookId={book.bookId}
                 cardType="A"
                 nickname={book.user?.nickname || 'Unknown'}  // Optional chaining to handle null values
                 createDate={book.bookCreatedate}
@@ -80,6 +97,7 @@ export default function BookList() {
                 questionCount={book.bookQuestionCount}
                 sectionCount={book.bookSectionCount}
                 status={book.bookStatus}
+                bookUrl={`/book/detail/${book.bookId}`} // 링크 추가
               />
             )) || <div>No books available</div>}
           </div>
