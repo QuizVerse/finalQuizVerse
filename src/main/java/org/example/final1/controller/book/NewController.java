@@ -3,15 +3,19 @@ package org.example.final1.controller.book;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
+import org.example.final1.model.ClassDto;
 import org.example.final1.model.UserDto;
+import org.example.final1.repository.ClassRepository;
 import org.example.final1.service.BookService;
 import org.example.final1.service.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.example.final1.storage.NcpObjectStorageService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +28,7 @@ public class NewController {
     private final JwtService jwtService;
 
     private final NcpObjectStorageService ncpObjectStorageService;
+    private final ClassRepository classRepository;
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
 
@@ -38,6 +43,7 @@ public class NewController {
     @PostMapping("/newbook")
     public ResponseEntity<Map<String, Object>> newBook(
             @ModelAttribute BookDto bookDto,
+            @RequestParam("classId") Integer classId,
             @RequestParam("upload") MultipartFile upload,
             HttpServletRequest request) {
 
@@ -52,6 +58,12 @@ public class NewController {
 
         // 업로드된 사진의 URL을 book_image 필드에 설정
         bookDto.setBookImage(bookPhoto);
+        // 클래스 설정
+        ClassDto classDto = classRepository.findById(classId).orElse(null);
+        if (classDto != null) {
+            bookDto.setClass1(classDto); // 클래스 객체를 BookDto에 설정
+        }
+
 
         // 책 정보를 사용자 정보와 결합하여 설정
         bookDto.setUser(userDto);
@@ -80,4 +92,18 @@ public class NewController {
             throw new RuntimeException("Invalid or missing JWT token");
         }
     }
+    @GetMapping("/user/classes")
+    public ResponseEntity<List<ClassDto>> getUserClasses(HttpServletRequest request) {
+
+        UserDto userDto=jwtService.getUserFromJwt(request);
+        if (userDto != null) {
+            List<ClassDto> classes = classRepository.findAllByUser(userDto);
+            return ResponseEntity.ok(classes);
+        }
+
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+
 }

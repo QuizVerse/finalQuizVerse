@@ -56,15 +56,35 @@ public class TokenService {
         }
     }
 
+    // Refresh Token으로 Access Token을 갱신하는 메서드
     public String refreshAccessToken(String refreshToken) {
-        TokenDto tokenDto = getTokenByRefreshToken(refreshToken);
+        Optional<TokenDto> tokenDtoOptional = Optional.ofNullable(tokenRepository.findByRefreshToken(refreshToken));
 
-        if (tokenDto != null && tokenDto.getExpiryDate() > System.currentTimeMillis()) {
+        if (tokenDtoOptional.isPresent()) {
+            TokenDto tokenDto = tokenDtoOptional.get();
             int userId = tokenDto.getUser().getUserId();
             String userEmail = tokenDto.getUser().getUserEmail();
-            return jwtTokenProvider.createToken(userId, userEmail);
-        } else {
-            return null; // 토큰이 유효하지 않거나 만료된 경우
+
+            // 새로운 Access Token 생성
+            String newAccessToken = jwtTokenProvider.createToken(userId, userEmail);
+
+            // 새로운 Refresh Token 생성
+            String newRefreshToken = jwtTokenProvider.createToken(userId, userEmail, JwtProperties.REFRESH_EXPIRATION_TIME);
+
+            // 기존 Refresh Token 삭제
+            tokenRepository.deleteByRefreshToken(refreshToken);
+
+            // 새로운 Refresh Token 데이터베이스에 저장
+            TokenDto newTokenDto = TokenDto.builder()
+                    .user(tokenDto.getUser())
+                    .refreshToken(newRefreshToken)
+                    .expiryDate(System.currentTimeMillis() + JwtProperties.REFRESH_EXPIRATION_TIME)
+                    .build();
+            tokenRepository.save(newTokenDto);
+
+            return newAccessToken;
         }
+
+        throw new RuntimeException("Invalid refresh token");
     }
 }

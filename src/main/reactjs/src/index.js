@@ -288,8 +288,10 @@ const router = createBrowserRouter([
 
         path: "/mypage",
         element: (
+            <private>
+                <Mypage />
+            </private>
 
-            <Mypage />
 
         ),
         errorElement: <ErrorPage />,
