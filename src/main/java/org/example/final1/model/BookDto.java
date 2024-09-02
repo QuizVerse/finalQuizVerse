@@ -66,7 +66,7 @@ public class BookDto {
     @Column(name = "book_totalscore", nullable = false)
     private int bookTotalscore;
 
-    @Column(name = "book_ispublished", nullable = false)
-    private int bookIspublished;
+    @Column(name = "book_ispublished", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean bookIspublished = false;
 
 }
