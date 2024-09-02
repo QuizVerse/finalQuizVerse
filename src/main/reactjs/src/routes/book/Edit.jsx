@@ -8,7 +8,7 @@ import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import SectionSort from "../../components/modal/SectionSort";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 export default function Edit() {
 
@@ -231,10 +231,12 @@ export default function Edit() {
                 <div className="flex justify-end">
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={() => console.log("임시저장")}>임시저장</Button>
-                        <Button variant={"outlined"} onClick={() => console.log("AI 문제 출제") }>AI 문제 출제</Button>
-                        <Button variant={"contained"}
-                                // onClick={handlePublish}
-                        >출제하기</Button>
+                        <Button variant={"outlined"}>
+                            <Link to={"/book/questionpreview"}>AI 문제 출제</Link>
+                        </Button>
+                        <Button variant={"contained"}>
+                            <Link to={"/book/questionpreview"}>출제하기</Link>
+                        </Button>
                     </div>
                 </div>
 
