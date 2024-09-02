@@ -37,5 +37,8 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
+    public List<BookDto> searchBooks(String keyword) {
+        return bookRepository.searchByTitleOrDescription(keyword);
+    }
 }
 
