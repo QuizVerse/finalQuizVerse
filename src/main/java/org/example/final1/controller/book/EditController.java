@@ -85,6 +85,11 @@ public class EditController {
     // 섹션 삭제
     @DeleteMapping("/section/delete/{id}")
     public ResponseEntity<Void> deleteSection(@PathVariable("id") Integer id) {
+
+        // 섹션 설명 사진 지우기
+        String image=sectionService.getSection(id).get().getSectionImage();
+        storageService.deleteFile(bucketName, folderName, image);
+
         sectionService.deleteSection(id);
         return ResponseEntity.noContent().build();
     }
@@ -107,6 +112,14 @@ public class EditController {
     // 질문 삭제
     @DeleteMapping("/question/delete/{id}")
     public ResponseEntity<Void> deleteQuestion(@PathVariable("id") int id) {
+        // 문제 설명 사진 지우기
+        String descriptionimage=questionService.getQuestion(id).get().getQuestionDescriptionimage();
+        storageService.deleteFile(bucketName, folderName, descriptionimage);
+
+        // 문제 해설 사진 지우기
+        String solutionimage=questionService.getQuestion(id).get().getQuestionSolutionimage();
+        storageService.deleteFile(bucketName, folderName, solutionimage);
+
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
@@ -127,17 +140,21 @@ public class EditController {
 
     /** 답안 관련 */
     // Choice 저장
-    @DeleteMapping("/choice/delete/{id}")
-    public ResponseEntity<Void> deleteChoice(@PathVariable("id") Integer id) {
-        choiceService.deleteChoice(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // Choice 삭제
     @PostMapping("/choice/new")
     public ResponseEntity<ChoiceDto> saveChoices(@RequestBody ChoiceDto choice) {
         ChoiceDto saved = choiceService.saveChoice(choice);
         return ResponseEntity.ok(saved);
+    }
+
+    // Choice 삭제
+    @DeleteMapping("/choice/delete/{id}")
+    public ResponseEntity<Void> deleteChoice(@PathVariable("id") Integer id) {
+        // 섹션 설명 사진 지우기
+        String image=choiceService.getChoice(id).get().getChoiceImage();
+        storageService.deleteFile(bucketName, folderName, image);
+
+        choiceService.deleteChoice(id);
+        return ResponseEntity.noContent().build();
     }
 
     // Choices 저장
