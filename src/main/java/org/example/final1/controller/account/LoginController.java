@@ -112,6 +112,7 @@ public class LoginController {
         return response; // 응답 반환
     }
 
+
     @GetMapping("/oauth/logout")
     public String oauthLogout(HttpServletRequest request) {
         // 여기서 토큰을 가지고 로그아웃 처리 로직을 구현합니다.
