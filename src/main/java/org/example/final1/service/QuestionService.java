@@ -48,4 +48,9 @@ public class QuestionService {
         // 업데이트된 QuestionDto 저장
         questionRepository.save(question);
     }
+
+    // 특정 책 ID에 대한 모든 질문 가져오기
+    public List<QuestionDto> getQuestionsByBookId(int id) {
+        return questionRepository.findAllByBookBookId(id);
+    }
 }
