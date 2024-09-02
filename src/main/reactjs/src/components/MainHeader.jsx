@@ -34,11 +34,15 @@ export default function MainHeader() {
             //소셜회원
             else{
                 const jwtToken=Cookies.get('jwtToken')
-                await axios.get('/login/ouath/logout',{
+
+                await axios.get('/login/oauth/logout',{
+
                     headers:{
                         'Authorization':`${jwtToken}`
                     }
                 });
+
+                console.log(jwtToken);
                 Cookies.remove('jwtToken');
             }
 

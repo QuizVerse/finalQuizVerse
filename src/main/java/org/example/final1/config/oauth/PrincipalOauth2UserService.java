@@ -21,6 +21,9 @@ import java.util.Map;
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
+    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/loopy.png";
+
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -64,6 +67,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         //구글 로그인 클릭 -> 구글 로그인 창-> 로그인 완료-> code리턴(oauth-client라이브러리를 통해)
         //->access token요청 ->//userrequest정보-> 회원 프로필 받음(loadUser함수)->회원 프로필받기
+        String accessToken = userRequest.getAccessToken().getTokenValue();
         //회원 가입 강제로 진행
         OAuth2User oauth2User = super.loadUser(userRequest);
         //System.out.println("getAttributes:"+oauth2User.getAttributes());
@@ -91,6 +95,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String user_role="ROLE_USER";
 
 
+
         UserDto userDto=userDaoInter.findByEmail(user_email);
 
         if(userDto==null) {
@@ -102,6 +107,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .userRole(user_role)
                     .userProvider(user_provider)
                     .userProviderid(user_providerId)
+                    .userImage(DEFAULT_USER_IMAGE_URL)
+                    .userAccessToken(accessToken)
                     .build();
             userDaoInter.save(userDto);
 
