@@ -1,6 +1,29 @@
 // v0 by Vercel.
 // https://v0.dev/t/b1mpVwcfUeX
 
+import { MenuItem, TextField } from "@mui/material";
+
+
+//필터
+const conditions = [
+  {
+    value: 'popular',
+    label: '인기순',
+  },
+  {
+    value: 'recent',
+    label: '최신순',
+  },
+  {
+    value: 'old',
+    label: '오래된순',
+  },
+  {
+    value: 'title',
+    label: '제목순',
+  },
+];
+
 export default function SolvedBook() {
   return (
       <main className="flex-1 p-8">
@@ -10,34 +33,19 @@ export default function SolvedBook() {
             className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
             placeholder="Name, email, etc..."
           />
-          <button
-            type="button"
-            role="combobox"
-            aria-controls="radix-:Rilufnnkr:"
-            aria-expanded="false"
-            aria-autocomplete="none"
-            dir="ltr"
-            data-state="closed"
-            data-placeholder=""
-            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <span>등록일순</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6"></path>
-            </svg>
-          </button>
+          <div className="flex items-center mb-6 space-x-4">
+                <TextField
+                    id="outlined-select-currency"
+                    select
+                    defaultValue="popular">
+                      {conditions &&
+                      conditions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                  ))}
+                </TextField>
+           </div>
           <select
             aria-hidden="true"
             tabindex="-1"

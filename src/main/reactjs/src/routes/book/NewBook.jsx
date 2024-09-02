@@ -1,116 +1,119 @@
-// // v0 by Vercel.
-// // https://v0.dev/t/rQwPfCM4VGo
-
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Button, MenuItem, Select, InputLabel, FormControl, TextField, Switch, IconButton} from "@mui/material";
+import {
+    Button,
+    MenuItem,
+    Select,
+    InputLabel,
+    FormControl,
+    TextField,
+    IconButton
+} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
+
 export default function NewBook() {
     // Dropdown state
     const [category, setCategory] = useState('');
-    const [visibility, setVisibility] = useState('');
-    const [coverImage, setCoverImage] = useState('/placeholder.svg');
-    const [bookName, setBookName] = useState('');
-    const [bookDescription, setBookDescription] = useState('');
-    const [totalPoints, setTotalPoints] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
-    const [timeLimit, setTimeLimit] = useState('');
-    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
+    const [visibility, setVisibility] = useState('전체 공개');
+    const [coverImage, setCoverImage] = useState('');
+    const [bookName, setBookName] = useState('사진테스트');
+    const [bookDescription, setBookDescription] = useState('제발');
+    const [totalPoints, setTotalPoints] = useState('100');
+    const [isChecked, setIsChecked] = useState(true);
+    const [timeLimit, setTimeLimit] = useState('10');
+    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(true);
+    const navigate = useNavigate();
+    const [categoryList, setCategoryList] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
+    // 사진 업로드
+    const [bookPhotoFile, setBookPhotoFile] = useState(null);
 
-    // Handle changes
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value)
+    const photoUploadEvent = (e) => {
+        const uploadFilename = e.target.files[0];
+        setBookPhotoFile(uploadFilename);
+
+        // 로컬 파일 URL을 생성하여 미리보기 설정
+        const localImageUrl = URL.createObjectURL(uploadFilename);
+        setCoverImage(localImageUrl);
     };
 
-    const handleVisibilityChange = (event) => {
-        setVisibility(event.target.value);
-    };
+    // 카테고리 목록 가져오기
+    useEffect(() => {
+        getDataList();
+    }, []);
 
-    const handleBookNameChange = (e) => setBookName(e.target.value);
-    const handleBookDescriptionChange = (e) => setBookDescription(e.target.value);
-    const handleTotalPointsChange = (e) => setTotalPoints(e.target.value);
-    const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
-
-    const toggleSwitch = () => {
-        setIsChecked(prevState => !prevState);
-    };
-
-    // Time Limit Toggle 함수 추가
-    const toggleTimeSwitch = () => {
-        setIsTimeLimitEnabled(prevState => !prevState);
-    };
-
-    // Image Upload
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setCoverImage(imageUrl);
-        }
-    };
-
-    // Submit new book
-    const handleSubmit = () => {
-        let selectedCategory = {};
-        categoryList.map((row)=>{
-            if(row.categoryId === category) {
-                selectedCategory = row;
-            }
-        })
-        const newBookData = {
-            "bookTitle": bookName,
-            "bookDescription": bookDescription,
-            "bookStatus": 0,
-            "category": selectedCategory === '' ? null : selectedCategory,
-            "bookTimer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
-            "bookImage": coverImage,
-            "bookDivide": isChecked ? 1 : 0,
-            "bookTotalgrade": parseInt(totalPoints, 10) || 0
-        };
-
-        axios.post('/book/newbook', newBookData)
-            .then((res) => {
-                console.log(res.data);
-                navigate("/book/edit")
+    const getDataList = () => {
+        axios.get('/category/list')
+            .then(res => {
+                setCategoryList(res.data);
             })
-            .catch((err) => {
+            .catch(err => {
                 console.error(err);
             });
     };
 
+    // Handle changes
+    const handleCategoryChange = (event) => setCategory(event.target.value);
+    const handleVisibilityChange = (event) => setVisibility(event.target.value);
+    const handleBookNameChange = (e) => setBookName(e.target.value);
+    const handleBookDescriptionChange = (e) => setBookDescription(e.target.value);
+    const handleTotalPointsChange = (e) => setTotalPoints(e.target.value);
+    const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
+    const toggleSwitch = () => setIsChecked(prevState => !prevState);
+    const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
+
+    // Submit new book
+    const handleSubmit = () => {
+        setLoading(true);
+        setError(null);
+        const formData = new FormData();
+        formData.append('bookTitle', bookName);
+        formData.append('bookDescription', bookDescription);
+        formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
+        formData.append('category', category);
+        formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
+        formData.append('bookDivide', isChecked ? 1 : 0);
+        formData.append('bookTotalscore', parseInt(totalPoints, 10) || 0);
+        if (bookPhotoFile) {
+            formData.append('upload', bookPhotoFile); // 이미지 파일 추가
+        }
+
+        axios.post('/book/newbook', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then((res) => {
+                console.log("Data saved successfully, navigating to /book/edit");
+                navigate("/book/edit");
+            })
+            .catch((err) => {
+                console.log("머가 단단히 잘못되었다..");
+                console.error(err);
+                setError('Failed to create new book');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
     // Cancel button logic
-    const navigate = useNavigate();
     const handleCancel = () => {
         setBookName('');
         setBookDescription('');
-        setCategory({});
-        setVisibility('');
-        setCoverImage('/placeholder.svg');
-        setTotalPoints('');
-        setIsChecked(false);
-        setIsTimeLimitEnabled(false);
-        setTimeLimit('');
+        setCategory('');
+        setVisibility('전체 공개');
+        setCoverImage('');
+        setTotalPoints('100');
+        setIsChecked(true);
+        setIsTimeLimitEnabled(true);
+        setTimeLimit('10');
+        setBookPhotoFile(null);
         navigate(-1);
     };
-
-    const [categoryList,setCategoryList]=useState([]);
-
-    //처음 딱 한번 목록 가져오기
-    useEffect(()=>{
-        getDataList();
-    },[]);
-
-    const getDataList=()=>{
-        axios({
-            method:'get',
-            url:'/category/list',
-        }).then(res=>{
-            console.log(res);
-            setCategoryList(res.data);
-        })
-    }
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
@@ -128,7 +131,7 @@ export default function NewBook() {
                             placeholder="문제집 이름"
                             value={bookName}
                             onChange={handleBookNameChange}
-                        ></TextField>
+                        />
                     </div>
                     <div className="space-y-2">
                         <TextField
@@ -137,10 +140,9 @@ export default function NewBook() {
                             placeholder="문제집 설명"
                             value={bookDescription}
                             onChange={handleBookDescriptionChange}
-                        ></TextField>
+                        />
                     </div>
                     <div className="space-y-4">
-                        {/* Visibility Dropdown */}
                         <FormControl fullWidth>
                             <InputLabel id="visibility-label">공개범위</InputLabel>
                             <Select
@@ -155,7 +157,6 @@ export default function NewBook() {
                             </Select>
                         </FormControl>
 
-                        {/* Category Dropdown */}
                         <FormControl fullWidth>
                             <InputLabel id="category-label">카테고리</InputLabel>
                             <Select
@@ -164,11 +165,9 @@ export default function NewBook() {
                                 value={category}
                                 onChange={handleCategoryChange}
                             >
-                                {categoryList &&
-                                    categoryList.map((row) => (
-                                        <MenuItem key={row.categoryId} value={row.categoryId}>{row.categoryName}</MenuItem>
-                                    ))
-                                }
+                                {categoryList.map((row) => (
+                                    <MenuItem key={row.categoryId} value={row.categoryId}>{row.categoryName}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </div>
@@ -179,42 +178,34 @@ export default function NewBook() {
                             placeholder="100"
                             value={totalPoints}
                             onChange={handleTotalPointsChange}
-                        ></TextField>
+                        />
                     </div>
                     <div className="flex justify-between items-center space-x-2">
-                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            점수 균등 분배
-                        </label>
+                        <label className="text-sm font-medium">점수 균등 분배</label>
                         <button
                             type="button"
                             role="switch"
                             aria-checked={isChecked}
-                            data-state={isChecked ? "checked" : "unchecked"}
-                            className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
+                            className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
                             onClick={toggleSwitch}
                         >
-                            <span className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
+                            <span className={`pointer-events-none block h-5 w-5 rounded-full ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
                         </button>
                     </div>
                     <div className="space-y-4">
-                        {/* Toggle Button for Time Limit */}
                         <div className="flex justify-between items-center space-x-2">
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                제한시간 여부
-                            </label>
+                            <label className="text-sm font-medium">제한시간 여부</label>
                             <button
                                 type="button"
                                 role="switch"
                                 aria-checked={isTimeLimitEnabled}
-                                data-state={isTimeLimitEnabled ? "checked" : "unchecked"}
-                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
                                 onClick={toggleTimeSwitch}
                             >
-                                <span className={`pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
+                                <span className={`pointer-events-none block h-5 w-5 rounded-full ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
                             </button>
                         </div>
 
-                        {/* Conditional Input Field for Time Limit */}
                         {isTimeLimitEnabled && (
                             <TextField
                                 fullWidth
@@ -222,54 +213,49 @@ export default function NewBook() {
                                 placeholder="100"
                                 value={timeLimit}
                                 onChange={handleTimeLimitChange}
-                            ></TextField>
+                            />
                         )}
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            문제집 표지
-                        </label>
+                        <label className="text-sm font-medium">문제집 표지</label>
                         <div className="relative">
-                            {/* Upload Button */}
-                            <div className={"flex justify-end"}>
+                            <div className="flex justify-end">
                                 <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                    <CreateIcon/>
+                                    <CreateIcon />
                                 </IconButton>
                             </div>
-
-                            <div className={"flex justify-center"}>
-                                {/* Image Preview */}
+                            <div className="flex justify-center">
                                 <img
                                     src={coverImage}
-                                    alt="Cover"
+                                    alt="CoverImage"
                                     className="w-36 h-36 object-cover"
                                     width="150"
                                     height="150"
                                 />
-                                {/* Hidden File Input */}
                                 <input
                                     type="file"
                                     id="file-input"
                                     accept="image/*"
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }} // Hide the file input
+                                    onChange={photoUploadEvent}
+                                    style={{ display: 'none' }}
                                 />
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div className="items-center p-6 flex justify-between gap-4">
                     <Button
                         variant={"outlined"}
                         fullWidth
-                        onClick={handleCancel}>
+                        onClick={handleCancel}
+                    >
                         취소
                     </Button>
                     <Button
                         fullWidth
                         variant={"contained"}
-                        onClick={handleSubmit}>
+                        onClick={handleSubmit}
+                    >
                         확인
                     </Button>
                 </div>

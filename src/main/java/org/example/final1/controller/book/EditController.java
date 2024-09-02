@@ -27,6 +27,8 @@ public class EditController {
     private final ChoiceService choiceService;
     private final BookService bookService;
 
+
+    /** 페이지 관련 */
     @GetMapping("/edit/{id}")
     public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
         Optional<BookDto> bookOpt = bookService.getBookById(id);
@@ -34,13 +36,13 @@ public class EditController {
             BookDto book = bookOpt.get();
 
             // Fetch sections, questions, and choices related to the book
-            List<SectionDto> sections = sectionService.getAllSections(book);
+//            List<SectionDto> sections = sectionService.getAllSections(book);
 //            List<QuestionDto> questions = questionService.getAllQuestions(book);
 
             // Create the response map
             Map<String, Object> response = new HashMap<>();
             response.put("book", book);
-            response.put("sections", sections);
+//            response.put("sections", sections);
 //            response.put("questions", questions);
 
             return ResponseEntity.ok(response);
@@ -49,6 +51,19 @@ public class EditController {
         }
     }
 
+
+    // 섹션, 질문 모두 저장
+    @PostMapping("/edit/saveall")
+    public ResponseEntity<Map<String, Object>> saveSections(@RequestBody List<SectionDto> sectionList,  @RequestBody List<QuestionDto> questionList) {
+        List<SectionDto> sections = sectionService.saveSections(sectionList);
+        List<QuestionDto> questions = questionService.saveQuestions(questionList);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("sections", sections);
+        response.put("questions", questions);
+
+        return ResponseEntity.ok(response);
+    }
 
     /** 섹션 관련 */
     // 섹션 생성
@@ -117,6 +132,13 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    // Choice 저장
+    @PostMapping("/choice/new")
+    public ResponseEntity<ChoiceDto> saveChoices(@RequestBody ChoiceDto choice) {
+        ChoiceDto saved = choiceService.saveChoice(choice);
+        return ResponseEntity.ok(saved);
+    }
+
     // Choices 저장
     @PostMapping("/choice/saveall")
     public ResponseEntity<List<ChoiceDto>> saveChoices(@RequestBody List<ChoiceDto> choices) {
@@ -125,9 +147,11 @@ public class EditController {
     }
 
     // ChoiceDto 조회
-    @PutMapping("/question/{id}/update-res")
-    public void updateQuestionRes(@PathVariable int id) {
-        questionService.updateQuestionRes(id);
+    @GetMapping("/choice/getall/{questionId}")
+    public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
+        List<ChoiceDto> list = choiceService.getAllChoices(questionId);
+
+        return ResponseEntity.ok(list);
     }
 
 }

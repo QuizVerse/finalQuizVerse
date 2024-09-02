@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface ChoiceRepository extends JpaRepository<ChoiceDto,Integer> {
-    List<ChoiceDto> findByQuestion(QuestionDto question);
+    List<ChoiceDto> findByQuestionQuestionId(int questionId);
 }

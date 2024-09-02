@@ -21,7 +21,9 @@ export default function Edit() {
             try {
                 // bookId에 해당하는 책 데이터를 가져옴
                 const response = await axios.get(`/book/edit/${bookId}`).then((res)=>{
+                    console.log(res)
                     setBookData(res.data.book);
+                    setSections(res.data.sections);
                 });
 
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
@@ -41,7 +43,9 @@ export default function Edit() {
     // sectionSort Alert state
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
-    const [sections, setSections] = useState([]);
+    const [sections, setSections] = useState([
+        { sectionNumber: 1, sectionTitle: "", sectionDescription: "", book : bookData }
+    ]);
 
     // side bar에서 섹션 추가
     const handleAddSection = () => {
@@ -49,18 +53,9 @@ export default function Edit() {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
             sectionDescription: "",
-            book: bookData
+            // questions: [{ id: 1, type: 3 }]
         };
-
-        axios({
-            method:'post',
-            url:'/book/section/new',
-            data: newSection
-        }).then(res=>{
-            console.log(res.data);
-            setSections([...sections, res.data]);
-        })
-
+        setSections([...sections, newSection]);
     };
 
     // 섹션 복제
@@ -69,45 +64,22 @@ export default function Edit() {
             ...sections[index],
             sectionId : "",
             sectionNumber: sections.length + 1,
+            // questions: sections[index].questions.map((q, i) => ({ ...q, id: i + 1 }))
         };
-
-        axios({
-            method:'post',
-            url:'/book/section/new',
-            data: duplicatedSection
-        }).then(res=>{
-            console.log(res.data);
-            setSections([...sections, res.data]);
-            openAlert("섹션이 복제되었습니다.");
-        })
+        setSections([...sections, duplicatedSection]);
+        openAlert("섹션이 복제되었습니다.");
     };
 
     // 섹션 삭제
     const handleDeleteSection = (index) => {
         if (sections.length > 1) {
+            setDeleteConfirmId(14);
             setDeleteSectionIndex(index);
             openConfirm();
         } else {
             openAlert("삭제할 수 없습니다. 섹션은 최소 하나는 있어야 합니다.");
         }
     };
-
-    // sections 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            axios.post('/book/section/saveall', sections)
-                .then(res => {
-                    console.log('섹션이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('섹션 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        // 컴포넌트가 언마운트되거나 sections가 변경되기 전에 타이머를 클리어
-        return () => clearTimeout(timer);
-    }, [sections]);
-
 
     const handleUpdateSection = (index, title, description) => {
         const updatedSections = [...sections];
@@ -137,6 +109,7 @@ export default function Edit() {
 
     // confirm state
     const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(0);
     const [deleteSectionIndex, setDeleteSectionIndex] = useState(0);
 
     /**
@@ -159,18 +132,17 @@ export default function Edit() {
      * */
     const clickBtn2 = () => {
         setDeleteConfirm(false);
-        const section = sections[deleteSectionIndex];
-        axios({
-            method: 'delete',
-            url: '/book/section/delete/' + section.sectionId,
-        }).then(res => {
-            console.log(res);
+
+        if(deleteConfirmId === 14) { // 섹션 삭제 확인 시
             setSections(sections.filter((_, i) => i !== deleteSectionIndex));
-        })
+        } else if(deleteConfirmId === 15) {
+
+        }
     };
 
     const handleSortChange = (newSortData) => {
         setSections(newSortData);
+        // 필요에 따라 상태 업데이트 또는 API 호출 등 추가 작업 수행
     };
 
     // 출제하기 버튼 클릭 시 실행되는 로직 추가
@@ -212,13 +184,15 @@ export default function Edit() {
                         description={section.sectionDescription}
                         sectionCount={sections.length}
                         questions={section.questions}
+                        openConfirm={openConfirm}
                         section={section}
                         book={bookData}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
                         onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
                     />
-                ))}
+
+                    ))}
                 <EditSidebar onAddSection={handleAddSection}/>
 
                 <CustomAlert
@@ -233,7 +207,8 @@ export default function Edit() {
                     content={
                         <SectionSort
                             sortData={sections}
-                            onSortChange={handleSortChange}/>
+                            onSortChange={handleSortChange}
+                        />
                     }
                     openAlert={sectionSortVisible}
                     closeAlert={closeAlert}
@@ -241,7 +216,7 @@ export default function Edit() {
 
                 {/* 삭제 Confirm */}
                 <CustomConfirm
-                    id={14} // 섹션삭제 : 14, 문제삭제 : 15
+                    id={deleteConfirmId} // 섹션삭제 : 14, 문제삭제 : 15
                     openConfirm={deleteConfirm}
                     clickBtn1={clickBtn1}
                     clickBtn2={clickBtn2}

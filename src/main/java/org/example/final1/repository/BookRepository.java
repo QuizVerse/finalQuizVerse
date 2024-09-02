@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<BookDto, Integer> {
     List<BookDto> findByCategoryCategoryId(Integer categoryId);
+    BookDto findByBookId(int bookId);
 }
