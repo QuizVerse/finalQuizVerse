@@ -1,16 +1,43 @@
 // v0 by Vercel.
 // https://v0.dev/t/oJhvLMfaWGD
 
+import {useEffect, useState} from "react";
+import * as async_hooks from "node:async_hooks";
+import axios from "axios";
+
 export default function UpdateUser() {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    async function fetchUserData(){
+      try{
+        const response=await axios.get("/update/user/data");
+        setUserData(response.data);
+      } catch(e){
+        console.error("Failed to fetch user data:",e);
+      }
+    }
+    fetchUserData();
+  }, []);
+
+
   return (
       <main className="flex-1 p-8">
         <div className="max-w-md mx-auto">
           <h1 className="mb-6 text-2xl font-bold text-center">회원 정보 수정</h1>
           <div className="flex justify-center mb-4">
             <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-              <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">
+            {userData && userData.userImage ? (
+                <img
+                    src={userData.userImage}
+                    alt="User Profile"
+                    className="h-full w-full object-cover rounded-full"
+                />
+            ) : (
+                <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">
                 U
               </span>
+            )}
             </span>
             <button className="ml-2">
               <svg
