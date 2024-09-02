@@ -75,10 +75,9 @@ export default function Detail() {
       try {
         const response = await axios.get(`/book/review/${book_Id}`); // 리뷰 엔드포인트 호출
         setReviewData(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log("review error", error);
-      } finally {
-        setLoading(false);
       }
     };
 
