@@ -88,7 +88,7 @@ export default function NewBook() {
         })
             .then((res) => {
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit");
+                navigate("/book/edit/"+res.data.book.bookId);
             })
             .catch((err) => {
                 console.log("머가 단단히 잘못되었다..");
