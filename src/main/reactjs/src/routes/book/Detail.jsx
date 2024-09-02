@@ -23,7 +23,6 @@ export default function Detail() {
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [reviewData, setReviewData] = useState([]);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [error, setError] = useState(null); // 에러 상태 추가
 
   //사진
@@ -89,9 +88,6 @@ export default function Detail() {
     return <div>{error}</div>; // 에러가 있을 때 표시
   }
 
-  if (loading) {
-    return <div>Loading...</div>; // 로딩 중일 때 표시
-  }
 
   if (!bookData) {
     return <div>No data found</div>; // 데이터가 없을 때 표시
