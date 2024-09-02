@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@mui/material": "^5.16.7",
-    "html2canvas": "^1.4.1",
-    "js-cookie": "^3.0.5",
-    "jspdf": "^2.5.1",
-    "react-router-dom": "^6.26.1"
-  }
-}
