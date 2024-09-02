@@ -116,12 +116,11 @@ export default function Edit() {
     }, [sections]);
 
 
-    const handleUpdateSection = (index, title, description) => {
+    const handleUpdateSection = (index, updated) => {
         const updatedSections = [...sections];
         updatedSections[index] = {
             ...updatedSections[index],
-            sectionTitle: title,
-            sectionDescription: description
+            ...updated
         };
         setSections(updatedSections);
     };
@@ -254,7 +253,7 @@ export default function Edit() {
                         onUploadImage={(e, inputType) => handleFileChange(e, index)}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
-                        onUpdateSection={(title, description) => handleUpdateSection(index, title, description)}
+                        onUpdateSection={(updated) => handleUpdateSection(index, updated)}
                     />
                 ))}
                 <EditSidebar onAddSection={handleAddSection} onSortSection={openSortSection}/>

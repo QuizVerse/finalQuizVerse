@@ -12,7 +12,7 @@ import CustomConfirm from "./modal/CustomConfirm";
 import CustomAlert from "./modal/CustomAlert";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
-
+import DescriptionIcon from '@mui/icons-material/Description';
 export default function Section({
                                     index,
                                     title,
@@ -48,9 +48,8 @@ export default function Section({
     // 상태로 관리되는 질문 리스트
     const [questions, setQuestions] = useState([]);
 
-    //.env 의 변수를 가져오는 방법
-    const storage=process.env.REACT_APP_STORAGE;
-
+    // 섹션 설명 표시 여부 관리
+    const [showDescription, setShowDescription] = useState(section.sectionDescription !== "" || section.sectionImage !== "");
 
     // 화면 로딩될 때
     useEffect(() => {
@@ -248,6 +247,18 @@ export default function Section({
         })
     };
 
+    // 섹션 설명 추가 핸들러
+    const handleAddDescription = () => {
+        setShowDescription(true);
+    };
+
+
+    // 섹션 설명 삭제 핸들러
+    const handleDeleteDescription = () => {
+        setShowDescription(false);
+        onUpdateSection({sectionImage: "", sectionDescription: ""});
+    };
+
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
@@ -267,23 +278,28 @@ export default function Section({
                         placeholder="질문을 입력하세요."
                         variant={"standard"}
                         value={title}
-                        onChange={(e) => onUpdateSection(e.target.value, description)}
+                        onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
                     />
                     <div className="flex flex-col gap-4">
-                        <div className="flex gap-4">
+                        {showDescription && (
+                            <div className="flex gap-4">
                             <TextField
                                 fullWidth multiline
                                 label={"섹션 설명"}
                                 placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
                                 variant={"standard"}
                                 value={description}
-                                onChange={(e) => onUpdateSection(title, e.target.value)}
+                                onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
                             />
                             <IconButton
                                 onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
                                 <InsertPhotoIcon/>
                             </IconButton>
+                            <IconButton onClick={handleDeleteDescription}>
+                                <CloseIcon/>
+                            </IconButton>
                         </div>
+                        )}
                         <div className={"flex justify-center"}>
                             {/* Image Preview */}
                             {section.sectionImage !== "" ?
@@ -315,6 +331,13 @@ export default function Section({
                                 <DeleteIcon/>
                             </IconButton>
                         </Tooltip>
+                        {!showDescription && (
+                        <Tooltip title="섹션 설명 추가">
+                            <IconButton onClick={handleAddDescription}>
+                                <DescriptionIcon/>
+                            </IconButton>
+                        </Tooltip>
+                        )}
                         <Tooltip title="질문 추가">
                             <IconButton onClick={handleAddQuestion}>
                                 <AddIcon/>
