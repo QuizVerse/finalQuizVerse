@@ -11,4 +11,5 @@ import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<BookmarkDto, Integer> {
     Optional<BookmarkDto> findByUserAndBook(UserDto user, BookDto book);
+    List<BookmarkDto> findAllByUser(UserDto user);
 }
