@@ -67,26 +67,17 @@ public class EditController {
         }
     }
 
-//    @PostMapping("/edit/save/temporary")
-//    public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
-//        Optional<BookDto> bookOpt = bookService.getBookById(id);
-//        if (bookOpt.isPresent()) {
-//            BookDto book = bookOpt.get();
-//
-//            // Fetch sections, questions, and choices related to the book
-//            List<SectionDto> sections = sectionService.getAllSections(book.getBookId());
-//
-//            // Create the response map
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("book", book);
-//            response.put("sections", sections);
-//
-//            return ResponseEntity.ok(response);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    // 책을 임시저장하거나 게시하기 위한 엔드포인트
+    @PostMapping("/edit/publish")
+    public ResponseEntity<BookDto> saveOrUpdateBook(@RequestBody BookDto bookDto, @RequestParam boolean isPublished) {
+        bookDto.setBookIspublished(isPublished);
 
+        // BookService를 통해 책 정보를 저장
+        BookDto savedBook = bookService.saveBook(bookDto);
+
+        // 저장된 책 정보를 클라이언트에 반환
+        return ResponseEntity.ok(savedBook);
+    }
 
     /** 섹션 관련 */
     // 섹션 생성

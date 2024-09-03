@@ -27,6 +27,9 @@ export default function NewBook() {
     const [categoryList, setCategoryList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [classList, setClassList] = useState([]); // 사용자 클래스 목록
+    const [selectedClass, setSelectedClass] = useState(''); // 선택된 클래스
+
 
     // 사진 업로드
     const [bookPhotoFile, setBookPhotoFile] = useState(null);
@@ -54,6 +57,19 @@ export default function NewBook() {
                 console.error(err);
             });
     };
+//클래스 목록가져오는거임
+    useEffect(() => {
+        if (visibility === '클래스 공개') {
+            axios.get('/book/user/classes')
+                .then(res => {
+                    setClassList(res.data || []); // 만약 res.data가 undefined/null일 경우 기본값을 빈 배열로 설정
+                })
+                .catch(err => {
+                    console.error(err);
+                    setClassList([]); // API 호출 실패 시 빈 배열로 초기화
+                });
+        }
+    }, [visibility]);
 
     // Handle changes
     const handleCategoryChange = (event) => setCategory(event.target.value);
@@ -64,15 +80,17 @@ export default function NewBook() {
     const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
     const toggleSwitch = () => setIsChecked(prevState => !prevState);
     const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
-
+    const handleClassChange = (event) => setSelectedClass(event.target.value);
     // Submit new book
     const handleSubmit = () => {
+        console.log("Selected Class ID:", selectedClass);
         setLoading(true);
         setError(null);
         const formData = new FormData();
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
+        formData.append('classId', selectedClass); // 선택된 클래스 추가
         formData.append('category', category);
         formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
         formData.append('bookDivide', isChecked ? 1 : 0);
@@ -88,7 +106,7 @@ export default function NewBook() {
         })
             .then((res) => {
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit");
+                navigate("/book/edit/"+res.data.book.bookId);
             })
             .catch((err) => {
                 console.log("머가 단단히 잘못되었다..");
@@ -155,7 +173,26 @@ export default function NewBook() {
                                 <MenuItem value={'클래스 공개'}>클래스 공개</MenuItem>
                                 <MenuItem value={'비공개'}>비공개</MenuItem>
                             </Select>
+
                         </FormControl>
+                        {visibility === '클래스 공개' && (
+                            <FormControl fullWidth>
+                                <InputLabel id="class-label">클래스 선택</InputLabel>
+                                <Select
+                                    labelId="class-label"
+                                    value={selectedClass}
+                                    label="클래스 선택"
+                                    onChange={handleClassChange}
+                                >
+                                    {classList.map((cls) => (
+                                        <MenuItem key={cls.classId} value={cls.classId}>
+                                            {cls.className}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
+
 
                         <FormControl fullWidth>
                             <InputLabel id="category-label">카테고리</InputLabel>

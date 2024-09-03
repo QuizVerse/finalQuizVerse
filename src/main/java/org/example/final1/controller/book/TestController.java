@@ -29,10 +29,13 @@ public class TestController {
     // 로그인한 사용자 정보 가져오기
     @GetMapping("/username")
     public ResponseEntity<UserDto> getUserInfo(HttpServletRequest request) {
+
         UserDto userDto = jwtService.getUserFromJwt(request);
         if(userDto == null) {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+
         return ResponseEntity.ok(userDto);
     }
 

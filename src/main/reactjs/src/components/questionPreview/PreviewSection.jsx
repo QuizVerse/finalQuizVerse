@@ -1,31 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LoopIcon from '@mui/icons-material/Loop';
-import Question from "./Question";
+import {IconButton, Typography} from "@mui/material";
+import PreviewQuestion from "./PreviewQuestion";
 import axios from "axios";
-import AddIcon from "@mui/icons-material/Add";
-import CustomConfirm from "./modal/CustomConfirm";
-import CustomAlert from "./modal/CustomAlert";
-import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
-import CloseIcon from "@mui/icons-material/Close";
-import DescriptionIcon from '@mui/icons-material/Description';
-export default function Section({
+import CustomConfirm from "../modal/CustomConfirm";
+import CustomAlert from "../modal/CustomAlert";
+
+
+export default function PreviewSection({
                                     index,
-                                    title,
-                                    description,
                                     sectionCount,
-                                    onDuplicate,
-                                    onDelete,
-                                    onUpdateSection,
                                     section,
-                                    book,
-                                    loading,
                                     setLoading,
-                                    onUploadImage
                                 }) {
 
 
@@ -68,48 +55,6 @@ export default function Section({
         fetchData(); // 데이터를 가져오는 함수 호출
     }, []);
 
-
-    // questions 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            questions.forEach((e, index) => e.questionOrder = index+1);
-            axios.post('/book/question/saveall', questions)
-                .then(res => {
-                    console.log('질문이 저장되었습니다:', res);
-                })
-                .catch(error => {
-                    console.error('질문 저장 중 오류가 발생했습니다:', error);
-                });
-        }, 1000); // 1초 뒤에 저장
-
-        return () => clearTimeout(timer);
-    }, [questions]);
-
-    /**
-     * @description : 새로운 질문 추가
-     */
-    const handleAddQuestion = () => {
-        const newQuestion = {
-                questionTitle: "",
-                questionType:0,
-                questionDescription: "",
-                questionDescriptionimage: "",
-                questionSolution: "",
-                questionSolutionimage: "",
-                questionOrder: 0,
-                book: book,
-                questionPoint: 0,
-                section: section
-            };
-        axios({
-            method:'post',
-            url:'/book/question/new',
-            data: newQuestion
-        }).then(res=>{
-            console.log(res.data);
-            setQuestions([...questions, res.data]);
-        })
-    };
 
     /**
      * @description : 질문 복제 기능
@@ -247,22 +192,11 @@ export default function Section({
         })
     };
 
-    // 섹션 설명 추가 핸들러
-    const handleAddDescription = () => {
-        setShowDescription(true);
-    };
-
-
-    // 섹션 설명 삭제 핸들러
-    const handleDeleteDescription = () => {
-        setShowDescription(false);
-        onUpdateSection({sectionImage: "", sectionDescription: ""});
-    };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{title || "섹션 제목"}</Typography>
+                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>
                     <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
@@ -272,95 +206,30 @@ export default function Section({
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <TextField
-                        fullWidth
-                        label={"섹션 제목"}
-                        placeholder="질문을 입력하세요."
-                        variant={"standard"}
-                        value={title}
-                        onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
-                    />
+                    <Typography>{section.sectionTitle}</Typography>
                     <div className="flex flex-col gap-4">
                         {showDescription && (
-                            <div className="flex gap-4">
-                            <TextField
-                                fullWidth multiline
-                                label={"섹션 설명"}
-                                placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
-                                variant={"standard"}
-                                value={description}
-                                onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
-                            />
-                            <IconButton
-                                onClick={() => document.getElementById('description-image-' + section.sectionId).click()}>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={handleDeleteDescription}>
-                                <CloseIcon/>
-                            </IconButton>
-                        </div>
+                            <Typography>{section.sectionDescription}</Typography>
                         )}
                         <div className={"flex justify-center"}>
                             {/* Image Preview */}
                             {section.sectionImage !== "" ?
                                 <img
                                     src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
-                                    alt="Cover"
+                                    alt={section.sectionDescription}
                                     className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
                                 /> : ""}
-                            {/* Hidden File Input */}
-                            <input
-                                type="file"
-                                id={'description-image-' + section.sectionId}
-                                accept="image/*"
-                                onChange={(e) => onUploadImage(e, "description")}
-                                style={{display: 'none'}} // Hide the file input
-                            />
                         </div>
-                    </div>
-                    <div className="flex gap-4 justify-end">
-                        <Tooltip title="섹션 복사">
-                            <IconButton onClick={onDuplicate}>
-                                <ContentCopyIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="섹션 삭제">
-                            <IconButton onClick={onDelete}>
-                                <DeleteIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        {!showDescription && (
-                        <Tooltip title="섹션 설명 추가">
-                            <IconButton onClick={handleAddDescription}>
-                                <DescriptionIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        )}
-                        <Tooltip title="질문 추가">
-                            <IconButton onClick={handleAddQuestion}>
-                                <AddIcon/>
-                            </IconButton>
-                        </Tooltip>
                     </div>
                 </div>
             )}
             {questions.map((question, index) => (
-                <Question
+                <PreviewQuestion
                     key={index}
                     index={index}
-                    questionType={question.questionType}
-                    title={question.questionTitle}
-                    description={question.questionDescription}
                     totalQuestions={questions.length}
                     question={question}
                     openConfirm={openConfirm}
-                    onDuplicate={() => handleDuplicateQuestion(index)}
-                    onDelete={() => handleDeleteQuestion(index)}
-                    moveQuestion={moveQuestion}
-                    onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
-                    onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
 

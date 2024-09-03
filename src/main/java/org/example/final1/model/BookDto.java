@@ -69,4 +69,10 @@ public class BookDto {
     @Column(name = "book_ispublished", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean bookIspublished = false;
 
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = true)
+    //카테고리가 삭제되었을시 기타라고 해주기
+    private ClassDto class1;
+
+
 }

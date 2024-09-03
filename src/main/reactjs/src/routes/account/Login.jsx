@@ -25,7 +25,9 @@ export default function Login() {
         }
     };
 
-
+    const handlePasswordReset = () => {
+        navi('/account/changepassword');
+    };
     const handleGoogleLogin = () => {
         window.location.href = "http://localhost:9002/oauth2/authorization/google";
     }
@@ -108,7 +110,8 @@ export default function Login() {
                     <div className="flex justify-between text-sm text-muted-foreground">
                         <button type="button">회원정보 조회</button>
                         <span>|</span>
-                        <button type="button">비밀번호 재설정</button>
+                        <button type="button"
+                        onClick={handlePasswordReset}>비밀번호 재설정</button>
                     </div>
                     <button
                         type="submit"
