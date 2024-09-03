@@ -157,6 +157,7 @@ export default function BookCard(props) {
 
     return (
         <>
+            {/* 알림 스낵바 */}
             <Snackbar
                 open={state.open}
                 onClose={handleSnackClose}
@@ -166,6 +167,7 @@ export default function BookCard(props) {
                 autoHideDuration={1200}
             />
 
+            {/* 링크 복사 Alert */}
             <CustomAlert
                 title={props.title + "에 대한 링크가 생성되었습니다."}
                 content={
@@ -177,6 +179,7 @@ export default function BookCard(props) {
                 closeAlert={closeAlert}
             />
 
+            {/* Setting 버튼 클릭시 보이는 메뉴 */}
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -190,6 +193,7 @@ export default function BookCard(props) {
                 <MenuItem onClick={handleSettingClose}>삭제하기</MenuItem>
             </Menu>
 
+            {/* 삭제 버튼 클릭시 보이는 Confirm */}
             <CustomConfirm
                 id={props.bookId}
                 openConfirm={confirmVisible}
@@ -199,7 +203,7 @@ export default function BookCard(props) {
 
             {/* 검색 결과를 카드 형태로 렌더링하는 부분 */}
             <div className="search-results" style={gridStyle}>
-                {currentItems.length > 0 ? (
+                {currentItems.length > 0 &&
                     currentItems.map((book, index) => (
                         <div key={index} className="book-item" style={cardStyle}>
                             <Link to={`/book/detail/${book.bookId}`}>
@@ -228,9 +232,7 @@ export default function BookCard(props) {
                             </Link>
                         </div>
                     ))
-                ) : (
-                    <p>검색된 책이 없습니다.</p>
-                )}
+                }
 
                 {/* 페이지네이션 - 카드 두 번째 줄 밑 50px에 위치 */}
                 <div className="pagination" style={paginationStyle}>
