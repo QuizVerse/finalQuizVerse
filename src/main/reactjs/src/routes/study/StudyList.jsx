@@ -1,11 +1,8 @@
-// v0 by Vercel.
-// https://v0.dev/t/sIyMyfnOzwY
-
 import SearchInput from "../../components/SearchInput";
 import StudyRoomCard from "../../components/StudyRoomCard";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 const ITEMS_PER_PAGE = 10;
 const SPACING = 2;
@@ -28,6 +25,16 @@ export default function StudyList() {
         setPage(value);
         window.scrollTo(0, 0);
     };
+
+    // const getRoomList = () => {
+    //     axios.get(`/study/list`).then((res) => {
+    //       setRoomList(res.data);
+    //     });
+    //   };
+    
+    //   useEffect(() => {
+    //     getRoomList();
+    //   }, []);
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
