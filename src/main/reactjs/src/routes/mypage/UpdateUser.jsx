@@ -14,6 +14,8 @@ export default function UpdateUser() {
 
   const navi = useNavigate();
 
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+
   // 닉네임 유효성 검사
   const validateNickname = (nickname) => {
     if (!nickname) return false; // 추가된 체크
@@ -68,10 +70,11 @@ export default function UpdateUser() {
       reader.onloadend = () => {
         setUserData((prevData) => ({
           ...prevData,
-          userImage: reader.result,
+          userImagePreview: reader.result, // 로컬에서 미리보기용 이미지 경로
+          userImageFile: file, // 실제 업로드할 파일
         }));
       };
-      reader.readAsDataURL(file); // 파일을 데이터 URL로 읽음
+      reader.readAsDataURL(file); // 파일을 Data URL로 읽어옴
     }
   };
 
@@ -86,6 +89,7 @@ export default function UpdateUser() {
   const handleConfirmSave = () => {
     // 저장 로직 추가 (서버로 데이터 전송 등)
     setOpenConfirm(false);
+    navi("/account/changepassword");
   };
 
   const handleConfirmCancel = () => {
@@ -95,6 +99,7 @@ export default function UpdateUser() {
     // 추가적으로 리다이렉트하거나 다른 처리를 할 수 있습니다.
   };
 
+//폼제출
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -105,6 +110,7 @@ export default function UpdateUser() {
       setNicknamecheck(false);
       return; // 닉네임이 유효하지 않으면 폼 제출 중지
     }
+
     // 닉네임 중복 검사
     try {
       const res = await axios.get(`/signup/user/nicknamecheck?user_nickname=${userNickname}`);
@@ -114,19 +120,47 @@ export default function UpdateUser() {
 
         // 닉네임이 유효하고 중복되지 않으면 폼 데이터를 서버로 전송합니다.
         console.log("폼 데이터를 서버로 전송합니다.");
-        // 예를 들어: axios.post("/update/user/data", userData);
-
       } else {
         setNicknamecheck(false);
         setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.");
+        return; // 중복된 닉네임이면 폼 제출 중지
       }
     } catch (error) {
       console.error("Failed to check nickname:", error);
       setNicknameMessage("닉네임 중복 검사에 실패했습니다. 다시 시도해 주세요.");
       setNicknamecheck(false);
+      return; // 에러 발생 시 폼 제출 중지
     }
 
+    // FormData 생성 및 이미지와 닉네임 추가
+    const formData = new FormData();
+    formData.append('userNickname', userNickname);
+    if (userData.userImageFile) { // 실제 업로드할 파일이 있는 경우에만 업로드
+      formData.append('userImage', userData.userImageFile);
+    }
+
+    // 폼 데이터를 서버로 전송
+    try {
+      const uploadRes = await axios.post('/update/user/formdata', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (uploadRes.data === 'success') {
+        console.log("폼 데이터를 서버로 전송했습니다.");
+        navi('/');
+        // 추가적인 성공 처리 로직
+      } else {
+        console.log("서버 응답 실패");
+        // 실패 처리 로직
+      }
+    } catch (error) {
+      console.error("서버로 데이터 전송 실패:", error);
+      // 에러 처리 로직
+    }
   };
+
 
   return (
       <main className="flex-1 p-8">
@@ -137,7 +171,7 @@ export default function UpdateUser() {
             <span className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full">
               {userData && userData.userImage ? (
                   <img
-                      src={userData.userImage}
+                      src={userData.userImagePreview ? userData.userImagePreview : `${photopath}/${userData.userImage}`}
                       alt="User Profile"
                       className="h-full w-full object-cover rounded-full"
                   />
