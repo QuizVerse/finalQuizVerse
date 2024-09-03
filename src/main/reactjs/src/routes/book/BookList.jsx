@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import BookCard from "../../components/BookCard";
+import BookCard from "../../components/BookCardSample";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
 // 스와이퍼
@@ -11,6 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 export default function BookList() {
+
   const [booksByCategory, setBooksByCategory] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,15 +25,22 @@ export default function BookList() {
         const categories = categoryResponse.data;
         setCategories(categories);
 
+        // 유저의 북마크된 책 목록 가져오기
+        const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');
+        const bookmarkedBookIds = bookmarksResponse.data.map(book => book.bookId);
+
         // 각 카테고리의 책 목록 가져오기
         const booksResponses = await Promise.all(
-          categories.map(category =>
-            axios.get(`${'/books/category'}?id=${category.categoryId}`)
-              .then(response => ({
-                categoryId: category.categoryId,
-                books: response.data
-              }))
-          )
+            categories.map(category =>
+                axios.get(`/books/category?id=${category.categoryId}`)
+                    .then(response => ({
+                      categoryId: category.categoryId,
+                      books: response.data.map(book => ({
+                        ...book,
+                        isBookmark: bookmarkedBookIds.includes(book.bookId)
+                      }))
+                    }))
+            )
         );
 
         // 카테고리 ID를 키로 사용하는 객체로 책 데이터를 변환
@@ -51,6 +59,28 @@ export default function BookList() {
 
     fetchCategoriesAndBooks();
   }, []);
+
+  const clickBookmark = async (bookId) => {
+    try {
+      const category = Object.keys(booksByCategory).find(cat =>
+          booksByCategory[cat].some(book => book.bookId === bookId)
+      );
+
+      const book = booksByCategory[category].find(book => book.bookId === bookId);
+      const newIsBookmark = !book.isBookmark;
+
+      await axios.post('/bookmark/toggle', { bookId });
+
+      setBooksByCategory({
+        ...booksByCategory,
+        [category]: booksByCategory[category].map((book) =>
+            book.bookId === bookId ? { ...book, isBookmark: newIsBookmark } : book
+        ),
+      });
+    } catch (error) {
+      console.error('Failed to toggle bookmark', error);
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -84,7 +114,7 @@ export default function BookList() {
             </Link>
           </div>
           <div className="grid grid-cols-5 gap-4">
-            {booksByCategory[category.categoryId]?.slice(0, 5).map(book => (
+            {booksByCategory[category.categoryId]?.slice(0, 5).map((book) => (
               <BookCard
                 key={book.bookId}
                 bookId={book.bookId}
@@ -98,6 +128,8 @@ export default function BookList() {
                 sectionCount={book.bookSectionCount}
                 status={book.bookStatus}
                 bookUrl={`/book/detail/${book.bookId}`} // 링크 추가
+                updateBookmark={() => clickBookmark(book.bookId)}
+                isBookmark={book.isBookmark}
               />
             )) || <div>No books available</div>}
           </div>
