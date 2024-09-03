@@ -140,16 +140,14 @@ export default function PreviewChoices({question}) {
                             className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
                             size={"large"}
                             variant={oxSelected === "O" ? "contained" : "outlined"}
-                            onClick={() => handleOxSelect("O")}
-                        >
+                            onClick={() => handleOxSelect("O")}>
                             <PanoramaFishEyeIcon fontSize={"large"}/>
                         </Button>
                         <Button
                             className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
                             color={"warning"}
                             variant={oxSelected === "X" ? "contained" : "outlined"}
-                            onClick={() => handleOxSelect("X")}
-                        >
+                            onClick={() => handleOxSelect("X")}>
                             <CloseIcon fontSize={"large"}/>
                         </Button>
                     </div>

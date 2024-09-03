@@ -10,17 +10,9 @@ import CustomAlert from "../modal/CustomAlert";
 
 export default function PreviewSection({
                                     index,
-                                    title,
-                                    description,
                                     sectionCount,
-                                    onDuplicate,
-                                    onDelete,
-                                    onUpdateSection,
                                     section,
-                                    book,
-                                    loading,
                                     setLoading,
-                                    onUploadImage
                                 }) {
 
 
@@ -235,17 +227,9 @@ export default function PreviewSection({
                 <PreviewQuestion
                     key={index}
                     index={index}
-                    questionType={question.questionType}
-                    title={question.questionTitle}
-                    description={question.questionDescription}
                     totalQuestions={questions.length}
                     question={question}
                     openConfirm={openConfirm}
-                    onDuplicate={() => handleDuplicateQuestion(index)}
-                    onDelete={() => handleDeleteQuestion(index)}
-                    moveQuestion={moveQuestion}
-                    onUpdateQuestion={(updated) => handleUpdateQuestion(index, updated)}
-                    onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
 

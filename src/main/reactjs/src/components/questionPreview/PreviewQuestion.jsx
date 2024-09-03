@@ -10,13 +10,7 @@ import PreviewChoices from "./PreviewChoices";
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
 export default function PreviewQuestion({
-                                            index,
-                                            moveQuestion,
-                                            onDuplicate,
-                                            onDelete,
-                                            totalQuestions,
                                             question,
-                                            onUpdateQuestion,
                                             onUploadImage
                                         }) {
 

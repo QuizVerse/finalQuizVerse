@@ -19,11 +19,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-
 export default function QuestionPreview() {
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
-    const [bookData, setBookData] = useState(''); // 책 데이터를 저장할 상태 추가
+    const [bookData, setBookData] = useState({}); // 책 데이터를 저장할 상태 추가
     const [sections, setSections] = useState([]);
 
     const [questions, setQuestions] = useState([]);
@@ -36,26 +35,21 @@ export default function QuestionPreview() {
     const [alertTitle, setAlertTitle] = useState("");
 
 
-
     // bookId에 해당하는 책 데이터를 가져옴
     useEffect(() => {
         const fetchData = async () => {
             try {
-                axios.get(`/book/edit/${bookId}`)
-                    .then((res)=>{
-                        setBookData(res.data.book);
-                        console.log("북북", res.data.book)
-                        console.log("북북22", res.data.book.user)
-                        setSections(res.data.sections);
-                    });
-                axios.get(`/book/questionpreview/${bookId}`)
-                    .then((res)=>{
-                        setQuestions(res.data);
-                    });
+                const bookRes = await axios.get(`/book/edit/${bookId}`);
+                setBookData(bookRes.data.book);
+                setSections(bookRes.data.sections);
+
+                const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+                setQuestions(questionsRes.data);
 
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
-                console.error("Error fetching book, section data:", error);
+                console.error("Error fetching data:", error);
+                setError("데이터를 가져오는 도중 문제가 발생했습니다."); // 에러 메시지 설정
                 setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
             }
         };
@@ -128,7 +122,7 @@ export default function QuestionPreview() {
             </div>
             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
                 <div className={"flex justify-between p-4"}>
-                    <Typography variant="h6">{bookData.user.userNickname}</Typography>
+                    <Typography variant="h6"> {bookData.user ? bookData.user.userNickname : "로드 중..."}</Typography>
                     <Typography variant="h6">
                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
@@ -196,7 +190,6 @@ export default function QuestionPreview() {
 
             </div>
 
-
             <div className="space-y-4">
                 {sections && sections.map((section, index) => (
                     <PreviewSection
@@ -210,7 +203,6 @@ export default function QuestionPreview() {
                     />
                 ))}
             </div>
-
 
             {/*alert*/}
             <CustomAlert
