@@ -4,19 +4,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import CustomAlert from "./modal/CustomAlert";
+import CustomAlert from "../modal/CustomAlert";
 
-export default function Choices({question}) {
+export default function EditChoices({question}) {
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
-
-    // confirm state
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(0);
 
     // questionType이 변경될 때마다 choices를 초기화
     useEffect(() => {
@@ -31,6 +27,11 @@ export default function Choices({question}) {
             axios.get('/book/choice/getall/'+question.questionId)
                 .then(res => {
                     setChoices(res.data);
+                    if(res.data[0].choiceText === "O") {
+                        setOxSelected("O");
+                    } else if(res.data[0].choiceText === "X") {
+                        setOxSelected("X");
+                    }
                 })
                 .catch(error => {
                     console.error("Error fetching question data:", error);
@@ -254,9 +255,7 @@ export default function Choices({question}) {
                                 placeholder="답안을 입력하세요."
                                 variant={"standard"}
                                 value={choice.choiceText}
-                                onChange={(e) => {updateChoices(e, index)}}
-
-                            />
+                                onChange={(e) => {updateChoices(e, index)}}/>
 
                             <IconButton onClick={() => document.getElementById('file-input').click()}>
                                 <InsertPhotoIcon/>
@@ -300,6 +299,7 @@ export default function Choices({question}) {
                         label={"답안"}
                         placeholder="정답을 입력하세요."
                         variant={"standard"}
+                        value={choices[0].choiceText}
                         onChange={(e) => updateShortAnswer(e)}
                     />
                 </div>
