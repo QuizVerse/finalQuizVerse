@@ -12,6 +12,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
 
 export default function BookCard(props) {
+
     // snack state
     const [state, setState] = useState({
         open: false,
