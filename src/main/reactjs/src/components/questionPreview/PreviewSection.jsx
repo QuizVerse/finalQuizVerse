@@ -15,6 +15,7 @@ export default function PreviewSection({
                                     setLoading,
                                 }) {
 
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -215,7 +216,7 @@ export default function PreviewSection({
                             {/* Image Preview */}
                             {section.sectionImage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
+                                    src={imagePath + section.sectionImage}
                                     alt={section.sectionDescription}
                                     className="w-36 h-36 object-cover"
                                 /> : ""}

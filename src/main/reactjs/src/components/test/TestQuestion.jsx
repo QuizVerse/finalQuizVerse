@@ -5,11 +5,11 @@ import {
 import React, {useEffect, useState} from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import PreviewChoices from "./PreviewChoices";
+import TestChoices from "./TestChoices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function PreviewQuestion({
+export default function TestQuestion({
                                             question,
                                             onUploadImage
                                         }) {
@@ -22,8 +22,6 @@ export default function PreviewQuestion({
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
-
-    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     return (
         <div className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
@@ -48,7 +46,7 @@ export default function PreviewQuestion({
                             {/* Image Preview */}
                             {question.questionDescriptionimage !== "" ?
                                 <img
-                                    src={imagePath + question.questionDescriptionimage}
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + question.questionDescriptionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"
@@ -64,7 +62,7 @@ export default function PreviewQuestion({
                             />
                         </div>
                     </div>
-                    <PreviewChoices question={question}/>
+                    <TestChoices question={question}/>
                     <div className="flex flex-col gap-4">
                         <div className="flex gap-4">
                             <Typography>{question.questionSolution}</Typography>
@@ -73,7 +71,7 @@ export default function PreviewQuestion({
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={imagePath + question.questionSolutionimage}
+                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"

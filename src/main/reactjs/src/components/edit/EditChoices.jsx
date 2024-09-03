@@ -8,6 +8,8 @@ import CustomAlert from "../modal/CustomAlert";
 
 export default function EditChoices({question}) {
 
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
+
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
 
@@ -24,12 +26,12 @@ export default function EditChoices({question}) {
     useEffect(() => {
         const fetchData = async () => {
             // questionId에 해당하는 choice 데이터를 가져옴
-            axios.get('/book/choice/getall/'+question.questionId)
+            axios.get('/book/choice/getall/' + question.questionId)
                 .then(res => {
                     setChoices(res.data);
-                    if(res.data[0].choiceText === "O") {
+                    if (res.data[0].choiceText === "O") {
                         setOxSelected("O");
-                    } else if(res.data[0].choiceText === "X") {
+                    } else if (res.data[0].choiceText === "X") {
                         setOxSelected("X");
                     }
                 })
@@ -81,10 +83,10 @@ export default function EditChoices({question}) {
                 }
             ;
             axios({
-                method:'post',
-                url:'/book/choice/new',
+                method: 'post',
+                url: '/book/choice/new',
                 data: newChoice
-            }).then(res=>{
+            }).then(res => {
                 console.log(res.data);
                 setChoices([...choices, res.data]);
             })
@@ -97,11 +99,11 @@ export default function EditChoices({question}) {
     // 특정 답안 삭제 핸들러
     const handleDeleteChoice = (index) => {
         const choiceId = choices[index].choiceId;
-        if(choiceId === "") return;
+        if (choiceId === "") return;
         axios({
-            method:'delete',
-            url:'/book/choice/delete/'+choiceId,
-        }).then(res=>{
+            method: 'delete',
+            url: '/book/choice/delete/' + choiceId,
+        }).then(res => {
             console.log(res);
             const newChoices = choices.filter((_, i) => i !== index);
             setChoices(newChoices);
@@ -111,23 +113,23 @@ export default function EditChoices({question}) {
     // Image Upload
     const handleFileChange = (event, index) => {
         const file = event.target.files[0];
-        const uploadForm=new FormData();
-        uploadForm.append("upload",file);
+        const uploadForm = new FormData();
+        uploadForm.append("upload", file);
 
         if (file) {
             axios({
-                method:'post',
-                url:'/book/edit/upload',
-                data:uploadForm,
-                headers:{'Content-Type':'multipart/form-data'},
-            }).then(res=>{
+                method: 'post',
+                url: '/book/edit/upload',
+                data: uploadForm,
+                headers: {'Content-Type': 'multipart/form-data'},
+            }).then(res => {
                 console.log("saved picture", res.data);
                 const updated = [...choices];
-                    updated[index] = {
-                        ...updated[index],
-                        choiceImage: res.data.photo,
-                    };
-                    setChoices(updated);
+                updated[index] = {
+                    ...updated[index],
+                    choiceImage: res.data.photo,
+                };
+                setChoices(updated);
             })
         }
     };
@@ -135,7 +137,7 @@ export default function EditChoices({question}) {
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
         const updatedChoices = {
-            choiceText : selection,
+            choiceText: selection,
             choiceImage: "",
             choiceIsanswer: false,
             question: question
@@ -156,7 +158,7 @@ export default function EditChoices({question}) {
         const updatedChoices = [...choices];
         updatedChoices[index].choiceIsanswer ?
             updatedChoices[index].choiceIsanswer = false
-            : updatedChoices[index].choiceIsanswer =true;
+            : updatedChoices[index].choiceIsanswer = true;
         setChoices(updatedChoices);
     };
 
@@ -168,7 +170,7 @@ export default function EditChoices({question}) {
         const val = event.target.value;
         setValue(val);
         const updatedChoices = [...choices];
-        updatedChoices.forEach((e, index)=>{
+        updatedChoices.forEach((e, index) => {
             index === Number(val) ? e.choiceIsanswer = true : e.choiceIsanswer = false;
         })
         setChoices(updatedChoices);
@@ -176,7 +178,7 @@ export default function EditChoices({question}) {
 
     const updateShortAnswer = (e) => {
         const updated = {
-            choiceText : e.target.value,
+            choiceText: e.target.value,
             choiceImage: "",
             choiceIsanswer: false,
             question: question
@@ -192,21 +194,77 @@ export default function EditChoices({question}) {
                         aria-labelledby="demo-controlled-radio-buttons-group"
                         name="controlled-radio-buttons-group"
                         value={value}
-                        onChange={handleChange}
-                    >
+                        onChange={handleChange}>
+                        {choices.map((choice, index) => (
+                            <div key={index} className="flex flex-col gap-4">
+                                <div className="flex gap-4 items-end">
+                                    <FormControlLabel value={index} control={<Radio/>} label=""/>
+                                    <TextField
+                                        fullWidth multiline
+                                        label={"답안"}
+                                        placeholder="답안을 입력하세요."
+                                        variant={"standard"}
+                                        value={choice.choiceText}
+                                        onChange={(e) => {
+                                            updateChoices(e, index)
+                                        }}
+                                    />
+                                    <IconButton
+                                        onClick={() => document.getElementById('choice-input-' + choice.choiceId).click()}>
+                                        <InsertPhotoIcon/>
+                                    </IconButton>
+                                    <IconButton onClick={() => handleDeleteChoice(index)}>
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </div>
+                                <div className={"flex justify-center"}>
+                                    {/* Image Preview */}
+                                    {choice.choiceImage !== "" ?
+                                        <img
+                                            src={imagePath + choice.choiceImage}
+                                            alt="Cover"
+                                            className="w-36 h-36 object-cover"
+                                            width="150"
+                                            height="150"
+                                        /> : ""}
+                                    {/* Hidden File Input */}
+                                    <input
+                                        type="file"
+                                        id={'choice-input-' + choice.choiceId}
+                                        accept="image/*"
+                                        onChange={(e) =>
+                                            handleFileChange(e, index)}
+                                        style={{display: 'none'}} // Hide the file input
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                    <div className="flex gap-4 items-center">
+                        <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
+                    </div>
+                </div>
+            )}
+            {question.questionType === 1 && (  // 다중선택형 문제일 경우
+                <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex gap-4 items-end">
-                                <FormControlLabel value={index} control={<Radio/>} label=""/>
+                                <Checkbox
+                                    checked={choice.choiceIsanswer}
+                                    value={choice.choiceIsanswer}
+                                    onClick={() => updateCheckBox(index)}/>
                                 <TextField
                                     fullWidth multiline
                                     label={"답안"}
                                     placeholder="답안을 입력하세요."
                                     variant={"standard"}
                                     value={choice.choiceText}
-                                    onChange={(e) => {updateChoices(e, index)}}
-                                />
-                                <IconButton onClick={() => document.getElementById('choice-input-'+choice.choiceId).click()}>
+                                    onChange={(e) => {
+                                        updateChoices(e, index)
+                                    }}/>
+
+                                <IconButton onClick={() => document.getElementById('file-input').click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={() => handleDeleteChoice(index)}>
@@ -217,7 +275,7 @@ export default function EditChoices({question}) {
                                 {/* Image Preview */}
                                 {choice.choiceImage !== "" ?
                                     <img
-                                        src={choice.choiceImage}
+                                        src={imagePath + choice.choiceImage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -226,7 +284,7 @@ export default function EditChoices({question}) {
                                 {/* Hidden File Input */}
                                 <input
                                     type="file"
-                                    id={'choice-input-'+choice.choiceId}
+                                    id={'choice-input-' + choice.choiceId}
                                     accept="image/*"
                                     onChange={(e) =>
                                         handleFileChange(e, index)}
@@ -235,63 +293,33 @@ export default function EditChoices({question}) {
                             </div>
                         </div>
                     ))}
-                    </RadioGroup>
                     <div className="flex gap-4 items-center">
                         <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
                     </div>
                 </div>
             )}
-            {question.questionType === 1 && (  // 다중선택형 문제일 경우
-                <div className={"flex flex-col gap-2"}>
-                    {choices.map((choice, index) => (
-                        <div key={index} className="flex gap-4 items-end">
-                            <Checkbox
-                                checked={choice.choiceIsanswer}
-                                value={choice.choiceIsanswer}
-                                onClick={()=>updateCheckBox(index)}/>
-                            <TextField
-                                fullWidth multiline
-                                label={"답안"}
-                                placeholder="답안을 입력하세요."
-                                variant={"standard"}
-                                value={choice.choiceText}
-                                onChange={(e) => {updateChoices(e, index)}}/>
-
-                            <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                <InsertPhotoIcon/>
-                            </IconButton>
-                            <IconButton onClick={() => handleDeleteChoice(index)}>
-                                <CloseIcon/>
-                            </IconButton>
+            { question.questionType === 2 && (  // OX 선택형 문제일 경우
+                    <div className={"flex flex-col gap-2"}>
+                        <div className="flex gap-4 items-end">
+                            <Button
+                                className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
+                                size={"large"}
+                                variant={oxSelected === "O" ? "contained" : "outlined"}
+                                onClick={() => handleOxSelect("O")}
+                            >
+                                <PanoramaFishEyeIcon fontSize={"large"}/>
+                            </Button>
+                            <Button
+                                className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
+                                color={"warning"}
+                                variant={oxSelected === "X" ? "contained" : "outlined"}
+                                onClick={() => handleOxSelect("X")}
+                            >
+                                <CloseIcon fontSize={"large"}/>
+                            </Button>
                         </div>
-                    ))}
-                    <div className="flex gap-4 items-center">
-                        <Button onClick={handleAddChoice}>답안 추가</Button> {/* 답안 추가 버튼 */}
                     </div>
-                </div>
-            )}
-            {question.questionType === 2 && (  // OX 선택형 문제일 경우
-                <div className={"flex flex-col gap-2"}>
-                    <div className="flex gap-4 items-end">
-                        <Button
-                            className="flex items-center justify-center w-1/2 h-32 border-2 border-blue-300 text-blue-500 text-4xl font-bold"
-                            size={"large"}
-                            variant={oxSelected === "O" ? "contained" : "outlined"}
-                            onClick={() => handleOxSelect("O")}
-                        >
-                            <PanoramaFishEyeIcon fontSize={"large"}/>
-                        </Button>
-                        <Button
-                            className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"
-                            color={"warning"}
-                            variant={oxSelected === "X" ? "contained" : "outlined"}
-                            onClick={() => handleOxSelect("X")}
-                        >
-                            <CloseIcon fontSize={"large"}/>
-                        </Button>
-                    </div>
-                </div>
-            )}
+                )}
             {question.questionType === 3 && (  // 단답형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     <TextField
