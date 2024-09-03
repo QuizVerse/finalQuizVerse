@@ -32,20 +32,15 @@ export default function BookCard(props) {
     // confirm state
     const [confirmVisible, setConfirmVisible] = useState(false);
 
-    /**
-     * @description : 삭제 취소 버튼 클릭시 실행되는 로직
-     * */
-    const clickBtn1 = () => {
-        setConfirmVisible(false);
+
+    const openAlert = () => {
+      setAlertVisible(true);
     };
 
-    /**
-     * @description : 삭제 확인 버튼 클릭시 실행되는 로직
-     * @TODO : 문제집 삭제 기능 추가
-     * */
-    const clickBtn2 = () => {
-        setConfirmVisible(false);
-    };
+        const closeAlert = () => {
+          setAlertVisible(false);
+        };
+
 
     /**
      * @description : 북마크 클릭시 발생하는 로직
@@ -62,19 +57,6 @@ export default function BookCard(props) {
                 Transition: Fade,
             });
         }
-    };
-
-    /**
-     * @description : 링크 클릭시 발생하는 로직
-     * */
-    const handleCopy = () => () => {
-        // snack message 교체
-        setSnackMessage("클립보드에 복사되었습니다.");
-        // snack 상태 업데이트
-        setState({
-            open: true,
-            Transition: Fade,
-        });
     };
 
     /**
@@ -127,30 +109,6 @@ export default function BookCard(props) {
                                 <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded"
                                         onClick={openAlert}>공유하기</Button>
                             </div> : ""
-                    }
-
-                    { /* B타입 - 마이페이지 메인 - 내가 만든 문제집, 나의 출제이력 */
-                        props.cardType === 'B' ?
-                            <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600"
-                                            onClick={handleSettingClick}>
-                                    <SettingsIcon/>
-                                </IconButton>
-                                <Button className="px-4 py-2 text-gray-600 border border-gray-rounded"
-                                        onClick={openAlert}>공유하기</Button>
-                            </div> : ""
-                    }
-                    {/* C타입 - 오답노트 */
-                        props.cardType === 'C' ?
-                            <div className="flex items-center justify-between mt-4">
-                                <IconButton className="text-red-600"
-                                            onClick={openConfirm}>
-                                    <DeleteIcon/>
-                                </IconButton>
-                                <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">
-                                    <Link to={props.bookUrl}>다시 학습하기</Link>
-                                </Button>
-                            </div>  : ""
                     }
                 </div>
             </div>

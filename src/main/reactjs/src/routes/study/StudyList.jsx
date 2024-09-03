@@ -32,13 +32,13 @@ export default function StudyList() {
 
     const getRoomList = () => {
         axios.get(`/studys/lists`).then((res) => {
-            setRoomList(res.data);
+          setRoomList(res.data);
         });
-    };
-
-    useEffect(() => {
+      };
+    
+      useEffect(() => {
         getRoomList();
-    }, []);
+      }, []);
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
