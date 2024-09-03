@@ -178,9 +178,9 @@ export default function Signup() {
         if (emailcheck && nicknamecheck && passwordcheck && agreecheck) {
             let url = `/signup/user/join`;
             axios.post(url, {
-                user_nickname: user_nickname,
-                user_password: user_password,
-                user_email: user_email
+                userNickname: user_nickname,
+                userPassword: user_password,
+                userEmail: user_email
             })
                 .then(res => {
                     navi("/");

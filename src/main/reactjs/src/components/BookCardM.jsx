@@ -11,8 +11,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
 import axios from "axios";
 
-export default function BookCard(props) {
-
+export default function BookCardM(props) {
     const [state, setState] = useState({
         open: false,
         Transition: Fade,
