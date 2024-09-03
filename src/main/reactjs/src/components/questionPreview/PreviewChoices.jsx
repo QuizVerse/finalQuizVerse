@@ -168,7 +168,7 @@ export default function PreviewChoices({question}) {
             )}
             {question.questionType === 3 && (  // 단답형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
-                    <Typography>{choices[0].choiceText}</Typography>
+                    <Typography>{choices[0]? choices[0].choiceText : ""}</Typography>
                 </div>
             )}
 
