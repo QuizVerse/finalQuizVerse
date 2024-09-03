@@ -6,6 +6,7 @@ import axios from "axios";
 import CustomAlert from "../modal/CustomAlert";
 
 export default function TestChoices({question}) {
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
@@ -96,8 +97,7 @@ export default function TestChoices({question}) {
                         aria-labelledby="demo-controlled-radio-buttons-group"
                         name="controlled-radio-buttons-group"
                         value={value}
-                        onChange={handleChange}
-                    >
+                        onChange={handleChange}>
                     {choices.map((choice, index) => (
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex items-center">
@@ -108,7 +108,7 @@ export default function TestChoices({question}) {
                                 {/* Image Preview */}
                                 {choice.choiceImage !== "" ?
                                     <img
-                                        src={choice.choiceImage}
+                                        src={imagePath + choice.choiceImage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -123,12 +123,24 @@ export default function TestChoices({question}) {
             {question.questionType === 1 && (  // 다중선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
-                        <div key={index} className="flex items-center">
-                            <Checkbox
-                                checked={choice.choiceIsanswer}
-                                value={choice.choiceIsanswer}
-                                onClick={()=>updateCheckBox(index)}/>
-                            <Typography>{choice.choiceText}</Typography>
+                        <div key={index} className="flex flex-col gap-4">
+                            <div className="flex items-center">
+                                <Checkbox
+                                    value={choice.choiceIsanswer}
+                                    onClick={() => updateCheckBox(index)}/>
+                                <Typography>{choice.choiceText}</Typography>
+                            </div>
+                            <div className={"flex justify-center"}>
+                                {/* Image Preview */}
+                                {choice.choiceImage !== "" ?
+                                    <img
+                                        src={imagePath + choice.choiceImage}
+                                        alt="Cover"
+                                        className="w-36 h-36 object-cover"
+                                        width="150"
+                                        height="150"
+                                    /> : ""}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -141,7 +153,7 @@ export default function TestChoices({question}) {
                             size={"large"}
                             variant={oxSelected === "O" ? "contained" : "outlined"}
                             onClick={() => handleOxSelect("O")}>
-                            <PanoramaFishEyeIcon fontSize={"large"}/>
+                        <PanoramaFishEyeIcon fontSize={"large"}/>
                         </Button>
                         <Button
                             className="flex items-center justify-center w-1/2 h-32 border-2 border-red-300 text-red-500 text-4xl font-bold"

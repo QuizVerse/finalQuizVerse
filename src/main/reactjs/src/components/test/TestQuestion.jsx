@@ -23,6 +23,8 @@ export default function TestQuestion({
         setIsCollapsed(!isCollapsed);
     };
 
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
+
     return (
         <div className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
             <div className="flex items-center space-x-2 justify-between">
@@ -46,7 +48,7 @@ export default function TestQuestion({
                             {/* Image Preview */}
                             {question.questionDescriptionimage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + question.questionDescriptionimage}
+                                    src={imagePath + question.questionDescriptionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"
@@ -71,7 +73,7 @@ export default function TestQuestion({
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + question.questionSolutionimage}
+                                    src={imagePath + question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"
