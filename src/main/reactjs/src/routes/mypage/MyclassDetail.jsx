@@ -15,8 +15,6 @@ export default function MyclassDetail() {
   const [userRole, setUserRole] = useState(null); // 현재 사용자의 역할(방장/멤버)을 관리합니다.
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅입니다.
   const [openRoleChange, setOpenRoleChange] = useState({ isOpen: false, action: null }); // 방장 권한 변경 모달의 상태를 관리합니다.
-  const [books,setBooks]=useState([]);//클래스 책들 관리
-
 
   // 구성원 추가 모달을 엽니다.
   const memberAdd = () => {
@@ -33,27 +31,19 @@ export default function MyclassDetail() {
   useEffect(() => {
     setOpenRoleChange({ isOpen: false, action: null }); // 방장 권한 변경 모달을 닫는 초기 상태로 설정합니다.
 
-    const fetchMemberandBooks = async () => {
+    const fetchUserAndMembers = async () => {
       try {
         const userResponse = await axios.get(`/myclass/${classId}/userrole`); // 사용자의 역할을 가져옵니다.
         setUserRole(userResponse.data);
 
         const membersResponse = await axios.get(`/myclass/${classId}/members`); // 클래스 멤버들을 가져옵니다.
         setMembers(membersResponse.data.map((member) => ({ ...member, isSelected: false }))); // 멤버 리스트를 초기화합니다.
-
-        const bookResponse=await axios.get(`/myclass/${classId}/books`);//해당 클래스 책 목록 부르기
-        setBooks(bookResponse.data.map((books)=>(
-            {...books}
-        )));
-
-
-
       } catch (e) {
         console.error("Failed to fetch members", e);
       }
     };
 
-    fetchMemberandBooks();
+    fetchUserAndMembers();
   }, [classId]);
 
   // 전체 선택 체크박스가 변경될 때 모든 멤버의 선택 상태를 업데이트합니다.
@@ -228,7 +218,7 @@ export default function MyclassDetail() {
           {openAdd && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white p-6 rounded-md shadow-lg relative w-full max-w-md">
-                  <AddClassMember onClose={handleClose}/>
+                  <AddClassMember onClose={handleClose} />
                 </div>
               </div>
           )}
@@ -308,8 +298,7 @@ export default function MyclassDetail() {
                       {new Date(member.classmemberDate).toLocaleString()}
                     </td>
                     <td className="p-4 align-middle">
-                      <div
-                          className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                      <div className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
                         {member.classmemberRole === 2 ? "멤버" : "방장"}
                       </div>
                     </td>
@@ -318,28 +307,6 @@ export default function MyclassDetail() {
               </tbody>
             </table>
           </div>
-        </div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold">클래스 공개 문제집</h2>
-          <a className="text-sm text-muted-foreground" href="#">
-            전체보기
-          </a>
-        </div>
-        <div className="grid grid-cols-4 gap-4">
-          {books.map((book) => (
-              <BookCard
-                  key={book.bookId}
-                  cardType="A" // 필요에 따라 cardType 설정
-                  nickname={book.user.userNickname}
-                  createDate={new Date(book.bookCreatedate).toLocaleDateString()}
-                  title={book.bookTitle}
-                  category={book.category.categoryName} // 카테고리명
-                  viewCount="10" // 임의로 설정, 필요에 따라 수정
-                  questionCount="20" // 임의로 설정, 필요에 따라 수정
-                  sectionCoune="4" // 임의로 설정, 필요에 따라 수정
-                  status={book.bookStatus === 1 ? "Published" : "Draft"}
-              />
-          ))}
         </div>
       </main>
   );

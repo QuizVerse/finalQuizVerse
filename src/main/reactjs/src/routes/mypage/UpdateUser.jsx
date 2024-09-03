@@ -16,37 +16,38 @@ export default function UpdateUser() {
 
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
 
-  // 닉네임 유효성 검사
+  // 닉네임 유효성 검사 함수
   const validateNickname = (nickname) => {
-    if (!nickname) return false; // 추가된 체크
     const lengthCheck = nickname.length >= 1 && nickname.length <= 10;
     const charCheck = /^[가-힣a-zA-Z0-9]+$/.test(nickname);
     return lengthCheck && charCheck;
   };
 
-  // 닉네임 중복 확인 이벤트
-  const checkNickname = (event) => {
-    event.preventDefault(); // 폼 제출 기본 동작 방지
+  // 닉네임 중복 확인 함수
+  const checkNickname = async () => {
     if (validateNickname(userNickname)) {
-      let url = `/signup/user/nicknamecheck?user_nickname=${userNickname}`;
-      axios.get(url)
-          .then(res => {
-            if (res.data === 'success') {
-              setNicknamecheck(true);
-              setNicknameMessage("사용 가능한 닉네임입니다.");
-            } else {
-              setNicknamecheck(false);
-              setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.");
-            }
-          });
+      try {
+        const res = await axios.get(`/signup/user/nicknamecheck?user_nickname=${userNickname}`);
+        if (res.data === 'success') {
+          setNicknamecheck(true);
+          setNicknameMessage("사용 가능한 닉네임입니다.");
+        } else {
+          setNicknamecheck(false);
+          setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.");
+        }
+      } catch (error) {
+        console.error("Failed to check nickname:", error);
+        setNicknameMessage("닉네임 중복 검사에 실패했습니다. 다시 시도해 주세요.");
+      }
     } else {
       setNicknameMessage("닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.");
       setNicknamecheck(false);
     }
   };
 
+  // 사용자 데이터 가져오기
   useEffect(() => {
-    async function fetchUserData() {
+    const fetchUserData = async () => {
       try {
         const response = await axios.get("/update/user/data");
         setUserData(response.data);
@@ -54,15 +55,11 @@ export default function UpdateUser() {
       } catch (e) {
         console.error("Failed to fetch user data:", e);
       }
-    }
-
+    };
     fetchUserData();
   }, []);
 
-  const handleFileButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
+  // 파일 선택 처리 함수
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -78,68 +75,46 @@ export default function UpdateUser() {
     }
   };
 
+  // 비밀번호 재설정 모달 열기 함수
   const handlePasswordReset = () => {
     setOpenConfirm(true); // 모달 열기
   };
 
+  // 비밀번호 재설정 모달 닫기 함수
   const handleCloseConfirm = () => {
     setOpenConfirm(false); // 모달 닫기
   };
 
-  const handleConfirmSave = () => {
-    // 저장 로직 추가 (서버로 데이터 전송 등)
-    setOpenConfirm(false);
-    navi("/account/changepassword");
+  // 비밀번호 재설정 모달 확인 버튼 클릭 시 처리
+  const handleConfirmSave = async () => {
+    await handleSubmit(); // 폼 제출 실행
+    if (nicknamecheck) { // 닉네임이 유효한 경우에만 이동
+      setOpenConfirm(false);
+      navi("/account/changepassword");
+    }
   };
 
+  // 비밀번호 재설정 모달 취소 버튼 클릭 시 처리
   const handleConfirmCancel = () => {
-    // 저장하지 않고 나가기
     setOpenConfirm(false);
     navi("/account/changepassword");
-    // 추가적으로 리다이렉트하거나 다른 처리를 할 수 있습니다.
   };
 
-//폼제출
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // 폼 제출 처리 함수
+  const handleSubmit = async () => {
+    await checkNickname(); // 닉네임 중복 검사 실행
 
-    // 닉네임 유효성 검사
-    const isNicknameValid = validateNickname(userNickname);
-    if (!isNicknameValid) {
-      setNicknameMessage("닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.");
-      setNicknamecheck(false);
-      return; // 닉네임이 유효하지 않으면 폼 제출 중지
+    if (!nicknamecheck) {
+      alert("닉네임을 확인해 주세요.");
+      return; // 닉네임 중복 확인에 실패하면 제출 중지
     }
 
-    // 닉네임 중복 검사
-    try {
-      const res = await axios.get(`/signup/user/nicknamecheck?user_nickname=${userNickname}`);
-      if (res.data === 'success') {
-        setNicknamecheck(true);
-        setNicknameMessage("사용 가능한 닉네임입니다.");
-
-        // 닉네임이 유효하고 중복되지 않으면 폼 데이터를 서버로 전송합니다.
-        console.log("폼 데이터를 서버로 전송합니다.");
-      } else {
-        setNicknamecheck(false);
-        setNicknameMessage("동일한 닉네임 사용자가 있습니다. 다른 닉네임을 사용해 주세요.");
-        return; // 중복된 닉네임이면 폼 제출 중지
-      }
-    } catch (error) {
-      console.error("Failed to check nickname:", error);
-      setNicknameMessage("닉네임 중복 검사에 실패했습니다. 다시 시도해 주세요.");
-      setNicknamecheck(false);
-      return; // 에러 발생 시 폼 제출 중지
-    }
-
-    // FormData 생성 및 이미지와 닉네임 추가
     const formData = new FormData();
     formData.append('userNickname', userNickname);
-    if (userData.userImageFile) { // 실제 업로드할 파일이 있는 경우에만 업로드
+    if (userData.userImageFile) {
       formData.append('userImage', userData.userImageFile);
     }
 
-    // 폼 데이터를 서버로 전송
     try {
       const uploadRes = await axios.post('/update/user/formdata', formData, {
         headers: {
@@ -150,23 +125,19 @@ export default function UpdateUser() {
       if (uploadRes.data === 'success') {
         console.log("폼 데이터를 서버로 전송했습니다.");
         navi('/');
-        // 추가적인 성공 처리 로직
       } else {
         console.log("서버 응답 실패");
-        // 실패 처리 로직
       }
     } catch (error) {
       console.error("서버로 데이터 전송 실패:", error);
-      // 에러 처리 로직
     }
   };
-
 
   return (
       <main className="flex-1 p-8">
         <div className="max-w-md mx-auto">
           <h1 className="mb-6 text-2xl font-bold text-center">회원 정보 수정</h1>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="flex justify-center mb-4">
             <span className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full">
               {userData && userData.userImage ? (
@@ -181,7 +152,11 @@ export default function UpdateUser() {
                 </span>
               )}
             </span>
-              <button className="ml-2" onClick={handleFileButtonClick}>
+              <button
+                  type="button"
+                  className="ml-2"
+                  onClick={() => fileInputRef.current.click()}
+              >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -222,13 +197,14 @@ export default function UpdateUser() {
                   onChange={(e) => setUserNickname(e.target.value)}
               />
               <button
+                  type="button"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-shrink-0"
                   onClick={checkNickname}
               >
                 중복확인
               </button>
             </div>
-            <p className={`text-xs ${nicknamecheck ? 'text-green-500' : nicknameMessage === "닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요." ? 'text-black' : 'text-red-500'}`}>
+            <p className={`text-xs ${nicknamecheck ? 'text-green-500' : 'text-red-500'}`}>
               {nicknameMessage}
             </p>
             <Button variant="contained" onClick={handlePasswordReset}>
@@ -293,6 +269,7 @@ export default function UpdateUser() {
             </div>
             <button
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                onClick={handleSubmit}
             >
               확인
             </button>
