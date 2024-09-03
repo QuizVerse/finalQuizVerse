@@ -198,7 +198,7 @@ export default function EditChoices({question}) {
                         {choices.map((choice, index) => (
                             <div key={index} className="flex flex-col gap-4">
                                 <div className="flex gap-4 items-end">
-                                    <FormControlLabel value={index} control={<Radio/>} label=""/>
+                                    <FormControlLabel value={index} control={<Radio checked={choice.choiceIsanswer}/>} label=""/>
                                     <TextField
                                         fullWidth multiline
                                         label={"답안"}
