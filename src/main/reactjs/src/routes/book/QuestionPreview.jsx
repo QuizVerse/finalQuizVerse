@@ -122,7 +122,7 @@ export default function QuestionPreview() {
             </div>
             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
                 <div className={"flex justify-between p-4"}>
-                    <Typography variant="h6"> {bookData.user ? bookData.user.userNickname : "로드 중..."}</Typography>
+                    <Typography variant="h6">{bookData.user ? bookData.user.userNickname : "로드 중..."}</Typography>
                     <Typography variant="h6">
                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
@@ -151,8 +151,8 @@ export default function QuestionPreview() {
                         {questions.map((question, index) => (
                             <SwiperSlide>
                                 <div key={index} className="flex flex-col items-center space-y-2 space-x-4">
-                                    <div className="font-medium">{`${index + 1}번`}</div>
-                                    <div className="min-w-max">
+                                    <div className="font-medium whitespace-nowrap p-2">{`${index + 1}번`}</div>
+                                    <div className="min-w-max whitespace-nowrap p-2">
                                         <TextField
                                             type="number"
                                             step="0.1"
