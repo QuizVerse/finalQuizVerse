@@ -20,6 +20,16 @@ import {
 import CustomAlert from "../../components/modal/CustomAlert";
 import PreviewSection from "../../components/questionPreview/PreviewSection";
 
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+// import required modules
+import { Pagination } from 'swiper/modules';
+
 export default function QuestionPreview() {
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
@@ -116,9 +126,12 @@ export default function QuestionPreview() {
     }
 
     return (
-        <>
-            <Container maxWidth="lg">
-                <Box display="flex" justifyContent="space-between" py={2} borderBottom={1}>
+        <div className={"space-y-8"}>
+            <div className={"flex justify-center"}>
+                <Typography variant="h5" mb={2}>문제 미리보기</Typography>
+            </div>
+            <div className={'sticky top-0 space-y-8 bg-white z-50'}>
+                <div className={"flex justify-between"}>
                     <Typography variant="h6">홍길동</Typography>
                     <Typography variant="h6">
                         총 {totalQuestions} 문항 | 총 {targetTotal} 점
@@ -129,74 +142,79 @@ export default function QuestionPreview() {
                         color="primary">
                         출제하기
                     </Button>
-                </Box>
-                <Box mt={4} textAlign="center">
-                    <Typography variant="h5" mb={2}>문제 미리보기</Typography>
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell className={"whitespace-nowrap"}>
-                                        문항번호
-                                    </TableCell>
-                                    {scores.map((_, index) => (
-                                        <TableCell key={index} className={"whitespace-nowrap"}>
-                                            {`${index + 1}번`}
-                                        </TableCell>
-                                    ))}
-                                    <TableCell align="center" className={"whitespace-nowrap"}>
-                                        현재 배점 합계
-                                    </TableCell>
-                                    <TableCell align="center" className={"whitespace-nowrap"}>
-                                        총점
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell align="center">배점</TableCell>
-                                    {scores.map((score, index) => (
-                                        <TableCell key={index} align="center" className={"whitespace-nowrap min-w-max"}>
-                                            <TextField
-                                                type="number"
-                                                step="0.1"
-                                                min="0"
-                                                value={score}
-                                                onChange={(e) => handleScoreInput(index, e.target.value)}
-                                                size="small"
-                                                variant="standard"
-                                                inputProps={{style: {textAlign: 'center'}}}
-                                                className={"whitespace-nowrap w-8"}
-                                            />
-                                        </TableCell>
-                                    ))}
-                                    <TableCell align="center" className={"whitespace-nowrap"}
-                                               style={{color: isTotalEqual ? 'blue' : 'red'}}>
-                                        {totalScore.toFixed(1)}점
-                                    </TableCell>
-                                    <TableCell align="center" className={"whitespace-nowrap"}
-                                               style={{color: 'blue'}}>
-                                        {targetTotal}점
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
-                <div className="space-y-4">
-                    {sections && sections.map((section, index) => (
-                        <PreviewSection
-                            key={index}
-                            index={index}
-                            sectionCount={sections.length}
-                            section={section}
-                            book={bookData}
-                            loading={loading}
-                            setLoading={setLoading}
-                        />
-                    ))}
                 </div>
-            </Container>
+                <div className="flex items-center bg-white rounded shadow-lg">
+                    {/* 문항번호와 배점 */}
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                        <div className="font-semibold whitespace-nowrap p-2">
+                            문항번호
+                        </div>
+                        <div className="font-semibold whitespace-nowrap p-2">배점</div>
+                    </div>
+
+                    {/* 문항번호 및 배점 입력 필드들 */}
+                    <Swiper
+                        slidesPerView={10}
+                        spaceBetween={30}
+                        centeredSlides={true}
+                        className="mySwiper">
+                        {scores.map((score, index) => (
+                            <SwiperSlide>
+                                <div key={index} className="flex flex-col items-center space-y-2 space-x-4">
+                                    <div className="font-medium">{`${index + 1}번`}</div>
+                                    <div className="min-w-max">
+                                        <TextField
+                                            type="number"
+                                            step="0.1"
+                                            min="0"
+                                            value={score}
+                                            onChange={(e) => handleScoreInput(index, e.target.value)}
+                                            size="small"
+                                            variant="standard"
+                                            inputProps={{className: "text-center"}}
+                                            className="w-12"
+                                        />
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+
+                    {/* 현재 배점 합계 */}
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                        <div className="font-semibold whitespace-nowrap p-2">현재 배점 합계</div>
+                        <div
+                            className={`${isTotalEqual ? 'text-blue-500' : 'text-red-500'} font-bold whitespace-nowrap p-2`}>
+                            {totalScore.toFixed(1)}점
+                        </div>
+                    </div>
+
+                    {/* 총점 */}
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                        <div className="font-semibold whitespace-nowrap p-2">총점</div>
+                        <div className="text-blue-500 font-bold whitespace-nowrap p-2">
+                            {targetTotal}점
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div className="space-y-4">
+                {sections && sections.map((section, index) => (
+                    <PreviewSection
+                        key={index}
+                        index={index}
+                        sectionCount={sections.length}
+                        section={section}
+                        book={bookData}
+                        loading={loading}
+                        setLoading={setLoading}
+                    />
+                ))}
+            </div>
+
 
             {/*alert*/}
             <CustomAlert
@@ -204,6 +222,6 @@ export default function QuestionPreview() {
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />
-        </>
+        </div>
     );
 }
