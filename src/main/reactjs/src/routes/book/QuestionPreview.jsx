@@ -136,19 +136,27 @@ export default function QuestionPreview() {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>문항번호</TableCell>
+                                    <TableCell className={"whitespace-nowrap"}>
+                                        문항번호
+                                    </TableCell>
                                     {scores.map((_, index) => (
-                                        <TableCell key={index}>{`${index + 1}번`}</TableCell>
+                                        <TableCell key={index} className={"whitespace-nowrap"}>
+                                            {`${index + 1}번`}
+                                        </TableCell>
                                     ))}
-                                    <TableCell align="center">현재 배점 합계</TableCell>
-                                    <TableCell align="center">총점</TableCell>
+                                    <TableCell align="center" className={"whitespace-nowrap"}>
+                                        현재 배점 합계
+                                    </TableCell>
+                                    <TableCell align="center" className={"whitespace-nowrap"}>
+                                        총점
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 <TableRow>
                                     <TableCell align="center">배점</TableCell>
                                     {scores.map((score, index) => (
-                                        <TableCell key={index} align="center">
+                                        <TableCell key={index} align="center" className={"whitespace-nowrap min-w-max"}>
                                             <TextField
                                                 type="number"
                                                 step="0.1"
@@ -158,13 +166,16 @@ export default function QuestionPreview() {
                                                 size="small"
                                                 variant="standard"
                                                 inputProps={{style: {textAlign: 'center'}}}
+                                                className={"whitespace-nowrap w-8"}
                                             />
                                         </TableCell>
                                     ))}
-                                    <TableCell align="center" style={{color: isTotalEqual ? 'blue' : 'red'}}>
+                                    <TableCell align="center" className={"whitespace-nowrap"}
+                                               style={{color: isTotalEqual ? 'blue' : 'red'}}>
                                         {totalScore.toFixed(1)}점
                                     </TableCell>
-                                    <TableCell align="center" style={{color: 'blue'}}>
+                                    <TableCell align="center" className={"whitespace-nowrap"}
+                                               style={{color: 'blue'}}>
                                         {targetTotal}점
                                     </TableCell>
                                 </TableRow>

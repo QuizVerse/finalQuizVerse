@@ -100,7 +100,7 @@ export default function PreviewChoices({question}) {
                     >
                     {choices.map((choice, index) => (
                         <div key={index} className="flex flex-col gap-4">
-                            <div className="flex gap-4 items-end">
+                            <div className="flex items-center">
                                 <FormControlLabel value={index} control={<Radio/>} label=""/>
                                 <Typography>{choice.choiceText}</Typography>
                             </div>
@@ -123,7 +123,7 @@ export default function PreviewChoices({question}) {
             {question.questionType === 1 && (  // 다중선택형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
                     {choices.map((choice, index) => (
-                        <div key={index} className="flex gap-4 items-end">
+                        <div key={index} className="flex items-center">
                             <Checkbox
                                 checked={choice.choiceIsanswer}
                                 value={choice.choiceIsanswer}
