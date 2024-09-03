@@ -126,7 +126,6 @@ export default function TestChoices({question}) {
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex items-center">
                                 <Checkbox
-                                    checked={choice.choiceIsanswer}
                                     value={choice.choiceIsanswer}
                                     onClick={() => updateCheckBox(index)}/>
                                 <Typography>{choice.choiceText}</Typography>
