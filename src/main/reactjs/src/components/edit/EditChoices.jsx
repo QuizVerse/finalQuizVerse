@@ -327,7 +327,7 @@ export default function EditChoices({question}) {
                         label={"답안"}
                         placeholder="정답을 입력하세요."
                         variant={"standard"}
-                        value={choices[0].choiceText}
+                        value={choices[0]?.choiceText}
                         onChange={(e) => updateShortAnswer(e)}
                     />
                 </div>
