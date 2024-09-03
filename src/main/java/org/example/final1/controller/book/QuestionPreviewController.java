@@ -18,6 +18,7 @@ public class QuestionPreviewController {
         this.questionService = questionService;
     }
 
+    // bookId로 question 모두 불러오기
     @GetMapping("/questionpreview/{id}")
     public ResponseEntity<List<QuestionDto>> getQuestionsByBookId(@PathVariable("id") int bookId) {
         List<QuestionDto> questions = questionService.getQuestionsByBookId(bookId);

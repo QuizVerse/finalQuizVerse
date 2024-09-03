@@ -2,16 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import {
-    Container,
     Typography,
     Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     TextField,
     Box,
     CircularProgress,
@@ -27,17 +19,14 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-// import required modules
-import { Pagination } from 'swiper/modules';
 
 export default function QuestionPreview() {
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
-    const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
+    const [bookData, setBookData] = useState(''); // 책 데이터를 저장할 상태 추가
     const [sections, setSections] = useState([]);
 
-    const [scores, setScores] = useState([1,2,3,34,5,5,6,6,7,8,3,33,4,5,6,21,1,1,34,5,435,345,43,54,5,5]);
-    const [totalQuestions, setTotalQuestions] = useState(0);
+    const [questions, setQuestions] = useState([]);
     const [targetTotal, setTargetTotal] = useState(100);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -55,8 +44,15 @@ export default function QuestionPreview() {
                 axios.get(`/book/edit/${bookId}`)
                     .then((res)=>{
                         setBookData(res.data.book);
+                        console.log("북북", res.data.book)
+                        console.log("북북22", res.data.book.user)
                         setSections(res.data.sections);
                     });
+                axios.get(`/book/questionpreview/${bookId}`)
+                    .then((res)=>{
+                        setQuestions(res.data);
+                    });
+
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
                 console.error("Error fetching book, section data:", error);
@@ -68,24 +64,25 @@ export default function QuestionPreview() {
     }, [bookId]);
 
     const handleScoreInput = (index, newScore) => {
-        const updatedScores = [...scores];
+        const updatedQuestions = [...questions];
         const parsedScore = parseFloat(newScore) || 0.0;
 
-        updatedScores[index] = parsedScore;
-        const currentTotal = updatedScores.reduce((acc, curr) => acc + curr, 0);
+        updatedQuestions[index].questionPoint = parsedScore; // questionPoint를 업데이트
+        const currentTotal = updatedQuestions.reduce((acc, curr) => acc + curr.questionPoint, 0); // 총합 계산
 
         if (currentTotal <= targetTotal) {
-            setScores(updatedScores);
+            setQuestions(updatedQuestions); // 상태 업데이트
         } else {
             openAlert("총 점수가 목표 점수를 초과할 수 없습니다.");
         }
     };
 
-    const totalScore = scores.reduce((acc, curr) => acc + curr, 0);
+    const totalScore = questions.reduce((acc, curr) => acc + curr.questionPoint, 0);
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
 
     const handleSubmit = () => {
-        if (scores.some((score) => score === 0)) {
+        // questionPoint가 0인 질문이 있는지 확인
+        if (questions.some((question) => question.questionPoint === 0)) {
             openAlert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
         } else {
             openAlert("모든 문제에 대해 배점이 완료되었습니다. 제출을 진행합니다.");
@@ -107,7 +104,6 @@ export default function QuestionPreview() {
     const closeAlert = () => {
         setAlertVisible(false);
     };
-
 
     if (loading) {
         return (
@@ -131,10 +127,10 @@ export default function QuestionPreview() {
                 <Typography variant="h5" mb={2}>문제 미리보기</Typography>
             </div>
             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
-                <div className={"flex justify-between"}>
-                    <Typography variant="h6">홍길동</Typography>
+                <div className={"flex justify-between p-4"}>
+                    <Typography variant="h6">{bookData.user.userNickname}</Typography>
                     <Typography variant="h6">
-                        총 {totalQuestions} 문항 | 총 {targetTotal} 점
+                        총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
                     <Button
                         onClick={handleSubmit}
@@ -158,7 +154,7 @@ export default function QuestionPreview() {
                         spaceBetween={30}
                         centeredSlides={true}
                         className="mySwiper">
-                        {scores.map((score, index) => (
+                        {questions.map((question, index) => (
                             <SwiperSlide>
                                 <div key={index} className="flex flex-col items-center space-y-2 space-x-4">
                                     <div className="font-medium">{`${index + 1}번`}</div>
@@ -167,7 +163,7 @@ export default function QuestionPreview() {
                                             type="number"
                                             step="0.1"
                                             min="0"
-                                            value={score}
+                                            value={question.questionPoint}
                                             onChange={(e) => handleScoreInput(index, e.target.value)}
                                             size="small"
                                             variant="standard"
@@ -193,7 +189,7 @@ export default function QuestionPreview() {
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
                         <div className="font-semibold whitespace-nowrap p-2">총점</div>
                         <div className="text-blue-500 font-bold whitespace-nowrap p-2">
-                            {targetTotal}점
+                            {bookData.bookTotalscore}점
                         </div>
                     </div>
                 </div>
