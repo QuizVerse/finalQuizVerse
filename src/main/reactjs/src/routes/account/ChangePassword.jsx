@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 export default function ChangePassword() {
   const [user_email, setUser_email] = useState('');
@@ -10,6 +10,7 @@ export default function ChangePassword() {
   const [user_password, setUser_password] = useState('');
   const [user_passwordcheck, setUser_passwordcheck] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+  const [isCodeSent, setIsCodeSent] = useState(false);  // 인증 코드 전송 여부 추가
 
   // 비밀번호 유효성 검사
   const validatePassword = (password) => {
@@ -23,7 +24,7 @@ export default function ChangePassword() {
     if (user_password !== user_passwordcheck) {
       setPasswordMessage('* 비밀번호가 일치하지 않습니다. 다시 입력해주세요');
     } else if (!validatePassword(user_password)) {
-      setPasswordMessage('* 비밀번호 양식 형식을 맞춰주세요.');
+      setPasswordMessage('* 비밀번호 양식을 맞춰주세요.');
     } else {
       setPasswordMessage('* 사용 가능한 비밀번호입니다.');
     }
@@ -68,7 +69,10 @@ export default function ChangePassword() {
             alert("인증 코드가 이메일로 발송되었습니다.");
             setTimerRunning(true); // 타이머 시작
             setTimeLeft(180); // 타이머를 다시 3분으로 초기화
-          }
+            setIsCodeSent(true); // 인증 코드 전송 상태 업데이트
+          }else if (res.data === 'nouser') {
+            alert('회원이 아닙니다. 회원 가입 후 시도해주세요.');}
+
           else {
             alert("이메일 전송 실패");
           }
@@ -102,9 +106,9 @@ export default function ChangePassword() {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
-  const handleSubmit=(e)=>{
-    e.preventDefault();//폼제출시 페이지 리로드를 방지한다.
-    if(!emailcheck){
+  const handleSubmit = (e) => {
+    e.preventDefault(); // 폼 제출 시 페이지 리로드를 방지한다.
+    if (!emailcheck) {
       alert("이메일 인증을 먼저 완료해주세요.");
       return;
     }
@@ -118,10 +122,10 @@ export default function ChangePassword() {
     }
 
     // 서버로 데이터 전송
-    axios.post('/change/user/updatepassword', {
-      user_email,
-      user_password
-    })
+    axios.post('/change/user/updatepassword', new URLSearchParams({
+      user_email: user_email,
+      user_password: user_password
+    }))
         .then(res => {
           if (res.data === 'success') {
             alert("비밀번호가 성공적으로 변경되었습니다.");
@@ -134,7 +138,6 @@ export default function ChangePassword() {
           alert("비밀번호 변경 중 오류가 발생했습니다.");
         });
   };
-
 
   return (
       <main className="flex flex-col items-center justify-center flex-1 w-full p-4">
@@ -161,6 +164,7 @@ export default function ChangePassword() {
                       onChange={(e) => setUser_email(e.target.value)}
                   />
                   <button
+                      type="button"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                       onClick={sendEmail}
                   >
@@ -182,11 +186,13 @@ export default function ChangePassword() {
                       placeholder="인증 코드"
                       value={auth_code} // 사용자 입력 코드
                       onChange={(e) => setAuth_code(e.target.value)} // 입력 값 상태로 업데이트
+                      disabled={!isCodeSent} // 인증 코드 전송 여부에 따라 입력 필드 비활성화/활성화
                   />
                   <button
                       type="button"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-shrink-0"
                       onClick={checkEmail}
+                      disabled={!isCodeSent} // 인증 코드 전송 여부에 따라 버튼 비활성화/활성화
                   >
                     확인
                   </button>
@@ -208,6 +214,7 @@ export default function ChangePassword() {
                       placeholder="비밀번호"
                       value={user_password}
                       onChange={(e) => setUser_password(e.target.value)}
+                      disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 비밀번호 필드 비활성화/활성화
                   />
                   <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -242,6 +249,7 @@ export default function ChangePassword() {
                       placeholder="비밀번호 확인"
                       value={user_passwordcheck}
                       onChange={(e) => setUser_passwordcheck(e.target.value)}
+                      disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 비밀번호 확인 필드 비활성화/활성화
                   />
                   <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -266,13 +274,14 @@ export default function ChangePassword() {
             </div>
             <div className="flex items-center p-6">
               <button
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
+                  type="submit"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                  disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 제출 버튼 비활성화/활성화
+              >
                 확인
               </button>
             </div>
-
           </form>
-
         </div>
       </main>
   );

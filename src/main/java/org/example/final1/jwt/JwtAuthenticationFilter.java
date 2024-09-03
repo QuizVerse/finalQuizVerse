@@ -102,6 +102,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String deviceId = UUID.randomUUID().toString();
         // Refresh Token을 데이터베이스에 저장
         tokenService.saveRefreshToken(refreshToken, principalDetails.getUserDto(), deviceId);
+        System.out.println("tokenservice");
 
 
         // Refresh Token을 HttpOnly 쿠키에 저장
