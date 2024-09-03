@@ -12,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/room")
+@RequestMapping("/studys")
 public class StudyListController {
     private final StudyService studyService;
     
-    @GetMapping("/list")
+    @GetMapping("/lists")
     public List<StudyDto> getAllRoom()
     {
         return studyService.getAllRoom();

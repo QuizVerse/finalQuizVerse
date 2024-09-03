@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 10;
 const SPACING = 2;
@@ -12,12 +13,12 @@ const SPACING = 2;
 const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
 export default function StudyList() {
-
     // pagenation에 필요한 변수
     const [page, setPage] = useState(1);
     const itemOffset = (page - 1) * ITEMS_PER_PAGE;
     const currentItems = items.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(items.length / ITEMS_PER_PAGE);
+    const navi = useNavigate();
 
     /**
      * @description : pagenation에 필요한 함수
@@ -30,7 +31,7 @@ export default function StudyList() {
     const [roomList, setRoomList] = useState([]);
 
     const getRoomList = () => {
-        axios.get(`/room/list`).then((res) => {
+        axios.get(`/studys/lists`).then((res) => {
           setRoomList(res.data);
         });
       };
