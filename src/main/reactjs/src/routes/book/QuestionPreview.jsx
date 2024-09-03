@@ -24,8 +24,8 @@ export default function QuestionPreview() {
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
     const [bookData, setBookData] = useState({}); // 책 데이터를 저장할 상태 추가
     const [sections, setSections] = useState([]);
-
     const [questions, setQuestions] = useState([]);
+
     const [targetTotal, setTargetTotal] = useState(100);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

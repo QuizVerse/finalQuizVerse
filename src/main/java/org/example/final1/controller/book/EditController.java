@@ -31,7 +31,7 @@ public class EditController {
     final NcpObjectStorageService storageService;
 
     private String bucketName="bitcamp701-129";
-    private String folderName="book";
+    private String folderName="final/book";
 
     //사진만 먼저 업로드
     @PostMapping("/edit/upload")
