@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CustomAlert from "../../components/modal/CustomAlert";
+import {Button, TextField} from "@mui/material";
 
 export default function Signup() {
     const [user_email, setUser_email] = useState('');
@@ -381,41 +382,13 @@ export default function Signup() {
                             [선택] 카카오톡 정보수신 동의
                         </label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            className="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                            id="not-robot"
-                        />
-                        <label
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            htmlFor="not-robot"
-                        >
-                            로봇이 아닙니다
-                        </label>
-                    </div>
                 </div>
-                <div className="flex flex-col items-center space-y-2">
-                    <img
-                        src="/placeholder.svg"
-                        alt="Captcha"
-                        className="w-full max-w-xs"
-                        width="300"
-                        height="200"
-                    />
-                    <button
-                        type="button"
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                    >
-                        새로고침
-                    </button>
-                </div>
-                <button
-                    type="submit"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 h-10 px-4 py-2 w-full bg-blue-500 text-white"
-                >
+                <Button
+                    fullWidth
+                    variant={"contained"}
+                    type="submit">
                     회원가입
-                </button>
+                </Button>
 
                 <CustomAlert
                     openAlert={alertVisible}
@@ -424,10 +397,7 @@ export default function Signup() {
                     content={alertContent}
                     btnText={alertBtnText}
                 />
-
             </form>
-
-
         </main>
     );
 }
