@@ -11,75 +11,94 @@ import {
 } from "@mui/material";
 import CustomAlert from "../../components/modal/CustomAlert";
 import PreviewSection from "../../components/questionPreview/PreviewSection";
-
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 
 export default function QuestionPreview() {
-    // 데이터 관련 변수
-    const {bookId} = useParams(); //URL에서 book_Id를 가져옴
-    const [bookData, setBookData] = useState({}); // 책 데이터를 저장할 상태 추가
+    const {bookId} = useParams();
+    const [bookData, setBookData] = useState({});
     const [sections, setSections] = useState([]);
     const [questions, setQuestions] = useState([]);
-
     const [targetTotal, setTargetTotal] = useState(100);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
+    // 추가: isChecked와 totalPoints 상태 정의
+    const [isChecked, setIsChecked] = useState(false);
+    const [totalPoints, setTotalPoints] = useState(0);
 
-    // bookId에 해당하는 책 데이터를 가져옴
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const bookRes = await axios.get(`/book/edit/${bookId}`);
-                setBookData(bookRes.data.book);
+                const bookData = bookRes.data.book;
+                setBookData(bookData);
                 setSections(bookRes.data.sections);
+                setTotalPoints(bookData.bookTotalscore);
+                // isChecked 설정: bookDivide 값에 따라 설정
+                setIsChecked(bookData.bookDivide === 1);
+                setTotalPoints(bookData.bookTotalscore || 100); // 기본값 100 설정
 
                 const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-                setQuestions(questionsRes.data);
+                const loadedQuestions = questionsRes.data.map(question => ({
+                    ...question,
+                    questionPoint: question.questionPoint || 0
+                }));
+                setQuestions(loadedQuestions);
 
-                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setError("데이터를 가져오는 도중 문제가 발생했습니다."); // 에러 메시지 설정
-                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+                setError("데이터를 가져오는 도중 문제가 발생했습니다.");
+                setLoading(false);
             }
         };
 
-        fetchData(); // 데이터를 가져오는 함수 호출
+        fetchData();
     }, [bookId]);
 
     const handleScoreInput = (index, newScore) => {
         const updatedQuestions = [...questions];
-        const parsedScore = parseFloat(newScore) || 0.0;
+        const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
+        updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
 
-        updatedQuestions[index].questionPoint = parsedScore; // questionPoint를 업데이트
-        const currentTotal = updatedQuestions.reduce((acc, curr) => acc + curr.questionPoint, 0); // 총합 계산
+        const currentTotal = updatedQuestions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
 
-        if (currentTotal <= targetTotal) {
-            setQuestions(updatedQuestions); // 상태 업데이트
+        if (currentTotal > targetTotal) {
+            const excess = currentTotal - targetTotal;
+            updatedQuestions[index].questionPoint = Math.round((parsedScore - excess) * 10) / 10;
+            openAlert(`총 점수가 목표 점수를 초과했습니다. 현재 문항의 배점이 ${targetTotal}점에 맞춰 조정되었습니다.`);
         } else {
-            openAlert("총 점수가 목표 점수를 초과할 수 없습니다.");
+            updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
         }
+
+        setQuestions(updatedQuestions);
     };
 
-    const totalScore = questions.reduce((acc, curr) => acc + curr.questionPoint, 0);
+    const totalScore = questions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
 
     const handleSubmit = async () => {
-        // questionPoint가 0인 질문이 있는지 확인
-        if (questions.some((question) => question.questionPoint === 0)) {
-            openAlert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
+        // 점수 균등 분배 로직
+        if (isChecked) {
+            const totalQuestions = questions.length;
+            const totalScore = parseInt(totalPoints, 10) || 0;
+            const evenScore = Math.round((totalScore / totalQuestions) * 10) / 10;
+            const updatedQuestions = questions.map((question) => ({
+                ...question,
+                questionPoint: evenScore
+            }));
+
+            setQuestions(updatedQuestions);
+        }
+
+        if (questions.some((question) => question.questionPoint === 0 || question.questionPoint === "")) {
+            openAlert("모든 문제에 대해 배점을 해야 합니다. 0점 또는 빈 점수가 있는 문제가 있습니다.");
         } else {
-            // 모든 문제에 대해 배점이 완료되었으므로 서버로 데이터 전송
             try {
                 const response = await axios.post(`/book/question/saveScore/${bookId}`, { questions });
 
@@ -95,18 +114,11 @@ export default function QuestionPreview() {
         }
     };
 
-    /** 모달 관련 함수 */
-    /**
-     * @description : Alert창 열릴 때
-     * */
     const openAlert = (alertTitle) => {
         setAlertTitle(alertTitle);
         setAlertVisible(true);
     };
 
-    /**
-     * @description : Alert창 닫힐 때
-     * */
     const closeAlert = () => {
         setAlertVisible(false);
     };
@@ -146,7 +158,6 @@ export default function QuestionPreview() {
                     </Button>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
-                    {/* 문항번호와 배점 */}
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
                         <div className="font-semibold whitespace-nowrap p-2">
                             문항번호
@@ -154,15 +165,17 @@ export default function QuestionPreview() {
                         <div className="font-semibold whitespace-nowrap p-2">배점</div>
                     </div>
 
-                    {/* 문항번호 및 배점 입력 필드들 */}
                     <Swiper
                         slidesPerView={10}
                         spaceBetween={30}
                         centeredSlides={true}
-                        className="mySwiper">
+                        className="mySwiper"
+                        virtual={false}
+                        watchSlidesProgress={true}
+                    >
                         {questions.map((question, index) => (
-                            <SwiperSlide>
-                                <div key={index} className="flex flex-col items-center space-y-2 space-x-4">
+                            <SwiperSlide key={index} style={{ overflow: 'visible' }}>
+                                <div className="flex flex-col items-center space-y-2 space-x-4">
                                     <div className="font-medium whitespace-nowrap p-2">{`${index + 1}번`}</div>
                                     <div className="min-w-max whitespace-nowrap p-2">
                                         <TextField
@@ -173,8 +186,13 @@ export default function QuestionPreview() {
                                             onChange={(e) => handleScoreInput(index, e.target.value)}
                                             size="small"
                                             variant="standard"
-                                            inputProps={{className: "text-center"}}
+                                            inputProps={{
+                                                step: 0.1,
+                                                min: 0,
+                                                className: "text-center"
+                                            }}
                                             className="w-12"
+                                            style={{ zIndex: 1 }}
                                         />
                                     </div>
                                 </div>
@@ -182,7 +200,6 @@ export default function QuestionPreview() {
                         ))}
                     </Swiper>
 
-                    {/* 현재 배점 합계 */}
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
                         <div className="font-semibold whitespace-nowrap p-2">현재 배점 합계</div>
                         <div
@@ -191,7 +208,6 @@ export default function QuestionPreview() {
                         </div>
                     </div>
 
-                    {/* 총점 */}
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
                         <div className="font-semibold whitespace-nowrap p-2">총점</div>
                         <div className="text-blue-500 font-bold whitespace-nowrap p-2">
@@ -216,7 +232,6 @@ export default function QuestionPreview() {
                 ))}
             </div>
 
-            {/*alert*/}
             <CustomAlert
                 title={alertTitle}
                 openAlert={alertVisible}
