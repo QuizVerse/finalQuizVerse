@@ -10,32 +10,17 @@ import VideoComponent from "../../components/VideoComponent";
 import AudioComponent from "../../components/AudioComponent";
 import { LiveKitRoom, LayoutContextProvider } from "@livekit/components-react";
 
-
-
-// 로컬 개발을 위한 기본값 설정
-// 프로덕션에서는 배포에 따라 올바른 URL을 구성해야 합니다
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
 // function configureUrls() {
-//     // 로컬 개발을 위한 URL 구성
-//     // 프로덕션을 위한 URL 구성
 //     APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
 //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 // }
 
-// 로컬이면 6080 http, 배포면 6443 https,
-
 function configureUrls() {
-  if (!APPLICATION_SERVER_URL) {
-      if (window.location.hostname === "localhost") {
-          APPLICATION_SERVER_URL = "http://localhost:9002/";
-      } else {
-          APPLICATION_SERVER_URL = "https://" + window.location.hostname + ":6443/";
-      }
-  }
-
+    APPLICATION_SERVER_URL = "http://localhost:9002/";
   LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
 
@@ -53,6 +38,7 @@ export default function StudyRoom() {
   const [screenTrack, setScreenTrack] = useState(null);
   
   
+
   async function joinRoom() {
       // 새 Room 객체 초기화
       const room = new Room();
@@ -115,23 +101,10 @@ export default function StudyRoom() {
       }
   }
 
-  /**
-   * --------------------------------------------
-   * 애플리케이션 서버에서 토큰 가져오기
-   * --------------------------------------------
-   * 아래 메서드는 애플리케이션 서버에서 토큰을 요청합니다.
-   * 이를 통해 LiveKit API 키와 비밀을 클라이언트 측에 노출하지 않습니다.
-   *
-   * 이 샘플 코드에서는 사용자 제어가 없습니다. 누구나
-   * 애플리케이션 서버 엔드포인트에 접근할 수 있습니다. 실제 프로덕션에서는
-   * 애플리케이션 서버가 사용자 인증을 통해 엔드포인트 접근을 허용해야 합니다.
-   */
-
   async function getToken(roomName, participantName) {
       try {
           const response = await fetch(APPLICATION_SERVER_URL + "token", {
               method: "POST",
-              //url: "http://localhost:6080",
               headers: {
                   "Content-Type": "application/json"
               },

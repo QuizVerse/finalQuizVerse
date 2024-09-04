@@ -43,9 +43,6 @@ public class StudyDto {
     @CreationTimestamp
     private Timestamp studyCreatedate;
 
-    @Column(name = "study_url", nullable = false, length = 255)
-    private String studyUrl;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private UserDto user;

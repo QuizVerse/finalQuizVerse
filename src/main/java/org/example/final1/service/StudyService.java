@@ -17,4 +17,9 @@ public class StudyService {
     {
         return studyDao.getAllRoom();
     }
+
+    public void insertRoom(StudyDto dto)
+    {
+        studyDao.insertRoom(dto);
+    }
 }
