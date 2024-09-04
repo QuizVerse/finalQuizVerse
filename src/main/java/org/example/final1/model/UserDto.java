@@ -47,8 +47,6 @@ public class UserDto {
     @Column(name = "user_role", nullable = false, length = 50)
     private String userRole;
 
-    @Column(name = "user_accesstoken", nullable = true, length = 255)
-    private String userAccessToken;
 
 
     @Builder
@@ -61,7 +59,7 @@ public class UserDto {
         this.userProviderid = userProviderid;
         this.userProvider = userProvider;
         this.userRole = userRole;
-        this.userAccessToken = userAccessToken;
+
     }
 
 }
