@@ -15,6 +15,7 @@ export default function EditAi() {
             });
             setData(jsonData);
             setHistory((prevHistory) => [...prevHistory, { prompt: userInput, result: jsonData }]); // 히스토리에 추가
+            console.log(jsonData);
         } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
         } finally {

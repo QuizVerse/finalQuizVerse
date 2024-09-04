@@ -5,11 +5,11 @@ import {
 import React, {useEffect, useState} from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import PreviewChoices from "./PreviewChoices";
+import TestChoices from "./TestChoices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function PreviewQuestion({
+export default function TestQuestion({
                                             question,
                                             onUploadImage
                                         }) {
@@ -64,7 +64,7 @@ export default function PreviewQuestion({
                             />
                         </div>
                     </div>
-                    <PreviewChoices question={question}/>
+                    <TestChoices question={question}/>
                     <div className="flex flex-col gap-4">
                         <div className="flex gap-4">
                             <Typography>{question.questionSolution}</Typography>

@@ -1,5 +1,3 @@
-// v0 by Vercel.
-// https://v0.dev/t/aQF3J0XBXxU
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -7,10 +5,38 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
 
 export default function Score() {
-  const navigate = useNavigate();
+    const [bookData, setBookData] = useState(null);
+    const [username, setUsername] = useState("");
+    const {bookId} = useParams(); // bookId 가져올 변수
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true); // 로딩 상태 추가
+
+
+
+    useEffect(() => {
+        const fetchData =async () => {
+            try {
+                //문제집 정보
+                const bookResponse = await axios.get(`/book/score/${bookId}`);
+                console.log(bookResponse.data);
+                setBookData(bookResponse.data);
+                // 사용자 정보
+                const userResponse = await axios.get(`/book/username`);
+                setUsername(userResponse.data.userNickname);
+            } catch (error) {console.log("Error : " , error);}
+        };
+        fetchData();
+    }, [bookId]);
+
+    if (!bookData) {
+        return <div>No data found</div>; // 데이터가 없을 때 표시
+    }
+
 
   // 일단 문제 개수를 20개로 지정
   const questions = Array.from({ length: 20 }, (_, index) => ({
@@ -27,7 +53,7 @@ export default function Score() {
         <div className="flex items-center space-x-4">
           <KeyboardArrowLeftIcon
             fontSize="large"
-            onClick={() => navigate("/book/detail")}
+            onClick={() => navigate(`/book/detail/${bookId}`)}
           />
           <div className="flex items-center gap-2 pr-4">
             <img
@@ -36,7 +62,7 @@ export default function Score() {
               src="/placeholder-user.jpg"
               style={{ width: "30px", height: "30px" }}
             />
-            <span>홍길동</span>
+            <span>{username}</span>
           </div>
 
           <div className="flex items-center gap-2  pr-4">
@@ -48,13 +74,13 @@ export default function Score() {
             <span>80점</span>
           </div>
         </div>
-        <h1 className="text-xl font-bold items-end">정보처리기사 기출문제</h1>
+        <h1 className="text-xl font-bold items-end">{bookData.bookTitle}</h1>
       </header>
       <section className="bg-black text-white p-6 mb-10">
         <div className="flex justify-evenly items-center">
           <div className="space-y-2">
             <h2 className="text-lg font-bold">
-              정보처리기사 2024 기출문제 1-2
+                {bookData.bookTitle}
             </h2>
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
@@ -137,13 +163,13 @@ export default function Score() {
               }}
             >
               <span style={{ color: "#626262" }}>
-                인자한 혹등고래님의 점수는?
+                {username}님의 점수는?
               </span>
               <span
                 className="block text-2xl font-bold"
                 style={{ color: "#626262" }}
               >
-                80/100점
+                80/{bookData.bookTotalscore}점
               </span>
             </div>
           </div>
@@ -158,12 +184,12 @@ export default function Score() {
         >
           해설보기
         </Button>
-        <Button variant="outlined" onClick={() => navigate("/book/detail")}>
+        <Button variant="outlined" onClick={() => navigate(`/book/detail/${bookId}`)}>
           문제집 정보 보기
         </Button>
         <Button
           variant="contained"
-          onClick={() => navigate("/book/scorepreview")}
+          onClick={() => navigate(`/book/scorepreview/${bookId}`)}
         >
           성적표 PDF 출력
         </Button>
