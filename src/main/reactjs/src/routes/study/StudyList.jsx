@@ -87,8 +87,7 @@ export default function StudyList() {
                             totalMember={item.studyMemberlimit}
                             status={1}
                             image={item.studyImage}
-                            onClick={()=>GoRoomEvent(item.studyId)}
-                        />
+                            onClick={()=>GoRoomEvent(item.studyId)}                        />
                     ))}
             </div>
 

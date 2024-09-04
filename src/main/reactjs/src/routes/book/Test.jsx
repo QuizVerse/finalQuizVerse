@@ -43,6 +43,7 @@ export default function ParentComponent() {
     return <div>No data found</div>; // 데이터가 없을 때 표시
   }
 
+
   const openConfirm = () => {
     setConfirmVisible(true);
   };
@@ -54,13 +55,13 @@ export default function ParentComponent() {
   const passbtn = () => {
     // 버튼1 클릭 시의 행동
     closeConfirm();
-    navigate("/book/score");
+    navigate(`/book/score/${bookId}`);
   };
 
   const submitbtn = () => {
     // 버튼2 클릭 시의 행동
     closeConfirm();
-    navigate("/book/score");
+    navigate(`/book/score/${bookId}`);
   };
 
   return (
