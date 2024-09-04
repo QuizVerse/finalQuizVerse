@@ -1,5 +1,5 @@
 import { MenuItem, Pagination, Stack, TextField } from "@mui/material";
-import BookCard from "../../components/BookCardSample";
+import BookCard from "../../components/BookCard";
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 
