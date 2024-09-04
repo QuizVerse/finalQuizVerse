@@ -1,15 +1,19 @@
-import {Button, Checkbox, FormControlLabel, Radio, RadioGroup, Typography} from "@mui/material";
+import {Button, Checkbox, FormControlLabel, Radio, RadioGroup, TextField, Typography} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import CustomAlert from "../modal/CustomAlert";
+import {TextFields, TextFieldsOutlined} from "@mui/icons-material";
 
 export default function TestChoices({question}) {
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
     const [oxSelected, setOxSelected] = useState(""); // OX 선택 상태 관리
+    const [subjectiveAnswer, setSubjectiveAnswer] = useState(""); // 주관식 답변 관리
+
+    // alert state
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
@@ -18,7 +22,9 @@ export default function TestChoices({question}) {
     useEffect(() => {
         setChoices([]);
         setOxSelected("");
+        setSubjectiveAnswer(""); // 주관식 답변 초기화
     }, [question.questionType]);
+
 
     // 화면 로딩될 때
     useEffect(() => {
@@ -87,6 +93,11 @@ export default function TestChoices({question}) {
             index === Number(val) ? e.choiceIsanswer = true : e.choiceIsanswer = false;
         })
         setChoices(updatedChoices);
+    };
+
+    // 주관식 답변 핸들러
+    const handleSubjectiveAnswer = (event) => {
+        setSubjectiveAnswer(event.target.value);
     };
 
     return (
@@ -167,7 +178,14 @@ export default function TestChoices({question}) {
             )}
             {question.questionType === 3 && (  // 단답형 문제일 경우
                 <div className={"flex flex-col gap-2"}>
-                    <Typography>{choices[0]? choices[0].choiceText : ""}</Typography>
+                    <TextField
+                        label="답변을 입력하세요"
+                        multiline
+                        rows={4}
+                        value={subjectiveAnswer}
+                        onChange={handleSubjectiveAnswer}
+                        fullWidth
+                    />
                 </div>
             )}
 
