@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import BookCardH from "../../components/BookCardH";
+import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
 // 스와이퍼
@@ -116,13 +116,8 @@ export default function BookList() {
             </Link>
           </div>
           <div className="grid grid-cols-5 gap-4">
-<<<<<<< HEAD
-            {booksByCategory[category.categoryId]?.slice(0, 5).map(book => (
-              <BookCardH
-=======
             {booksByCategory[category.categoryId]?.slice(0, 5).map((book) => (
               <BookCard
->>>>>>> 93ab209ce43a330bf3523b936e9fd4024cce4221
                 key={book.bookId}
                 bookId={book.bookId}
                 photo={`${photopath}/${book.bookImage}`}

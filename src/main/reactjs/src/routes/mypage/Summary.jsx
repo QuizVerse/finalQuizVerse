@@ -1,12 +1,12 @@
 // v0 by Vercel.
 // https://v0.dev/t/AIdkA9Pm9Pa
 
-import BookCardH from "../../components/BookCardH";
 import {Link} from "react-router-dom";
 import {Button, Pagination, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import Paper from '@mui/material/Paper';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import BookCard from "../../components/BookCard";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -97,17 +97,17 @@ export default function Summary() {
               </div>
               </Link>
             </Button>
-            <BookCardH cardType="B" className={"flex-1"} 
+            <BookCard cardType="B" className={"flex-1"} 
             photo={""}
             createDate={"2024-08-17"} nickname={"닉네임"} 
             title={"제목이랍니다"} category={"취업 / 자격증"}
              />
-             <BookCardH cardType="B" className={"flex-1"} 
+             <BookCard cardType="B" className={"flex-1"} 
              photo={""}
              createDate={"2024-08-18"} nickname={"쿠킹호일"} 
              title={"제목일걸요"} category={"여기는 카테고리"}
               />
-              <BookCardH cardType="B" className={"flex-1"} 
+              <BookCard cardType="B" className={"flex-1"} 
               photo={""}
               createDate={"2000-05-16"} nickname={"이시연"} 
               title={"R"} category={" 보컬 / 서브기타"}
