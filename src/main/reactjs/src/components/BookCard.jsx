@@ -32,9 +32,6 @@ export default function BookCard(props) {
     // Confirm 창 상태 관리
     const [confirmVisible, setConfirmVisible] = useState(false);
 
-    // 저장수 불러오기
-    const bookmarkCount = props.bookmarkCount || 0;
-
     // 문항수 불러오기
     const questionCount = props.questionCount || 0;
 
@@ -195,7 +192,7 @@ export default function BookCard(props) {
                 clickBtn2={clickBtn2}
             />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
-                <Link>
+                <Link to={`/book/detail/${props.bookId}`}>
                     <img src={props.photo} alt="책이미지" style={{ margin:'auto', display:'block'}} className="w-full h-48 rounded-t"/>
                 </Link>
 
@@ -208,7 +205,7 @@ export default function BookCard(props) {
                         </div>
                         <h3 className="mt-2 text-lg font-bold">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
-                        <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.questionCount} | 섹션수 {props.sectionCount}</p>
+                        <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
                         <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
                     </Link>
 

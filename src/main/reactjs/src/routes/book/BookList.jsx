@@ -3,18 +3,11 @@ import axios from 'axios';
 import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
-// 스와이퍼
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
-
 import './bannerStyle.css';
-
-// import required modules
-import { Pagination} from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 
 export default function BookList() {
 
@@ -28,16 +21,13 @@ export default function BookList() {
   useEffect(() => {
     const fetchCategoriesAndBooks = async () => {
       try {
-        // 카테고리 목록 가져오기
         const categoryResponse = await axios.get('/category/list');
         const categories = categoryResponse.data;
         setCategories(categories);
 
-        // 유저의 북마크된 책 목록 가져오기
         const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');
         const bookmarkedBookIds = bookmarksResponse.data.map(book => book.bookId);
 
-        // 각 카테고리의 책 목록 가져오기
         const booksResponses = await Promise.all(
             categories.map(category =>
                 axios.get(`/books/category?id=${category.categoryId}`)
@@ -45,19 +35,43 @@ export default function BookList() {
                       categoryId: category.categoryId,
                       books: response.data.map(book => ({
                         ...book,
-                        isBookmark: bookmarkedBookIds.includes(book.bookId)
+                        isBookmark: bookmarkedBookIds.includes(book.bookId),
+                        bookmarkCount: 0  // 초기 값 설정
                       }))
                     }))
             )
         );
 
-        // 카테고리 ID를 키로 사용하는 객체로 책 데이터를 변환
         const booksByCategory = booksResponses.reduce((acc, { categoryId, books }) => {
           acc[categoryId] = books;
           return acc;
         }, {});
 
         setBooksByCategory(booksByCategory);
+
+        // 북마크 수 업데이트
+        await Promise.all(
+            Object.keys(booksByCategory).flatMap(categoryId =>
+                booksByCategory[categoryId].map(async (book) => {
+                  // 저장수
+                  const countBookmarkResponse = await axios.get(`/bookmark/countBookmarks/${book.bookId}`);
+                  const countBookmark = countBookmarkResponse.data;
+                  // 문항수
+                  const countQuestionResponse = await axios.get(`/book/question/count/${book.bookId}`);
+                  const countQuestion = countQuestionResponse.data;
+                  // 섹션수
+                  const countSectionResponse = await axios.get(`/book/section/count/${book.bookId}`);
+                  const countSection = countSectionResponse.data;
+                  setBooksByCategory(prevState => ({
+                    ...prevState,
+                    [categoryId]: prevState[categoryId].map(b =>
+                        b.bookId === book.bookId ? { ...b, bookmarkCount: countBookmark, bookSectionCount : countSection, bookQuestionCount : countQuestion } : b,
+
+                    )
+                  }));
+                })
+            )
+        );
       } catch (error) {
         setError(error);
       } finally {
@@ -96,48 +110,48 @@ export default function BookList() {
   return (
       <>
         <Swiper
-            pagination={{type: 'fraction'}}
+            pagination={{ type: 'fraction' }}
             navigation={true}
             modules={[Pagination]}
             className="mySwiper"
-            style={{height:'500px'}}
+            style={{ height: '500px' }}
         >
           <SwiperSlide>Slide 1</SwiperSlide>
           <SwiperSlide>Slide 2</SwiperSlide>
           <SwiperSlide>Slide 3</SwiperSlide>
         </Swiper>
-      {categories.map(category => (
-        <section className="mb-8" key={category.categoryId}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
-            <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
-              전체보기
-              <ArrowForwardIosIcon fontSize={'small'} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-5 gap-4">
-            {booksByCategory[category.categoryId]?.slice(0, 5).map((book) => (
-              <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
-                photo={`${photopath}/${book.bookImage}`}
-                cardType="A"
-                nickname={book.user?.userNickname || 'Unknown'}
-                createDate={book.bookCreatedate}
-                title={book.bookTitle}
-                category={book.category?.categoryName || 'Unknown'}  // Optional chaining
-                viewCount={book.bookViewCount}
-                questionCount={book.bookQuestionCount}
-                sectionCount={book.bookSectionCount}
-                status={book.bookStatus}
-                bookUrl={`/book/detail/${book.bookId}`} // 링크 추가
-                updateBookmark={() => clickBookmark(book.bookId)}
-                isBookmark={book.isBookmark}
-              />
-            )) || <div>No books available</div>}
-                </div>
-              </section>
-          ))}
+        {categories.map(category => (
+            <section className="mb-8" key={category.categoryId}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
+                <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
+                  전체보기
+                  <ArrowForwardIosIcon fontSize={'small'} />
+                </Link>
+              </div>
+              <div className="grid grid-cols-5 gap-4">
+                {booksByCategory[category.categoryId]?.slice(0, 5).map((book) => (
+                    <BookCard
+                        key={book.bookId}
+                        bookId={book.bookId}
+                        photo={`${photopath}/${book.bookImage}`}
+                        cardType="A"
+                        nickname={book.user?.userNickname || 'Unknown'}
+                        createDate={book.bookCreatedate}
+                        title={book.bookTitle}
+                        category={book.category?.categoryName || 'Unknown'}
+                        bookmarkCount={book.bookmarkCount}
+                        bookQuestionCount={book.bookQuestionCount}
+                        bookSectionCount={book.bookSectionCount}
+                        status={book.bookStatus}
+                        bookUrl={`/book/detail/${book.bookId}`} // 링크 추가
+                        updateBookmark={() => clickBookmark(book.bookId)}
+                        isBookmark={book.isBookmark}
+                    />
+                )) || <div>No books available</div>}
+              </div>
+            </section>
+        ))}
       </>
   );
 }
