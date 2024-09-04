@@ -101,13 +101,8 @@ export default function UpdateUser() {
   };
 
   // 폼 제출 처리 함수
-  const handleSubmit = async () => {
-    await checkNickname(); // 닉네임 중복 검사 실행
-
-    if (!nicknamecheck) {
-      alert("닉네임을 확인해 주세요.");
-      return; // 닉네임 중복 확인에 실패하면 제출 중지
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     const formData = new FormData();
     formData.append('userNickname', userNickname);
@@ -116,22 +111,23 @@ export default function UpdateUser() {
     }
 
     try {
-      const uploadRes = await axios.post('/update/user/formdata', formData, {
+      const response = await axios.post('/update/user/formdata', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      if (uploadRes.data === 'success') {
+      if (response.status === 200 && response.data === "User update success") {
         console.log("폼 데이터를 서버로 전송했습니다.");
-        navi('/');
+        navi('/');  // 성공적으로 전송되었을 때 리다이렉트
       } else {
         console.log("서버 응답 실패");
       }
     } catch (error) {
-      console.error("서버로 데이터 전송 실패:", error);
+      console.error("서버로 데이터 전송 실패:", error.response ? error.response.data : error.message);
     }
   };
+
 
   return (
       <main className="flex-1 p-8">

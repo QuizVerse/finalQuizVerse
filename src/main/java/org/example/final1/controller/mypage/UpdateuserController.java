@@ -63,12 +63,12 @@ public class UpdateuserController {
         userDto.setUserNickname(userNickname);
 
         userDaoInter.save(userDto);
+        System.out.println("컨트롤러 오류");
 
 
         return ResponseEntity.ok("User update success");
 
     }
 }
-
 
 

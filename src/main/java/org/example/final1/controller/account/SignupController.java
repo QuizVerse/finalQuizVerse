@@ -19,7 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class SignupController {
-    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/loopy.png";
+    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user/default-image.png";
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
     private final EmailService emailService;
