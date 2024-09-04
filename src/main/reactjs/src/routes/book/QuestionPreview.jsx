@@ -74,12 +74,24 @@ export default function QuestionPreview() {
     const totalScore = questions.reduce((acc, curr) => acc + curr.questionPoint, 0);
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         // questionPoint가 0인 질문이 있는지 확인
         if (questions.some((question) => question.questionPoint === 0)) {
             openAlert("모든 문제에 대해 배점을 해야 합니다. 0점인 문제가 있습니다.");
         } else {
-            openAlert("모든 문제에 대해 배점이 완료되었습니다. 제출을 진행합니다.");
+            // 모든 문제에 대해 배점이 완료되었으므로 서버로 데이터 전송
+            try {
+                const response = await axios.post(`/book/question/saveScore/${bookId}`, { questions });
+
+                if (response.status === 200) {
+                    openAlert("배점이 성공적으로 저장되었습니다.");
+                } else {
+                    openAlert("배점 저장에 실패했습니다.");
+                }
+            } catch (error) {
+                console.error("Error saving scores:", error);
+                openAlert("배점을 저장하는 도중 문제가 발생했습니다.");
+            }
         }
     };
 
