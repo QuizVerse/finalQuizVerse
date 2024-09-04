@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BookCard from "../../components/BookCard";
+import BookCardH from "../../components/BookCardH";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Button, MenuItem, TextField } from '@mui/material';
@@ -83,10 +83,10 @@ export default function PublishedBook() {
           </Button>
       </div>
 
-      {/* BookCard 출력 */}
+      {/* BookCardH 출력 */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {currentItems.map((item, index) => (
-          <BookCard
+          <BookCardH
             key={index}
             cardType="B"
             className="flex-1"

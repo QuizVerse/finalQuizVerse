@@ -46,5 +46,11 @@ public class BookService {
         return bookRepository.findByBookId(id);
     }
 
+    // publishedbooks 에 사용되는 서비스
+    public List<BookDto> getBooksByUserId(int userId) {
+        return bookRepository.findByUserId(userId);
+    }
+
+    // solbokk뭐시기 들어올자리
 }
 
