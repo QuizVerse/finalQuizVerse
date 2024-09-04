@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import { Button } from "@mui/material";
-import Section from "../../components/Section";
+import EditSection from "../../components/edit/EditSection";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import EditSidebar from "../../components/EditSidebar";
@@ -270,7 +270,7 @@ export default function Edit() {
                 </div>
 
                 {sections && sections.map((section, index) => (
-                    <Section
+                    <EditSection
                         key={index}
                         index={index}
                         title={section.sectionTitle}
