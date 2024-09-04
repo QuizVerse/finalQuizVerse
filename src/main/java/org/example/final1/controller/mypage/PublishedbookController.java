@@ -8,21 +8,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/published-books")
 public class PublishedbookController {
-
     private final PublishedBookService publishedBookService;
     
-    public PublishedbookController(PublishedBookService publishedBookService) {
-        this.publishedBookService = publishedBookService;
+    @GetMapping("/list")
+    public List<BookDto> getMethodName(@RequestParam("user_id") int userId)
+    {
+        return publishedBookService.PublishedBookList(userId);
     }
-
-    // 사용자 ID로 책을 조회하는 엔드포인트
-    @GetMapping
-    public List<BookDto> getBooksByUserId(@RequestParam int userId) {
-        return publishedBookService.getBooksByUserId(userId);
-    }
+    
 }
