@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import CustomAlert from "../modal/CustomAlert";
 
-export default function PreviewChoices({question}) {
+export default function TestChoices({question}) {
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     const [choices, setChoices] = useState([]); // 답안 리스트 관리
@@ -126,7 +126,6 @@ export default function PreviewChoices({question}) {
                         <div key={index} className="flex flex-col gap-4">
                             <div className="flex items-center">
                                 <Checkbox
-                                    checked={choice.choiceIsanswer}
                                     value={choice.choiceIsanswer}
                                     onClick={() => updateCheckBox(index)}/>
                                 <Typography>{choice.choiceText}</Typography>
