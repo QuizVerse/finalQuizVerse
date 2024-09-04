@@ -23,6 +23,7 @@ export default function PublishedBook() {
   const [userId, setUserId] = useState(16); // 사용자 ID 상태
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
+  
 
   // 페이지 변경 처리
   const handleChange = (event, value) => {
@@ -36,16 +37,26 @@ export default function PublishedBook() {
   };
 
   // 데이터 로드
-  //room list 출력
+  //book list 출력
   const getBookList = () => {
-    axios.get(`/published-books/list`).then((res) => {
-      setBookList(res.data);
+    axios.get(`/published-books/list/${userId}`).then((res) => {
+      setBookList(res.data.userId);
     });
+  };
+  //사용자 정보를 가져오는 함수
+  const getUserDto = async () => {
+    axios.get(`/book/username`).then((res) => {
+        //유저아이디불러오기
+        setUserId(res.data.userId);
+      });
   };
 
   useEffect(() => {
     getBookList();
+    getUserDto();
   }, []);
+
+
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

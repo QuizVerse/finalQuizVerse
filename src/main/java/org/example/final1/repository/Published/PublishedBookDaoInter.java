@@ -13,7 +13,7 @@ import java.util.List;
 public interface PublishedBookDaoInter extends JpaRepository<BookDto, Integer> {
     
     @Query(value = """
-            select * from tb_book where user_id = :user
+            SELECT * FROM tb_book WHERE user_id = :user
             """, nativeQuery = true)
-    public List<BookDto> PublishedBookList(@Param("user_id") int userId);
+    public List<BookDto> PublishedBookList(@Param("user") int userId);
 }
