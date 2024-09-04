@@ -273,7 +273,10 @@ export default function Edit() {
                     <EditSection
                         key={index}
                         index={index}
+                        title={section.sectionTitle}
+                        description={section.sectionDescription}
                         sectionCount={sections.length}
+                        questions={section.questions}
                         section={section}
                         book={bookData}
                         loading={loading}

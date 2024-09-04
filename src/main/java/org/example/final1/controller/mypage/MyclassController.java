@@ -3,9 +3,11 @@ package org.example.final1.controller.mypage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.final1.model.BookDto;
 import org.example.final1.model.ClassDto;
 import org.example.final1.model.ClassmemberDto;
 import org.example.final1.model.UserDto;
+import org.example.final1.repository.BookRepository;
 import org.example.final1.repository.ClassRepository;
 import org.example.final1.repository.ClassmemberRepository;
 import org.example.final1.service.ClassService;
@@ -30,6 +32,7 @@ public class MyclassController {
     private final ClassmemberService classmemberService;
     private final ClassmemberRepository classmemberRepository;
     private final ClassRepository classRepository;
+    private final BookRepository bookRepository;
 
     @PostMapping("/newclass")
     public ResponseEntity<ClassDto> insertClass(@RequestBody ClassDto dto, HttpServletRequest request) {
@@ -195,6 +198,16 @@ public class MyclassController {
         }
     }
 
+
+    @GetMapping("/{classId}/books")
+    public ResponseEntity<List<BookDto>> roleMembers(@PathVariable Integer classId) {
+        List<BookDto> books;
+        books = bookRepository.findByClass1_ClassId(classId);
+        return ResponseEntity.ok(books);
+    }
+
+
+
     @PostMapping("/{classId}/changeLeader")
     @Transactional
     public ResponseEntity<String> changeLeader(
@@ -245,6 +258,10 @@ public class MyclassController {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
 }
 
 

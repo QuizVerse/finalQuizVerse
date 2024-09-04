@@ -1,12 +1,11 @@
 import { Button, IconButton, TableCell, TableRow, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // useNavigate 훅을 import
+import { Link } from "react-router-dom";
+import SearchInput from "./SearchInput"; // useNavigate 훅을 import
 
 export default function CategoryHeader() {
     const [categoryList, setCategoryList] = useState([]);
-    const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태 추가
-    const navigate = useNavigate(); // useNavigate 훅 사용
 
     useEffect(() => {
         getDataList();
@@ -20,13 +19,6 @@ export default function CategoryHeader() {
             console.log(res);
             setCategoryList(res.data);
         });
-    };
-
-    const handleSearch = () => {
-        if (searchKeyword) {
-            // 검색어를 쿼리 파라미터로 추가하여 URL 업데이트
-            navigate(`/book/searchbook?keyword=${encodeURIComponent(searchKeyword)}`);
-        }
     };
 
     return (
@@ -44,17 +36,8 @@ export default function CategoryHeader() {
                     <Link to={'/book/list'}>전체보기</Link>
                 </Button>
             </div>
-            {/* 검색어 입력 필드와 버튼 */}
             <div>
-                <TextField
-                    label="검색어 입력"
-                    variant="outlined"
-                    value={searchKeyword}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                />
-                <Button variant="contained" onClick={handleSearch}>
-                    검색
-                </Button>
+                <SearchInput/>
             </div>
         </div>
     );

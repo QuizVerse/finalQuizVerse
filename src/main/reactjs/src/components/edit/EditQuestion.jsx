@@ -15,11 +15,13 @@ import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import QuestionButtons from "../QuestionButtons";
-import EditChoices from "./EditChoices";
+import Choices from "./EditChoices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
 export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
+
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
@@ -159,7 +161,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                                 {/* Image Preview */}
                                 {question.questionDescriptionimage !== "" ?
                                     <img
-                                        src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionDescriptionimage}
+                                        src={imagePath+question.questionDescriptionimage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -176,7 +178,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                             </div>
                         </div>
                     )}
-                    <EditChoices question={question}/>
+                    <Choices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">
@@ -199,7 +201,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionSolutionimage}
+                                    src={imagePath+question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"

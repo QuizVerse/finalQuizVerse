@@ -18,7 +18,12 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
 
     BookDto findByBookId(int bookId);
 
+<<<<<<< HEAD
     List<BookDto> findByUserId(int userId);
 
     //solbook꺼 들어올자리
+=======
+
+    List<BookDto> findByClass1_ClassId(Integer classId);
+>>>>>>> 93ab209ce43a330bf3523b936e9fd4024cce4221
 }

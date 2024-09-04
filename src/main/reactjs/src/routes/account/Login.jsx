@@ -1,12 +1,30 @@
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 export default function Login() {
 
     const [user_email, setUser_email] = useState('');
     const [user_password, setUser_password] = useState('');
     const navi = useNavigate();
+
+    const [alertVisible, setAlertVisible] = useState(false);  // Alert 표시 여부
+    const [alertTitle, setAlertTitle] = useState('');         // Alert 제목
+    const [alertContent, setAlertContent] = useState('');     // Alert 내용
+    const [alertBtnText, setAlertBtnText] = useState('확인');  // Alert 버튼 텍스트
+
+    const showAlert = (title, content, btnText = '확인') => {
+        setAlertTitle(title);
+        setAlertContent(content);
+        setAlertBtnText(btnText);
+        setAlertVisible(true);  // Alert를 보이도록 설정
+    };
+
+    const closeAlert = () => {
+        setAlertVisible(false);  // Alert를 닫음
+    };
+
 
     const submitLoginEvent=async (e)=>{
         e.preventDefault();
@@ -21,7 +39,7 @@ export default function Login() {
         }
         catch (error) {
             console.error('로그인 실패:', error);
-            alert("로그인 실패 오류");
+            showAlert("오류","로그인 실패");
         }
     };
 
@@ -160,6 +178,14 @@ export default function Login() {
                 >
                     최근 로그인
                 </button>
+
+                <CustomAlert
+                    openAlert={alertVisible}
+                    closeAlert={closeAlert}
+                    title={alertTitle}
+                    content={alertContent}
+                    btnText={alertBtnText}
+                />
             </div>
         </main>
     );

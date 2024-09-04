@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {IconButton, Typography} from "@mui/material";
-import PreviewQuestion from "./PreviewQuestion";
+import TestQuestion from "./TestQuestion";
 import axios from "axios";
 import CustomConfirm from "../modal/CustomConfirm";
 import CustomAlert from "../modal/CustomAlert";
 
 
-export default function PreviewSection({
+export default function TestSection({
                                     index,
                                     sectionCount,
                                     section,
@@ -58,47 +58,6 @@ export default function PreviewSection({
 
 
     /**
-     * @description : 질문 복제 기능
-     */
-    const handleDuplicateQuestion = (index) => {
-        const newQuestion = {
-            ...questions[index],
-            questionId : "",
-        };
-        axios({
-            method:'post',
-            url:'/book/question/new',
-            data: newQuestion
-        }).then(res=> {
-            setQuestions([...questions, res.data]);
-        })
-    };
-
-
-    /**
-     * @description : 특정 질문 삭제 기능
-     */
-    const handleDeleteQuestion = (index) => {
-        if (questions.length > 1) {
-            setDeleteIndex(index);
-            openConfirm();
-        } else {
-            openAlert("삭제할 수 없습니다. 질문은 최소 하나는 있어야 합니다.");
-        }
-    };
-
-    /**
-     * @description : 질문 순서 변경 기능
-     */
-    const moveQuestion = (dragIndex, hoverIndex) => {
-        const dragQuestion = questions[dragIndex];
-        const updatedQuestions = [...questions];
-        updatedQuestions.splice(dragIndex, 1);
-        updatedQuestions.splice(hoverIndex, 0, dragQuestion);
-        setQuestions(updatedQuestions);
-    };
-
-    /**
      * @description : 문제 변경 사항 업데이트
      */
     const handleUpdateQuestion = (index, updated) => {
@@ -122,22 +81,11 @@ export default function PreviewSection({
     };
 
     /**
-     * @description : 확인 버튼 클릭시 실행되는 로직
+     * @description : 취소 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
         setDeleteConfirm(false);
-        const question = questions[deleteIndex];
-        if (questions.length > 1) {
-            axios({
-                method:'delete',
-                url:'/book/question/delete/'+question.questionId,
-            }).then(res=>{
-                console.log(res);
-                setQuestions(questions.filter((_, i) => i !== deleteIndex));
-            })
-        } else {
-
-        }
+        setDeleteIndex('');
     };
 
     /**
@@ -160,37 +108,6 @@ export default function PreviewSection({
      * */
     const closeAlert = () => {
         setAlertVisible(false);
-    };
-
-    // Image Upload
-    const handleFileChange = (event, index, inputType) => {
-        const file = event.target.files[0];
-
-        const uploadForm=new FormData();
-        uploadForm.append("upload",file);
-
-        axios({
-            method:'post',
-            url:'/book/edit/upload',
-            data:uploadForm,
-            headers:{'Content-Type':'multipart/form-data'},
-        }).then(res=>{
-            console.log("saved picture", res.data);
-            const updated = [...questions];
-            if(inputType === "solution"){
-                updated[index] = {
-                    ...updated[index],
-                    questionSolutionimage: res.data.photo,
-                };
-                setQuestions(updated);
-            } else {
-                updated[index] = {
-                    ...updated[index],
-                    questionDescriptionimage: res.data.photo,
-                };
-                setQuestions(updated);
-            }
-        })
     };
 
 
@@ -225,7 +142,7 @@ export default function PreviewSection({
                 </div>
             )}
             {questions.map((question, index) => (
-                <PreviewQuestion
+                <TestQuestion
                     key={index}
                     index={index}
                     totalQuestions={questions.length}

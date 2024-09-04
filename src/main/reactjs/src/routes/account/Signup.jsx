@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 export default function Signup() {
     const [user_email, setUser_email] = useState('');
@@ -19,6 +20,25 @@ export default function Signup() {
     const [passwordMessage, setPasswordMessage] = useState('');
     const [nicknameMessage, setNicknameMessage] = useState('닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.');
     const [agreecheck, setAgreecheck] = useState(false);
+
+
+    const [alertVisible, setAlertVisible] = useState(false);  // Alert 표시 여부
+    const [alertTitle, setAlertTitle] = useState('');         // Alert 제목
+    const [alertContent, setAlertContent] = useState('');     // Alert 내용
+    const [alertBtnText, setAlertBtnText] = useState('확인');  // Alert 버튼 텍스트
+
+
+    const showAlert = (title, content, btnText = '확인') => {
+        setAlertTitle(title);
+        setAlertContent(content);
+        setAlertBtnText(btnText);
+        setAlertVisible(true);  // Alert를 보이도록 설정
+    };
+
+    const closeAlert = () => {
+        setAlertVisible(false);  // Alert를 닫음
+    };
+
 
     // 비밀번호 유효성 검사
     const validatePassword = (password) => {
@@ -44,7 +64,7 @@ export default function Signup() {
 
             return () => clearInterval(timerId); // 클린업 함수로 타이머 종료
         } else if (timeLeft === 0) {
-            alert("인증 시간이 만료되었습니다. 다시 시도해 주세요.");
+            showAlert("인증 시간 만료","인증 시간이 만료되었습니다. 다시 시도해 주세요.");
             setTimerRunning(false);
             setTimeLeft(180); // 타이머 초기화
 
@@ -72,18 +92,18 @@ export default function Signup() {
         axios.get(url)
             .then(res => {
                 if (res.data === 'success') {
-                    alert("인증 코드가 이메일로 발송되었습니다.");
+                    showAlert("인증 코드가 이메일로 발송되었습니다.");
                     setTimerRunning(true); // 타이머 시작
                     setTimeLeft(180); // 타이머를 다시 3분으로 초기화
                 } else if (res.data === '이메일이 존재하는 회원입니다.') {
-                    alert("이미 존재하는 이메일입니다. 다른 이메일을 사용하세요.");
+                    showAlert("이미 존재하는 이메일입니다.  다른 이메일을 사용하세요.");
                 } else {
-                    alert("이메일 전송 실패");
+                    showAlert("이메일 전송 실패");
                 }
             })
             .catch(error => {
                 console.error("Error sending email:", error);
-                alert("이메일 전송 중 오류가 발생했습니다.");
+                showAlert("이메일 전송 중 오류가 발생했습니다.");
             });
     };
 
@@ -95,10 +115,10 @@ export default function Signup() {
             .then(res => {
                 if (res.data === 'success') {
                     setEmailcheck(true);
-                    alert("이메일 인증이 성공적으로 완료되었습니다.");
+                    showAlert("이메일 인증이 성공적으로 완료되었습니다.");
                 } else {
                     setEmailcheck(false);
-                    alert("인증 코드가 일치하지 않습니다.");
+                    showAlert("인증 코드가 일치하지 않습니다.");
                 }
             });
     }
@@ -164,11 +184,11 @@ export default function Signup() {
         const isChecked = e.target.checked;
 
         if (!isChecked) {
-            alert("필수 동의사항에 동의하셔야 합니다.");
+            showAlert("필수 동의사항에 동의하셔야 합니다.");
             setAgreecheck(false);
         } else {
             setAgreecheck(true);
-            alert("필수 동의사항에 동의하셨습니다.");
+            showAlert("필수 동의사항에 동의하셨습니다.");
         }
     }
 
@@ -190,13 +210,13 @@ export default function Signup() {
                 });
         } else {
             if (!emailcheck) {
-                alert("이메일 인증을 완료해주세요.");
+                showAlert("이메일 인증을 완료해주세요.");
             } else if (!nicknamecheck) {
-                alert("닉네임 중복 확인을 완료해주세요.");
+                showAlert("닉네임 중복 확인을 완료해주세요.");
             } else if (!passwordcheck) {
-                alert("비밀번호가 일치하지 않습니다.");
+                showAlert("비밀번호가 일치하지 않습니다.");
             } else if (!agreecheck) {
-                alert("필수 동의사항에 동의해주세요.");
+                showAlert("필수 동의사항에 동의해주세요.");
             }
         }
     };
@@ -396,7 +416,18 @@ export default function Signup() {
                 >
                     회원가입
                 </button>
+
+                <CustomAlert
+                    openAlert={alertVisible}
+                    closeAlert={closeAlert}
+                    title={alertTitle}
+                    content={alertContent}
+                    btnText={alertBtnText}
+                />
+
             </form>
+
+
         </main>
     );
 }
