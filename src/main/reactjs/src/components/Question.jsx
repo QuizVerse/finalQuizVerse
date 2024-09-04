@@ -21,6 +21,8 @@ const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아
 
 export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
 
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
+
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
 
@@ -159,7 +161,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                                 {/* Image Preview */}
                                 {question.questionDescriptionimage !== "" ?
                                     <img
-                                        src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionDescriptionimage}
+                                        src={imagePath+question.questionDescriptionimage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -199,7 +201,7 @@ export default function Question({index, moveQuestion, onDuplicate, onDelete, to
                             {/* Image Preview */}
                             {question.questionSolutionimage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/"+question.questionSolutionimage}
+                                    src={imagePath+question.questionSolutionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
                                     width="150"
