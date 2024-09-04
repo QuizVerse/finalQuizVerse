@@ -106,7 +106,6 @@ export default function BookList() {
           <SwiperSlide>Slide 2</SwiperSlide>
           <SwiperSlide>Slide 3</SwiperSlide>
         </Swiper>
-      </div>
       {categories.map(category => (
         <section className="mb-8" key={category.categoryId}>
           <div className="flex items-center justify-between mb-4">
@@ -139,7 +138,6 @@ export default function BookList() {
                 </div>
               </section>
           ))}
-        </main>
       </>
   );
 }
