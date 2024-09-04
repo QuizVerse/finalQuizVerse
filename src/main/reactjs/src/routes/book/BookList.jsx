@@ -12,6 +12,8 @@ import 'swiper/css/pagination';
 
 export default function BookList() {
 
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
+
   const [booksByCategory, setBooksByCategory] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -118,6 +120,7 @@ export default function BookList() {
               <BookCard
                 key={book.bookId}
                 bookId={book.bookId}
+                photo={`${photopath}/${book.bookImage}`}
                 cardType="A"
                 nickname={book.user?.userNickname || 'Unknown'}
                 createDate={book.bookCreatedate}

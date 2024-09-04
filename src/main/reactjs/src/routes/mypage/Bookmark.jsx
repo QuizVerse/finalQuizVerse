@@ -1,5 +1,5 @@
 import { MenuItem, Pagination, Stack, TextField } from "@mui/material";
-import BookCard from "../../components/BookCardM";
+import BookCard from "../../components/BookCardSample";
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 
@@ -15,6 +15,8 @@ const ITEMS_PER_PAGE=8;
 const SPACING=2;
 
 export default function Bookmark() {
+
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
@@ -115,6 +117,7 @@ export default function Bookmark() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {currentItems.map((book) => (
               <BookCard
+                  photo = {`${photopath}/${book.bookImage}`}
                   key={book.bookId}
                   bookId={book.bookId}
                   cardType="A"
