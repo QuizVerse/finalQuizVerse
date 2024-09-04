@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import BookCardU from "../../components/BookCardU";
+import BookCard from "../../components/BookCard";
 
 export default function SearchBook() {
     const [searchResults, setSearchResults] = useState([]);
@@ -28,7 +28,7 @@ export default function SearchBook() {
     return (
         <div className="grid gap-4 md:grid-cols-2">
             {searchResults.map((book) => (
-                <BookCardU
+                <BookCard
                     key={book.bookId}
                     bookId={book.bookId}
                     photo={`https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/${book.bookImage}`}
