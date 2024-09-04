@@ -8,7 +8,10 @@ import "./StudyRoom.css";
 import { useEffect, useState } from "react";
 import VideoComponent from "../../components/VideoComponent";
 import AudioComponent from "../../components/AudioComponent";
+import ShareVideoComponent from "../../components/ShareVideoComponent";
+import StartVideoComponent from "../../components/StartVideoComponent";
 import { LiveKitRoom, LayoutContextProvider } from "@livekit/components-react";
+import axios from "axios";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
@@ -20,24 +23,73 @@ configureUrls();
 // }
 
 function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:9002/";
-  LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
 
 export default function StudyRoom() {
-  const [room, setRoom] = useState(undefined);
-  const [localTrack, setLocalTrack] = useState(undefined);
-  const [localAudioTrack, setLocalAudioTrack] = useState(null);
-  const [remoteTracks, setRemoteTracks] = useState([]);
-  const [participantName, setParticipantName] = useState("Participant" + Math.floor(Math.random() * 100));
-  const [roomName, setRoomName] = useState("Test Room");
-  const [token, setToken] = useState(null);
-  const [isCameraEnabled, setIsCameraEnabled] = useState(true);
-  const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [screenTrack, setScreenTrack] = useState(null);
-  
-  
+    const [room, setRoom] = useState(undefined);
+    const [localTrack, setLocalTrack] = useState(undefined);
+    const [localAudioTrack, setLocalAudioTrack] = useState(null);
+    const [remoteTracks, setRemoteTracks] = useState([]);
+    const [participantName, setParticipantName] = useState("");
+    const [roomName, setRoomName] = useState("Test Room");
+    const [token, setToken] = useState(null);
+    const [isCameraEnabled, setIsCameraEnabled] = useState(true);
+    const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const [screenTrack, setScreenTrack] = useState(null);
+    const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
+    const [nickName, setNickname] = useState(null); // 유저 DTO 상태를 관리
+    
+
+    //사용자 정보를 가져오는 함수
+    const getUserDto = async () => {
+        axios.get(`/book/username`).then((res) => {
+            //닉네임불러오기
+            setNickname(res.data.userNickname);
+          });
+    };
+
+      useEffect(() => {
+        getUserDto();
+      }, []);
+      useEffect(() => {
+        if (nickName) {
+            setParticipantName(nickName); // 닉네임을 참가자 이름으로 설정
+        }
+    }, [nickName]);
+    // 방에 참가하기 전 카메라 미리보기 활성화 함수
+    const startVideoPreview = async () => {
+        try {
+            // 사용자의 비디오 장치에서 비디오 스트림을 생성
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const videoTrack = stream.getVideoTracks()[0];
+            setPreviewStream(stream); // 미리보기 스트림 설정
+            const startVideoTrack = new LocalVideoTrack(videoTrack);
+            setLocalTrack(startVideoTrack);
+        } catch (error) {
+        console.error("비디오 미리보기를 활성화할 수 없습니다:", error);
+        }
+    };
+
+    // 방에 참가하지 않으면 미리보기 종료
+    const stopVideoPreview = () => {
+        if (previewStream) {
+        previewStream.getTracks().forEach((track) => track.stop());
+        setPreviewStream(null);
+        }
+    };
+
+    useEffect(() => {
+        if (!room) {
+        startVideoPreview(); // 방에 참가하지 않은 상태에서는 미리보기를 시작
+        } else {
+        stopVideoPreview(); // 방에 참가할 경우 미리보기 중지
+        }
+
+        return () => stopVideoPreview(); // 컴포넌트 언마운트 시 미리보기 종료
+    }, [room]); // room 상태 변경에 따라 미리보기 상태를 관리
 
   async function joinRoom() {
       // 새 Room 객체 초기화
@@ -213,24 +265,31 @@ export default function StudyRoom() {
           await enableMicrophone();
       }
   }
-  //화면공유
-  async function toggleScreenSharing() {
-      if (isScreenSharing) {
-          //화면 공유 중지
-          if (screenTrack) {
-              await screenTrack.stop();
-              room.localParticipant.unpublishTrack(screenTrack);
-              setScreenTrack(null);
-          }
-      } else {
-          //화면 공유 
-          const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-          const track = stream.getVideoTracks()[0];
-          setScreenTrack(track);
-          await room.localParticipant.publishTrack(track);
-      }
-      setIsScreenSharing(!isScreenSharing);
-  }
+
+    //화면공유
+    async function toggleScreenSharing() {
+        if (isScreenSharing) {
+            if (screenTrack) {
+                await room.localParticipant.unpublishTrack(screenTrack);
+                screenTrack.stop();
+                setScreenTrack(null);
+            }
+        } else {
+            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const videoTrack = stream.getVideoTracks()[0];
+            const localScreenTrack = new LocalVideoTrack(videoTrack);
+
+            videoTrack.onended = () => {
+                console.log('화면 공유가 중지되었습니다.');
+                setIsScreenSharing(false);
+                setScreenTrack(null);
+            };
+
+            setScreenTrack(localScreenTrack);
+            await room.localParticipant.publishTrack(localScreenTrack);
+        }
+        setIsScreenSharing(!isScreenSharing);
+    }
 
   //채팅
   const [message, setMessage] = useState('');
@@ -239,7 +298,7 @@ export default function StudyRoom() {
 
   useEffect(() => {
       //const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
-      const ws = new WebSocket('wss://localhost:9002/ws/chat');
+      const ws = new WebSocket('ws://localhost:9002/ws/chat');
       
       ws.onopen = () => {
       console.log('웹소켓 연결이 설정되었습니다.');
@@ -270,7 +329,6 @@ export default function StudyRoom() {
       if (socket && message) {
           let sending = participantName + " : " + message;
           socket.send(sending);
-          //setMessages((prevMessages) => [...prevMessages, `나: ${message}`]); // 나의 메시지를 화면에 추가
           setMessage(''); // 메시지 입력란 비우기
       }
       else {
@@ -285,7 +343,14 @@ export default function StudyRoom() {
           {!room ? (
               <div id="join">
                   <div id="join-dialog">
-                      <h2>Join a Video Room</h2>
+                  <b>스터디제목</b>
+                        {/* 미리보는 화상창 */}
+                        {previewStream && (
+                        <StartVideoComponent
+                            track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
+                            local={true}
+                        />
+                        )}
                       <form
                           onSubmit={(e) => {
                               joinRoom();
@@ -293,22 +358,22 @@ export default function StudyRoom() {
                           }}
                       >
                           <div>
-                              <label htmlFor="participant-name">참가자</label>
+                              {/* <label htmlFor="participant-name">참가자</label> */}
                               <input
                                   id="participant-name"
                                   className="form-control"
-                                  type="text"
-                                  value={participantName}
+                                  type="hidden"
+                                  value={nickName}
                                   onChange={(e) => setParticipantName(e.target.value)}
                                   required
                               />
                           </div>
                           <div>
-                              <label htmlFor="room-name">Room</label>
+                              {/* <label htmlFor="room-name">Room</label> */}
                               <input
                                   id="room-name"
                                   className="form-control"
-                                  type="text"
+                                  type="hidden"
                                   value={roomName}
                                   onChange={(e) => setRoomName(e.target.value)}
                                   required
@@ -319,7 +384,7 @@ export default function StudyRoom() {
                               type="submit"
                               disabled={!roomName || !participantName}
                           >
-                              Join!
+                              입장
                           </button>
                       </form>
                   </div>
@@ -332,33 +397,55 @@ export default function StudyRoom() {
                           Leave Room
                       </button>
                   </div>
-                  <div id="layout-container">
-                      {localTrack && (
-                          <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
-                      )}
-                      {remoteTracks.map((remoteTrack) =>
-                          remoteTrack.trackPublication.kind === "video" ? (
-                              <VideoComponent
-                                  key={remoteTrack.trackPublication.trackSid}
-                                  track={remoteTrack.trackPublication.videoTrack}
-                                  participantIdentity={remoteTrack.participantIdentity}
-                              />
-                          ) : (
-                              <AudioComponent
-                                  key={remoteTrack.trackPublication.trackSid}
-                                  track={remoteTrack.trackPublication.audioTrack}
-                              />
-                          )
-                      )}
-                      {/* 화면 공유 비디오 표시 */}
-                      {isScreenSharing && screenTrack && (
-                          <VideoComponent
-                              track={screenTrack} // 화면 공유 비디오 트랙
-                              participantIdentity={participantName} // 화면 공유를 나타내는 고유 이름
-                              local={true}
-                          />
-                      )}
-                  </div>
+                  <div id="layout-container-share">
+                        {/* 화면 공유 비디오 표시 */}
+                        {isScreenSharing && screenTrack && (
+                            <ShareVideoComponent
+                                track={screenTrack} // 화면 공유 비디오 트랙
+                                participantIdentity={participantName} // 화면 공유를 나타내는 고유 이름
+                                local={true}
+                            />
+                        )}
+                        {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
+                        {remoteTracks
+                                .filter(remoteTrack =>
+                                    remoteTrack.trackPublication.kind === "video" &&
+                                    remoteTrack.trackPublication.trackSid === screenTrack?.sid
+                                )
+                                .map(remoteTrack => (
+                                    <ShareVideoComponent
+                                        key={remoteTrack.trackPublication.trackSid}
+                                        track={remoteTrack.trackPublication.videoTrack}
+                                        participantIdentity={remoteTrack.participantIdentity}
+                                    />
+                                ))}
+                    </div>
+                    <div id="layout-container">
+                        {localTrack && (
+                            <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                        )}
+                        {/* 일반 비디오 및 오디오 트랙 렌더링 */}
+                        {remoteTracks
+                                .filter(remoteTrack =>
+                                    remoteTrack.trackPublication.kind === "video" &&
+                                    remoteTrack.trackPublication.trackSid !== screenTrack?.sid
+                                )
+                                .map(remoteTrack =>
+                                    remoteTrack.trackPublication.kind === "video" ? (
+                                        <VideoComponent
+                                            key={remoteTrack.trackPublication.trackSid}
+                                            track={remoteTrack.trackPublication.videoTrack}
+                                            participantIdentity={remoteTrack.participantIdentity}
+                                        />
+                                    ) : (
+                                        <AudioComponent
+                                            key={remoteTrack.trackPublication.trackSid}
+                                            track={remoteTrack.trackPublication.audioTrack}
+                                            participantIdentity={remoteTrack.participantIdentity}
+                                        />
+                                    )
+                                )}
+                    </div>
                   <button className="btn btn-secondary" onClick={toggleCamera}>
                       {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
                   </button>
