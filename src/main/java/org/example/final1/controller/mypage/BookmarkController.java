@@ -73,4 +73,10 @@ public class BookmarkController {
         }
     }
 
+    @GetMapping("/countBookmarks/{id}")
+    public ResponseEntity<Integer> getBookmarkCount(@PathVariable("id") int id) {
+        int bookmarkCount = bookmarkService.getBookmarkcounts(id);
+        return ResponseEntity.ok(bookmarkCount);
+    }
+
 }

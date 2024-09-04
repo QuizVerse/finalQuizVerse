@@ -13,7 +13,6 @@ import CustomConfirm from "./modal/CustomConfirm";
 
 export default function BookCard(props) {
 
-
     // snack state
     const [state, setState] = useState({
         open: false,
@@ -32,6 +31,16 @@ export default function BookCard(props) {
 
     // Confirm 창 상태 관리
     const [confirmVisible, setConfirmVisible] = useState(false);
+
+    // 저장수 불러오기
+    const bookmarkCount = props.bookmarkCount || 0;
+
+    // 문항수 불러오기
+    const questionCount = props.questionCount || 0;
+
+    // 섹션수 불러오기
+    const sectionCount = props.sectionCount || 0;
+
 
     /**
      * @description : 삭제 취소 버튼 클릭시 실행되는 로직
@@ -199,7 +208,7 @@ export default function BookCard(props) {
                         </div>
                         <h3 className="mt-2 text-lg font-bold">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
-                        <p className="mt-1 text-sm text-gray-600">조회수 {props.viewCount} | 문항수 {props.questionCount} | 섹션수 {props.sectionCount}</p>
+                        <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.questionCount} | 섹션수 {props.sectionCount}</p>
                         <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
                     </Link>
 

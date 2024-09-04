@@ -34,7 +34,6 @@ export default function Bookmark() {
 
         // 유저의 북마크된 책 목록 가져오기
         const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');
-
         // books 상태에 IsBookmark 속성 추가하여 초기화
         const bookWithBookmarks = bookmarksResponse.data.map(book => ({
           ...book, isBookmark : true
@@ -126,6 +125,7 @@ export default function Bookmark() {
                   title={book.bookTitle}
                   category={book.category?.categoryName || "Unknown"}
                   questionCount={book.bookQuestionCount}
+                  bookmarkCount={book.bookMarkCount}
                   bookUrl={`/book/detail/${book.bookId}`}
                   isBookmark={book.isBookmark}
                   updateBookmark = {()=>clickBookmark(book.bookId)}
