@@ -123,6 +123,18 @@ export default function BookCard(props) {
         setConfirmVisible(true);
     };
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '날짜 없음';
+        const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+        const formattedDate = new Date(dateString)
+            .toLocaleDateString("ko-KR", options)
+            .replace(/\./g, "-")
+            .replace(/ /g, "");
+        return formattedDate.endsWith("-")
+            ? formattedDate.slice(0, -1)
+            : formattedDate;
+    };
+
 
     return (
         <>
@@ -180,7 +192,8 @@ export default function BookCard(props) {
                     <Link>
                         <div className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
                              data-v0-t="badge">
-                            {props.nickname} · {props.createDate}
+                            {/*{props.nickname} · {props.createDate}*/}
+                            {props.nickname ? props.nickname : "알 수 없음"} · {formatDate(props.createDate)}
                         </div>
                         <h3 className="mt-2 text-lg font-bold">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>

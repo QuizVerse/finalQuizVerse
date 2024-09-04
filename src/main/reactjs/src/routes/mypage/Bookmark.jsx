@@ -118,7 +118,7 @@ export default function Bookmark() {
                   key={book.bookId}
                   bookId={book.bookId}
                   cardType="A"
-                  nickname={book.user?.nickname || "Unknown"}
+                  nickname={book.user?.userNickname || "Unknown"}
                   createDate={book.bookCreatedate}
                   title={book.bookTitle}
                   category={book.category?.categoryName || "Unknown"}

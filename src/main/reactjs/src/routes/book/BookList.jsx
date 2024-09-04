@@ -119,7 +119,7 @@ export default function BookList() {
                 key={book.bookId}
                 bookId={book.bookId}
                 cardType="A"
-                nickname={book.user?.nickname || 'Unknown'}  // Optional chaining to handle null values
+                nickname={book.user?.userNickname || 'Unknown'}
                 createDate={book.bookCreatedate}
                 title={book.bookTitle}
                 category={book.category?.categoryName || 'Unknown'}  // Optional chaining
