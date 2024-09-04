@@ -4,11 +4,17 @@ import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Link } from "react-router-dom";
 // 스와이퍼
+// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+
+// Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
+import './bannerStyle.css';
+
+// import required modules
+import { Pagination} from 'swiper/modules';
 
 export default function BookList() {
 
@@ -88,22 +94,17 @@ export default function BookList() {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <main className="p-16">
-      <div className="flex items-center justify-center mb-8">
+      <>
         <Swiper
-          cssMode={true}
-          navigation={true}
-          pagination={true}
-          mousewheel={true}
-          keyboard={true}
-          modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-          className="mySwiper"
+            pagination={{type: 'fraction'}}
+            navigation={true}
+            modules={[Pagination]}
+            className="mySwiper"
+            style={{height:'500px'}}
         >
           <SwiperSlide>Slide 1</SwiperSlide>
           <SwiperSlide>Slide 2</SwiperSlide>
           <SwiperSlide>Slide 3</SwiperSlide>
-          <SwiperSlide>Slide 4</SwiperSlide>
-          <SwiperSlide>Slide 5</SwiperSlide>
         </Swiper>
       </div>
       {categories.map(category => (
@@ -135,9 +136,10 @@ export default function BookList() {
                 isBookmark={book.isBookmark}
               />
             )) || <div>No books available</div>}
-          </div>
-        </section>
-      ))}
-    </main>
+                </div>
+              </section>
+          ))}
+        </main>
+      </>
   );
 }
