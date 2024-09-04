@@ -17,12 +17,6 @@ public class TestService {
 
     public UserDto findUsernameById(int userId) {
         Optional<UserDto> userDto = testRepository.findById(userId);
-//        if(userDto.isPresent()) {
-//            return userDto.get();
-//        } else {
-//            throw new EntityNotFoundException("ID가 " + userId +"인 사용자 찾을 수 없음");
-//
-//        }
         return userDto.orElse(null);
     }
 }
