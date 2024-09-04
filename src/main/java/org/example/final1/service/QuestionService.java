@@ -2,8 +2,12 @@ package org.example.final1.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
+import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
+import org.example.final1.model.SectionDto;
+import org.example.final1.repository.ChoiceRepository;
 import org.example.final1.repository.QuestionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,7 @@ public class QuestionService {
     public QuestionDto saveQuestion(QuestionDto newQuestion) {
         return questionRepository.save(newQuestion);
     }
+
 
     public void deleteQuestion(int id) {
         questionRepository.deleteById(id);
@@ -45,7 +50,7 @@ public class QuestionService {
     }
 
     // 특정 책 ID에 대한 모든 질문 가져오기
-    public List<QuestionDto> getQuestionsByBookId(int bookId) {
-        return questionRepository.findAllByBookBookId(bookId);
+    public List<QuestionDto> getQuestionsByBookId(int id) {
+        return questionRepository.findAllByBookBookId(id);
     }
 }

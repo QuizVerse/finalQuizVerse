@@ -14,12 +14,10 @@ import java.util.List;
 public class QuestionPreviewController {
 
     private final QuestionService questionService;
-    private final BookService bookService;  // final로 선언
 
     // 생성자에서 두 개의 서비스 클래스를 주입 받음
     public QuestionPreviewController(QuestionService questionService, BookService bookService) {
         this.questionService = questionService;
-        this.bookService = bookService;  // 여기서 bookService를 초기화
     }
 
     @GetMapping("/questionpreview/{id}")
@@ -32,13 +30,4 @@ public class QuestionPreviewController {
         }
     }
 
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<BookDto> getBookDetail(@PathVariable("id") int bookId) {
-        BookDto book = bookService.getBookByBookId(bookId);
-        if (book == null) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(book);
-        }
-    }
 }

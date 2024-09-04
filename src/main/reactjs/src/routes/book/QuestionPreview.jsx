@@ -31,35 +31,22 @@ export default function QuestionPreview() {
     const [isChecked, setIsChecked] = useState(false);
     const [totalPoints, setTotalPoints] = useState(0);
 
-    //임시로 추가
-    // const [book, setResponse] = useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const bookRes = await axios.get(`/book/edit/${bookId}`);
-
-                //임시로 책 디테일 받아올라고 적음요
-                const response = await axios.get(`/book/detail/${book_Id}`);
-                const bookDetail = response.data.book
-
-
                 const bookData = bookRes.data.book;
                 setBookData(bookData);
                 setSections(bookRes.data.sections);
                 setTotalPoints(bookData.bookTotalscore);
-
                 // isChecked 설정: bookDivide 값에 따라 설정
-                setIsChecked(bookDetail.bookDivide === 1);
-                //균등분배인지 확인용
-                // console.log("isChecked:", isChecked);  // 이 부분에서 isChecked 값을 확인
-                console.log("isChecked:", bookDetail.bookDivide);  // 이 부분에서 isChecked 값을 확인
-
+                setIsChecked(bookData.bookDivide === 1);
+                setTotalPoints(bookData.bookTotalscore || 100); // 기본값 100 설정
 
                 const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
                 const loadedQuestions = questionsRes.data.map(question => ({
                     ...question,
-                    questionPoint: question.questionPoint || 0 // 배점이 없으면 0으로 초기화
+                    questionPoint: question.questionPoint || 0
                 }));
                 setQuestions(loadedQuestions);
 
@@ -103,7 +90,7 @@ export default function QuestionPreview() {
             const evenScore = Math.round((totalScore / totalQuestions) * 10) / 10;
             const updatedQuestions = questions.map((question) => ({
                 ...question,
-                questionPoint: question.questionPoint || evenScore // 이미 배점이 있는 경우 유지, 없는 경우 균등 배점
+                questionPoint: evenScore
             }));
 
             setQuestions(updatedQuestions);
