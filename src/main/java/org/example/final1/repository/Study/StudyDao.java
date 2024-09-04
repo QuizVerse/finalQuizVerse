@@ -10,9 +10,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class StudyDao {
     private StudyDaoInter studyDaoInter;
-
+    //화상방 전체 출력
     public List<StudyDto> getAllRoom()
     {
         return studyDaoInter.findAll();
+    }
+    //화상방 만들기
+    public void insertRoom(StudyDto dto)
+    {
+        studyDaoInter.save(dto);
     }
 }
