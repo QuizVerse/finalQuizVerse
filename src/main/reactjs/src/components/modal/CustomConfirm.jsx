@@ -5,6 +5,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import ConfirmContent from "./ConfirmContent";
+import {IconButton} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 /**
  * @description :
@@ -45,6 +47,20 @@ export default function CustomConfirm(props) {
             >
                 <DialogTitle id="alert-dialog-title">
                     {props.title || title ||'모달 제목'}
+                    <IconButton
+                        aria-label="close"
+                        onClick={props.closeConfirm}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
+
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">

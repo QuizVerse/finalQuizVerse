@@ -14,12 +14,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import QuestionButtons from "../QuestionButtons";
-import EditChoices from "./EditChoices";
+import QuestionButtons from "./QuestionButtons";
+import Choices from "./Choices";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
-export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
+export default function Question({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
 
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
@@ -178,7 +178,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                             </div>
                         </div>
                     )}
-                    <EditChoices question={question}/>
+                    <Choices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">

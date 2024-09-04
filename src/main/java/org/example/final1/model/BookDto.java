@@ -67,6 +67,7 @@ public class BookDto {
     private int bookTotalscore;
 
     @Column(name = "book_ispublished", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    @Builder.Default
     private boolean bookIspublished = false;
 
     @ManyToOne

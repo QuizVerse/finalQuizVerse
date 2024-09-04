@@ -5,15 +5,15 @@ import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material"
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
-import EditQuestion from "./EditQuestion";
+import Question from "./Question";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
-import CustomConfirm from "../modal/CustomConfirm";
-import CustomAlert from "../modal/CustomAlert";
+import CustomConfirm from "./modal/CustomConfirm";
+import CustomAlert from "./modal/CustomAlert";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import DescriptionIcon from '@mui/icons-material/Description';
-export default function EditSection({
+export default function Section({
                                     index,
                                     sectionCount,
                                     onDuplicate,
@@ -261,7 +261,7 @@ export default function EditSection({
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
+                <Typography variant="h5">{title || "섹션 제목"}</Typography>
                 <div>
                     <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
@@ -276,7 +276,7 @@ export default function EditSection({
                         label={"섹션 제목"}
                         placeholder="질문을 입력하세요."
                         variant={"standard"}
-                        value={section.sectionTitle}
+                        value={title}
                         onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
                     />
                     <div className="flex flex-col gap-4">
@@ -287,7 +287,7 @@ export default function EditSection({
                                 label={"섹션 설명"}
                                 placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
                                 variant={"standard"}
-                                value={section.sectionDescription}
+                                value={description}
                                 onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
                             />
                             <IconButton
@@ -344,7 +344,7 @@ export default function EditSection({
                 </div>
             )}
             {questions.map((question, index) => (
-                <EditQuestion
+                <Question
                     key={index}
                     index={index}
                     questionType={question.questionType}
