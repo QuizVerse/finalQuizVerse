@@ -23,7 +23,6 @@ export default function Detail() {
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [reviewData, setReviewData] = useState([]);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [error, setError] = useState(null); // 에러 상태 추가
 
   //사진
@@ -89,9 +88,6 @@ export default function Detail() {
     return <div>{error}</div>; // 에러가 있을 때 표시
   }
 
-  // if (loading) {
-  //   return <div>Loading...</div>; // 로딩 중일 때 표시
-  // }
 
   if (!bookData) {
     return <div>No data found</div>; // 데이터가 없을 때 표시
@@ -106,6 +102,21 @@ export default function Detail() {
     return formattedDate.endsWith("-")
         ? formattedDate.slice(0, -1)
         : formattedDate;
+  };
+
+
+  const handleStartExam = async () => {
+    try {
+      const response = await axios.post('/book/test/start', { bookId: book_Id });
+      const { solvedbookId } = response.data; // 서버 응답에서 solvedbookId 추출
+
+      console.log('Exam started successfully', response.data);
+
+      navigate(`/book/test/${book_Id}/${solvedbookId}`); // solvedbookId를 URL에 포함하여 네비게이션
+    } catch (error) {
+      console.error('Error starting exam:', error);
+      alert('시험을 시작하는데 실패했습니다.');
+    }
   };
 
 
@@ -202,10 +213,10 @@ export default function Detail() {
               </Box>
 
               <Button
-                  onClick={()=> navigate(`/book/test/${book_Id}`)}
-                variant="contained"
-                color="primary"
-                sx={{ mt: 4, height: 56 }}
+                  onClick={handleStartExam} // 버튼 클릭 시 시험 응시 처리
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 4, height: 56 }}
               >
                 시험 응시
               </Button>
@@ -298,5 +309,6 @@ export default function Detail() {
         </Container>
       </Container>
     </Box>
+    
   );
 }

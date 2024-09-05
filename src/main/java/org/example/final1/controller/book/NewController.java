@@ -3,15 +3,19 @@ package org.example.final1.controller.book;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
+import org.example.final1.model.ClassDto;
 import org.example.final1.model.UserDto;
+import org.example.final1.repository.ClassRepository;
 import org.example.final1.service.BookService;
 import org.example.final1.service.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.example.final1.storage.NcpObjectStorageService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +28,7 @@ public class NewController {
     private final JwtService jwtService;
 
     private final NcpObjectStorageService ncpObjectStorageService;
+    private final ClassRepository classRepository;
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
 
@@ -38,24 +43,36 @@ public class NewController {
     @PostMapping("/newbook")
     public ResponseEntity<Map<String, Object>> newBook(
             @ModelAttribute BookDto bookDto,
-            @RequestParam("upload") MultipartFile upload,
+            @RequestParam(value = "classId", required = false) Integer classId, // classId가 선택적으로 제공됨
+            @RequestParam(value = "upload", required = false) MultipartFile upload, // 이미지도 선택 사항으로 처리
             HttpServletRequest request) {
 
         // JWT 토큰에서 사용자 정보 가져오기
         UserDto userDto = jwtService.getUserFromJwt(request);
         if (userDto == null) {
-            return ResponseEntity.status(401).build(); // 유효하지 않은 JWT 토큰 처리
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid JWT token")); // 유효하지 않은 JWT 토큰 처리
         }
 
-        // 사진 업로드 처리
-        String bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
+        // 사진 업로드 처리 (사진이 있는 경우에만)
+        String bookPhoto = null;
+        if (upload != null && !upload.isEmpty()) {
+            bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
+            bookDto.setBookImage(bookPhoto); // 업로드된 사진의 URL을 설정
+        }
 
-        // 업로드된 사진의 URL을 book_image 필드에 설정
-        bookDto.setBookImage(bookPhoto);
+        // 클래스 설정 (classId가 제공된 경우에만)
+        if (classId != null) {
+            ClassDto classDto = classRepository.findById(classId).orElse(null);
+            if (classDto != null) {
+                bookDto.setClass1(classDto); // 클래스 객체를 BookDto에 설정
+            }
+        }
 
         // 책 정보를 사용자 정보와 결합하여 설정
         bookDto.setUser(userDto);
-        BookDto savedBook = bookService.createBook(bookDto);
+
+        // 책 저장
+        BookDto savedBook = bookService.saveBook(bookDto);
 
         // 결과 반환
         Map<String, Object> response = new HashMap<>();
@@ -80,4 +97,21 @@ public class NewController {
             throw new RuntimeException("Invalid or missing JWT token");
         }
     }
+    @GetMapping("/user/classes")
+    public ResponseEntity<List<ClassDto>> getUserClasses(HttpServletRequest request) {
+
+        UserDto userDto=jwtService.getUserFromJwt(request);
+        if (userDto != null) {
+            List<ClassDto> classes = classRepository.findAllByUser(userDto);
+            return ResponseEntity.ok(classes);
+        }
+        else
+        {
+            //***********************************************************
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+
 }

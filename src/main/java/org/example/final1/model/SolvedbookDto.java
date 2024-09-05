@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_solvedbook")
@@ -35,6 +36,9 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_end")
     private Timestamp solvedbookEnd;
 
-    @Column(name = "solvedbook_timer", nullable = false, length = 100)
+    @Column(name = "solvedbook_timer", length = 100)
     private String solvedbookTimer;
+
+    @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
+    private List<AnswerDto> answers;
 }

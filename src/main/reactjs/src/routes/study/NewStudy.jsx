@@ -1,44 +1,30 @@
 import {Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 export default function NewStudy() {
     // Dropdown state
-    const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('');
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
-
-    const [bookName, setBookName] = useState('');
-    const [bookDescription, setBookDescription] = useState('');
+    const [studyTitle, setStudyTitle] = useState('');
+    const [studyDescription, setStudyDescription] = useState('');
     const [totalMember, setTotalMember] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
-    const [timeLimit, setTimeLimit] = useState('');
-    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false); // 추가된 부분
 
-    // Handle changes
-    const handleCategoryChange = (event) => {
-        setCategory(event.target.value);
-    };
 
     const handleVisibilityChange = (event) => {
         setVisibility(event.target.value);
     };
 
-    const handleBookNameChange = (e) => setBookName(e.target.value);
-    const handleBookDescriptionChange = (e) => setBookDescription(e.target.value);
-    const handleTotalMemberChange = (e) => setTotalMember(e.target.value);
-    const handleTimeLimitChange = (e) => setTimeLimit(e.target.value);
-
-    const toggleSwitch = () => {
-        setIsChecked(prevState => !prevState);
+    const handleTotalMemberChange = (e) => {
+        const value = e.target.value;
+        // 숫자로 변환
+        setTotalMember(value ? parseInt(value, 10) : 0);
     };
 
-    // Time Limit Toggle 함수 추가
-    const toggleTimeSwitch = () => {
-        setIsTimeLimitEnabled(prevState => !prevState);
-    };
+    const handleRoomNameChange = (e) => setStudyTitle(e.target.value);
+    const handleRoomDescriptionChange = (e) => setStudyDescription(e.target.value);
 
     // Image Upload
     const handleFileChange = (event) => {
@@ -49,60 +35,37 @@ export default function NewStudy() {
         }
     };
 
-    // Submit new book
+    // Submit new study
     const handleSubmit = () => {
-        const newBookData = {
-            "book_title": bookName,
-            "book_description": bookDescription,
-            "book_status": 0,
-            "book_category": category === '' ? null : category,
-            "book_timer": timeLimit === '' ? 0 : parseInt(timeLimit, 10),
-            "book_image": coverImage,
-            "book_divide": isChecked ? 1 : 0,
-            "book_totalgrade": parseInt(totalMember, 10) || 0
+        const newRoomData = {
+            "studyTitle": studyTitle,
+            "studyDescription": studyDescription,
+            "studyMemberlimit": totalMember,
+            "studyImage": coverImage,
+            "studyStatus": visibility === '전체 공개' ? 1 : 0 // 상태를 1 또는 0으로 설정
         };
 
-        axios.post('/new/newbook', newBookData)
+        axios.post(`/studys/inserts`, newRoomData)
             .then((res) => {
                 console.log(res.data);
-                navigate("/book/edit")
+                navigate(`/study/list`)
+                //navigate(`/study/room/${res.data.study_id}`)
             })
             .catch((err) => {
-                console.error(err);
+                console.error("Error:", err.response ? err.response.data : err.message);
             });
     };
 
     // Cancel button logic
     const navigate = useNavigate();
     const handleCancel = () => {
-        setBookName('');
-        setBookDescription('');
-        setCategory('');
+        setStudyTitle('');
+        setStudyDescription('');
         setVisibility('');
         setCoverImage('/placeholder.svg');
         setTotalMember('');
-        setIsChecked(false);
-        setIsTimeLimitEnabled(false);
-        setTimeLimit('');
         navigate(-1);
     };
-
-    const [categoryList,setCategoryList] = useState([]);
-
-    //처음 딱 한번 목록 가져오기
-    useEffect(()=>{
-        getDataList();
-    },[]);
-
-    const getDataList=()=>{
-        axios({
-            method:'get',
-            url:'/category/list',
-        }).then(res=>{
-            console.log(res);
-            setCategoryList(res.data);
-        })
-    }
 
     return (
         <>
@@ -119,8 +82,8 @@ export default function NewStudy() {
                                 fullWidth
                                 label="화상스터디 이름"
                                 placeholder="화상스터디 이름"
-                                value={bookName}
-                                onChange={handleBookNameChange}
+                                value={studyTitle}
+                                onChange={handleRoomNameChange}
                             ></TextField>
                         </div>
                         <div className="space-y-2">
@@ -128,8 +91,8 @@ export default function NewStudy() {
                                 fullWidth
                                 label="화상스터디 설명"
                                 placeholder="화상스터디 설명"
-                                value={bookDescription}
-                                onChange={handleBookDescriptionChange}
+                                value={studyDescription}
+                                onChange={handleRoomDescriptionChange}
                             ></TextField>
                         </div>
                         <div className="space-y-4">
@@ -143,26 +106,7 @@ export default function NewStudy() {
                                     onChange={handleVisibilityChange}
                                 >
                                     <MenuItem value={'전체 공개'}>전체 공개</MenuItem>
-                                    <MenuItem value={'클래스 공개'}>클래스 공개</MenuItem>
                                     <MenuItem value={'비공개'}>비공개</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            {/* Category Dropdown */}
-                            <FormControl fullWidth>
-                                <InputLabel id="category-label">카테고리</InputLabel>
-                                <Select
-                                    labelId="category-label"
-                                    value={category}
-                                    label="카테고리"
-                                    onChange={handleCategoryChange}
-                                >
-                                    {categoryList &&
-                                        categoryList.map((row) => (
-                                            <MenuItem key={row.categoryId}
-                                                      value={row.categoryId}>{row.categoryName}</MenuItem>
-                                        ))
-                                    }
                                 </Select>
                             </FormControl>
                         </div>

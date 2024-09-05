@@ -31,7 +31,7 @@ public class EditController {
     final NcpObjectStorageService storageService;
 
     private String bucketName="bitcamp701-129";
-    private String folderName="book";
+    private String folderName="final/book";
 
     //사진만 먼저 업로드
     @PostMapping("/edit/upload")
@@ -67,26 +67,17 @@ public class EditController {
         }
     }
 
-//    @PostMapping("/edit/save/temporary")
-//    public ResponseEntity<Map<String, Object>> getBookDetail(@PathVariable("id") int id) {
-//        Optional<BookDto> bookOpt = bookService.getBookById(id);
-//        if (bookOpt.isPresent()) {
-//            BookDto book = bookOpt.get();
-//
-//            // Fetch sections, questions, and choices related to the book
-//            List<SectionDto> sections = sectionService.getAllSections(book.getBookId());
-//
-//            // Create the response map
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("book", book);
-//            response.put("sections", sections);
-//
-//            return ResponseEntity.ok(response);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    // 책을 임시저장하거나 게시하기 위한 엔드포인트
+    @PostMapping("/edit/publish")
+    public ResponseEntity<BookDto> saveOrUpdateBook(@RequestBody BookDto bookDto, @RequestParam boolean isPublished) {
+        bookDto.setBookIspublished(isPublished);
 
+        // BookService를 통해 책 정보를 저장
+        BookDto savedBook = bookService.saveBook(bookDto);
+
+        // 저장된 책 정보를 클라이언트에 반환
+        return ResponseEntity.ok(savedBook);
+    }
 
     /** 섹션 관련 */
     // 섹션 생성
@@ -122,6 +113,12 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    // 섹션 개수 count
+    @GetMapping("/section/count/{bookId}")
+    public ResponseEntity<Integer> getSectionCount(@PathVariable("bookId") int bookId) {
+        int sectionCount = sectionService.getSectionCountByBookId(bookId);
+        return ResponseEntity.ok(sectionCount);
+    }
     /** 질문 관련 */
     // 질문 생성
     @PostMapping("/question/new")
@@ -158,6 +155,12 @@ public class EditController {
         List<QuestionDto> list = questionService.getAllQuestions(sectionId);
         return ResponseEntity.ok(list);
     }
+    // 질문 개수 count
+    @GetMapping("/question/count/{bookId}")
+    public ResponseEntity<Integer> getQuestionCount(@PathVariable("bookId") int bookId) {
+        int questionCount = questionService.getQuestionCountByBookId(bookId);
+        return ResponseEntity.ok(questionCount);
+    }
 
     /** 답안 관련 */
     // Choice 저장
@@ -190,6 +193,21 @@ public class EditController {
     public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
         List<ChoiceDto> list = choiceService.getAllChoices(questionId);
         return ResponseEntity.ok(list);
+    }
+
+    /**
+     * @description 문제 제출 후에 정답과 해설을 가져오는 API
+     * 이 API는 사용자가 문제를 제출한 후에 정답과 해설을 받아볼 수 있도록 한다.
+     */
+    @GetMapping("/question/submit/{questionId}")
+    public ResponseEntity<QuestionDto> getQuestionSolution(@PathVariable("questionId") int questionId) {
+        Optional<QuestionDto> questionOpt = questionService.getQuestion(questionId);
+        if (questionOpt.isPresent()) {
+            QuestionDto question = questionOpt.get();
+            return ResponseEntity.ok(question); // 제출 후 정답과 해설 반환
+        } else {
+            return ResponseEntity.notFound().build(); // 질문이 없으면 404 반환
+        }
     }
 
 }

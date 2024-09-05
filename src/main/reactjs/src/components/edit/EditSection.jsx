@@ -5,18 +5,16 @@ import {IconButton, TextField, Typography, Tooltip, Button} from "@mui/material"
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LoopIcon from '@mui/icons-material/Loop';
-import Question from "./Question";
+import EditQuestion from "./EditQuestion";
 import axios from "axios";
 import AddIcon from "@mui/icons-material/Add";
-import CustomConfirm from "./modal/CustomConfirm";
-import CustomAlert from "./modal/CustomAlert";
+import CustomConfirm from "../modal/CustomConfirm";
+import CustomAlert from "../modal/CustomAlert";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import CloseIcon from "@mui/icons-material/Close";
 import DescriptionIcon from '@mui/icons-material/Description';
-export default function Section({
+export default function EditSection({
                                     index,
-                                    title,
-                                    description,
                                     sectionCount,
                                     onDuplicate,
                                     onDelete,
@@ -28,6 +26,7 @@ export default function Section({
                                     onUploadImage
                                 }) {
 
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     // 섹션 접고 펴는 상태
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -262,7 +261,7 @@ export default function Section({
     return (
         <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{title || "섹션 제목"}</Typography>
+                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>
                     <span>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
@@ -277,7 +276,7 @@ export default function Section({
                         label={"섹션 제목"}
                         placeholder="질문을 입력하세요."
                         variant={"standard"}
-                        value={title}
+                        value={section.sectionTitle}
                         onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
                     />
                     <div className="flex flex-col gap-4">
@@ -288,7 +287,7 @@ export default function Section({
                                 label={"섹션 설명"}
                                 placeholder="여러줄로 섹션 설명을 입력할 수 있습니다."
                                 variant={"standard"}
-                                value={description}
+                                value={section.sectionDescription}
                                 onChange={(e) => onUpdateSection({sectionDescription : e.target.value})}
                             />
                             <IconButton
@@ -304,11 +303,9 @@ export default function Section({
                             {/* Image Preview */}
                             {section.sectionImage !== "" ?
                                 <img
-                                    src={"https://kr.object.ncloudstorage.com/bitcamp701-129/book/" + section.sectionImage}
-                                    alt="Cover"
+                                    src={imagePath + section.sectionImage}
+                                    alt={section.sectionDescription}
                                     className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
                                 /> : ""}
                             {/* Hidden File Input */}
                             <input
@@ -347,12 +344,9 @@ export default function Section({
                 </div>
             )}
             {questions.map((question, index) => (
-                <Question
+                <EditQuestion
                     key={index}
                     index={index}
-                    questionType={question.questionType}
-                    title={question.questionTitle}
-                    description={question.questionDescription}
                     totalQuestions={questions.length}
                     question={question}
                     openConfirm={openConfirm}

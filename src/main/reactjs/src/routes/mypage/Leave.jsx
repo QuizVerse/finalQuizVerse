@@ -6,10 +6,80 @@ import CustomInput from "../../components/CustomInput";
 export default function Leave() {
   // 탈퇴 사유를 저장하기 위한 state
   const [reason, setReason] = useState("");
+  const [isVerified,setIsVerified]=useState(false);
+  const[verificationCode,setVerificationCode]=useState("");
+
+
+  const[alertVisible,setAlertVisible]=useState(false);
+  const[alertTitle,setAlertTitle]=useState('');
+  const[alertContent,setAlertContent]=useState('');
+  const[alertBtnText,setAlertBtnText]=useState('확인');
+  const [onConfirm, setOnConfirm] = useState(null);
+
+
+  const showAlert = (title, content, btnText = '확인', onConfirmCallback = null) => {
+    setAlertTitle(title);
+    setAlertContent(content);
+    setAlertBtnText(btnText);
+    setAlertVisible(true);
+    setOnConfirm(() => onConfirmCallback); // 필요할 때만 콜백을 설정합니다.
+  };
+
+
+  const closeAlert=()=>{
+    setAlertVisible(false)
+    if (onConfirm) {
+      onConfirm();  // 확인 버튼을 눌렀을 때 콜백 함수 실행
+    }
+  };
+
+
+  const sendVerificationCode=async()=>{
+    try {
+      const response = await axios.post("/leave/email");
+      showAlert("알림","인증코드가 이메일로 전송되었습니다.");
+
+    } catch (e) {
+      console.error("인증 코드 전송 실패",e);
+    }
+
+  }
+
+  const verifyCode=async ()=>{
+    try {
+      const response = await axios.post("/leave/verify", {code: verificationCode});
+
+
+      if (response.data.success) {
+        showAlert("알림","인증이 성공적으로 완료되었습니다.");
+        setIsVerified(true);
+
+      } else {
+        showAlert("오류", "인증코드가 유효하지 않습니다.");
+        setIsVerified(true);
+      }
+
+
+    } catch (e) {
+      console.error("인증 코드 검증 실패",e);
+      showAlert("오류", "서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+      setIsVerified(false);
+    }
+
+
+  }
+
+
 
   // 폼 제출 처리 함수
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
+    if (!isVerified) {
+      showAlert("오류", "인증이 완료되지 않았습니다.");
+      return;
+    }
 
     try {
       // 1. 탈퇴 사유를 서버로 전송
@@ -43,10 +113,11 @@ export default function Leave() {
 
         if (leaveResponse.data === "success") {
           localStorage.removeItem("token");
-          alert("회원 탈퇴가 되었습니다.");
-          window.location.href = "/";
+          showAlert("알림", "회원 탈퇴가 완료되었습니다.", "확인", () => {
+            window.location.href = "/";
+          });
         } else {
-          alert("삭제 이슈.");
+          showAlert("오류", "탈퇴 처리에 실패했습니다.");
         }
       } else {
         // OAuth 탈퇴 처리 (쿠키 사용)
@@ -55,15 +126,16 @@ export default function Leave() {
         });
 
         if (leaveResponse.data === "success") {
-          alert("회원 탈퇴가 되었습니다.");
-          window.location.href = "/";
+          showAlert("알림", "회원 탈퇴가 완료되었습니다.", "확인", () => {
+            window.location.href = "/";
+          });
         } else {
-          alert("삭제 이슈.");
+          showAlert("오류", "탈퇴 처리에 실패했습니다.");
         }
       }
     } catch (error) {
       console.error("서버 요청 중 오류가 발생했습니다.", error);
-      alert("오류가 났습니다.");
+      showAlert("오류", "탈퇴 처리에 실패했습니다.");
     }
   };
 
@@ -72,12 +144,15 @@ export default function Leave() {
       <div className="max-w-md mx-auto">
         <h1 className="mb-6 text-2xl font-bold text-center">회원 탈퇴</h1>
         <div className="flex justify-between mb-4">
-          <Button>인증코드 발송</Button>
-          <Button>인증코드 재발송</Button>
+          <Button onClick={sendVerificationCode}>인증코드 발송</Button>
+          <Button onClick={sendVerificationCode}>인증코드 재발송</Button>
         </div>
         <div className="space-y-4">
           <div>
-            <CustomInput label={"인증코드"} timerVisible={true} />
+            <CustomInput label={"인증코드"}
+                         value={verificationCode}
+                         updateValue={setVerificationCode}
+                         timerVisible={true} />
           </div>
           <div className="flex items-center">
             <label
@@ -127,6 +202,8 @@ export default function Leave() {
                 onChange={(e) => setReason(e.target.value)} // 입력 시 state 업데이트
               ></textarea>
               <Button type="submit">확인</Button>
+
+
             </form>
           </div>
         </div>

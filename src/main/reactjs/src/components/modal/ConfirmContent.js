@@ -111,6 +111,13 @@ const confirmContent = [
         btn1Text: "",
         btn2Text: "",
     },
+    {
+        id: 16,
+        title: "임시저장이 완료되었습니다.",
+        content: "임시저장된 문제집은 마이페이지의 출제내역에서 확인할 수 있습니다.",
+        btn1Text: "계속 출제하기",
+        btn2Text: "마이페이지로 이동",
+    },
 ]
 
 export default confirmContent;

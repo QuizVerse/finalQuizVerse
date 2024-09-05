@@ -19,7 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class SignupController {
-    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/loopy.png";
+    private static final String DEFAULT_USER_IMAGE_URL = "20240904_be1aaec1-c3fb-4025-96de-9d52ec447cf8";
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
     private final EmailService emailService;
@@ -66,18 +67,6 @@ public class SignupController {
         }
     }
 
-    @GetMapping("/user/deletecode")
-    public String deleteAuntenticationCode(@RequestParam("user_email")String user_email){
-        if(authenticationCodes.containsKey(user_email)){
-            authenticationCodes.remove(user_email);
-            return "success";
-
-        }else{
-            return "fail";
-        }
-    }
-
-
 
     //닉네임 중복체크
     @GetMapping("/user/nicknamecheck")
@@ -87,6 +76,9 @@ public class SignupController {
         else
             return "success";
     }
+
+
+
     //비밀번호 암호화 후 저장
     @PostMapping("/user/join")
     public String joinUser(@RequestBody UserDto userDto) {

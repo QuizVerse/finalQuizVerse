@@ -17,4 +17,13 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
     List<BookDto> searchByTitleOrDescription(@Param("keyword") String keyword);
 
     BookDto findByBookId(int bookId);
+
+
+    //List<BookDto> findByUserId(int userId);
+
+    //solbook꺼 들어올자리
+
+
+    List<BookDto> findByClass1_ClassId(Integer classId);
+
 }
