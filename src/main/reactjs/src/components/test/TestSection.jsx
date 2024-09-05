@@ -13,6 +13,7 @@ export default function TestSection({
                                     sectionCount,
                                     section,
                                     setLoading,
+                                        onAnswerChange
                                 }) {
 
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
@@ -148,6 +149,7 @@ export default function TestSection({
                     totalQuestions={questions.length}
                     question={question}
                     openConfirm={openConfirm}
+                    onAnswerChange={onAnswerChange}
                 />
             ))}
 

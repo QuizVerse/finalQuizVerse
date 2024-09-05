@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CustomAlert from "../modal/CustomAlert";
 
-export default function TestChoices({ question }) {
+export default function TestChoices({ question, onAnswerChange }) {
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
 
     const [choices, setChoices] = useState([]); // 선택지 데이터를 저장하는 상태
@@ -41,7 +41,8 @@ export default function TestChoices({ question }) {
     const handleOxSelect = (selection) => {
         setOxSelected(selection); // 선택한 값을 상태에 저장
         // 선택된 값으로 선택지 배열을 업데이트
-        setChoices([{ choiceText: selection, choiceIsanswer: selection === "O", question }]);
+        const updatedChoice = [{ choiceText: selection, choiceIsanswer: selection === "O", question }];
+        onAnswerChange(question.questionId, updatedChoice);
     };
 
     // 다중 선택형에서 체크박스를 클릭했을 때 선택지 상태 업데이트
@@ -49,6 +50,7 @@ export default function TestChoices({ question }) {
         const updatedChoices = [...choices]; // 기존 선택지를 복사
         updatedChoices[index].choiceIsanswer = !updatedChoices[index].choiceIsanswer; // 선택 여부를 토글
         setChoices(updatedChoices); // 선택지 상태를 업데이트
+        onAnswerChange(question.questionId, updatedChoices); // 상위로 선택 결과 전달
     };
 
     // 선택형 문제에서 라디오 버튼이 선택됐을 때의 로직
@@ -60,11 +62,14 @@ export default function TestChoices({ question }) {
             e.choiceIsanswer = index === Number(val);
         });
         setChoices(updatedChoices); // 선택지 상태 업데이트
+        onAnswerChange(question.questionId, updatedChoices.find(choice => choice.choiceIsanswer)); // 선택된 답안을 상위 컴포넌트로 전달
     };
 
     // 주관식 문제에서 답변이 입력됐을 때의 로직
     const handleSubjectiveAnswer = (event) => {
-        setSubjectiveAnswer(event.target.value); // 입력된 답변을 상태에 저장
+        const answer = event.target.value;
+        setSubjectiveAnswer(answer); // 입력된 답변을 상태에 저장
+        onAnswerChange(question.questionId, answer); // 주관식 답변을 상위 컴포넌트로 전달
     };
 
     // 로딩 중일 때 로딩 메시지를 표시
