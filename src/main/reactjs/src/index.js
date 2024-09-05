@@ -210,6 +210,11 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
+                path: "/book/edit/ai/:bookId",
+                element: <EditAi />,
+                errorElement: <ErrorPage />,
+            },
+            {
                 path: '/book/questionpreview/:bookId',
                 element: <QuestionPreview />,
                 errorElement: <ErrorPage />,
@@ -272,7 +277,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/study/room/:study_id',
+                path: '/study/room/:study_id/:studyTitle',
                 element: <StudyRoom />,
                 errorElement: <ErrorPage />,
             },

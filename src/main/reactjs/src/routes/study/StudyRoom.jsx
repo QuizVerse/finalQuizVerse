@@ -12,6 +12,7 @@ import ShareVideoComponent from "../../components/ShareVideoComponent";
 import StartVideoComponent from "../../components/StartVideoComponent";
 import { LiveKitRoom, LayoutContextProvider } from "@livekit/components-react";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
@@ -33,32 +34,30 @@ export default function StudyRoom() {
     const [localAudioTrack, setLocalAudioTrack] = useState(null);
     const [remoteTracks, setRemoteTracks] = useState([]);
     const [participantName, setParticipantName] = useState("");
-    const [roomName, setRoomName] = useState("Test Room");
+    const [roomName, setRoomName] = useState("");
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [screenTrack, setScreenTrack] = useState(null);
+    const [remoteScreenTrack, setRemoteScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const [nickName, setNickname] = useState(null); // 유저 DTO 상태를 관리
-    
+    const { study_id,studyTitle } = useParams(); // URL에서 studyId 추출
+    const navi = useNavigate();
 
     //사용자 정보를 가져오는 함수
-    const getUserDto = async () => {
+    const getUserDto = () => {
         axios.get(`/book/username`).then((res) => {
             //닉네임불러오기
-            setNickname(res.data.userNickname);
+            setParticipantName(res.data.userNickname);
           });
     };
 
-      useEffect(() => {
+    useEffect(() => {
         getUserDto();
-      }, []);
-      useEffect(() => {
-        if (nickName) {
-            setParticipantName(nickName); // 닉네임을 참가자 이름으로 설정
-        }
-    }, [nickName]);
+        setRoomName(studyTitle);
+    },[]); 
+    
     // 방에 참가하기 전 카메라 미리보기 활성화 함수
     const startVideoPreview = async () => {
         try {
@@ -137,22 +136,24 @@ export default function StudyRoom() {
       }
   }
 
-  //방 나가기
-  async function leaveRoom() {
-      // 'disconnect' 메서드를 호출하여 방에서 나가기
-      await room?.disconnect();
-
-      // 상태 초기화
-      setRoom(undefined);
-      setLocalTrack(undefined);
-      setRemoteTracks([]);
-      //공유화면, ?
-      if (isScreenSharing && screenTrack) {
-          await screenTrack.stop();
-          setScreenTrack(null);
-      }
-  }
-
+    //방 나가기
+    async function leaveRoom() {
+        // 'disconnect' 메서드를 호출하여 방에서 나가기
+        await room?.disconnect();
+        // 비디오 미리보기 종료
+        stopVideoPreview(); // 추가: 미리보기 종료
+        // 상태 초기화
+        setRoom(undefined);
+        setLocalTrack(undefined);
+        setPreviewStream(undefined);
+        setRemoteTracks([]);
+        //공유화면, ?
+        if (isScreenSharing && screenTrack) {
+            await screenTrack.stop();
+            setScreenTrack(null);
+        }
+        navi(`/study/list`);
+    }
   async function getToken(roomName, participantName) {
       try {
           const response = await fetch(APPLICATION_SERVER_URL + "token", {
@@ -189,9 +190,22 @@ export default function StudyRoom() {
   }
   //카메라 끄기
   async function disableCamera() {
-      await room.localParticipant.unpublishTrack(localTrack);
-      localTrack.stop();
-      setLocalTrack(null);
+    if (localTrack) {
+        await room.localParticipant.unpublishTrack(localTrack);
+        localTrack.stop(); // 비디오 트랙을 중지합니다.
+        setLocalTrack(null);
+    }
+
+    // 현재 사용 중인 비디오 스트림이 있는 경우, 해당 스트림의 모든 트랙을 중지합니다.
+    const streams = await navigator.mediaDevices.enumerateDevices();
+    for (const stream of streams) {
+        if (stream.kind === 'videoinput') {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: stream.deviceId } });
+            mediaStream.getTracks().forEach(track => track.stop());
+        }
+    }
+
+    setIsCameraEnabled(false);
   }
   //카메라 토글 함수
   async function toggleCamera() {
@@ -343,7 +357,11 @@ export default function StudyRoom() {
           {!room ? (
               <div id="join">
                   <div id="join-dialog">
-                  <b>스터디제목</b>
+                  <h2 id="room-title">{roomName}</h2>
+                  &nbsp;
+                    <button className="btn btn-danger" id="leave-room-button" onClick={leaveRoom}>
+                        Leave Room
+                    </button>
                         {/* 미리보는 화상창 */}
                         {previewStream && (
                         <StartVideoComponent
@@ -362,8 +380,8 @@ export default function StudyRoom() {
                               <input
                                   id="participant-name"
                                   className="form-control"
-                                  type="hidden"
-                                  value={nickName}
+                                  type="text"
+                                  value={participantName}
                                   onChange={(e) => setParticipantName(e.target.value)}
                                   required
                               />
@@ -379,6 +397,12 @@ export default function StudyRoom() {
                                   required
                               />
                           </div>
+                            <button className="btn btn-secondary" onClick={toggleCamera}>
+                                {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
+                            </button>
+                            <button className="btn btn-secondary" onClick={toggleMicrophone}>
+                                {isMicrophoneEnabled ? "마이크 끄기" : "마이크 켜기"}
+                            </button>
                           <button
                               className="btn btn-lg btn-success"
                               type="submit"

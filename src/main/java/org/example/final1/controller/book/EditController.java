@@ -113,6 +113,12 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    // 섹션 개수 count
+    @GetMapping("/section/count/{bookId}")
+    public ResponseEntity<Integer> getSectionCount(@PathVariable("bookId") int bookId) {
+        int sectionCount = sectionService.getSectionCountByBookId(bookId);
+        return ResponseEntity.ok(sectionCount);
+    }
     /** 질문 관련 */
     // 질문 생성
     @PostMapping("/question/new")
@@ -148,6 +154,12 @@ public class EditController {
     public ResponseEntity<List<QuestionDto>> getAllQuestionsBySection(@PathVariable("id") int sectionId) {
         List<QuestionDto> list = questionService.getAllQuestions(sectionId);
         return ResponseEntity.ok(list);
+    }
+    // 질문 개수 count
+    @GetMapping("/question/count/{bookId}")
+    public ResponseEntity<Integer> getQuestionCount(@PathVariable("bookId") int bookId) {
+        int questionCount = questionService.getQuestionCountByBookId(bookId);
+        return ResponseEntity.ok(questionCount);
     }
 
     /** 답안 관련 */

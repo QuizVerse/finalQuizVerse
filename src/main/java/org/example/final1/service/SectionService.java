@@ -40,4 +40,8 @@ public class SectionService {
         return sectionRepository.findById(id);
     }
 
+    // 섹션 개수 count
+    public int getSectionCountByBookId(int bookId) {
+        return sectionRepository.countSectionsByBookId(bookId);
+    }
 }

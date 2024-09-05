@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Stack, Pagination, TextField, MenuItem } from "@mui/material";
-import BookCard from "../../components/BookCard";
+import BookCardH from "../../components/BookCardH";
 
 
 
@@ -108,7 +108,7 @@ export default function Wrong() {
       {/* BookCard 목록 출력 */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {currentItems.map((item, index) => (
-          <BookCard
+          <BookCardH
             key={index}
             cardType="C"
             className={"flex-1"}

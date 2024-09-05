@@ -22,7 +22,6 @@ export default function StudyList() {
     const [roomList, setRoomList] = useState([]);
     const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태를 관리합니다.
     const [filteredRoom, setFilteredRoom] = useState([]); // 검색어에 따라 필터링된 멤버들을 관리합니다.
-    const [nickName, setNickname] = useState(null); // 유저 DTO 상태를 관리
     const navi = useNavigate();
     
     /**
@@ -39,22 +38,15 @@ export default function StudyList() {
           setRoomList(res.data);
         });
       };
-    // //사용자 정보를 가져오는 함수
-    // const getUserDto = async () => {
-    //     axios.get(`/book/username`).then((res) => {
-    //         //닉네임불러오기
-    //         setNickname(res.data.userNickname);
-    //       });
-    // };
 
       useEffect(() => {
-        //getUserDto();
         getRoomList();
       }, []);
     
     //화상방 들어가는 이벤트
-    const GoRoomEvent = (study_id)=>{
-        navi(`/study/room/${study_id}`);
+    const GoRoomEvent = (studyId,studyTitle)=>{
+       // alert("ssss="+studyId+","+studyTitle);
+        navi(`/study/room/${studyId}/${studyTitle}`);
     }
 
     //방생성 들어가는 이벤트
@@ -67,7 +59,7 @@ export default function StudyList() {
         const lowerCaseQuery = searchQuery.toLowerCase();
         const filtered = roomList.filter((room) =>
             room.studyTitle.toLowerCase().includes(lowerCaseQuery) ||
-            room.studyTitle.toLowerCase().includes(lowerCaseQuery)
+            room.user.toLowerCase().includes(lowerCaseQuery)
         );
         setFilteredRoom(filtered);
     }, [searchQuery, roomList]);
@@ -95,7 +87,7 @@ export default function StudyList() {
                             totalMember={item.studyMemberlimit}
                             status={1}
                             image={item.studyImage}
-                            onClick={()=>GoRoomEvent(item.studyId)}                        />
+                            onClick={()=>GoRoomEvent(item.studyId, item.studyTitle)}                        />
                     ))}
             </div>
 
