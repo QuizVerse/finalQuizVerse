@@ -10,16 +10,23 @@ import TestSection from "../../components/test/TestSection";
 export default function ParentComponent() {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const navigate = useNavigate();
-  const {bookId} = useParams(); // bookId 가져올 변수
+  const {bookId,solvedbookId} = useParams(); // bookId 가져올 변수
   const [bookData, setBookData] = useState(null); // 문제집 정보 저장할 변수
   const [sections, setSections] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // bookId와 solvedbookId를 사용하여 데이터 가져오기
+  console.log('Book ID:', bookId);
+  console.log('Solved Book ID:', solvedbookId);
+
   // bookId에 해당하는 책 데이터를 가져옴
   useEffect(() => {
     const fetchData = async () => {
+
+
+
       try {
         const bookRes = await axios.get(`/book/edit/${bookId}`);
         setBookData(bookRes.data.book);
@@ -27,6 +34,8 @@ export default function ParentComponent() {
 
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
         setQuestions(questionsRes.data);
+
+        console.log(questionsRes.data);
 
         setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
       } catch (error) {
@@ -63,6 +72,8 @@ export default function ParentComponent() {
     closeConfirm();
     navigate(`/book/score/${bookId}`);
   };
+
+
 
   return (
       <div className={"space-y-8"}>

@@ -49,7 +49,7 @@ public class QuestionDto {
     @JoinColumn(name = "book_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE) // 문제집이 삭제되면 해당 문제도 삭제
     private BookDto book;
-    
+
     @Column(name = "question_order", nullable = false)
     private int questionOrder;
 
