@@ -15,6 +15,7 @@ export default function CustomInput(props) {
                            variant="standard"
                            placeholder={props.placeholder}
                            onChange={(e) => props.updateValue(e.target.value)}
+                           fullWidth
                 />
 
                 {props.isPassword && (
