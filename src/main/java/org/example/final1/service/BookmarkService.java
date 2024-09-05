@@ -50,4 +50,9 @@ public class BookmarkService {
     public int getBookmarkCountByBookId(int bookId) {
         return bookmarkRepository.countByBookId(bookId);
     }
+
+    // 특정 사용자가 즐겨찾기한 문제집 총 개수 가져오기
+    public int getBookmarkCountByUser(UserDto user) {
+        return bookmarkRepository.countBookmarkByUserId(user.getUserId());
+    }
 }
