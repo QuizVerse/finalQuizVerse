@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class StudyDao {
     private StudyDaoInter studyDaoInter;
-    private UserDaoInter userDaoInter;
+    
     //화상방 전체 출력
     public List<StudyDto> getAllRoom()
     {
@@ -22,5 +22,10 @@ public class StudyDao {
     public void insertRoom(StudyDto dto)
     {
         studyDaoInter.save(dto);
+    }
+    //아이디 참조하여 Dto받아오기
+    public StudyDto StudyRoomDto(int studyId)
+    {
+        return studyDaoInter.getReferenceById(studyId);
     }
 }
