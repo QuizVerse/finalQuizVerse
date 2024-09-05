@@ -37,6 +37,41 @@ export default function ParentComponent() {
 
     fetchData();
   }, [bookId]);
+  const openConfirm = async () => {
+    console.log(answers);
+
+    const formattedAnswers = answers.map((answer) => {
+      const answerData = {
+        solvedbook: { solvedbookId: solvedbookId },
+        question: { questionId: answer.questionId },
+        answerOrder: answer.answerOrder,
+      };
+
+      // 객관식 문제 처리
+      if (Array.isArray(answer.answer)) {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      }
+      // 주관식 문제 처리
+      else if (typeof answer.answer === 'string') {
+        answerData.subjectiveAnswer = answer.answer || null;
+      }
+
+      return answerData;
+    });
+
+    console.log("전송할 데이터:", formattedAnswers);
+
+    try {
+      const response = await axios.post(`/book/save/answers`, formattedAnswers);
+      console.log("답안 제출 성공", response.data);
+    } catch (error) {
+      console.error("답안 제출 중 오류:", error.response?.data);
+    }
+
+    setConfirmVisible(true);
+  };
 
   const closeConfirm = () => {
     setConfirmVisible(false);
@@ -56,78 +91,18 @@ export default function ParentComponent() {
   const handleAnswerChange = (questionId, answer) => {
     setAnswers((prevAnswers) => {
       const existingAnswer = prevAnswers.find((a) => a.questionId === questionId);
-      const newAnswerOrder = answerOrderCount;
-      setAnswerOrderCount(answerOrderCount + 1);
+      const newAnswerOrder = answerOrderCount; // 현재 answerOrderCount 사용
+      setAnswerOrderCount(answerOrderCount + 1); // 다음 answerOrder 설정
 
-      // 객관식일 때 배열로 저장 (다중 선택 가능)
-      if (Array.isArray(answer)) {
-        // choiceId만 추출해서 저장
-        const choices = answer.map((choice) => ({ choiceId: choice.choiceId }));
-        if (existingAnswer) {
-          return prevAnswers.map((a) =>
-              a.questionId === questionId
-                  ? { ...a, answer: choices, answerOrder: newAnswerOrder }
-                  : a
-          );
-        } else {
-          return [...prevAnswers, { questionId, answer: choices, answerOrder: newAnswerOrder }];
-        }
+      if (existingAnswer) {
+        return prevAnswers.map((a) =>
+            a.questionId === questionId ? { ...a, answer, answerOrder: newAnswerOrder } : a
+        );
+      } else {
+        return [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
       }
-
-      // 주관식일 때
-      if (typeof answer === "string") {
-        if (existingAnswer) {
-          return prevAnswers.map((a) =>
-              a.questionId === questionId
-                  ? { ...a, answer, answerOrder: newAnswerOrder }
-                  : a
-          );
-        } else {
-          return [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
-        }
-      }
-
-      return prevAnswers;
     });
   };
-
-  const openConfirm = async () => {
-    console.log("answers:", answers);
-
-    const formattedAnswers = answers.map((answer) => {
-      const answerData = {
-        solvedbook: { solvedbookId: solvedbookId },
-        question: { questionId: answer.questionId },
-        answerOrder: answer.answerOrder,
-      };
-
-      // 객관식 문제 처리: choiceId 배열로 전송
-      if (Array.isArray(answer.answer)) {
-        answerData.choices = answer.answer.map((choice) => ({
-          choiceId: choice.choiceId,
-        }));
-      }
-
-      // 주관식 문제 처리
-      else if (typeof answer.answer === "string") {
-        answerData.subjectiveAnswer = answer.answer || null;
-      }
-
-      return answerData;
-    });
-
-    console.log("전송할 데이터:", formattedAnswers);
-
-    try {
-      const response = await axios.post(`/book/save/answers`, formattedAnswers);
-      console.log("답안 제출 성공", response.data);
-    } catch (error) {
-      console.error("답안 제출 중 오류:", error.response?.data);
-    }
-
-    setConfirmVisible(true);
-  };
-
 
   return (
       <div className={"space-y-8"}>
