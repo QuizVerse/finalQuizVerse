@@ -2,16 +2,13 @@ import SearchInput from "../../components/SearchInput";
 import StudyRoomCard from "../../components/StudyRoomCard";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
 
-const ITEMS_PER_PAGE = 10;
-const SPACING = 2;
-
-// pagenation할 자료
-const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+const ITEMS_PER_PAGE = 10; // 페이지당 항목 수
+const SPACING = 2; // 페이지네이션 버튼 간격
 
 export default function StudyList() {
     // pagenation에 필요한 변수
@@ -45,7 +42,6 @@ export default function StudyList() {
     
     //화상방 들어가는 이벤트
     const GoRoomEvent = (studyId,studyTitle)=>{
-       // alert("ssss="+studyId+","+studyTitle);
         navi(`/study/room/${studyId}/${studyTitle}`);
     }
 
