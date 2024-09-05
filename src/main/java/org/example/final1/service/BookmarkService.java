@@ -47,7 +47,7 @@ public class BookmarkService {
     }
 
     // bookid별 저장 수 가져오기
-    public int getBookmarkcounts(int id) {
-        return bookmarkRepository.getBookmarkCount(id);
+    public int getBookmarkCountByBookId(int bookId) {
+        return bookmarkRepository.countByBookId(bookId);
     }
 }
