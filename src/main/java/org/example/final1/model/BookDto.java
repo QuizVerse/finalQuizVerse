@@ -24,7 +24,6 @@ public class BookDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
-
     private int bookId;
 
     @Column(name = "book_image", nullable = false, length = 255)
