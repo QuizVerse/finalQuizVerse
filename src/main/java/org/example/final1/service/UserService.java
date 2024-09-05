@@ -66,6 +66,12 @@ public class UserService {
         userDaoInter.save(userDto);
         return true;
     }
+    // 사용자 ID로 닉네임 추출하는 메서드
+    public String getUserNicknameById(int userId) {
+        return userDaoInter.findById(userId)
+                .map(UserDto::getUserNickname)
+                .orElse(null); // 사용자 ID로 사용자 찾을 수 없는 경우
+    }
 
 
 }

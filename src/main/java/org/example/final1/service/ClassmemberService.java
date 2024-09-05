@@ -38,16 +38,12 @@ public class ClassmemberService {
                 .classmemberRole((short) 2)
                 .classmemberDate(Timestamp.from(Instant.now()))
                 .build();
-
-
         try {
             classmemberRepository.save(classmemberDto);
             return true;
         } catch (Exception e) {
             throw new RuntimeException("Failed to invite member", e);
         }
-
-
     }
 
     public List<ClassmemberDto> getClassMembers(Integer classId) {
@@ -58,6 +54,8 @@ public class ClassmemberService {
         return optionalMembers.orElseThrow(() -> new RuntimeException("No members found for this class"));
     }
 
-
-
+    // 사용자 ID가 포함된 클래스 총 개수 가져오기
+    public int getClassCount(UserDto user) {
+        return classmemberRepository.countUserClassById(user.getUserId());
+    }
 }
