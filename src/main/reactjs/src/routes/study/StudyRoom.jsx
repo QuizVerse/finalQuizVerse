@@ -18,15 +18,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
-
 function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
+
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -40,10 +40,35 @@ export default function StudyRoom() {
     const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [screenTrack, setScreenTrack] = useState(null);
-    const [remoteScreenTrack, setRemoteScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
     const { study_id,studyTitle } = useParams(); // URL에서 studyId 추출
+    const [sharedScreenTrackSid, setSharedScreenTrackSid] = useState(null);
     const navi = useNavigate();
+    // 원격 화면 공유 트랙 상태 추가
+    const [remoteSharedScreenTrack, setRemoteSharedScreenTrack] = useState(null);
+    
+    // // 트랙의 해상도를 확인하는 함수
+    // function isScreenSharingTrack(track) {
+    //     if (track.kind === 'video') {
+    //         const settings = track.mediaStreamTrack.getSettings();
+    //         return settings.width && settings.height && (settings.width > 1280 || settings.height > 720); // 해상도가 1280x720보다 크면 화면 공유로 가정
+    //     }
+    //     return false;
+    // }
+    // // 원격 트랙 업데이트 로직
+    // useEffect(() => {
+    //     // 원격 트랙이 변경될 때마다 실행
+    //     const sharedScreenTrack = remoteTracks.find(remoteTrack => 
+    //         remoteTrack.trackPublication.kind === 'video' && 
+    //         isScreenSharingTrack(remoteTrack.trackPublication.track)
+    //     );
+
+    //     if (sharedScreenTrack) {
+    //         setRemoteSharedScreenTrack(sharedScreenTrack.trackPublication);
+    //     } else {
+    //         setRemoteSharedScreenTrack(null);
+    //     }
+    // }, [remoteTracks]);
 
     //사용자 정보를 가져오는 함수
     const getUserDto = () => {
@@ -284,12 +309,20 @@ export default function StudyRoom() {
     async function toggleScreenSharing() {
         if (isScreenSharing) {
             if (screenTrack) {
+                //공유화면 중지
                 await room.localParticipant.unpublishTrack(screenTrack);
                 screenTrack.stop();
                 setScreenTrack(null);
+                setSharedScreenTrackSid(null); // 화면 공유 트랙 식별자 초기화
             }
         } else {
-            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            //공유화면 시작
+            //const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                video: { 
+                    cursor: "always" // 화면 공유일 때만 커서를 항상 보이도록 설정
+                } 
+            });
             const videoTrack = stream.getVideoTracks()[0];
             const localScreenTrack = new LocalVideoTrack(videoTrack);
 
@@ -297,9 +330,11 @@ export default function StudyRoom() {
                 console.log('화면 공유가 중지되었습니다.');
                 setIsScreenSharing(false);
                 setScreenTrack(null);
+                setSharedScreenTrackSid(null); // 화면 공유 중지 시 식별자 초기화
             };
 
             setScreenTrack(localScreenTrack);
+            setSharedScreenTrackSid(localScreenTrack.sid); // 화면 공유 트랙 식별자 설정
             await room.localParticipant.publishTrack(localScreenTrack);
         }
         setIsScreenSharing(!isScreenSharing);
@@ -311,8 +346,8 @@ export default function StudyRoom() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-      //const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
-      const ws = new WebSocket('ws://localhost:9002/ws/chat');
+      const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
+      //const ws = new WebSocket('ws://localhost:9002/ws/chat');
       
       ws.onopen = () => {
       console.log('웹소켓 연결이 설정되었습니다.');
@@ -434,7 +469,7 @@ export default function StudyRoom() {
                         {remoteTracks
                                 .filter(remoteTrack =>
                                     remoteTrack.trackPublication.kind === "video" &&
-                                    remoteTrack.trackPublication.trackSid === screenTrack?.sid
+                                    remoteTrack.trackPublication.trackSid === sharedScreenTrackSid  //screenTrack?.sid
                                 )
                                 .map(remoteTrack => (
                                     <ShareVideoComponent
@@ -452,7 +487,7 @@ export default function StudyRoom() {
                         {remoteTracks
                                 .filter(remoteTrack =>
                                     remoteTrack.trackPublication.kind === "video" &&
-                                    remoteTrack.trackPublication.trackSid !== screenTrack?.sid
+                                    remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid  //screenTrack?.sid
                                 )
                                 .map(remoteTrack =>
                                     remoteTrack.trackPublication.kind === "video" ? (
