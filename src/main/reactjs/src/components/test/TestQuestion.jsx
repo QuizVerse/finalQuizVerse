@@ -11,8 +11,9 @@ const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아
 
 export default function TestQuestion({
                                             question,
-                                            onUploadImage
-                                        }) {
+                                            onUploadImage,
+                                            onAnswerChange
+                                     }) {
 
     /** 일반 코드 */
         // 질문 접힘 상태 관리
@@ -64,7 +65,7 @@ export default function TestQuestion({
                             />
                         </div>
                     </div>
-                    <TestChoices question={question}/>
+                    <TestChoices question={question} onAnswerChange={onAnswerChange}/>
                     <div className="flex flex-col gap-4">
                         <div className="flex gap-4">
                             <Typography>{question.questionSolution}</Typography>
