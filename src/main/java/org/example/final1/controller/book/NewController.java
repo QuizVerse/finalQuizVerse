@@ -43,30 +43,35 @@ public class NewController {
     @PostMapping("/newbook")
     public ResponseEntity<Map<String, Object>> newBook(
             @ModelAttribute BookDto bookDto,
-            @RequestParam("classId") Integer classId,
-            @RequestParam("upload") MultipartFile upload,
+            @RequestParam(value = "classId", required = false) Integer classId, // classId가 선택적으로 제공됨
+            @RequestParam(value = "upload", required = false) MultipartFile upload, // 이미지도 선택 사항으로 처리
             HttpServletRequest request) {
 
         // JWT 토큰에서 사용자 정보 가져오기
         UserDto userDto = jwtService.getUserFromJwt(request);
         if (userDto == null) {
-            return ResponseEntity.status(401).build(); // 유효하지 않은 JWT 토큰 처리
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid JWT token")); // 유효하지 않은 JWT 토큰 처리
         }
 
-        // 사진 업로드 처리
-        String bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
-
-        // 업로드된 사진의 URL을 book_image 필드에 설정
-        bookDto.setBookImage(bookPhoto);
-        // 클래스 설정
-        ClassDto classDto = classRepository.findById(classId).orElse(null);
-        if (classDto != null) {
-            bookDto.setClass1(classDto); // 클래스 객체를 BookDto에 설정
+        // 사진 업로드 처리 (사진이 있는 경우에만)
+        String bookPhoto = null;
+        if (upload != null && !upload.isEmpty()) {
+            bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
+            bookDto.setBookImage(bookPhoto); // 업로드된 사진의 URL을 설정
         }
 
+        // 클래스 설정 (classId가 제공된 경우에만)
+        if (classId != null) {
+            ClassDto classDto = classRepository.findById(classId).orElse(null);
+            if (classDto != null) {
+                bookDto.setClass1(classDto); // 클래스 객체를 BookDto에 설정
+            }
+        }
 
         // 책 정보를 사용자 정보와 결합하여 설정
         bookDto.setUser(userDto);
+
+        // 책 저장
         BookDto savedBook = bookService.saveBook(bookDto);
 
         // 결과 반환
