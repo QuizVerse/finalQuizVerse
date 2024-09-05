@@ -15,12 +15,18 @@ export default function MyclassDetail() {
   const [userRole, setUserRole] = useState(null); // 현재 사용자의 역할(방장/멤버)을 관리합니다.
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅입니다.
   const [openRoleChange, setOpenRoleChange] = useState({ isOpen: false, action: null }); // 방장 권한 변경 모달의 상태를 관리합니다.
-  const [books,setBooks]=useState([]);//클래스 책들 관리
+  const [books, setBooks] = useState([]); // 클래스 책들 관리
+  const[classdata,setClassdata]=useState("");
 
+
+
+
+  const [currentPage, setCurrentPage] = useState(1); // 페이지네이션 - 현재 페이지를 관리합니다.
+  const [pageGroup, setPageGroup] = useState(0); // 페이지 그룹 (5개씩 페이지 번호를 표시하기 위해 추가)
+  const itemsPerPage = 5; // 페이지당 보여줄 구성원 수를 설정합니다.
+  const pagesPerGroup = 5; // 한 번에 표시할 페이지 번호 수
 
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
-
-
 
   // 구성원 추가 모달을 엽니다.
   const memberAdd = () => {
@@ -42,16 +48,18 @@ export default function MyclassDetail() {
         const userResponse = await axios.get(`/myclass/${classId}/userrole`); // 사용자의 역할을 가져옵니다.
         setUserRole(userResponse.data);
 
+        const classResponse = await axios.get(`/myclass/${classId}/class`); // 사용자의 역할을 가져옵니다.
+        setClassdata(classResponse.data);
+
         const membersResponse = await axios.get(`/myclass/${classId}/members`); // 클래스 멤버들을 가져옵니다.
         setMembers(membersResponse.data.map((member) => ({ ...member, isSelected: false }))); // 멤버 리스트를 초기화합니다.
 
-        const bookResponse=await axios.get(`/myclass/${classId}/books`);//해당 클래스 책 목록 부르기
-        setBooks(bookResponse.data.map((books)=>(
-            {...books}
-        )));
-
-
-
+        const bookResponse = await axios.get(`/myclass/${classId}/books`); // 해당 클래스 책 목록 부르기
+        setBooks(
+            bookResponse.data.map((books) => ({
+              ...books,
+            }))
+        );
       } catch (e) {
         console.error("Failed to fetch members", e);
       }
@@ -71,24 +79,19 @@ export default function MyclassDetail() {
   const handleSelectMember = (id) => {
     setMembers((prevMembers) =>
         prevMembers.map((member) =>
-            member.classmemberId === id
-                ? { ...member, isSelected: !member.isSelected }
-                : member
+            member.classmemberId === id ? { ...member, isSelected: !member.isSelected } : member
         )
     );
   };
 
   // 선택된 멤버들을 삭제합니다.
   const memberDelete = async () => {
-    const selectIds = members
-        .filter(member => member.isSelected)
-        .map(member => member.classmemberId);
+    const selectIds = members.filter((member) => member.isSelected).map((member) => member.classmemberId);
 
     if (selectIds.length > 0) {
       try {
-        await axios.post('/myclass/delete/members', selectIds); // 선택된 멤버들을 삭제합니다.
-        setMembers(prevMembers => prevMembers
-            .filter(member => !selectIds.includes(member.classmemberId))); // 삭제된 멤버들을 목록에서 제거합니다.
+        await axios.post("/myclass/delete/members", selectIds); // 선택된 멤버들을 삭제합니다.
+        setMembers((prevMembers) => prevMembers.filter((member) => !selectIds.includes(member.classmemberId))); // 삭제된 멤버들을 목록에서 제거합니다.
       } catch (error) {
         console.error("Failed to delete members", error);
       }
@@ -144,7 +147,7 @@ export default function MyclassDetail() {
   const realDeleteClass = async () => {
     try {
       const response = await axios.get(`/myclass/${classId}/delete`);
-      if (response.data === 'Delete class successfully') {  // 서버에서 반환한 메시지와 비교
+      if (response.data === "Delete class successfully") {
         console.log("Successfully delete really 시작이 젤무서워 미루니");
         navigate("/mypage/myclass");
       } else {
@@ -153,14 +156,15 @@ export default function MyclassDetail() {
     } catch (e) {
       console.error("내일의 나에게 일단 미루지");
     }
-  }
+  };
 
   // 검색어에 따라 멤버들을 필터링합니다.
   useEffect(() => {
     const lowerCaseQuery = searchQuery.toLowerCase();
-    const filtered = members.filter((member) =>
-        member.user.userNickname.toLowerCase().includes(lowerCaseQuery) ||
-        member.user.userEmail.toLowerCase().includes(lowerCaseQuery)
+    const filtered = members.filter(
+        (member) =>
+            member.user.userNickname.toLowerCase().includes(lowerCaseQuery) ||
+            member.user.userEmail.toLowerCase().includes(lowerCaseQuery)
     );
     setFilteredMembers(filtered);
   }, [searchQuery, members]);
@@ -185,9 +189,44 @@ export default function MyclassDetail() {
     }
   };
 
+  // 페이지네이션: 현재 페이지에서 보여줄 멤버들을 계산합니다.
+  const indexOfLastMember = currentPage * itemsPerPage;
+  const indexOfFirstMember = indexOfLastMember - itemsPerPage;
+  const currentMembers = filteredMembers.slice(indexOfFirstMember, indexOfLastMember);
+
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+
+  // 페이지네이션: 페이지 변경 함수
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // 페이지 그룹 범위 계산
+  const startPage = pageGroup * pagesPerGroup + 1;
+  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+  const pageNumbers = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
+  // 다음 페이지 그룹으로 이동
+  const nextPageGroup = () => {
+    if (endPage < totalPages) {
+      setPageGroup(pageGroup + 1);
+    }
+  };
+
+  // 이전 페이지 그룹으로 이동
+  const prevPageGroup = () => {
+    if (pageGroup > 0) {
+      setPageGroup(pageGroup - 1);
+    }
+  };
+
   return (
       <main className="flex-1 p-6">
-        <h1 className="mb-6 text-2xl font-bold">정치기 실기 스터디</h1>
+        <h1 className="mb-6 text-2xl font-bold">
+          {classdata ? classdata.className : 'Loading...'}
+        </h1>
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
@@ -275,7 +314,7 @@ export default function MyclassDetail() {
               </tr>
               </thead>
               <tbody>
-              {filteredMembers.map((member) => (
+              {currentMembers.map((member) => (
                   <tr
                       key={member.classmemberId}
                       className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
@@ -294,7 +333,7 @@ export default function MyclassDetail() {
                     <td className="p-4 align-middle">
                       {member.user.userImage ? (
                           <img
-                              src={`${photopath}/${member.user.userImage}`}  // photopath와 userImage를 결합하여 이미지 URL 생성
+                              src={`${photopath}/${member.user.userImage}`} // photopath와 userImage를 결합하여 이미지 URL 생성
                               alt={member.user.userNickname}
                               style={{
                                 width: "60px",
@@ -304,7 +343,7 @@ export default function MyclassDetail() {
                               }}
                           />
                       ) : (
-                          <span>No Image</span>  // 이미지가 없을 때 표시할 텍스트
+                          <span>No Image</span> // 이미지가 없을 때 표시할 텍스트
                       )}
                     </td>
 
@@ -322,6 +361,40 @@ export default function MyclassDetail() {
               ))}
               </tbody>
             </table>
+          </div>
+          {/* 페이지네이션 버튼 */}
+          <div className="flex justify-center mt-4">
+            {/* 이전 버튼 */}
+            {pageGroup > 0 && (
+                <button
+                    onClick={prevPageGroup}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200"
+                >
+                  이전
+                </button>
+            )}
+
+            {pageNumbers.map((pageNumber) => (
+                <button
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    className={`mx-1 px-3 py-1 rounded ${
+                        currentPage === pageNumber ? "bg-primary text-white" : "bg-gray-200"
+                    }`}
+                >
+                  {pageNumber}
+                </button>
+            ))}
+
+            {/* 다음 버튼 */}
+            {endPage < totalPages && (
+                <button
+                    onClick={nextPageGroup}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200"
+                >
+                  다음
+                </button>
+            )}
           </div>
         </div>
         <div className="flex items-center justify-between mb-6">
