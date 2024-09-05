@@ -85,6 +85,7 @@ export default function AddClassMember({ onClose}) {
                         value={nickname}
                         onChange={handleInputChange}
                         onSearch={handleSearch}
+
                     />
                 </div>
                 {user && (

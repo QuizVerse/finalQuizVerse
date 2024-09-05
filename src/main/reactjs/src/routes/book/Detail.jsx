@@ -105,6 +105,21 @@ export default function Detail() {
   };
 
 
+  const handleStartExam = async () => {
+    try {
+      const response = await axios.post('/book/test/start', { bookId: book_Id });
+      const { solvedbookId } = response.data; // 서버 응답에서 solvedbookId 추출
+
+      console.log('Exam started successfully', response.data);
+
+      navigate(`/book/test/${book_Id}/${solvedbookId}`); // solvedbookId를 URL에 포함하여 네비게이션
+    } catch (error) {
+      console.error('Error starting exam:', error);
+      alert('시험을 시작하는데 실패했습니다.');
+    }
+  };
+
+
   return (
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
@@ -198,10 +213,10 @@ export default function Detail() {
               </Box>
 
               <Button
-                  onClick={()=> navigate(`/book/test/${book_Id}`)}
-                variant="contained"
-                color="primary"
-                sx={{ mt: 4, height: 56 }}
+                  onClick={handleStartExam} // 버튼 클릭 시 시험 응시 처리
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 4, height: 56 }}
               >
                 시험 응시
               </Button>

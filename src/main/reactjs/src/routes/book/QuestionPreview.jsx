@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {
     Typography,
     Button,
@@ -30,6 +30,8 @@ export default function QuestionPreview() {
     // 추가: isChecked와 totalPoints 상태 정의
     const [isChecked, setIsChecked] = useState(false);
     const [totalPoints, setTotalPoints] = useState(0);
+
+    const navigate=useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,7 +85,6 @@ export default function QuestionPreview() {
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
 
     const handleSubmit = async () => {
-        // 점수 균등 분배 로직
         if (isChecked) {
             const totalQuestions = questions.length;
             const totalScore = parseInt(totalPoints, 10) || 0;
@@ -96,14 +97,21 @@ export default function QuestionPreview() {
             setQuestions(updatedQuestions);
         }
 
-        if (questions.some((question) => question.questionPoint === 0 || question.questionPoint === "")) {
+        const sanitizedQuestions = questions.map(({ questionId, questionPoint }) => ({
+            questionId,
+            questionPoint,
+        }));
+
+        if (sanitizedQuestions.some((question) => question.questionPoint === 0 || question.questionPoint === "")) {
             openAlert("모든 문제에 대해 배점을 해야 합니다. 0점 또는 빈 점수가 있는 문제가 있습니다.");
         } else {
             try {
-                const response = await axios.post(`/book/question/saveScore/${bookId}`, { questions });
+                // questions를 배열로 보내야 함
+                const response = await axios.post(`/book/question/saveScore/${bookId}`, sanitizedQuestions);
 
                 if (response.status === 200) {
                     openAlert("배점이 성공적으로 저장되었습니다.");
+                    navigate("/");  // 저장 성공 후 메인 페이지로 이동
                 } else {
                     openAlert("배점 저장에 실패했습니다.");
                 }
@@ -113,6 +121,7 @@ export default function QuestionPreview() {
             }
         }
     };
+
 
     const openAlert = (alertTitle) => {
         setAlertTitle(alertTitle);
