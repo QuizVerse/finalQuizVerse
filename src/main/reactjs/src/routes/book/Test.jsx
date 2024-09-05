@@ -16,6 +16,9 @@ export default function ParentComponent() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [answers,setAnswers]=useState([]);
+
+
 
   // bookId와 solvedbookId를 사용하여 데이터 가져오기
   console.log('Book ID:', bookId);
@@ -52,8 +55,34 @@ export default function ParentComponent() {
     return <div>No data found</div>; // 데이터가 없을 때 표시
   }
 
+  const openConfirm = async () => {
+    const formattedAnswers = answers.map((answer) => {
+      if (answer.choiceId) {
+        // 객관식 문제 처리
+        return {
+          questionId: answer.questionId,
+          choice: { choiceId: answer.choiceId },
+          answerOrder: answer.answerOrder
+        };
+      } else {
+        // 주관식 문제 처리
+        return {
+          questionId: answer.questionId,
+          subjectiveAnswer: answer.subjectiveAnswer,
+          answerOrder: answer.answerOrder
+        };
+      }
+    });
 
-  const openConfirm = () => {
+    console.log("전송할 데이터:", formattedAnswers); // 전송 전 데이터를 확인
+
+    try {
+      await axios.post(`/book/save/answers`, { answers: formattedAnswers });
+      console.log("답안 제출 성공");
+    } catch (error) {
+      console.error("답안 제출 중 오류:", error.response?.data); // 서버로부터의 응답을 출력하여 에러 원인 확인
+    }
+
     setConfirmVisible(true);
   };
 
@@ -73,8 +102,17 @@ export default function ParentComponent() {
     navigate(`/book/score/${bookId}`);
   };
 
-
-
+// TestSection에서 답안을 전달받아 업데이트
+  const handleAnswerChange = (questionId, answer) => {
+    setAnswers((prevAnswers) => {
+      const existingAnswer = prevAnswers.find((a) => a.questionId === questionId);
+      if (existingAnswer) {
+        return prevAnswers.map((a) => (a.questionId === questionId ? { questionId, answer } : a));
+      } else {
+        return [...prevAnswers, { questionId, answer }];
+      }
+    });
+  };
   return (
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
@@ -103,6 +141,7 @@ export default function ParentComponent() {
                   book={bookData}
                   loading={loading}
                   setLoading={setLoading}
+                  onAnswerChange={handleAnswerChange}
               />
           ))}
         </div>
