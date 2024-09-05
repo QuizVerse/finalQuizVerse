@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BookCard from "../../components/BookCard";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -18,7 +18,6 @@ export default function BookList() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const fetchCategoriesAndBooks = async () => {
@@ -37,18 +36,20 @@ export default function BookList() {
                 const booksResponses = await Promise.all(
                     categories.map(category =>
                         axios.get(`/books/category?id=${category.categoryId}`)
-            .then(response => ({
-                    categoryId: category.categoryId,
-                    books: response.data.map(book => ({
-                        ...book,
-                        isBookmark: bookmarkedBookIds.includes(book.bookId),
-                        bookmarkCount: 0, // Placeholder, to be updated below
-                        bookSectionCount: 0, // Placeholder, to be updated below
-                        bookQuestionCount: 0 // Placeholder, to be updated below
-                    }))
-                }))
-            )
-            );
+                            .then(response => ({
+                                categoryId: category.categoryId,
+                                books: response.data
+                                    .filter(book => book.bookStatus === 1) // Filter books based on status
+                                    .map(book => ({
+                                        ...book,
+                                        isBookmark: bookmarkedBookIds.includes(book.bookId),
+                                        bookmarkCount: 0, // Placeholder, to be updated below
+                                        bookSectionCount: 0, // Placeholder, to be updated below
+                                        bookQuestionCount: 0 // Placeholder, to be updated below
+                                    }))
+                            }))
+                    )
+                );
 
                 const booksByCategory = booksResponses.reduce((acc, { categoryId, books }) => {
                     acc[categoryId] = books;
@@ -165,7 +166,7 @@ export default function BookList() {
                 <section className="mb-8" key={category.categoryId}>
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
-                        <Link className="text-gray-600 flex gap-2 items-center" to={'/book/category?cat=${category.categoryId}'}>
+                        <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
                             전체보기
                             <ArrowForwardIosIcon fontSize={'small'} />
                         </Link>
@@ -190,13 +191,10 @@ export default function BookList() {
                                 isBookmark={book.isBookmark}
                                 isLoggedIn={isLoggedIn}
                             />
-                        )) || <div>No books available</div>
-                        }
+                        )) || <div>등록된 문제집이 없습니다</div>}
                     </div>
                 </section>
-                )
-            )
-            }
-            </>
+            ))}
+        </>
     );
 }
