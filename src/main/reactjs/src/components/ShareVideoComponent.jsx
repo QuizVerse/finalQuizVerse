@@ -32,7 +32,7 @@ export default function ShareVideoComponent({ track, participantIdentity, local 
     return (
         <div id={"camera-" + participantIdentity} className="sharevideo-container">
             <div className="participant-data">
-                <p>{participantIdentity + (" (Share)")}</p>
+                <p>{participantIdentity + (local ? " (Share - You)" : " (Share)")}</p>
             </div>
             {/* <video ref={videoElement} id={track.sid}></video> */}
             <video ref={videoElement} autoPlay playsInline muted={local}></video>
