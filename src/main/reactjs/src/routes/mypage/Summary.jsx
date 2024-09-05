@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import BookCard from "../../components/BookCard";
 
+const ITEMS_PER_PAGE = 4;
 
 export default function Summary() {
     const [classList, setClassList] = useState([]);
@@ -59,6 +60,42 @@ export default function Summary() {
         }
     }, [userId]);
 
+    const fetchUserBooks = async () => {
+        if (!userId) return;
+
+        try {
+            const res = await axios.get(`/publishedbook/user-books?userId=${userId}`);
+            const bookWithDetails = await Promise.all(res.data.map(async (book) => {
+                const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
+                    axios.get(`/bookmark/countBookmarks/${book.bookId}`),
+                    axios.get(`/book/question/count/${book.bookId}`),
+                    axios.get(`/book/section/count/${book.bookId}`)
+                ]);
+
+                return {
+                    ...book,
+                    bookmarkCount: bookmarkCountResponse.data,
+                    bookQuestionCount: questionCountResponse.data,
+                    bookSectionCount: sectionCountResponse.data
+                };
+            }));
+
+            setClassList(bookWithDetails);
+        } catch (error) {
+            setError(error);
+        }
+    };
+
+    useEffect(() => {
+        if (userId) {
+            fetchUserBooks();
+        }
+    }, [userId]);
+
+    // Pagination
+    const itemOffset = (page - 1) * ITEMS_PER_PAGE;
+    const currentItems = classList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+
     return (
         <main className="flex-1 p-8">
             <section className="mb-8">
@@ -71,9 +108,19 @@ export default function Summary() {
                 </div>
             </section>
             <section className="mb-8">
-                <h2 className="mb-4 text-2xl font-bold">
-                    <span className="text-blue-500">{name}</span>님이 만든 문제집
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold">
+                        <span className="text-blue-500">{name}</span>님이 만든 문제집
+                    </h2>
+                    <Button
+                        className="rounded-lg border bg-card text-card-foreground shadow-sm"
+                        variant="text"
+                        component={Link}
+                        to="/mypage/publishedbook"
+                    >
+                        전체보기
+                    </Button>
+                </div>
                 <div className="grid grid-cols-4 gap-4">
                     <Button
                         className="rounded-lg border bg-card text-card-foreground shadow-sm flex items-center justify-center space-x-4"
@@ -86,10 +133,26 @@ export default function Summary() {
                             </div>
                         </Link>
                     </Button>
-                    {/* 이 곳에 북카드가 들어와야 해요 */}
-                    {/*<BookCard cardType="B" className="flex-1" photo="" createDate="2024-08-17" nickname="닉네임" title="제목이랍니다" category="취업 / 자격증" />*/}
-                    {/*<BookCard cardType="B" className="flex-1" photo="" createDate="2024-08-18" nickname="쿠킹호일" title="제목일걸요" category="여기는 카테고리" />*/}
-                    {/*<BookCard cardType="B" className="flex-1" photo="" createDate="2000-05-16" nickname="이시연" title="R" category="보컬 / 서브기타" />*/}
+                    {currentItems.length > 0 ? (
+                        currentItems.slice(0, 3).map((book) => (
+                            <BookCard
+                                key={book.bookId}
+                                bookId={book.bookId}
+                                photo={book.bookImage}
+                                cardType="B"
+                                nickname={book.user?.userNickname || "Unknown"}
+                                className="flex-1"
+                                createDate={book.bookCreatedate}
+                                title={book.bookTitle}
+                                bookUrl={`/book/detail/${book.bookId}`}
+                                bookmarkCount={book.bookmarkCount}
+                                bookQuestionCount={book.bookQuestionCount}
+                                bookSectionCount={book.bookSectionCount}
+                            />
+                        ))
+                    ) : (
+                        <div>출제한 문제집이 없습니다.</div>
+                    )}
                 </div>
             </section>
         </main>
