@@ -20,10 +20,9 @@ export default function PublishedBook() {
   const [bookList, setBookList] = useState([]); // 책 목록 상태
   const [page, setPage] = useState(1); // 현재 페이지 상태
   const [sort, setSort] = useState('popular'); // 정렬 기준 상태
-  const [userId, setUserId] = useState(16); // 사용자 ID 상태
+  const [userId, setUserId] = useState(null); // 사용자 ID 상태
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
-  
 
   // 페이지 변경 처리
   const handleChange = (event, value) => {
@@ -36,35 +35,45 @@ export default function PublishedBook() {
     setSort(event.target.value);
   };
 
-  // 데이터 로드
-  //book list 출력
-  const getBookList = () => {
-    axios.get(`/published-books/list/${userId}`).then((res) => {
-      setBookList(res.data.userId);
-    });
-  };
-  //사용자 정보를 가져오는 함수
+  // 사용자 정보를 가져오는 함수
   const getUserDto = async () => {
-    axios.get(`/book/username`).then((res) => {
-        //유저아이디불러오기
-        setUserId(res.data.userId);
-      });
+    try {
+      const res = await axios.get(`/publishedbook/user-id`); // URL 수정
+      setUserId(res.data); // 서버에서 반환된 userId 사용
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  // book list 출력
+  const getBookList = async () => {
+    try {
+      const res = await axios.get(`/publishedbook/user-books?userId=${userId}`);
+      setBookList(res.data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false); // 로딩 상태 해제
+    }
   };
 
   useEffect(() => {
-    getBookList();
     getUserDto();
   }, []);
 
-
+  useEffect(() => {
+    if (userId) { // userId가 설정된 이후에만 책 목록을 가져옴
+      getBookList();
+    }
+  }, [userId]); // userId가 변경될 때마다 책 목록을 가져옴
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  // 현재 페이지에 표시할 항목 계산 **********************************************************************************
-  // const itemOffset = (page - 1) * ITEMS_PER_PAGE;
-  // const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
-  // const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
+  // 현재 페이지에 표시할 항목 계산
+  const itemOffset = (page - 1) * ITEMS_PER_PAGE;
+  const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
   return (
     <main className="flex-1 p-6">
@@ -95,17 +104,15 @@ export default function PublishedBook() {
 
       {/* BookCard 출력 */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {bookList.length > 0 ? (
-          bookList.map((book,idx) => (
+        {currentBooks.length > 0 ? (
+          currentBooks.map((book) => (
             <BookCard
               key={book.bookId} // bookId를 키로 사용
               cardType="B"
               className="flex-1"
               photo={book.bookImage}
               createDate={book.bookCreatedate}
-              //nickname={book.user ? book.user.nickname : "알 수 없음"}
               title={book.bookTitle}
-              //category={book.category ? book.category.name : "기타"}
             />
           ))
         ) : (
@@ -114,7 +121,7 @@ export default function PublishedBook() {
       </div>
 
       {/* 페이지네이션 */}
-      {/* <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
+      <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
         <Pagination
           count={pageCount} // 전체 페이지 수
           page={page} // 현재 페이지 번호
@@ -122,7 +129,7 @@ export default function PublishedBook() {
           showFirstButton // 첫 페이지로 이동 버튼 표시
           showLastButton // 마지막 페이지로 이동 버튼 표시
         />
-      </Stack> */}
+      </Stack>
     </main>
   );
 }

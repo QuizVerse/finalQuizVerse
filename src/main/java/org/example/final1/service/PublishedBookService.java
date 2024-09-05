@@ -1,23 +1,22 @@
 package org.example.final1.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
-import org.example.final1.repository.Published.PublishedBookDao;
-import org.example.final1.repository.Published.PublishedBookDaoInter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.example.final1.model.UserDto;
+import org.example.final1.repository.BookRepository;
+import org.example.final1.repository.PublishedBookRepository;
 import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PublishedBookService {
-    private PublishedBookDao publishedBookDao;
 
-    public List<BookDto> PublishedBookList(int userId)
-    {
-        return publishedBookDao.PublishedBookList(userId);
+    private final PublishedBookRepository publishedbookRepository;
+
+    // 특정 사용자가 작성한 책들을 가져오는 메서드
+    public List<BookDto> getBooksByUser(UserDto user) {
+        return publishedbookRepository.findAllByUser(user);
     }
 }
