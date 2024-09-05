@@ -24,4 +24,8 @@ public class StudyService {
         studyDao.insertRoom(dto);
     }
 
+    public StudyDto StudyRoomDto(int studyId)
+    {
+        return studyDao.StudyRoomDto(studyId);
+    }
 }

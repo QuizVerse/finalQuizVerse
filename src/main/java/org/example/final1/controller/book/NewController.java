@@ -100,7 +100,10 @@ public class NewController {
             List<ClassDto> classes = classRepository.findAllByUser(userDto);
             return ResponseEntity.ok(classes);
         }
-
+        else
+        {
+            //***********************************************************
+        }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
