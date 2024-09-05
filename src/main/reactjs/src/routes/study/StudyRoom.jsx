@@ -40,6 +40,7 @@ export default function StudyRoom() {
     const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [screenTrack, setScreenTrack] = useState(null);
+    const [remoteScreenTrack, setRemoteScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
     const { study_id,studyTitle } = useParams(); // URL에서 studyId 추출
     const navi = useNavigate();
