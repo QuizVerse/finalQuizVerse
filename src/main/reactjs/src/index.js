@@ -210,6 +210,11 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
+                path: "/book/edit/ai/:bookId",
+                element: <EditAi />,
+                errorElement: <ErrorPage />,
+            },
+            {
                 path: '/book/questionpreview/:bookId',
                 element: <QuestionPreview />,
                 errorElement: <ErrorPage />,
