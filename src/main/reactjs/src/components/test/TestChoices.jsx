@@ -36,12 +36,22 @@ export default function TestChoices({ question, onAnswerChange }) {
         };
         fetchData(); // 선택지 데이터를 가져오는 함수 호출
     }, [question.questionId]); // question의 ID가 변경될 때마다 데이터를 다시 불러옴
-
-    // OX 문제에서 O 또는 X를 선택했을 때의 로직
+// OX 문제에서 O 또는 X를 선택했을 때의 로직
     const handleOxSelect = (selection) => {
         setOxSelected(selection); // 선택한 값을 상태에 저장
+
         // 선택된 값으로 선택지 배열을 업데이트
-        const updatedChoice = [{ choiceText: selection, choiceIsanswer: selection === "O", question }];
+        const selectedChoice = choices.find(choice => choice.choiceText === selection);
+
+        if (!selectedChoice) {
+            console.error(`선택한 텍스트 (${selection})에 해당하는 선택지가 없습니다.`);
+            return; // 선택지가 없으면 함수를 종료합니다.
+        }
+
+        // 선택된 값과 관련된 정보를 updatedChoice로 구성
+        const updatedChoice = [{ choiceId: selectedChoice.choiceId, choiceText: selection, choiceIsanswer: selection === "O", question }];
+
+        // choiceId와 함께 상위 컴포넌트에 전달
         onAnswerChange(question.questionId, updatedChoice);
     };
 
@@ -50,8 +60,17 @@ export default function TestChoices({ question, onAnswerChange }) {
         const updatedChoices = [...choices]; // 기존 선택지를 복사
         updatedChoices[index].choiceIsanswer = !updatedChoices[index].choiceIsanswer; // 선택 여부를 토글
         setChoices(updatedChoices); // 선택지 상태를 업데이트
-        onAnswerChange(question.questionId, updatedChoices); // 상위로 선택 결과 전달
+
+        // 선택된 답안을 choiceId를 포함한 형태로 상위 컴포넌트로 전달
+        const selectedChoices = updatedChoices.filter(choice => choice.choiceIsanswer).map(choice => ({
+            choiceId: choice.choiceId,
+            choiceText: choice.choiceText,
+            choiceIsanswer: choice.choiceIsanswer
+        }));
+
+        onAnswerChange(question.questionId, selectedChoices); // 선택한 choiceId들을 전달
     };
+
 
     // 선택형 문제에서 라디오 버튼이 선택됐을 때의 로직
     const handleChange = (event) => {
@@ -62,8 +81,17 @@ export default function TestChoices({ question, onAnswerChange }) {
             e.choiceIsanswer = index === Number(val);
         });
         setChoices(updatedChoices); // 선택지 상태 업데이트
-        onAnswerChange(question.questionId, updatedChoices.find(choice => choice.choiceIsanswer)); // 선택된 답안을 상위 컴포넌트로 전달
+
+        const selectedChoice = updatedChoices.find(choice => choice.choiceIsanswer);
+
+        onAnswerChange(question.questionId, [{
+            choiceId: selectedChoice.choiceId,
+            choiceText: selectedChoice.choiceText,
+            choiceIsanswer: true
+        }]);
+
     };
+
 
     // 주관식 문제에서 답변이 입력됐을 때의 로직
     const handleSubjectiveAnswer = (event) => {
