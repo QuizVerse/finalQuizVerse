@@ -1,5 +1,6 @@
 import { CallGpt } from "../../components/gpt";
 import { useState } from "react";
+import {Button} from "@mui/material";
 
 export default function EditAi() {
     const [data, setData] = useState(null); // 현재 선택된 데이터
@@ -30,23 +31,19 @@ export default function EditAi() {
     return (
         <div className="flex flex-col min-h-screen">
             <header className="flex items-center justify-between p-4 border-b">
-                <h1 className="text-xl font-bold">QuizVerse</h1>
-                <nav className="flex items-center space-x-4">
-                    <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full mb-4"
-                    >
+                <nav className="flex items-center space-x-4 justify-end w-full">
+                    <Button variant={"contained"}>
                         에디터로 편집하기
-                    </button>
+                    </Button>
                 </nav>
             </header>
             <main className="flex flex-1 p-4">
-                <aside className="w-1/4 p-4 border-r">
-                    <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full mb-4"
+                <aside className="w-1/4 p-4 border-r space-y-2">
+                    <Button variant={"outlined"} fullWidth
                         onClick={() => setHistory([])} // 히스토리 초기화
-                    >
+                        >
                         히스토리 초기화
-                    </button>
+                    </Button>
                     <ul className="space-y-2">
                         {history.map((item, index) => (
                             <li key={index}>

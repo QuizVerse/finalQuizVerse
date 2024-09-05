@@ -20,28 +20,35 @@ export const CallGpt = async ({ prompt }) => {
             - [Explanation]: A detailed explanation of the correct answer.
         
         Please output the following structure in Korean:
-
         {
-          "시험 제목": "Title",
-          "시험 요약": "Summary",
-          "문제들": [
-            {
-              "번호": Number,
-              "문제 유형": "Problem Type",
-              "문제": "Problem",
-              "선택지": ["Option1", "Option2", ...],  // Only include if multiple-choice
-              "정답": "Answer",
-              "해설": "Explanation"
+            "sectionNumber": 1,
+            "sectionTitle": "Title",
+            "sectionDescription": "Summary",
+            "questions" :   [{
+                "questionType": Problem Type,
+                "questionTitle": "Problem",
+                "questionSolution": "Explanation",
+                "questionOrder": Number,
+                "correctAnswer": "Answer"
+                "choices" : [
+                    {
+                        "choiceText": "Option1",
+                    },
+                    {
+                        "choiceText": "Option2",
+                    },
+                    ...
+                ]
             },
             ...
-          ]
+            ]
         }
         
         Repeat this structure for each question.`,
         },
         {
             role: "user",
-            content: `Please note: If the question is not multiple-choice, do not include the "선택지" field in the JSON. Create an exam based on the following prompt: """ ${prompt} """`,
+            content: `Please note: If the question is not multiple-choice, do not include the "choices" field in the JSON. Create an exam based on the following prompt: """ ${prompt} """`,
         },
     ];
     const response = await fetch("https://api.openai.com/v1/chat/completions", {

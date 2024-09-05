@@ -261,7 +261,7 @@ export default function Edit() {
                     <div className="flex space-x-2">
                         <Button variant={"outlined"} onClick={handlePublishTemporary}>임시저장</Button>
                         <Button variant={"outlined"}>
-                            <Link to={"/book/questionpreview"}>AI 문제 출제</Link>
+                            <Link to={"/book/edit/ai/"+bookId}>AI 문제 출제</Link>
                         </Button>
                         <Button variant={"contained"}>
                             <Link to={"/book/questionpreview/"+bookId}>출제하기</Link>
