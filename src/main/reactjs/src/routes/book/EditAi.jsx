@@ -1,12 +1,15 @@
 import { CallGpt } from "../../components/gpt";
 import { useState } from "react";
-import {Button, TextField} from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom"; // 페이지 이동을 위한 훅
 
 export default function EditAi() {
     const [data, setData] = useState(null); // 현재 선택된 데이터
     const [isLoading, setIsLoading] = useState(false);
     const [userInput, setUserInput] = useState('');
     const [history, setHistory] = useState([]); // 히스토리 저장
+    const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+    const {bookId} = useParams(); //URL에서 book_Id를 가져옴
 
     const handleClickAPICall = async () => {
         try {
@@ -28,20 +31,22 @@ export default function EditAi() {
         setData(selectedData.result); // 선택한 히스토리의 결과를 현재 데이터로 설정
     };
 
+    const handleEditClick = () => {
+        navigate(`/book/edit/`+bookId, { state: { data } }); // 데이터와 함께 edit 페이지로 이동
+    };
+
     return (
         <div className="flex flex-col min-h-screen">
             <header className="flex items-center justify-between p-4 border-b">
                 <nav className="flex items-center space-x-4 justify-end w-full">
-                    <Button variant={"contained"}>
+                    <Button variant={"contained"} onClick={handleEditClick}>
                         에디터로 편집하기
                     </Button>
                 </nav>
             </header>
             <main className="flex flex-1 p-4">
                 <aside className="w-1/4 p-4 border-r space-y-2">
-                    <Button variant={"outlined"} fullWidth
-                            onClick={() => setHistory([])} // 히스토리 초기화
-                    >
+                    <Button variant={"outlined"} fullWidth onClick={() => setHistory([])}>
                         히스토리 초기화
                     </Button>
                     <ul className="space-y-2">
@@ -107,9 +112,6 @@ export default function EditAi() {
                     </div>
                 </section>
             </main>
-            <footer className="p-4 border-t">
-                {/* Add any footer content here if needed */}
-            </footer>
         </div>
     );
 }

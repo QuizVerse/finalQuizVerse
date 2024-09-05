@@ -8,11 +8,15 @@ import CustomAlert from "../../components/modal/CustomAlert";
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import SectionSort from "../../components/modal/SectionSort";
 import axios from "axios";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 
 export default function Edit() {
 
     const navigate = useNavigate(); // useNavigate를 사용하여 페이지 이동 처리
+
+    // ai로 생성된 문제 받아옴
+    const { state } = useLocation(); // 전달된 데이터를 수신
+    const { data } = state || {}; // 전달된 데이터가 없는 경우 방어 코드 추가
 
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
@@ -35,23 +39,32 @@ export default function Edit() {
     // sectionSort Alert state
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
-    // bookId에 해당하는 책 데이터를 가져옴
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                axios.get(`/book/edit/${bookId}`)
-                    .then((res)=>{
+    const fetchData = async () => {
+        try {
+            axios.get(`/book/edit/${bookId}`)
+                .then((res)=>{
                     setBookData(res.data.book);
                     setSections(res.data.sections);
                 });
-                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
-            } catch (error) {
-                console.error("Error fetching book, section data:", error);
-                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
-            }
-        };
+            setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+        } catch (error) {
+            console.error("Error fetching book, section data:", error);
+            setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+        }
+    };
 
-        fetchData(); // 데이터를 가져오는 함수 호출
+    useEffect(() => {
+        if (!data) {
+            fetchData();
+        } else {
+            console.log(data);
+            setLoading(false); // 데이터를 이미 받았으므로 로딩 상태 해제
+        }
+    }, [data]);
+
+    // bookId에 해당하는 책 데이터를 가져옴
+    useEffect(() => {
+        fetchData() // 데이터를 가져오는 함수 호출
     }, [bookId]);
 
     // sections 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
@@ -273,8 +286,6 @@ export default function Edit() {
                     <EditSection
                         key={index}
                         index={index}
-                        title={section.sectionTitle}
-                        description={section.sectionDescription}
                         sectionCount={sections.length}
                         questions={section.questions}
                         section={section}
