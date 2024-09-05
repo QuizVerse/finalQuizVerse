@@ -2,10 +2,7 @@ package org.example.final1.controller.book;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.User;
-import org.example.final1.model.AnswerDto;
-import org.example.final1.model.BookDto;
-import org.example.final1.model.SolvedbookDto;
-import org.example.final1.model.UserDto;
+import org.example.final1.model.*;
 import org.example.final1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,15 +80,18 @@ public class TestController {
     // 답안을 저장하는 엔드포인트
     @PostMapping("/save/answers")
     public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers) {
-        System.out.println(answers);
+        System.out.println("Received answers: " + answers.toString());  // 로그로 데이터 확인
         try {
-            answerService.saveAnswers(answers);
+            answerService.saveAnswers(answers); // 답안 저장 서비스 호출
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
+            System.err.println("Error saving answers: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("답안 저장 중 오류가 발생했습니다.");
         }
-
     }
+
+
+
 
 
 }
