@@ -43,6 +43,7 @@ export default function MainHeader() {
                 });
 
                 console.log(jwtToken);
+                window.location.reload();
                 Cookies.remove('jwtToken');
             }
 

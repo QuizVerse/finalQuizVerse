@@ -73,10 +73,15 @@ public class BookmarkController {
         }
     }
 
-    @GetMapping("/countBookmarks/{id}")
-    public ResponseEntity<Integer> getBookmarkCount(@PathVariable("id") int id) {
-        int bookmarkCount = bookmarkService.getBookmarkcounts(id);
-        return ResponseEntity.ok(bookmarkCount);
+    // 북마크된 책 개수 가져오기
+    @GetMapping("/countBookmarks/{bookId}")
+    public ResponseEntity<Integer> getBookmarkCount(@PathVariable("bookId") int bookId) {
+        try {
+            int bookmarkCount = bookmarkService.getBookmarkCountByBookId(bookId);
+            return ResponseEntity.ok(bookmarkCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+        }
     }
-
 }

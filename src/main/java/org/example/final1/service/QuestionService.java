@@ -53,6 +53,10 @@ public class QuestionService {
     public List<QuestionDto> getQuestionsByBookId(int id) {
         return questionRepository.findAllByBookBookId(id);
     }
+    // 섹션 개수 count
+    public int getQuestionCountByBookId(int bookId) {
+        return questionRepository.countQuestionByBookId(bookId);
+    }
 
     // 주어진 질문 리스트의 배점을 업데이트하는 메서드
     public void updateQuestionPoints(List<QuestionDto> questions) {
