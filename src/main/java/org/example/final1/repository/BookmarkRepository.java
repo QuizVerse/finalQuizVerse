@@ -15,6 +15,6 @@ public interface BookmarkRepository extends JpaRepository<BookmarkDto, Integer> 
     Optional<BookmarkDto> findByUserAndBook(UserDto user, BookDto book);
     List<BookmarkDto> findAllByUser(UserDto user);
     BookmarkDto findByBookmarkId(int id);
-    @Query("SELECT COUNT(bookmark) FROM BookmarkDto bookmark WHERE bookmark.book = :id")
-    int getBookmarkCount(@Param("id") int id);
+    @Query("SELECT COUNT(b) FROM BookmarkDto b WHERE b.book.bookId = :bookId")
+    int countByBookId(@Param("bookId") int bookId);
 }
