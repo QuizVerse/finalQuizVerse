@@ -15,43 +15,50 @@ const ITEMS_PER_PAGE = 8;
 const SPACING = 2;
 
 export default function Bookmark() {
-
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortCondition, setSortCondition] = useState('popular');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status state
 
   useEffect(() => {
+    // user 정보 확인
+    const checkLoginStatus = async () => {
+      try {
+        const response = await axios.get('/book/username'); // Get user info from JWT
+        if (response.status === 200 && response.data) {
+          setIsLoggedIn(true); // 로그인 O
+        } else {
+          setIsLoggedIn(false); // 로그인 X
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+
     const fetchBookmarks = async () => {
       try {
-        // 로그인한 유저 정보 가져오기
-        const userResponse = await axios.get('/bookmark/userid');
-        setUser(userResponse.data);
-
-        // 유저의 북마크된 책 목록 가져오기
+        await checkLoginStatus();
         const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');
-        // 북마크된 책 목록에 대한 추가 데이터 (북마크 수, 문항 수, 섹션 수) 가져오기
         const bookWithDetails = await Promise.all(bookmarksResponse.data.map(async (book) => {
           const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
             axios.get(`/bookmark/countBookmarks/${book.bookId}`),
             axios.get(`/book/question/count/${book.bookId}`),
             axios.get(`/book/section/count/${book.bookId}`)
           ]);
-          const bookmarkCount = bookmarkCountResponse.data;
-          const bookQuestionCount = questionCountResponse.data;
-          const bookSectionCount = sectionCountResponse.data;
+
           return {
             ...book,
             isBookmark: true,
-            bookmarkCount,
-            bookQuestionCount: bookQuestionCount,
-            bookSectionCount: bookSectionCount
+            bookmarkCount: bookmarkCountResponse.data,
+            bookQuestionCount: questionCountResponse.data,
+            bookSectionCount: sectionCountResponse.data
           };
         }));
+
         setBooks(bookWithDetails);
       } catch (error) {
         setError(error);
@@ -64,6 +71,11 @@ export default function Bookmark() {
   }, []);
 
   const clickBookmark = async (bookId) => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
     try {
       const book = books.find(book => book.bookId === bookId);
       const newIsBookmark = !book.isBookmark;
@@ -84,10 +96,9 @@ export default function Bookmark() {
 
   const handleChange = (event, value) => {
     setPage(value);
-    window.scrollTo(0, 0); // 페이지가 바뀔 때 상단으로 스크롤
+    window.scrollTo(0, 0); // Scroll to the top when changing page
   };
 
-  // 현재 페이지에 표시할 항목 계산
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
   const currentItems = books.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
   const pageCount = Math.ceil(books.length / ITEMS_PER_PAGE);
@@ -126,16 +137,17 @@ export default function Bookmark() {
                   createDate={book.bookCreatedate}
                   title={book.bookTitle}
                   category={book.category?.categoryName || "Unknown"}
-                  bookmarkCount={book.bookmarkCount} // 북마크 수
+                  bookmarkCount={book.bookmarkCount}
                   bookQuestionCount={book.bookQuestionCount}
                   bookSectionCount={book.bookSectionCount}
                   bookUrl={`/book/detail/${book.bookId}`}
                   isBookmark={book.isBookmark}
+                  isLoggedIn={isLoggedIn}
                   updateBookmark={() => clickBookmark(book.bookId)}
               />
           ))}
         </div>
-        {/* 페이지네이션 */}
+        {/* Pagination */}
         <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
           <Pagination
               count={pageCount}
