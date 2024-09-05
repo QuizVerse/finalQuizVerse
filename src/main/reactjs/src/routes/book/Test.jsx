@@ -107,10 +107,7 @@ export default function ParentComponent() {
           choiceId: choice.choiceId,
         }));
       }
-      // 단일 객관식 문제 처리: 단일 choiceId
-      else if (typeof answer.answer === 'object' && answer.answer.choiceId) {
-        answerData.choice = { choiceId: answer.answer.choiceId };
-      }
+
       // 주관식 문제 처리
       else if (typeof answer.answer === "string") {
         answerData.subjectiveAnswer = answer.answer || null;
@@ -130,7 +127,6 @@ export default function ParentComponent() {
 
     setConfirmVisible(true);
   };
-
 
 
   return (
