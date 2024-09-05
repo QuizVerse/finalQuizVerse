@@ -40,10 +40,10 @@ public class UpdateuserController {
     }
 
     @PostMapping("/user/formdata")
-    public ResponseEntity<String> getUserFormData(
+    public ResponseEntity<String> updateUserData(
             HttpServletRequest request,
-            @RequestParam("userNickname") String userNickname,
-            @RequestPart("userImage") MultipartFile userImage) {
+            @RequestParam(value = "userNickname", required = false) String userNickname,
+            @RequestPart(value = "userImage", required = false) MultipartFile userImage) {
 
         UserDto userDto = jwtService.getUserFromJwt(request);
 
@@ -52,22 +52,26 @@ public class UpdateuserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
 
-        // 파일 업로드 처리
-        String uploadedFilePath = ncpObjectStorageService.uploadFile(bucketName, folderName, userImage);
-
-        if (uploadedFilePath != null) {
-            userDto.setUserImage(uploadedFilePath);
+        // 닉네임이 제공된 경우에만 업데이트
+        if (userNickname != null && !userNickname.trim().isEmpty()) {
+            userDto.setUserNickname(userNickname);
         }
 
-        // 닉네임 업데이트
-        userDto.setUserNickname(userNickname);
+        // 이미지 파일이 제공된 경우에만 업로드 처리
+        if (userImage != null && !userImage.isEmpty()) {
+            String uploadedFilePath = ncpObjectStorageService.uploadFile(bucketName, folderName, userImage);
 
+            if (uploadedFilePath != null) {
+                userDto.setUserImage(uploadedFilePath);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+            }
+        }
+
+        // 업데이트된 데이터를 저장
         userDaoInter.save(userDto);
-        System.out.println("컨트롤러 오류");
-
 
         return ResponseEntity.ok("User update success");
-
     }
 }
 

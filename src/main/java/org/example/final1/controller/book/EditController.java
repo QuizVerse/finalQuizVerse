@@ -195,4 +195,19 @@ public class EditController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * @description 문제 제출 후에 정답과 해설을 가져오는 API
+     * 이 API는 사용자가 문제를 제출한 후에 정답과 해설을 받아볼 수 있도록 한다.
+     */
+    @GetMapping("/question/submit/{questionId}")
+    public ResponseEntity<QuestionDto> getQuestionSolution(@PathVariable("questionId") int questionId) {
+        Optional<QuestionDto> questionOpt = questionService.getQuestion(questionId);
+        if (questionOpt.isPresent()) {
+            QuestionDto question = questionOpt.get();
+            return ResponseEntity.ok(question); // 제출 후 정답과 해설 반환
+        } else {
+            return ResponseEntity.notFound().build(); // 질문이 없으면 404 반환
+        }
+    }
+
 }

@@ -22,6 +22,7 @@ export default function StudyList() {
     const [roomList, setRoomList] = useState([]);
     const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태를 관리합니다.
     const [filteredRoom, setFilteredRoom] = useState([]); // 검색어에 따라 필터링된 멤버들을 관리합니다.
+    const [nickName, setNickname] = useState(null); // 유저 DTO 상태를 관리
     const navi = useNavigate();
     
     /**
@@ -38,8 +39,16 @@ export default function StudyList() {
           setRoomList(res.data);
         });
       };
-    
+    // //사용자 정보를 가져오는 함수
+    // const getUserDto = async () => {
+    //     axios.get(`/book/username`).then((res) => {
+    //         //닉네임불러오기
+    //         setNickname(res.data.userNickname);
+    //       });
+    // };
+
       useEffect(() => {
+        //getUserDto();
         getRoomList();
       }, []);
     
@@ -61,7 +70,6 @@ export default function StudyList() {
             room.studyTitle.toLowerCase().includes(lowerCaseQuery)
         );
         setFilteredRoom(filtered);
-        // navi(`/study/searchroom`);
     }, [searchQuery, roomList]);
 
     return (

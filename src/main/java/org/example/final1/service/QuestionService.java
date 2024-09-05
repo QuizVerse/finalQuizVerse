@@ -57,4 +57,19 @@ public class QuestionService {
     public int getQuestionCountByBookId(int bookId) {
         return questionRepository.countQuestionByBookId(bookId);
     }
+
+    // 주어진 질문 리스트의 배점을 업데이트하는 메서드
+    public void updateQuestionPoints(List<QuestionDto> questions) {
+        for (QuestionDto question : questions) {
+            // 각 questionId를 사용해 기존 질문을 조회
+            QuestionDto existingQuestion = questionRepository.findById(question.getQuestionId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid question ID: " + question.getQuestionId()));
+
+            // 기존 질문의 배점(questionPoint)을 새로운 값으로 업데이트
+            existingQuestion.setQuestionPoint(question.getQuestionPoint());
+
+            // 업데이트된 질문을 데이터베이스에 저장
+            questionRepository.save(existingQuestion);
+        }
+    }
 }
