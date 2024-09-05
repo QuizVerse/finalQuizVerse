@@ -30,7 +30,7 @@ public class AnswerDto {
     private QuestionDto question;
 
     @ManyToMany  // 여러 개의 선택지를 참조할 수 있음
-    @JoinTable(name = "answer_choices",
+    @JoinTable(name = "tb_answerchoices",
             joinColumns = @JoinColumn(name = "answer_id"),
             inverseJoinColumns = @JoinColumn(name = "choice_id"))
     private List<ChoiceDto> choices;  // 선택형 답안일 경우 선택한 선택지들
