@@ -19,7 +19,7 @@ let LIVEKIT_URL = "";
 configureUrls();
 
 function configureUrls() {
-    APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
+    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
 
