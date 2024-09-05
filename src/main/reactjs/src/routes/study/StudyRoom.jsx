@@ -346,7 +346,7 @@ export default function StudyRoom() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-      const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
+      const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
       //const ws = new WebSocket('ws://localhost:9002/ws/chat');
       
       ws.onopen = () => {
