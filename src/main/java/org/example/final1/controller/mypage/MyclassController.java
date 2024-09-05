@@ -198,6 +198,23 @@ public class MyclassController {
         }
     }
 
+    @GetMapping("/{classId}/class")
+    public ResponseEntity<?> className(@PathVariable Integer classId) {
+        Optional<ClassDto> classDtoOptional = classRepository.findById(classId);
+
+        if (classDtoOptional.isPresent()) {
+            ClassDto classDto = classDtoOptional.get();
+            // 원하는 응답을 반환 (예: classDto 객체나 다른 정보를 ResponseEntity로 반환)
+            return ResponseEntity.ok(classDto); // 또는 다른 객체나 메시지를 반환
+        } else {
+            // 클래스가 존재하지 않는 경우 404 상태코드와 함께 메시지를 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Class not found");
+        }
+
+    }
+
+
 
     @GetMapping("/{classId}/books")
     public ResponseEntity<List<BookDto>> roleMembers(@PathVariable Integer classId) {

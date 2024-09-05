@@ -11,6 +11,11 @@ export default function UpdateUser() {
   const [nicknameMessage, setNicknameMessage] = useState('닉네임은 한글/영문/숫자만 가능하며 1~10자 이내로 입력해주세요.');
   const [nicknamecheck, setNicknamecheck] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [isProfileImageUpdated, setIsProfileImageUpdated] = useState(false); // 프로필 이미지가 수정되었는지 여부
+  const [emailNotification, setEmailNotification] = useState(false); // 이메일 수신 여부
+  const [kakaoNotification, setKakaoNotification] = useState(false); // 카카오톡 수신 여부
+
+
 
   const navi = useNavigate();
 
@@ -70,6 +75,7 @@ export default function UpdateUser() {
           userImagePreview: reader.result, // 로컬에서 미리보기용 이미지 경로
           userImageFile: file, // 실제 업로드할 파일
         }));
+        setIsProfileImageUpdated(true);
       };
       reader.readAsDataURL(file); // 파일을 Data URL로 읽어옴
     }
@@ -105,10 +111,20 @@ export default function UpdateUser() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('userNickname', userNickname);
-    if (userData.userImageFile) {
+    // 닉네임이 변경된 경우에만 추가
+    if (userNickname && userNickname !== userData.nickname && nicknamecheck) {
+      formData.append('userNickname', userNickname);
+    }
+
+    // 프로필 이미지가 변경된 경우에만 추가
+    if (isProfileImageUpdated && userData.userImageFile) {
       formData.append('userImage', userData.userImageFile);
     }
+
+    // 이메일 수신 여부와 카카오톡 수신 여부도 함께 전송
+    formData.append('emailNotification', emailNotification);
+    formData.append('kakaoNotification', kakaoNotification);
+
 
     try {
       const response = await axios.post('/update/user/formdata', formData, {
@@ -221,6 +237,7 @@ export default function UpdateUser() {
                   value="on"
                   className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
                   id="email-notifications"
+                  onClick={() => setEmailNotification(!emailNotification)}
               >
               <span
                   data-state="checked"
@@ -250,6 +267,7 @@ export default function UpdateUser() {
                   value="on"
                   className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
                   id="kakao-notifications"
+                  onClick={() => setKakaoNotification(!kakaoNotification)}
               >
               <span
                   data-state="unchecked"
