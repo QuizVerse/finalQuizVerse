@@ -20,7 +20,7 @@ const conditions = [
   },
 ];
 
-const ITEMS_PER_PAGE = 10;  // 한 페이지당 보여줄 아이템 수
+const ITEMS_PER_PAGE = 5;  // 한 페이지당 보여줄 아이템 수
 const SPACING = 2;  // 페이지네이션 사이의 간격
 
 export default function Category() {

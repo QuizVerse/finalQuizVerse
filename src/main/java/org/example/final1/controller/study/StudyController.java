@@ -37,4 +37,10 @@ public class StudyController {
         studyService.insertRoom(dto);
     }   
     
+    @GetMapping("/dtos")
+    public StudyDto StudyRoomDto(@RequestParam("study_id") int studyId)
+    {
+        System.out.println("111111");
+        return studyService.StudyRoomDto(studyId);
+    }
 }

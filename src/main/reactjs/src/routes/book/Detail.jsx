@@ -309,5 +309,6 @@ export default function Detail() {
         </Container>
       </Container>
     </Box>
+    
   );
 }
