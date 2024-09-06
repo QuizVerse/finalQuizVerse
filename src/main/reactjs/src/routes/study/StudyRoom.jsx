@@ -324,6 +324,8 @@ import {
         } else {
             await enableMicrophone();
         }
+        // 상태 업데이트
+    setIsMicrophoneEnabled(!isMicrophoneEnabled);
     }
   
       //화면공유
@@ -413,18 +415,27 @@ import {
             {!room ? (
                 <div id="join">
                     <div id="join-dialog">
-                        <AppBar position="static" sx={{ backgroundColor: '#ff00ff' }}>
-                            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
-                                {/* 방제목데스네 */}
-                                <Typography variant="h6" sx={{ flexShrink: 0 }}>
-                                    {roomName}
-                                </Typography>
-                                {/* 방나가기버튼입니다 */}
-                                <Button variant="text" color="success" startIcon={<ExitToApp />} onClick={leaveRoom} sx={{marginLeft:'auto'}}>
-                                     Leave Room
-                                </Button>
-                            </Toolbar>
-                        </AppBar>
+                    <AppBar position="static" sx={{ backgroundColor: '#ff00ff' }}>
+                        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
+                            {/* 방제목 */}
+                            <Typography variant="h6" sx={{ flexShrink: 0 }}>
+                            {roomName}
+                            </Typography>
+
+                            {/* 공간 확장 */}
+                            <Box sx={{ flexGrow: 1 }} />
+
+                            {/* 방나가기 버튼 */}
+                            <Button 
+                            variant="text" 
+                            color="success" 
+                            startIcon={<ExitToApp />} 
+                            onClick={leaveRoom}
+                            >
+                            Leave Room
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
                           {/* 미리보는 화상창 */}
                           {previewStream && (
                           <StartVideoComponent
@@ -458,12 +469,13 @@ import {
                                         required
                                     />
                                 </div>
-                                {/* <button className="btn btn-secondary" onClick={toggleCamera}>
+                                <button className="btn btn-secondary" onClick={toggleCamera}>
                                     {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
                                 </button>
                                 <button className="btn btn-secondary" onClick={toggleMicrophone}>
                                     {isMicrophoneEnabled ? "마이크 끄기" : "마이크 켜기"}
-                                </button> */}
+                                </button>
+                                
                                 <button
                                     className="btn btn-lg btn-success"
                                     type="submit"
