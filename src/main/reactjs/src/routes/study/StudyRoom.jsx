@@ -416,8 +416,19 @@ const toggleMicrophone = async () => {
                         ))}
                     </div>
                     <div id="layout-container">
-                        {localTrack &&(
+                        {/* {localTrack &&(
                             <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                        )} */}
+                        {localTrack && (
+                            <>
+                                {/* 로컬 비디오 컴포넌트 렌더링 */}
+                                <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                                
+                                {/* 로컬 오디오 컴포넌트 렌더링 */}
+                                {localAudioTrack && (
+                                    <AudioComponent track={localAudioTrack} isLocal={true} />
+                                )}
+                            </>
                         )}
                         {/* 일반 비디오 및 오디오 트랙 렌더링 */}
                         {remoteTracks
@@ -435,7 +446,7 @@ const toggleMicrophone = async () => {
                                     <AudioComponent
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.audioTrack}
-                                        muted={isMicrophoneMuted} // 음소거 상태 전달
+                                        //muted={isMicrophoneMuted} // 음소거 상태 전달
                                     />
                                 )
                             )
