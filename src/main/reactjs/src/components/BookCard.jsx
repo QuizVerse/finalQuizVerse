@@ -13,6 +13,7 @@ import CustomConfirm from "./modal/CustomConfirm";
 
 export default function BookCard(props) {
 
+    const siteUrl = "http://localhost:3000"
     const [state, setState] = useState({
         open: false,
         Transition: Fade,
@@ -53,18 +54,24 @@ export default function BookCard(props) {
         setConfirmVisible(false);
     };
 
+    // 북마크 추가 버튼 클릭 이벤트
     const handleBookmarkClick = () => {
-        // 로그인 상태 확인
-
-        // 로그인 X
         if (!props.isLoggedIn) {
-            alert("로그인이 필요합니다.");
+            alert("로그인이 필요합니다!.");
             return;
         }
-        // 로그인 O
-        props.updateBookmark();
-        setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
-        setState({ open: true, Transition: Fade });
+
+        try {
+            props.updateBookmark();
+
+            // Only set Snackbar message if user is logged in
+            if (props.isLoggedIn) {
+                setSnackMessage(props.isBookmark ? "즐겨찾기에서 삭제되었습니다." : "즐겨찾기에 추가되었습니다.");
+                setState({ open: true, Transition: Fade });
+            }
+        } catch (error) {
+            console.error("Failed to update bookmark", error);
+        }
     };
 
     /**
@@ -134,8 +141,8 @@ export default function BookCard(props) {
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
-                    <CopyToClipboard text={props.bookUrl} onCopy={handleCopy}>
-                        <button>링크를 클릭하여 복사 : {props.bookUrl}</button>
+                    <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
+                        <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
                     </CopyToClipboard>
                 }
                 openAlert={alertVisible}

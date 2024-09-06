@@ -5,7 +5,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Button, MenuItem, TextField } from '@mui/material';
 
-// 필터
+// 필터 조건
 const conditions = [
   { value: 'popular', label: '인기순' },
   { value: 'recent', label: '최신순' },
@@ -13,43 +13,64 @@ const conditions = [
   { value: 'title', label: '제목순' },
 ];
 
-const ITEMS_PER_PAGE = 8; // 페이지당 출력할 아이템 수
-const SPACING = 2; // 페이지네이션 사이의 간격
+const ITEMS_PER_PAGE = 8; // 페이지당 아이템 수
+const SPACING = 2; // 페이지네이션 간격
 
 export default function PublishedBook() {
-  const [bookList, setBookList] = useState([]); // 책 목록 상태
-  const [page, setPage] = useState(1); // 현재 페이지 상태
-  const [sort, setSort] = useState('popular'); // 정렬 기준 상태
-  const [userId, setUserId] = useState(null); // 사용자 ID 상태
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
+
+  const [bookList, setBookList] = useState([]); // 책 목록
+  const [page, setPage] = useState(1); // 현재 페이지
+  const [sort, setSort] = useState('popular'); // 정렬 기준
+  const [userId, setUserId] = useState(null); // 사용자 ID
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
 
-  // 페이지 변경 처리
+  // 페이지 변경 핸들러
   const handleChange = (event, value) => {
     setPage(value);
-    window.scrollTo(0, 0); // 페이지가 바뀔 때 상단으로 스크롤
+    window.scrollTo(0, 0); // 페이지가 바뀔 때 상단으로 이동
   };
 
-  // 정렬 기준 변경 처리
+  // 정렬 기준 변경 핸들러
   const handleSortChange = (event) => {
     setSort(event.target.value);
   };
 
-  // 사용자 정보를 가져오는 함수
-  const getUserDto = async () => {
+  // 사용자 로그인 상태 및 ID 가져오기
+  const fetchUserInfo = async () => {
     try {
-      const res = await axios.get(`/publishedbook/user-id`); // URL 수정
-      setUserId(res.data); // 서버에서 반환된 userId 사용
+      const res = await axios.get(`/book/username`); // 사용자 정보 요청
+      setUserId(res.data.userId);
+      setIsLoggedIn(true); // 로그인 상태
     } catch (error) {
-      setError(error);
+      setIsLoggedIn(false);
     }
   };
 
-  // book list 출력
-  const getBookList = async () => {
+  // 책 목록 가져오기
+  const getPublishedBooks = async () => {
+    if (!userId) return;
+
     try {
       const res = await axios.get(`/publishedbook/user-books?userId=${userId}`);
-      setBookList(res.data);
+      const bookWithDetails = await Promise.all(res.data.map(async (book) => {
+        const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
+          axios.get(`/bookmark/countBookmarks/${book.bookId}`),  // 북마크 수 가져오기
+          axios.get(`/book/question/count/${book.bookId}`),      // 문항 수 가져오기
+          axios.get(`/book/section/count/${book.bookId}`)        // 섹션 수 가져오기
+        ]);
+
+        return {
+          ...book,
+          bookmarkCount: bookmarkCountResponse.data,      // 북마크 수
+          bookQuestionCount: questionCountResponse.data,  // 문항 수
+          bookSectionCount: sectionCountResponse.data     // 섹션 수
+        };
+      }));
+
+      setBookList(bookWithDetails);  // 책 목록 상태 업데이트
     } catch (error) {
       setError(error);
     } finally {
@@ -57,15 +78,17 @@ export default function PublishedBook() {
     }
   };
 
+
+  // 컴포넌트가 마운트될 때 사용자 정보 및 책 목록 가져오기
   useEffect(() => {
-    getUserDto();
+    fetchUserInfo();
   }, []);
 
   useEffect(() => {
-    if (userId) { // userId가 설정된 이후에만 책 목록을 가져옴
-      getBookList();
+    if (userId) {
+      getPublishedBooks();
     }
-  }, [userId]); // userId가 변경될 때마다 책 목록을 가져옴
+  }, [userId]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -76,60 +99,65 @@ export default function PublishedBook() {
   const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
   return (
-    <main className="flex-1 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">나의 출제이력</h1>
-      </div>
-      <div className="flex items-center mb-6 space-x-4">
-        <input
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-          placeholder="Search..."
-        />
-        <TextField
-          id="outlined-select-sort"
-          select
-          value={sort}
-          onChange={handleSortChange}
-        >
-          {conditions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <Button variant="contained">
-          문제출제하기
-        </Button>
-      </div>
+      <main className="flex-1 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">나의 출제이력</h1>
+        </div>
+        <div className="flex items-center mb-6 space-x-4">
+          <input
+              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
+              placeholder="Search..."
+          />
+          <TextField
+              id="outlined-select-sort"
+              select
+              value={sort}
+              onChange={handleSortChange}
+          >
+            {conditions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+            ))}
+          </TextField>
+          <Button variant="contained">문제출제하기</Button>
+        </div>
 
-      {/* BookCard 출력 */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {currentBooks.length > 0 ? (
-          currentBooks.map((book) => (
-            <BookCard
-              key={book.bookId} // bookId를 키로 사용
-              cardType="B"
-              className="flex-1"
-              photo={book.bookImage}
-              createDate={book.bookCreatedate}
-              title={book.bookTitle}
-            />
-          ))
-        ) : (
-          <div>No books available</div>
-        )}
-      </div>
+        {/* BookCard 출력 */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {currentBooks.length > 0 ? (
+              currentBooks.map((book) => (
+                  <BookCard
+                      key={book.bookId}
+                      bookId={book.bookId}
+                      photo={`${photopath}/${book.bookImage}`}
+                      cardType="B"
+                      nickname={book.user?.userNickname || "Unknown"}
+                      className="flex-1"
+                      createDate={book.bookCreatedate}
+                      title={book.bookTitle}
+                      bookUrl={`/book/detail/${book.bookId}`}
+                      bookmarkCount={book.bookmarkCount}
+                      bookQuestionCount={book.bookmarkCount}
+                      bookSectionCount={book.bookSectionCount}
 
-      {/* 페이지네이션 */}
-      <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
-        <Pagination
-          count={pageCount} // 전체 페이지 수
-          page={page} // 현재 페이지 번호
-          onChange={handleChange} // 페이지 변경 시 호출되는 함수
-          showFirstButton // 첫 페이지로 이동 버튼 표시
-          showLastButton // 마지막 페이지로 이동 버튼 표시
-        />
-      </Stack>
-    </main>
+                  />
+              ))
+          ) : (
+              <div>No books available</div>
+          )}
+        </div>
+
+        {/* 페이지네이션 */}
+        <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
+          <Pagination
+              count={pageCount} // 전체 페이지 수
+              page={page} // 현재 페이지
+              onChange={handleChange} // 페이지 변경 핸들러
+              showFirstButton
+              showLastButton
+          />
+        </Stack>
+      </main>
   );
 }

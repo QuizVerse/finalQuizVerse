@@ -17,4 +17,6 @@ public interface ClassmemberRepository extends JpaRepository<ClassmemberDto, Int
 
     Optional<ClassmemberDto>findByClass1_ClassIdAndUser_UserId(Integer classId, Integer userId);
 
+    @Query("select count(book) from BookDto book where book.user.userId = :userId")
+    int countUserClassById(@Param("userId")int userId);
 }
