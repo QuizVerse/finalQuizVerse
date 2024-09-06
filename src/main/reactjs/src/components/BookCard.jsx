@@ -168,12 +168,21 @@ export default function BookCard(props) {
             <CustomConfirm id={12} openConfirm={confirmVisible} clickBtn1={clickBtn1} clickBtn2={clickBtn2} />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link to={`/book/detail/${props.bookId}`}>
-                    <img src={props.photo} alt="책이미지" className="w-full h-48 rounded-t"/>
+                    <img
+                        src={props.photo && props.photo.startsWith("https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/2") ?
+                            props.photo :
+                            "/quizverse-logo.png"}
+                        alt="책 이미지"
+                        className="w-full h-48 rounded-t"
+                    />
+
+
                 </Link>
 
                 <div className="p-4">
                     <Link>
-                        <div className="inline-flex w-fit items-center whitespace-nowrap px-2.5 py-0.5 text-xs font-semibold transition-colors">
+                        <div
+                            className="inline-flex w-fit items-center whitespace-nowrap px-2.5 py-0.5 text-xs font-semibold transition-colors">
                             {props.nickname || "알 수 없음"} · {formatDate(props.createDate)}
                         </div>
                         <h3 className="mt-2 text-lg font-bold">{props.title}</h3>

@@ -17,7 +17,7 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('사진테스트');
+    const [bookName, setBookName] = useState('디폴트 이미지 테스트');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
     const [isChecked, setIsChecked] = useState(true);
@@ -57,7 +57,7 @@ export default function NewBook() {
                 console.error(err);
             });
     };
-//클래스 목록가져오는거임
+//클래스 목록 가져오는 거다냥
     useEffect(() => {
         if (visibility === '클래스 공개') {
             axios.get('/book/user/classes')
@@ -70,6 +70,7 @@ export default function NewBook() {
                 });
         }
     }, [visibility]);
+
 
     // Handle changes
     const handleCategoryChange = (event) => setCategory(event.target.value);
@@ -86,10 +87,12 @@ export default function NewBook() {
         console.log("Selected Class ID:", selectedClass);
         setLoading(true);
         setError(null);
+
         const formData = new FormData();
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
+
         // 클래스 공개가 선택되었고 클래스가 선택된 경우에만 classId를 추가
         if (visibility === '클래스 공개' && selectedClass) {
             formData.append('classId', selectedClass);
@@ -99,8 +102,12 @@ export default function NewBook() {
         formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
         formData.append('bookDivide', isChecked ? 1 : 0);
         formData.append('bookTotalscore', parseInt(totalPoints, 10) || 0);
+
+        // 사진이 없는 경우 빈 문자열로 처리한다냥~
         if (bookPhotoFile) {
             formData.append('upload', bookPhotoFile); // 이미지 파일 추가
+        } else {
+            formData.append('upload', ''); // 빈 문자열을 전송한다냥~
         }
 
         axios.post('/book/newbook', formData, {
@@ -110,10 +117,10 @@ export default function NewBook() {
         })
             .then((res) => {
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit/"+res.data.book.bookId);
+                navigate("/book/edit/" + res.data.book.bookId);
             })
             .catch((err) => {
-                console.log("머가 단단히 잘못되었다..");
+                console.log("머가 단단히 잘못되었다냥..");
                 console.error(err);
                 setError('Failed to create new book');
             })
@@ -121,6 +128,7 @@ export default function NewBook() {
                 setLoading(false);
             });
     };
+
 
     // Cancel button logic
     const handleCancel = () => {
@@ -188,11 +196,15 @@ export default function NewBook() {
                                     label="클래스 선택"
                                     onChange={handleClassChange}
                                 >
-                                    {classList.map((cls) => (
-                                        <MenuItem key={cls.classId} value={cls.classId}>
-                                            {cls.className}
-                                        </MenuItem>
-                                    ))}
+                                    {classList.length > 0 ? (
+                                        classList.map((cls) => (
+                                            <MenuItem key={cls.classId} value={cls.classId}>
+                                                {cls.className}
+                                            </MenuItem>
+                                        ))
+                                    ) : (
+                                        <MenuItem disabled>클래스가 없습니다</MenuItem>
+                                    )}
                                 </Select>
                             </FormControl>
                         )}
