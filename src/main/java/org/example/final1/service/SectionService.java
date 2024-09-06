@@ -7,6 +7,7 @@ import org.example.final1.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,10 @@ public class SectionService {
 
     public void deleteSection(Integer id) {
         sectionRepository.deleteById(id);
+    }
+
+    public List<SectionDto> getAllSectionsByBook(BookDto book) {
+        return sectionRepository.findAllByBook(book);
     }
 
     public List<SectionDto> getAllSections(int bookId) {

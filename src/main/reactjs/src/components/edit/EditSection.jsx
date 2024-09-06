@@ -21,7 +21,7 @@ export default function EditSection({
                                     onUpdateSection,
                                     section,
                                     book,
-                                    loading,
+                                    aiData,
                                     setLoading,
                                     onUploadImage
                                 }) {
@@ -83,6 +83,7 @@ export default function EditSection({
 
         return () => clearTimeout(timer);
     }, [questions]);
+
 
     /**
      * @description : 새로운 질문 추가

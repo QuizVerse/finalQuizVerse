@@ -87,8 +87,57 @@ public class EditController {
         }
 
     }
+    @PostMapping("/edit/ai/save")
+    public ResponseEntity<String> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
 
-    /** 섹션 관련 */
+        // Section 정보를 JSON에서 추출
+        SectionDto sectionDto = new SectionDto();
+        int sectionNumber = sectionService.getAllSectionsByBook((BookDto) requestData.get("book")).size() + 1;
+
+        sectionDto.setSectionNumber(sectionNumber);
+        sectionDto.setSectionTitle((String) requestData.get("sectionTitle"));
+        sectionDto.setBook((BookDto) requestData.get("book"));
+        sectionDto.setSectionDescription((String) requestData.get("sectionDescription"));
+
+        // 섹션 저장
+        SectionDto savedSection = sectionService.saveSection(sectionDto);
+
+        // Questions가 있는지 확인 후 처리
+        List<Map<String, Object>> questions = (List<Map<String, Object>>) requestData.get("questions");
+        if (questions != null) {
+            for (Map<String, Object> questionData : questions) {
+                // QuestionDto 생성 및 저장
+                QuestionDto questionDto = new QuestionDto();
+                questionDto.setQuestionType((short) questionData.get("questionType"));
+                questionDto.setQuestionTitle((String) questionData.get("questionTitle"));
+                questionDto.setQuestionSolution((String) questionData.get("questionSolution"));
+                questionDto.setQuestionOrder((Integer) questionData.get("questionOrder"));
+                questionDto.setSection(savedSection);  // 저장된 섹션 ID 설정
+
+                // 질문 저장
+                QuestionDto savedQuestion = questionService.saveQuestion(questionDto);
+                // Choices가 있는지 확인 후 처리
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) questionData.get("choices");
+                if (choices != null) {
+                    for (Map<String, Object> choiceData : choices) {
+                        // ChoiceDto 생성 및 저장
+                        ChoiceDto choiceDto = new ChoiceDto();
+                        choiceDto.setChoiceText((String) choiceData.get("choiceText"));
+                        choiceDto.setQuestion(savedQuestion);  // 저장된 질문 ID 설정
+                        choiceDto.setChoiceIsanswer(questionData.get("correctAnswer") == choiceData.get("choiceText"));
+
+                        // 선택지 저장
+                        choiceService.saveChoice(choiceDto);
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.ok("저장됨");
+    }
+
+
+
     // 섹션 생성
     @PostMapping("/section/new")
     public ResponseEntity<SectionDto> insertSection(@RequestBody SectionDto dto) {
