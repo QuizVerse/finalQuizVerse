@@ -3,6 +3,7 @@ package org.example.final1.controller.book;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.User;
 import org.example.final1.model.*;
+import org.example.final1.repository.WrongbookRepository;
 import org.example.final1.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,8 @@ public class TestController {
     private SolvedbookService solvedbookService;
     @Autowired
     private AnswerService answerService;
+    @Autowired
+    private WrongbookRepository wrongbookRepository;
 
     public TestController(BookService bookService) {
         this.bookService = bookService;
@@ -83,6 +86,8 @@ public class TestController {
     public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers) {
         try {
             answerService.saveAnswers(answers);
+
+
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
             System.err.println("Error saving answers: " + e.getMessage());
