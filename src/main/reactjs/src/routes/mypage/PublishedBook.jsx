@@ -26,6 +26,21 @@ export default function PublishedBook() {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+   // 마이크 상태를 관리하는 state (초기값: off)
+   const [isMicOn, setIsMicOn] = useState(false);
+
+   // 마이크 상태를 토글하는 함수
+   const toggleMic = () => {
+     setIsMicOn((prevState) => !prevState); // 이전 상태를 반대로 변경
+   };
+
+   // 카메라 상태를 관리하는 state (초기값: off)
+  const [isCameraOn, setIsCameraOn] = useState(false);
+
+  // 카메라 상태를 토글하는 함수
+  const toggleCamera = () => {
+    setIsCameraOn((prevState) => !prevState); // 이전 상태를 반대로 변경
+  };
 
   // 페이지 변경 핸들러
   const handleChange = (event, value) => {
@@ -146,6 +161,18 @@ export default function PublishedBook() {
           ) : (
               <div>No books available</div>
           )}
+        </div>
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
+          {/* 버튼을 클릭하면 마이크 상태를 토글 */}
+          <button onClick={toggleMic} style={{ fontSize: "20px" }}>
+            {isMicOn ? "🎤 마이크 켜짐" : "🔇 마이크 꺼짐"}
+          </button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
+          {/* 버튼을 클릭하면 카메라 상태를 토글 */}
+          <button onClick={toggleCamera} style={{ fontSize: "20px" }}>
+            {isCameraOn ? "📸 카메라 켜짐" : "🚫 카메라 꺼짐"}
+          </button>
         </div>
 
         {/* 페이지네이션 */}
