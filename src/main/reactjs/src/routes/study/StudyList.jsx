@@ -49,8 +49,8 @@ export default function StudyList() {
     useEffect(() => {
         const lowerCaseQuery = searchQuery.toLowerCase();
         const filtered = roomList.filter((room) =>
-            room.studyTitle.toLowerCase().includes(lowerCaseQuery) ||
-            room.user.toLowerCase().includes(lowerCaseQuery)
+            room.studyTitle.toLowerCase().includes(lowerCaseQuery) 
+            //room.user.toLowerCase().includes(lowerCaseQuery)
         );
         setFilteredRoom(filtered)
     }, [searchQuery, roomList]);
@@ -71,7 +71,7 @@ export default function StudyList() {
             </div>
             <div className="grid grid-cols-2 w-full max-w-5xl gap-4">
                 {/* 페이지네이션을 적용한 리스트 */}
-                {
+                {filteredRoom &&
                     currentItems.map((item, index) => (
                         <StudyRoomCard
                             key={index}

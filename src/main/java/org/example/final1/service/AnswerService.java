@@ -35,33 +35,31 @@ public class AnswerService {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid question ID"));
             answer.setQuestion(question);
 
-            // Choice (객관식 문제) 매핑
+            // Solvedbook 매핑
+            SolvedbookDto solvedbook = solvedbookRepository.findById(answerDto.getSolvedbook().getSolvedbookId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid solvedbook ID"));
+            answer.setSolvedbook(solvedbook);
+
+            // Choice (객관식 답안일 경우) 매핑
             if (answerDto.getChoice() != null) {
                 ChoiceDto choice = choiceRepository.findById(answerDto.getChoice().getChoiceId())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid choice ID"));
                 answer.setChoice(choice);
             }
 
-            // 주관식 답안
+            // 주관식 답안 처리
             if (answerDto.getSubjectiveAnswer() != null) {
                 answer.setSubjectiveAnswer(answerDto.getSubjectiveAnswer());
             }
 
-            // Solvedbook 매핑
-            if (answerDto.getSolvedbook() != null) {
-                SolvedbookDto solvedbook = solvedbookRepository
-                        .findById(answerDto.getSolvedbook().getSolvedbookId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid solvedbook ID"));
-                answer.setSolvedbook(solvedbook);
-            }
-
-            // 정답 여부 및 기타 정보 설정
+            // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
-            answer.setAnswerCorrect(false); // 정답 여부는 별도의 로직에서 처리 가능
+
+            // 정답 여부 처리 (추후 로직 추가 가능)
+            answer.setAnswerCorrect(false);  // 정답 여부는 별도로 처리
 
             // 답안 저장
             answerRepository.save(answer);
         }
     }
-
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tb_answer")
 @Data
@@ -20,23 +22,33 @@ public class AnswerDto {
     private int answerId;
 
     @ManyToOne
-    @JoinColumn(name = "solvedbook_id", nullable = true)
+    @JoinColumn(name = "solvedbook_id", nullable = false)  // 시험을 푼 책 참조
     private SolvedbookDto solvedbook;
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)  // 질문 참조
     private QuestionDto question;
 
+    // 단일 선택형 처리
     @ManyToOne
-    @JoinColumn(name = "choice_id", nullable = true)  // 객관식/선택형 문제에 대한 답변 선택
-    private ChoiceDto choice;  // 선택형 문제일 경우 사용자가 선택한 답안
+    @JoinColumn(name = "choice_id", nullable = true)  // 객관식 답안일 경우 선택한 선택지
+    private ChoiceDto choice;
+
+    // 다중 선택형 처리 (객관식 다중 선택일 경우)
+    @ManyToMany
+    @JoinTable(
+            name = "answer_choices",  // 중간 테이블 이름
+            joinColumns = @JoinColumn(name = "answer_id"),
+            inverseJoinColumns = @JoinColumn(name = "choice_id")
+    )
+    private List<ChoiceDto> choices;
 
     @Column(name = "subjective_answer", length = 1000, nullable = true)  // 주관식 답안
-    private String subjectiveAnswer;  // 주관식 문제에 대한 사용자의 답변
+    private String subjectiveAnswer;
 
-    @Column(name = "answer_correct")
-    private Boolean answerCorrect;  // 정답 여부
+    @Column(name = "answer_order", nullable = false)  // 답안 순서
+    private int answerOrder;
 
-    @Column(name = "answer_order")
-    private int answerOrder;  // 사용자가 문제를 푼 순서
+    @Column(name = "answer_correct", nullable = true)  // 정답 여부
+    private Boolean answerCorrect;  // 추후 정답 여부 계산하는 로직 추가 가능
 }
