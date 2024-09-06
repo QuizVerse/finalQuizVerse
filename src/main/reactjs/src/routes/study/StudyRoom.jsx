@@ -211,7 +211,6 @@ export default function StudyRoom() {
 
 // 마이크 음소거 기능
 const toggleMicrophone = async () => {
-    console.log('Microphone muted:', isMicrophoneMuted);
     if (isMicrophoneMuted) {
         // 마이크 켜기
         if (!localAudioTrack) {
@@ -239,7 +238,6 @@ const toggleMicrophone = async () => {
         setIsMicrophoneMuted(true);
     }
 };
-
 
     // 화면 공유
     async function toggleScreenSharing() {
@@ -419,12 +417,7 @@ const toggleMicrophone = async () => {
                     </div>
                     <div id="layout-container">
                         {localTrack &&(
-                            <>
-                                <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
-                                {localAudioTrack && (
-                                    <AudioComponent track={localAudioTrack} />
-                                )}
-                            </>
+                            <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
                         )}
                         {/* 일반 비디오 및 오디오 트랙 렌더링 */}
                         {remoteTracks
@@ -442,6 +435,7 @@ const toggleMicrophone = async () => {
                                     <AudioComponent
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.audioTrack}
+                                        muted={isMicrophoneMuted} // 음소거 상태 전달
                                     />
                                 )
                             )
