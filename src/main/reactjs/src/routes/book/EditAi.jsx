@@ -65,6 +65,7 @@ export default function EditAi() {
             jsonData &&
             jsonData.sectionTitle &&
             jsonData.sectionDescription &&
+            jsonData.questions.questionType === 0 &&
             Array.isArray(jsonData.questions) &&
             jsonData.questions.length > 0
         );

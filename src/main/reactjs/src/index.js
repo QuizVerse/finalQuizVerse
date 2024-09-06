@@ -68,6 +68,7 @@ import AlarmModal from "./routes/devtest/AlarmModal";
 import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
+import {createTheme, ThemeProvider} from "@mui/material";
 
 const router = createBrowserRouter([
     {
@@ -369,10 +370,23 @@ const router = createBrowserRouter([
 
 ]);
 
+const colorTheme = createTheme({
+    palette: {
+        primary: {
+            main: '#FFC038',
+            // light: will be calculated from palette.primary.main,
+            // dark: will be calculated from palette.primary.main,
+            // contrastText: will be calculated to contrast with palette.primary.main
+        }
+    }
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <RouterProvider router={router} />
+      <ThemeProvider theme={colorTheme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
   </React.StrictMode>
 );
 
