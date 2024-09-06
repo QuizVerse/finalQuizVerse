@@ -14,6 +14,6 @@ public interface PublishedBookRepository extends JpaRepository<BookDto, Integer>
     // @Query("SELECT b FROM BookDto b WHERE b.user.id = :userId")
     List<BookDto> findAllByUser(UserDto user);
 
-    @Query("SELECT COUNT(b) FROM BookDto b WHERE b.user.userId = :userId AND b.bookIspublished = true")
+    @Query("SELECT COUNT(b) FROM BookDto b WHERE b.user.userId = :userId ")
     int countPublishedBooksByUserId(@Param("userId") int userId);
 }

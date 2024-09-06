@@ -136,13 +136,21 @@ export default function EditChoices({question}) {
 
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
-        const updatedChoices = {
-            choiceText: selection,
-            choiceImage: "",
-            choiceIsanswer: false,
-            question: question
-        };
-        setChoices([updatedChoices]);
+        const updatedChoices = [
+            {
+                choiceText: "O",
+                choiceImage: "",
+                choiceIsanswer: selection === "O",
+                question: question
+            },
+            {
+                choiceText: "X",
+                choiceImage: "",
+                choiceIsanswer: selection === "X",
+                question: question
+            }
+        ];
+        setChoices(updatedChoices);
         setOxSelected(selection);
     };
 
@@ -176,11 +184,12 @@ export default function EditChoices({question}) {
         setChoices(updatedChoices);
     };
 
+    // 단답형
     const updateShortAnswer = (e) => {
         const updated = {
             choiceText: e.target.value,
             choiceImage: "",
-            choiceIsanswer: false,
+            choiceIsanswer: true,
             question: question
         }
         setChoices([updated]);

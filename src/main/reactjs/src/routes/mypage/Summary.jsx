@@ -10,12 +10,14 @@ export default function Summary() {
     const [classList, setClassList] = useState([]);
     const [page, setPage] = useState(1);
     const [userId, setUserId] = useState(null);
-    const [totalBooksCount, setTotalBooksCount] = useState('');
-    const [totalClassCount , setTotalClassCount] = useState('');
-    const [totalSolvedCount, setTotalSolvedCount] = useState('');
-    const [totalBookmarkCount, setTotalBookmarkCount] = useState('');
+    const [totalBooksCount, setTotalBooksCount] = useState(0);
+    const [totalClassCount , setTotalClassCount] = useState(0);
+    const [totalSolvedCount, setTotalSolvedCount] = useState(0);
+    const [totalBookmarkCount, setTotalBookmarkCount] = useState(0);
     const [name, setName] = useState('');
     const [error, setError] = useState(null);
+
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
     useEffect(() => {
         fetchUserId();
@@ -138,7 +140,7 @@ export default function Summary() {
                             <BookCard
                                 key={book.bookId}
                                 bookId={book.bookId}
-                                photo={book.bookImage}
+                                photo={`${photopath}/${book.bookImage}`}
                                 cardType="B"
                                 nickname={book.user?.userNickname || "Unknown"}
                                 className="flex-1"
@@ -148,6 +150,7 @@ export default function Summary() {
                                 bookmarkCount={book.bookmarkCount}
                                 bookQuestionCount={book.bookQuestionCount}
                                 bookSectionCount={book.bookSectionCount}
+                                status={book.bookStatus}
                             />
                         ))
                     ) : (
