@@ -21,7 +21,6 @@ export default function EditSection({
                                     onUpdateSection,
                                     section,
                                     book,
-                                    aiData,
                                     setLoading,
                                     onUploadImage
                                 }) {

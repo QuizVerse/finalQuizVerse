@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.example.final1.storage.NcpObjectStorageService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,12 +85,14 @@ public class EditController {
         }
 
     }
-
     @PostMapping("/edit/ai/save")
     public ResponseEntity<Map<String, Object>> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
 
         // ObjectMapper를 사용하여 JSON 데이터를 BookDto로 변환
         ObjectMapper objectMapper = new ObjectMapper();
+
+        // 반환할 데이터를 Map에 추가
+        Map<String, Object> response = new HashMap<>();
 
         // BookDto 변환
         BookDto bookDto = objectMapper.convertValue(requestData.get("book"), BookDto.class);
@@ -111,10 +110,8 @@ public class EditController {
         // 섹션 저장
         SectionDto savedSection = sectionService.saveSection(sectionDto);
 
-        // Create the response map
-        Map<String, Object> updated = new HashMap<>();
-        updated.put("book", bookDto);
-        updated.put("sections", savedSection);
+        // 저장된 질문과 선택지를 담을 리스트
+        List<QuestionDto> savedQuestions = new ArrayList<>();
 
         // Questions가 있는지 확인 후 처리
         List<Map<String, Object>> questions = (List<Map<String, Object>>) requestData.get("questions");
@@ -139,6 +136,9 @@ public class EditController {
                 // 질문 저장
                 QuestionDto savedQuestion = questionService.saveQuestion(questionDto);
 
+                // 선택지 저장용 리스트
+                List<ChoiceDto> savedChoices = new ArrayList<>();
+
                 // Choices가 있는지 확인 후 처리
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) questionData.get("choices");
                 if (choices != null) {
@@ -152,15 +152,24 @@ public class EditController {
 
                         // 선택지 저장
                         choiceService.saveChoice(choiceDto);
+
+                        // 저장된 선택지 리스트에 추가
+                        savedChoices.add(choiceDto);
                     }
                 }
+                response.put("choices", savedChoices); // 질문별 선택지 추가
+                // 저장된 질문 리스트에 추가
+                savedQuestions.add(savedQuestion);
             }
         }
 
+        response.put("book", bookDto);           // BookDto 추가
+        response.put("section", savedSection);   // SectionDto 추가
+        response.put("questions", savedQuestions); // 저장된 질문들 추가
 
-
-        return ResponseEntity.ok(updated); // 저장된 섹션 반환
+        return ResponseEntity.ok(response); // JSON 형태로 반환
     }
+
 
 
 

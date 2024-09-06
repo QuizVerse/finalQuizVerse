@@ -98,7 +98,7 @@ export default function Edit() {
             url: '/book/edit/ai/save',
             data: combinedData
         }).then(res => {
-            const savedSection = res.data;
+            const savedSection = res.data.section;
 
             // 성공적으로 저장된 섹션을 sections에 추가
             setSections([...sections, savedSection]);
@@ -321,12 +321,10 @@ export default function Edit() {
                         key={index}
                         index={index}
                         sectionCount={sections.length}
-                        questions={section.questions}
                         section={section}
                         book={bookData}
                         loading={loading}
                         setLoading={setLoading}
-                        aiData = {aiData}
                         onUploadImage={(e, inputType) => handleFileChange(e, index)}
                         onDuplicate={() => handleDuplicateSection(index)}  // 상위 컴포넌트의 handleDuplicateSection을 사용
                         onDelete={() => handleDeleteSection(index)}         // 상위 컴포넌트의 handleDeleteSection을 사용
