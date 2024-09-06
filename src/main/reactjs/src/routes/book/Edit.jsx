@@ -14,11 +14,6 @@ export default function Edit() {
 
     const navigate = useNavigate(); // useNavigate를 사용하여 페이지 이동 처리
 
-    // ai로 생성된 문제 받아옴
-    const { state } = useLocation(); // 전달된 데이터를 수신
-    const { aiData } = state || {}; // 전달된 데이터가 없는 경우 방어 코드 추가
-    const [aiDataTarget, setAiDataTarget] = useState(aiData);
-
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
     const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
@@ -50,11 +45,6 @@ export default function Edit() {
                     .then((res)=>{
                         setBookData(res.data.book);
                         setSections(res.data.sections);
-                        if (aiData) {
-                            console.log("데이터 있으면 출력", aiDataTarget);
-                            handleAddAiSection(aiDataTarget, res.data.book);
-                            setLoading(false); // 데이터를 이미 받았으므로 로딩 상태 해제
-                        }
                     });
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
@@ -84,34 +74,6 @@ export default function Edit() {
         return () => clearTimeout(timer);
     }, [sections]);
 
-// ai 출제 문제 추가
-    const handleAddAiSection = (data, book) => {
-        const combinedData = {
-            ...data,       // AI 문제 관련 데이터
-            book           // bookData를 추가
-        };
-
-        console.log("combinedData", combinedData);
-
-        axios({
-            method: 'post',
-            url: '/book/edit/ai/save',
-            data: combinedData
-        }).then(res => {
-            const savedSection = res.data.section;
-
-            // 성공적으로 저장된 섹션을 sections에 추가
-            setSections([...sections, savedSection]);
-
-            // 저장된 후 aiDataTarget을 빈 객체로 설정하여 중복 저장 방지
-            setAiDataTarget({});
-
-            console.log("AI 데이터가 성공적으로 저장되었습니다:", savedSection);
-        }).catch(err => {
-            console.error("AI 데이터 저장 중 오류가 발생했습니다:", err);
-        });
-
-    };
 
     // side bar에서 섹션 추가
     const handleAddSection = () => {

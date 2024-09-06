@@ -85,14 +85,13 @@ public class EditController {
         }
 
     }
+
+    // ai문제 추가
     @PostMapping("/edit/ai/save")
-    public ResponseEntity<Map<String, Object>> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
+    public ResponseEntity<String> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
 
         // ObjectMapper를 사용하여 JSON 데이터를 BookDto로 변환
         ObjectMapper objectMapper = new ObjectMapper();
-
-        // 반환할 데이터를 Map에 추가
-        Map<String, Object> response = new HashMap<>();
 
         // BookDto 변환
         BookDto bookDto = objectMapper.convertValue(requestData.get("book"), BookDto.class);
@@ -103,15 +102,12 @@ public class EditController {
 
         sectionDto.setSectionNumber(sectionNumber);
         sectionDto.setSectionTitle((String) requestData.get("sectionTitle"));
-        sectionDto.setSectionImage("");  // 기본 이미지 설정
+        sectionDto.setSectionImage("");
         sectionDto.setBook(bookDto);
         sectionDto.setSectionDescription((String) requestData.get("sectionDescription"));
 
         // 섹션 저장
         SectionDto savedSection = sectionService.saveSection(sectionDto);
-
-        // 저장된 질문과 선택지를 담을 리스트
-        List<QuestionDto> savedQuestions = new ArrayList<>();
 
         // Questions가 있는지 확인 후 처리
         List<Map<String, Object>> questions = (List<Map<String, Object>>) requestData.get("questions");
@@ -130,14 +126,11 @@ public class EditController {
                 questionDto.setQuestionDescriptionimage("");
                 questionDto.setQuestionDescription("");
                 questionDto.setQuestionSolutionimage("");
-                questionDto.setSection(savedSection);  // 해당 섹션과 연결
-                questionDto.setBook(bookDto);  // 해당 책과 연결
+                questionDto.setSection(savedSection);
+                questionDto.setBook(bookDto);
 
                 // 질문 저장
                 QuestionDto savedQuestion = questionService.saveQuestion(questionDto);
-
-                // 선택지 저장용 리스트
-                List<ChoiceDto> savedChoices = new ArrayList<>();
 
                 // Choices가 있는지 확인 후 처리
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) questionData.get("choices");
@@ -146,30 +139,18 @@ public class EditController {
                         // ChoiceDto 생성 및 저장
                         ChoiceDto choiceDto = new ChoiceDto();
                         choiceDto.setChoiceText((String) choiceData.get("choiceText"));
-                        choiceDto.setQuestion(savedQuestion);  // 저장된 질문과 연결
+                        choiceDto.setQuestion(savedQuestion);  // 저장된 질문 ID 설정
                         choiceDto.setChoiceIsanswer(choiceData.get("choiceText").equals(questionData.get("correctAnswer")));
-                        choiceDto.setChoiceImage("");  // 기본 이미지 설정
-
+                        choiceDto.setChoiceImage("");
                         // 선택지 저장
                         choiceService.saveChoice(choiceDto);
-
-                        // 저장된 선택지 리스트에 추가
-                        savedChoices.add(choiceDto);
                     }
                 }
-                response.put("choices", savedChoices); // 질문별 선택지 추가
-                // 저장된 질문 리스트에 추가
-                savedQuestions.add(savedQuestion);
             }
         }
 
-        response.put("book", bookDto);           // BookDto 추가
-        response.put("section", savedSection);   // SectionDto 추가
-        response.put("questions", savedQuestions); // 저장된 질문들 추가
-
-        return ResponseEntity.ok(response); // JSON 형태로 반환
+        return ResponseEntity.ok("저장됨");
     }
-
 
 
 

@@ -1,8 +1,9 @@
 import { CallGpt } from "../../components/gpt";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Button, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import CustomAlert from "../../components/modal/CustomAlert"; // 페이지 이동을 위한 훅
+import CustomAlert from "../../components/modal/CustomAlert";
+import axios from "axios"; // 페이지 이동을 위한 훅
 
 export default function EditAi() {
     const [aiData, setAiData] = useState(null); // 현재 선택된 데이터
@@ -12,9 +13,36 @@ export default function EditAi() {
     const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
     const { bookId } = useParams(); //URL에서 book_Id를 가져옴
 
+    // 데이터 관련 변수
+    const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
+
+    // 로딩 상태
+    const [loading, setLoading] = useState(true);
+
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
+
+
+    // bookId에 해당하는 책 데이터를 가져옴
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                axios.get(`/book/edit/${bookId}`)
+                    .then((res)=>{
+                        setBookData(res.data.book);
+                    });
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+            } catch (error) {
+                console.error("Error fetching book, section data:", error);
+                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+            }
+        };
+
+        fetchData() // 데이터를 가져오는 함수 호출
+
+
+    }, [bookId]);
 
     /**
      * @description : Alert창 열릴 때
@@ -70,7 +98,24 @@ export default function EditAi() {
     };
 
     const handleEditClick = () => {
-        navigate(`/book/edit/` + bookId, { state: { aiData } }); // 데이터와 함께 edit 페이지로 이동
+
+        const combinedData = {
+            ...aiData,       // AI 문제 관련 데이터
+            book: bookData
+        };
+
+        console.log("combinedData", combinedData);
+
+        axios({
+            method: 'post',
+            url: '/book/edit/ai/save',
+            data: combinedData
+        }).then(res => {
+            navigate(`/book/edit/` + bookId); // 데이터와 함께 edit 페이지로 이동
+            console.log("AI 데이터가 성공적으로 저장되었습니다");
+        }).catch(err => {
+            console.error("AI 데이터 저장 중 오류가 발생했습니다:", err);
+        });
     };
 
     return (
