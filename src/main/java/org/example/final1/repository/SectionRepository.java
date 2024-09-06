@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface SectionRepository extends JpaRepository<SectionDto, Integer> {
-
+    public List<SectionDto> findAllByBook(BookDto book);
     public List<SectionDto> findAllByBookBookId(int bookId);
     // 섹션 개수 count
     @Query("SELECT COUNT(s) FROM SectionDto s WHERE s.book.bookId =:bookId")
