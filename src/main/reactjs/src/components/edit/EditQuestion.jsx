@@ -15,7 +15,7 @@ import {useDrag, useDrop} from "react-dnd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import QuestionButtons from "../QuestionButtons";
-import Choices from "./EditChoices";
+import EditChoices from "./EditChoices";
 import CustomConfirm from "../modal/CustomConfirm";
 import axios from "axios";
 
@@ -46,12 +46,20 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
     };
 
     /**
-     * @description : 확인 버튼 클릭시 실행되는 로직
+     * @description : 타입 변경 확인 버튼 클릭시 답안 전부 삭제
      * */
     const clickBtn2 = () => {
         setConfirmVisible(false);
-        onUpdateQuestion({questionType: confirmStatus})
-        setConfirmStatus(0);
+        const questionId = question.questionId;
+        if(questionId === null || questionId === "") return;
+        axios({
+            method: 'delete',
+            url: '/book/choice/deleteall/' + questionId,
+        }).then(res => {
+            console.log("답안 전부 삭제 완료")
+            onUpdateQuestion({questionType: confirmStatus})
+            setConfirmStatus(0);
+        })
     };
 
     /** 드래그앤 드롭 관련 코드 */
@@ -161,7 +169,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                                 value={question.questionType}
                                 label="문제 형식"
                                 variant={"standard"}
-                                onChange={(e) => openConfirm(e)}
+                                onChange={(e) => openConfirm(e, question.questionId)}
                             >
                                 <MenuItem value={0}>선택형</MenuItem>
                                 <MenuItem value={1}>다중선택형</MenuItem>
@@ -209,7 +217,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                             </div>
                         </div>
                     )}
-                    <Choices question={question}/>
+                    <EditChoices question={question}/>
                     {showExplanation && (  // 해설 입력란이 표시되어 있을 경우
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">
