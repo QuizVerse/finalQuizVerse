@@ -158,9 +158,21 @@ export default function BookList() {
                 className="mySwiper"
                 style={{ height: '500px' }}
             >
-                <SwiperSlide>Slide 1</SwiperSlide>
-                <SwiperSlide>Slide 2</SwiperSlide>
-                <SwiperSlide>Slide 3</SwiperSlide>
+                <SwiperSlide>
+                    <img
+                        src="/banner2.png"
+                        style={{cursor: 'pointer'}}
+                    /></SwiperSlide>
+                <SwiperSlide>
+                    <img
+                    src="/banner1.png"
+                    style={{cursor: 'pointer'}}
+                /></SwiperSlide>
+                <SwiperSlide>
+                    <img
+                    src="/banner3.png"
+                    style={{cursor: 'pointer'}}
+                /></SwiperSlide>
             </Swiper>
             {categories.map(category => (
                 <section className="mb-8" key={category.categoryId}>

@@ -122,7 +122,6 @@ export default function QuestionPreview() {
         }
     };
 
-
     const openAlert = (alertTitle) => {
         setAlertTitle(alertTitle);
         setAlertVisible(true);

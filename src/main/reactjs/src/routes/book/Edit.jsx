@@ -200,8 +200,11 @@ export default function Edit() {
      * @description : 취소 버튼 클릭시 실행되는 로직
      * */
     const clickBtn1 = () => {
-        if(confirmId === 14) setDeleteSectionIndex('');
-        setConfirmId(0);
+        if(confirmId === 14) {
+            setDeleteSectionIndex('');
+        } else if (confirmId === 16) {
+            saveOrUpdateBook(false);
+        }
         setConfirmVisible(false);
     };
 
@@ -231,8 +234,9 @@ export default function Edit() {
     // 출제 혹은 임시저장
     const saveOrUpdateBook = async (isPublished) => {
         try {
-            const response = await axios.post('/edit/publish', bookData, {
+            const response = await axios.get('/book/edit/publish',{
                 params: {
+                    id : bookId,
                     isPublished: isPublished
                 },
                 headers: {
