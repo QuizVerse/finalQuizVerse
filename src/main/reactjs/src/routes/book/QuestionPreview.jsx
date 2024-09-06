@@ -164,6 +164,7 @@ export default function QuestionPreview() {
                         color="primary">
                         출제하기
                     </Button>
+                    <Button onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
