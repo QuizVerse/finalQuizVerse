@@ -57,7 +57,7 @@ export default function NewBook() {
                 console.error(err);
             });
     };
-//클래스 목록가져오는거임
+//클래스 목록 가져오는 거다냥
     useEffect(() => {
         if (visibility === '클래스 공개') {
             axios.get('/book/user/classes')
@@ -70,6 +70,7 @@ export default function NewBook() {
                 });
         }
     }, [visibility]);
+
 
     // Handle changes
     const handleCategoryChange = (event) => setCategory(event.target.value);
@@ -195,11 +196,15 @@ export default function NewBook() {
                                     label="클래스 선택"
                                     onChange={handleClassChange}
                                 >
-                                    {classList.map((cls) => (
-                                        <MenuItem key={cls.classId} value={cls.classId}>
-                                            {cls.className}
-                                        </MenuItem>
-                                    ))}
+                                    {classList.length > 0 ? (
+                                        classList.map((cls) => (
+                                            <MenuItem key={cls.classId} value={cls.classId}>
+                                                {cls.className}
+                                            </MenuItem>
+                                        ))
+                                    ) : (
+                                        <MenuItem disabled>클래스가 없습니다</MenuItem>
+                                    )}
                                 </Select>
                             </FormControl>
                         )}

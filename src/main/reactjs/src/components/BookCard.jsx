@@ -169,12 +169,13 @@ export default function BookCard(props) {
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link to={`/book/detail/${props.bookId}`}>
                     <img
-                        src={props.photo.startsWith("https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/2") ?
+                        src={props.photo && props.photo.startsWith("https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/2") ?
                             props.photo :
                             "/quizverse-logo.png"}
                         alt="책 이미지"
                         className="w-full h-48 rounded-t"
                     />
+
 
                 </Link>
 
