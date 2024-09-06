@@ -1,9 +1,7 @@
 package org.example.final1.repository;
 
-import org.example.final1.model.QuestionDto;
-import org.example.final1.model.SolvedbookDto;
-import org.example.final1.model.UserDto;
-import org.example.final1.model.WrongDto;
+import org.apache.catalina.User;
+import org.example.final1.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

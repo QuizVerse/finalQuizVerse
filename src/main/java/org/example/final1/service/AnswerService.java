@@ -5,10 +5,7 @@ import org.example.final1.model.AnswerDto;
 import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SolvedbookDto;
-import org.example.final1.repository.AnswerRepository;
-import org.example.final1.repository.ChoiceRepository;
-import org.example.final1.repository.QuestionRepository;
-import org.example.final1.repository.SolvedbookRepository;
+import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +25,9 @@ public class AnswerService {
     private ChoiceRepository choiceRepository;
     @Autowired
     private SolvedbookRepository solvedbookRepository;
+
+    @Autowired
+    private WrongbookRepository wrongRepository;
 
     public void saveAnswers(List<AnswerDto> answers) {
         for (AnswerDto answerDto : answers) {
@@ -70,10 +70,15 @@ public class AnswerService {
 
             // 답안 저장
             answerRepository.save(answer);
+
+
+
+
+
         }
     }
 
-    // 객관식 답안 채점 로직
+
     // 객관식 답안 채점 로직
     private boolean checkMultipleChoiceCorrect(QuestionDto question, List<ChoiceDto> selectedChoices) {
         // 선택한 문제의 모든 선택지 가져오기 (ChoiceRepository에서 questionId를 이용해 찾음)
@@ -87,6 +92,8 @@ public class AnswerService {
         // 선택한 답안과 정답 비교 (HashSet을 사용하여 선택한 답안과 정답이 일치하는지 확인)
         return new HashSet<>(selectedChoices).containsAll(correctChoices)
                 && new HashSet<>(correctChoices).containsAll(selectedChoices);
+
+
     }
 
 
