@@ -57,4 +57,13 @@ public class QuestionPreviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("배점 저장 실패");
         }
     }
+    @GetMapping("/questionpreviewPDF/{id}")
+    public ResponseEntity<List<QuestionDto>> getQuestionsByBookIdToPDF(@PathVariable("id") int bookId) {
+        List<QuestionDto> questions = questionService.getQuestionsByBookId(bookId);
+        if (questions == null || questions.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(questions);
+        }
+    }
 }
