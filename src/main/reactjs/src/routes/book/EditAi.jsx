@@ -1,15 +1,47 @@
 import { CallGpt } from "../../components/gpt";
 import { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom"; // 페이지 이동을 위한 훅
+import { useNavigate, useParams } from "react-router-dom";
+import CustomAlert from "../../components/modal/CustomAlert"; // 페이지 이동을 위한 훅
 
 export default function EditAi() {
     const [data, setData] = useState(null); // 현재 선택된 데이터
     const [isLoading, setIsLoading] = useState(false);
     const [userInput, setUserInput] = useState('');
     const [history, setHistory] = useState([]); // 히스토리 저장
+    const [retryCount, setRetryCount] = useState(0); // 재시도 횟수 저장
     const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
-    const {bookId} = useParams(); //URL에서 book_Id를 가져옴
+    const { bookId } = useParams(); //URL에서 book_Id를 가져옴
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title)
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
+    // 데이터 유효성 검증 함수
+    const isValidData = (jsonData) => {
+        return (
+            jsonData &&
+            jsonData.sectionTitle &&
+            jsonData.sectionDescription &&
+            Array.isArray(jsonData.questions) &&
+            jsonData.questions.length > 0
+        );
+    };
 
     const handleClickAPICall = async () => {
         try {
@@ -17,11 +49,26 @@ export default function EditAi() {
             const jsonData = await CallGpt({
                 prompt: userInput,
             });
-            setData(jsonData);
-            setHistory((prevHistory) => [...prevHistory, { prompt: userInput, result: jsonData }]); // 히스토리에 추가
-            console.log(jsonData);
+
+            // 데이터 유효성 검증
+            if (isValidData(jsonData)) {
+                setData(jsonData);
+                setHistory((prevHistory) => [...prevHistory, { prompt: userInput, result: jsonData }]); // 히스토리에 추가
+                console.log(jsonData);
+            } else {
+                // 데이터가 유효하지 않으면 재시도
+                if (retryCount < 3) { // 재시도 횟수 제한 설정 (예: 3회)
+                    setRetryCount(retryCount + 1);
+                    handleClickAPICall().then(r => openAlert("다시 시도하고 있습니다. 조금만 더 기다려주세요.")); // 재시도
+                } else {
+                    console.error("재시도 횟수를 초과했습니다.");
+                    openAlert("데이터를 불러오지 못했습니다. 다시 시도해 주세요.");
+                    setRetryCount(0); // 재시도 횟수 초기화
+                }
+            }
         } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
+            openAlert("API 호출 중 오류가 발생했습니다. 다시 시도해 주세요."); // 에러 발생 시 사용자에게 메시지 표시
         } finally {
             setIsLoading(false);
         }
@@ -32,7 +79,7 @@ export default function EditAi() {
     };
 
     const handleEditClick = () => {
-        navigate(`/book/edit/`+bookId, { state: { data } }); // 데이터와 함께 edit 페이지로 이동
+        navigate(`/book/edit/` + bookId, { state: { data } }); // 데이터와 함께 edit 페이지로 이동
     };
 
     return (
@@ -112,6 +159,12 @@ export default function EditAi() {
                     </div>
                 </section>
             </main>
+
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
         </div>
     );
 }
