@@ -5,11 +5,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import CustomAlert from "../../components/modal/CustomAlert"; // 페이지 이동을 위한 훅
 
 export default function EditAi() {
-    const [data, setData] = useState(null); // 현재 선택된 데이터
+    const [aiData, setAiData] = useState(null); // 현재 선택된 데이터
     const [isLoading, setIsLoading] = useState(false);
     const [userInput, setUserInput] = useState('');
     const [history, setHistory] = useState([]); // 히스토리 저장
-    const [retryCount, setRetryCount] = useState(0); // 재시도 횟수 저장
     const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
     const { bookId } = useParams(); //URL에서 book_Id를 가져옴
 
@@ -52,19 +51,11 @@ export default function EditAi() {
 
             // 데이터 유효성 검증
             if (isValidData(jsonData)) {
-                setData(jsonData);
+                setAiData(jsonData);
                 setHistory((prevHistory) => [...prevHistory, { prompt: userInput, result: jsonData }]); // 히스토리에 추가
                 console.log(jsonData);
             } else {
-                // 데이터가 유효하지 않으면 재시도
-                if (retryCount < 3) { // 재시도 횟수 제한 설정 (예: 3회)
-                    setRetryCount(retryCount + 1);
-                    handleClickAPICall().then(r => openAlert("다시 시도하고 있습니다. 조금만 더 기다려주세요.")); // 재시도
-                } else {
-                    console.error("재시도 횟수를 초과했습니다.");
-                    openAlert("데이터를 불러오지 못했습니다. 다시 시도해 주세요.");
-                    setRetryCount(0); // 재시도 횟수 초기화
-                }
+                openAlert("데이터를 불러오지 못했습니다. 다시 시도해 주세요.");
             }
         } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
@@ -75,11 +66,11 @@ export default function EditAi() {
     };
 
     const handleHistoryClick = (selectedData) => {
-        setData(selectedData.result); // 선택한 히스토리의 결과를 현재 데이터로 설정
+        setAiData(selectedData.result); // 선택한 히스토리의 결과를 현재 데이터로 설정
     };
 
     const handleEditClick = () => {
-        navigate(`/book/edit/` + bookId, { state: { data } }); // 데이터와 함께 edit 페이지로 이동
+        navigate(`/book/edit/` + bookId, { state: { aiData } }); // 데이터와 함께 edit 페이지로 이동
     };
 
     return (
@@ -113,12 +104,12 @@ export default function EditAi() {
                     <div className="p-4 border rounded-lg shadow-md bg-white">
                         {isLoading ? (
                             <p>로딩 중...</p>
-                        ) : data ? (
+                        ) : aiData ? (
                             <div>
-                                <h2 className="text-2xl font-bold mb-4">{data.sectionTitle}</h2>
-                                <p className="mb-4">{data.sectionDescription}</p>
+                                <h2 className="text-2xl font-bold mb-4">{aiData.sectionTitle}</h2>
+                                <p className="mb-4">{aiData.sectionDescription}</p>
 
-                                {data.questions && data.questions.map((question, index) => (
+                                {aiData.questions && aiData.questions.map((question, index) => (
                                     <div key={index} className="p-4 mb-4 border rounded-lg shadow-sm bg-gray-50">
                                         <h3 className="text-lg font-semibold mb-2">문제 {question.questionOrder}</h3>
                                         <p className="mb-2">{question.questionTitle}</p>
