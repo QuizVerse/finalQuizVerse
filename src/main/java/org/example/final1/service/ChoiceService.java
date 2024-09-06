@@ -32,12 +32,17 @@ public class ChoiceService {
     }
 
     public List<ChoiceDto> getAllChoices(int questionId) {
-        return choiceRepository.findByQuestionQuestionId(questionId);
+        return choiceRepository.findAllByQuestionQuestionId(questionId);
     }
 
     public void deleteChoice(Integer id) {
         choiceRepository.deleteById(id);
     }
+
+    public void deleteAllChoice(int questionId) {
+        choiceRepository.deleteAllByQuestionQuestionId(questionId);
+    }
+
 
     // 답안 아이디로 답안 하나의 정보 받아오기
     public Optional<ChoiceDto> getChoice(int id) {
