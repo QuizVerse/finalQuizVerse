@@ -12,11 +12,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 
+// static 폴더의 이미지를 불러오기 위한 경로
+const defaultImage = '/quizverse-logo.png';
 export default function NewBook() {
     // Dropdown state
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
-    const [coverImage, setCoverImage] = useState('');
+    const [coverImage, setCoverImage] = useState(defaultImage); // 디폴트 이미지를 초기값으로 설정
     const [bookName, setBookName] = useState('사진테스트');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
@@ -29,6 +31,7 @@ export default function NewBook() {
     const [error, setError] = useState(null);
     const [classList, setClassList] = useState([]); // 사용자 클래스 목록
     const [selectedClass, setSelectedClass] = useState(''); // 선택된 클래스
+
 
 
     // 사진 업로드
@@ -103,6 +106,14 @@ export default function NewBook() {
             formData.append('upload', bookPhotoFile); // 이미지 파일 추가
         }
 
+        // 이미지 업로드 여부를 확인하여 처리
+        if (bookPhotoFile) {
+            formData.append('upload', bookPhotoFile); // 사용자가 업로드한 파일
+        } else {
+            // 사용자가 사진을 업로드하지 않은 경우 기본 이미지를 설정
+            formData.append('bookImage', '/path/to/quizverse-logo.png'); // 기본 이미지 경로
+        }
+
         axios.post('/book/newbook', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -128,7 +139,7 @@ export default function NewBook() {
         setBookDescription('');
         setCategory('');
         setVisibility('전체 공개');
-        setCoverImage('');
+        setCoverImage(defaultImage); // 기본 이미지를 다시 설정
         setTotalPoints('100');
         setIsChecked(true);
         setIsTimeLimitEnabled(true);
