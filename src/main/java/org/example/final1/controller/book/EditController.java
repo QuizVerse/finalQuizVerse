@@ -1,5 +1,6 @@
 package org.example.final1.controller.book;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.ChoiceDto;
@@ -87,16 +88,25 @@ public class EditController {
         }
 
     }
+
+    // ai문제 추가
     @PostMapping("/edit/ai/save")
     public ResponseEntity<String> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
 
-        // Section 정보를 JSON에서 추출
+        // ObjectMapper를 사용하여 JSON 데이터를 BookDto로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // BookDto 변환
+        BookDto bookDto = objectMapper.convertValue(requestData.get("book"), BookDto.class);
+
+        // Section 정보를 JSON에서 추출 및 변환
         SectionDto sectionDto = new SectionDto();
-        int sectionNumber = sectionService.getAllSectionsByBook((BookDto) requestData.get("book")).size() + 1;
+        int sectionNumber = sectionService.getAllSectionsByBook(bookDto).size() + 1;
 
         sectionDto.setSectionNumber(sectionNumber);
         sectionDto.setSectionTitle((String) requestData.get("sectionTitle"));
-        sectionDto.setBook((BookDto) requestData.get("book"));
+        sectionDto.setSectionImage("");
+        sectionDto.setBook(bookDto);
         sectionDto.setSectionDescription((String) requestData.get("sectionDescription"));
 
         // 섹션 저장
@@ -108,14 +118,23 @@ public class EditController {
             for (Map<String, Object> questionData : questions) {
                 // QuestionDto 생성 및 저장
                 QuestionDto questionDto = new QuestionDto();
-                questionDto.setQuestionType((short) questionData.get("questionType"));
+
+                // questionType을 Integer에서 Short로 변환
+                Integer questionTypeInt = (Integer) questionData.get("questionType");
+                questionDto.setQuestionType(questionTypeInt.shortValue());
+
                 questionDto.setQuestionTitle((String) questionData.get("questionTitle"));
                 questionDto.setQuestionSolution((String) questionData.get("questionSolution"));
                 questionDto.setQuestionOrder((Integer) questionData.get("questionOrder"));
-                questionDto.setSection(savedSection);  // 저장된 섹션 ID 설정
+                questionDto.setQuestionDescriptionimage("");
+                questionDto.setQuestionDescription("");
+                questionDto.setQuestionSolutionimage("");
+                questionDto.setSection(savedSection);
+                questionDto.setBook(bookDto);
 
                 // 질문 저장
                 QuestionDto savedQuestion = questionService.saveQuestion(questionDto);
+
                 // Choices가 있는지 확인 후 처리
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) questionData.get("choices");
                 if (choices != null) {
@@ -124,8 +143,8 @@ public class EditController {
                         ChoiceDto choiceDto = new ChoiceDto();
                         choiceDto.setChoiceText((String) choiceData.get("choiceText"));
                         choiceDto.setQuestion(savedQuestion);  // 저장된 질문 ID 설정
-                        choiceDto.setChoiceIsanswer(questionData.get("correctAnswer") == choiceData.get("choiceText"));
-
+                        choiceDto.setChoiceIsanswer(choiceData.get("choiceText").equals(questionData.get("correctAnswer")));
+                        choiceDto.setChoiceImage("");
                         // 선택지 저장
                         choiceService.saveChoice(choiceDto);
                     }
@@ -135,6 +154,8 @@ public class EditController {
 
         return ResponseEntity.ok("저장됨");
     }
+
+
 
 
 
