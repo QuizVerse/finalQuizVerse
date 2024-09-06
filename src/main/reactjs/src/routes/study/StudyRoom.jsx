@@ -18,15 +18,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
-
 function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
+
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -284,8 +284,8 @@ const toggleMicrophone = async () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-      //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-      const ws = new WebSocket('ws://localhost:9002/ws/chat');
+      const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+      //const ws = new WebSocket('ws://localhost:9002/ws/chat');
       
       ws.onopen = () => {
       console.log('웹소켓 연결이 설정되었습니다.');
