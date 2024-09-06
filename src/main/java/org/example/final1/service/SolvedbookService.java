@@ -37,6 +37,8 @@ public class SolvedbookService {
         return savedSolvedBook; // 저장된 solvedBook 반환
     }
 
-
-
+    // 사용자 ID가 응시한 문제집 총 개수 가져오기
+    public int getSolvedBookCountByUser(UserDto user){
+        return solvedBookRepository.countSolvedBookByUserId(user.getUserId());
+    }
 }
