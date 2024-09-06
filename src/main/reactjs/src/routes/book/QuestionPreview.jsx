@@ -249,3 +249,252 @@ export default function QuestionPreview() {
         </div>
     );
 }
+//
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { Typography, Button, TextField, Box, CircularProgress, Alert } from "@mui/material";
+// import CustomAlert from "../../components/modal/CustomAlert";
+// import PreviewSection from "../../components/questionPreview/PreviewSection";
+// import { Swiper, SwiperSlide } from 'swiper/react';
+// import 'swiper/css';
+// import 'swiper/css/pagination';
+// import html2canvas from 'html2canvas';
+// import jsPDF from 'jspdf';
+//
+// export default function QuestionPreview() {
+//     const { bookId } = useParams();
+//     const [bookData, setBookData] = useState({});
+//     const [sections, setSections] = useState([]);
+//     const [questions, setQuestions] = useState([]);
+//     const [targetTotal, setTargetTotal] = useState(100);
+//     const [loading, setLoading] = useState(true); // 상태 초기화
+//     const [error, setError] = useState(null);
+//     const [alertVisible, setAlertVisible] = useState(false);
+//     const [alertTitle, setAlertTitle] = useState("");
+//     const [isChecked, setIsChecked] = useState(false);
+//     const [totalPoints, setTotalPoints] = useState(0);
+//
+//     const navigate = useNavigate();
+//
+//     useEffect(() => {
+//         const fetchData = async () => {
+//             try {
+//                 const bookResponse = await axios.get(`/book/edit/${bookId}`);
+//                 const bookData = bookResponse.data.book;
+//                 setBookData(bookData);
+//                 setSections(bookResponse.data.sections);
+//                 setTotalPoints(bookData.bookTotalscore);
+//                 setIsChecked(bookData.bookDivide === 1);
+//                 setTotalPoints(bookData.bookTotalscore || 100);
+//
+//                 const questionsResponse = await axios.get(`/book/questionpreview/${bookId}`);
+//                 const loadedQuestions = questionsResponse.data.map(question => ({
+//                     ...question,
+//                     questionPoint: question.questionPoint || 0
+//                 }));
+//                 setQuestions(loadedQuestions);
+//
+//                 setLoading(false); // 데이터 로딩이 완료되면 상태 업데이트
+//             } catch (error) {
+//                 console.error("Error fetching data:", error);
+//                 setError("데이터를 가져오는 도중 문제가 발생했습니다.");
+//                 setLoading(false); // 오류 발생 시에도 로딩 상태 업데이트
+//             }
+//         };
+//
+//         fetchData();
+//     }, [bookId]);
+//
+//     const handleScoreInput = (index, newScore) => {
+//         const updatedQuestions = [...questions];
+//         const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
+//         updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
+//
+//         const currentTotal = updatedQuestions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
+//
+//         if (currentTotal > targetTotal) {
+//             const excess = currentTotal - targetTotal;
+//             updatedQuestions[index].questionPoint = Math.round((parsedScore - excess) * 10) / 10;
+//             openAlert(`총 점수가 목표 점수를 초과했습니다. 현재 문항의 배점이 ${targetTotal}점에 맞춰 조정되었습니다.`);
+//         } else {
+//             updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
+//         }
+//
+//         setQuestions(updatedQuestions);
+//     };
+//
+//     const totalScore = questions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
+//     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
+//
+//     const handleSubmit = async () => {
+//         if (isChecked) {
+//             const totalQuestions = questions.length;
+//             const totalScore = parseInt(totalPoints, 10) || 0;
+//             const evenScore = Math.round((totalScore / totalQuestions) * 10) / 10;
+//             const updatedQuestions = questions.map((question) => ({
+//                 ...question,
+//                 questionPoint: evenScore
+//             }));
+//
+//             setQuestions(updatedQuestions);
+//         }
+//
+//         const sanitizedQuestions = questions.map(({ questionId, questionPoint }) => ({
+//             questionId,
+//             questionPoint,
+//         }));
+//
+//         if (sanitizedQuestions.some((question) => question.questionPoint === 0 || question.questionPoint === "")) {
+//             openAlert("모든 문제에 대해 배점을 해야 합니다. 0점 또는 빈 점수가 있는 문제가 있습니다.");
+//         } else {
+//             try {
+//                 const response = await axios.post(`/book/question/saveScore/${bookId}`, sanitizedQuestions);
+//
+//                 if (response.status === 200) {
+//                     openAlert("배점이 성공적으로 저장되었습니다.");
+//                     navigate("/");  // 저장 성공 후 메인 페이지로 이동
+//                 } else {
+//                     openAlert("배점 저장에 실패했습니다.");
+//                 }
+//             } catch (error) {
+//                 console.error("Error saving scores:", error);
+//                 openAlert("배점을 저장하는 도중 문제가 발생했습니다.");
+//             }
+//         }
+//     };
+//
+//     const openAlert = (alertTitle) => {
+//         setAlertTitle(alertTitle);
+//         setAlertVisible(true);
+//     };
+//
+//     const closeAlert = () => {
+//         setAlertVisible(false);
+//     };
+//
+//     if(loading) {
+//         return (
+//             <Box display="flex" justifyContent="center" mt={4}>
+//                 <CircularProgress/>
+//             </Box>
+//         )
+//     }
+//
+//     if(error) {
+//         return (
+//             <Box display="flex" justifyContent="center" mt={4}>
+//                 <Alert severity="error">{error}</Alert>
+//             </Box>
+//         )
+//     }
+//
+//     // PDF 출력 함수
+//     const handleDownloadPDF = () => {
+//         html2canvas(document.querySelector("#pdf-content")).then(canvas => {
+//             const imgData = canvas.toDataURL('image/png');
+//             const pdf = new jsPDF();
+//             const imgWidth = 210; // A4 사이즈의 폭 (mm)
+//             const pageHeight = 295; // A4 사이즈의 높이 (mm)
+//             const imgHeight = canvas.height * imgWidth / canvas.width;
+//             let heightLeft = imgHeight;
+//
+//             let position = 0;
+//
+//             pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+//             heightLeft -= pageHeight;
+//
+//             while (heightLeft >= 0) {
+//                 position = heightLeft - imgHeight;
+//                 pdf.addPage();
+//                 pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+//                 heightLeft -= pageHeight;
+//             }
+//
+//             pdf.save(`${bookData.bookTitle || '문제미리보기'}.pdf`);
+//         });
+//     };
+//
+//
+//     return (
+//         <div className="space-y-8">
+//             <div className="flex justify-center">
+//                 <Typography variant="h5" mb={2}>문제 미리보기</Typography>
+//             </div>
+//             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
+//                 <div className="flex justify-between p-4">
+//                     <Typography variant="h6">{bookData.user ? bookData.user.userNickname : "로드 중..."}</Typography>
+//                     <Typography variant="h6">
+//                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
+//                     </Typography>
+//                     <Button
+//                         onClick={handleSubmit}
+//                         variant="contained"
+//                         color="primary">
+//                         출제하기
+//                     </Button>
+//                     <Button onClick={() => navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
+//                     <Button onClick={handleDownloadPDF} variant="contained" color="secondary">
+//                         PDF 다운로드
+//                     </Button>
+//                 </div>
+//                 <div className="flex items-center bg-white rounded shadow-lg" id="pdf-content">
+//                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+//                         <div className="font-semibold whitespace-nowrap p-2">
+//                             문항번호
+//                         </div>
+//                         <div className="font-semibold whitespace-nowrap p-2">배점</div>
+//                     </div>
+//
+//                     <Swiper
+//                         slidesPerView={10}
+//                         spaceBetween={30}
+//                         centeredSlides={true}
+//                         className="mySwiper"
+//                         virtual={false}
+//                         watchSlidesProgress={true}
+//                     >
+//                         {questions.map((question, index) => (
+//                             <SwiperSlide key={index} style={{ overflow: 'visible' }}>
+//                                 <div className="flex flex-col items-center space-y-2 space-x-2 p-2">
+//                                     <div className="text-sm">
+//                                         <Typography>{question.questionId}</Typography>
+//                                     </div>
+//                                     <div className="text-sm">
+//                                         <TextField
+//                                             type="number"
+//                                             value={question.questionPoint || ""}
+//                                             onChange={(e) => handleScoreInput(index, e.target.value)}
+//                                             inputProps={{ min: 0, step: '0.1' }}
+//                                             sx={{
+//                                                 '& .MuiInputBase-input': {
+//                                                     textAlign: 'center',
+//                                                 }
+//                                             }}
+//                                         />
+//                                     </div>
+//                                 </div>
+//                             </SwiperSlide>
+//                         ))}
+//                     </Swiper>
+//                 </div>
+//                 {alertVisible && (
+//                     <CustomAlert
+//                         open={alertVisible}
+//                         title={alertTitle}
+//                         onClose={closeAlert}
+//                     />
+//                 )}
+//             </div>
+//             {sections.map((section, index) => (
+//                 <PreviewSection
+//                     key={index}
+//                     section={section}
+//                     questions={questions.filter(q => q.sectionId === section.sectionId)}
+//                     setLoading={setLoading}
+//                 />
+//             ))}
+//         </div>
+//     );
+// }
+
