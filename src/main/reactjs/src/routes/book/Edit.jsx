@@ -45,6 +45,9 @@ export default function Edit() {
                     .then((res)=>{
                         setBookData(res.data.book);
                         setSections(res.data.sections);
+                        if(res.data.sections.length === 0){
+                            handleAddSection(res.data.book);
+                        }
                     });
                 setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
             } catch (error) {
@@ -54,8 +57,6 @@ export default function Edit() {
         };
 
         fetchData() // 데이터를 가져오는 함수 호출
-
-
     }, [bookId]);
 
     // sections 상태가 변경될 때마다 1초 뒤에 저장하도록 하는 useEffect 추가
@@ -76,7 +77,7 @@ export default function Edit() {
 
 
     // side bar에서 섹션 추가
-    const handleAddSection = () => {
+    const handleAddSection = (bookData) => {
         const newSection = {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
@@ -293,7 +294,7 @@ export default function Edit() {
                         onUpdateSection={(updated) => handleUpdateSection(index, updated)}
                     />
                 ))}
-                <EditSidebar onAddSection={handleAddSection} onSortSection={openSortSection}/>
+                <EditSidebar onAddSection={() => handleAddSection(bookData)} onSortSection={openSortSection}/>
 
                 <CustomAlert
                     title={alertTitle}
