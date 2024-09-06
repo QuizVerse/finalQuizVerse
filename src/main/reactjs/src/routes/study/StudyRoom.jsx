@@ -44,31 +44,7 @@ export default function StudyRoom() {
     const { study_id,studyTitle } = useParams(); // URL에서 studyId 추출
     const [sharedScreenTrackSid, setSharedScreenTrackSid] = useState(null);
     const navi = useNavigate();
-    // 원격 화면 공유 트랙 상태 추가
-    const [remoteSharedScreenTrack, setRemoteSharedScreenTrack] = useState(null);
-    
-    // // 트랙의 해상도를 확인하는 함수
-    // function isScreenSharingTrack(track) {
-    //     if (track.kind === 'video') {
-    //         const settings = track.mediaStreamTrack.getSettings();
-    //         return settings.width && settings.height && (settings.width > 1280 || settings.height > 720); // 해상도가 1280x720보다 크면 화면 공유로 가정
-    //     }
-    //     return false;
-    // }
-    // // 원격 트랙 업데이트 로직
-    // useEffect(() => {
-    //     // 원격 트랙이 변경될 때마다 실행
-    //     const sharedScreenTrack = remoteTracks.find(remoteTrack => 
-    //         remoteTrack.trackPublication.kind === 'video' && 
-    //         isScreenSharingTrack(remoteTrack.trackPublication.track)
-    //     );
 
-    //     if (sharedScreenTrack) {
-    //         setRemoteSharedScreenTrack(sharedScreenTrack.trackPublication);
-    //     } else {
-    //         setRemoteSharedScreenTrack(null);
-    //     }
-    // }, [remoteTracks]);
 
     //사용자 정보를 가져오는 함수
     const getUserDto = () => {
@@ -179,6 +155,7 @@ export default function StudyRoom() {
         }
         navi(`/study/list`);
     }
+
   async function getToken(roomName, participantName) {
       try {
           const response = await fetch(APPLICATION_SERVER_URL + "token", {
@@ -220,16 +197,6 @@ export default function StudyRoom() {
         localTrack.stop(); // 비디오 트랙을 중지합니다.
         setLocalTrack(null);
     }
-
-    // 현재 사용 중인 비디오 스트림이 있는 경우, 해당 스트림의 모든 트랙을 중지합니다.
-    const streams = await navigator.mediaDevices.enumerateDevices();
-    for (const stream of streams) {
-        if (stream.kind === 'videoinput') {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: stream.deviceId } });
-            mediaStream.getTracks().forEach(track => track.stop());
-        }
-    }
-
     setIsCameraEnabled(false);
   }
   //카메라 토글 함수
@@ -244,11 +211,11 @@ export default function StudyRoom() {
   //마이크 켜기
   async function enableMicrophone() {
       if (!localAudioTrack) {
-          // 새로운 오디오 트랙을 생성합니다.
-          const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          const track = mediaStream.getAudioTracks()[0];
-          const audioTrack = new LocalAudioTrack(track);
-      
+            // 새로운 오디오 트랙을 생성합니다.
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const track = mediaStream.getAudioTracks()[0];
+            const audioTrack = new LocalAudioTrack(track);
+            
           // 트랙을 퍼블리시합니다.
           await room.localParticipant.publishTrack(audioTrack);
           setLocalAudioTrack(audioTrack);
@@ -293,7 +260,6 @@ export default function StudyRoom() {
           setLocalAudioTrack(null);
       }
       // 모든 오디오 트랙 중지
-      // await stopAllMediaStreams();
       setIsMicrophoneEnabled(false);
   }
   //마이크 토글
@@ -305,39 +271,41 @@ export default function StudyRoom() {
       }
   }
 
-    //화면공유
+    // 화면 공유
     async function toggleScreenSharing() {
-        if (isScreenSharing) {
-            if (screenTrack) {
-                //공유화면 중지
-                await room.localParticipant.unpublishTrack(screenTrack);
-                screenTrack.stop();
-                setScreenTrack(null);
-                setSharedScreenTrackSid(null); // 화면 공유 트랙 식별자 초기화
+        try {
+            if (isScreenSharing) {
+                // 화면 공유 중지
+                if (screenTrack) {
+                    try {
+                        await screenTrack.stop();
+                        room.localParticipant.unpublishTrack(screenTrack);
+                        setScreenTrack(null);
+                        setSharedScreenTrackSid(null); // 화면 공유 중지 시, 식별자도 초기화
+                    } catch (error) {
+                        console.error("화면 공유 중지 중 에러 발생:", error);
+                        alert("화면 공유를 중지하는 동안 문제가 발생했습니다.");
+                    }
+                }
+            } else {
+                // 화면 공유 시작
+                try {
+                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    const track = stream.getVideoTracks()[0];
+                    setScreenTrack(track);
+                    await room.localParticipant.publishTrack(track);
+                    setSharedScreenTrackSid(track.id); // 화면 공유 시, 고유 식별자 설정
+                } catch (error) {
+                    console.error("화면 공유 시작 중 에러 발생:", error);
+                    alert("화면 공유를 시작하는 동안 문제가 발생했습니다. 권한을 허용했는지 확인하세요.");
+                }
             }
-        } else {
-            //공유화면 시작
-            //const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-            const stream = await navigator.mediaDevices.getDisplayMedia({ 
-                video: { 
-                    cursor: "always" // 화면 공유일 때만 커서를 항상 보이도록 설정
-                } 
-            });
-            const videoTrack = stream.getVideoTracks()[0];
-            const localScreenTrack = new LocalVideoTrack(videoTrack);
-
-            videoTrack.onended = () => {
-                console.log('화면 공유가 중지되었습니다.');
-                setIsScreenSharing(false);
-                setScreenTrack(null);
-                setSharedScreenTrackSid(null); // 화면 공유 중지 시 식별자 초기화
-            };
-
-            setScreenTrack(localScreenTrack);
-            setSharedScreenTrackSid(localScreenTrack.sid); // 화면 공유 트랙 식별자 설정
-            await room.localParticipant.publishTrack(localScreenTrack);
+            // 화면 공유 상태 토글
+            setIsScreenSharing(!isScreenSharing);
+        } catch (error) {
+            console.error("화면 공유 토글 중 에러 발생:", error);
+            alert("화면 공유 상태를 변경하는 동안 문제가 발생했습니다.");
         }
-        setIsScreenSharing(!isScreenSharing);
     }
 
   //채팅
@@ -442,7 +410,7 @@ export default function StudyRoom() {
                               className="btn btn-lg btn-success"
                               type="submit"
                               disabled={!roomName || !participantName}
-                          >
+                            >
                               입장
                           </button>
                       </form>
@@ -467,17 +435,17 @@ export default function StudyRoom() {
                         )}
                         {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
                         {remoteTracks
-                                .filter(remoteTrack =>
-                                    remoteTrack.trackPublication.kind === "video" &&
-                                    remoteTrack.trackPublication.trackSid === sharedScreenTrackSid  //screenTrack?.sid
-                                )
-                                .map(remoteTrack => (
-                                    <ShareVideoComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.videoTrack}
-                                        participantIdentity={remoteTrack.participantIdentity}
-                                    />
-                                ))}
+                            .filter(remoteTrack =>
+                                remoteTrack.trackPublication.kind === "video" &&
+                                remoteTrack.trackPublication.trackSid === sharedScreenTrackSid  //screenTrack?.sid
+                            )
+                            .map(remoteTrack => (
+                                <ShareVideoComponent
+                                    key={remoteTrack.trackPublication.trackSid}
+                                    track={remoteTrack.trackPublication.videoTrack}
+                                    participantIdentity={remoteTrack.participantIdentity}
+                                />
+                        ))}
                     </div>
                     <div id="layout-container">
                         {localTrack && (
@@ -485,25 +453,22 @@ export default function StudyRoom() {
                         )}
                         {/* 일반 비디오 및 오디오 트랙 렌더링 */}
                         {remoteTracks
-                                .filter(remoteTrack =>
-                                    remoteTrack.trackPublication.kind === "video" &&
-                                    remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid  //screenTrack?.sid
+                            .filter(remoteTrack => remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid)
+                            .map(remoteTrack =>
+                                remoteTrack.trackPublication.kind === "video" ? (
+                                    <VideoComponent
+                                        key={remoteTrack.trackPublication.trackSid}
+                                        track={remoteTrack.trackPublication.videoTrack}
+                                        participantIdentity={remoteTrack.participantIdentity}
+                                    />
+                                ) : (
+                                    <AudioComponent
+                                        key={remoteTrack.trackPublication.trackSid}
+                                        track={remoteTrack.trackPublication.audioTrack}
+                                    />
                                 )
-                                .map(remoteTrack =>
-                                    remoteTrack.trackPublication.kind === "video" ? (
-                                        <VideoComponent
-                                            key={remoteTrack.trackPublication.trackSid}
-                                            track={remoteTrack.trackPublication.videoTrack}
-                                            participantIdentity={remoteTrack.participantIdentity}
-                                        />
-                                    ) : (
-                                        <AudioComponent
-                                            key={remoteTrack.trackPublication.trackSid}
-                                            track={remoteTrack.trackPublication.audioTrack}
-                                            participantIdentity={remoteTrack.participantIdentity}
-                                        />
-                                    )
-                                )}
+                            )
+                        }
                     </div>
                   <button className="btn btn-secondary" onClick={toggleCamera}>
                       {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
