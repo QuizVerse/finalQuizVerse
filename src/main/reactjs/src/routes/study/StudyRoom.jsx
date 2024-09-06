@@ -18,15 +18,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
-
 // function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
 //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 // }
+
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -37,12 +37,12 @@ export default function StudyRoom() {
     const [roomName, setRoomName] = useState("");
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
-    const [isMicrophoneEnabled, setIsMicrophoneEnabled] = useState(true);
     const [isScreenSharing, setIsScreenSharing] = useState(false);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const { study_id,studyTitle } = useParams(); // URL에서 studyId 추출
+    const {study_id,studyTitle } = useParams(); // URL에서 studyId 추출
     const [sharedScreenTrackSid, setSharedScreenTrackSid] = useState(null);
+    const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
 
 
@@ -208,68 +208,38 @@ export default function StudyRoom() {
       }
       setIsCameraEnabled(!isCameraEnabled);
   }
-  //마이크 켜기
-  async function enableMicrophone() {
-      if (!localAudioTrack) {
-            // 새로운 오디오 트랙을 생성합니다.
+
+// 마이크 음소거 기능
+const toggleMicrophone = async () => {
+    console.log('Microphone muted:', isMicrophoneMuted);
+    if (isMicrophoneMuted) {
+        // 마이크 켜기
+        if (!localAudioTrack) {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const track = mediaStream.getAudioTracks()[0];
             const audioTrack = new LocalAudioTrack(track);
-            
-          // 트랙을 퍼블리시합니다.
-          await room.localParticipant.publishTrack(audioTrack);
-          setLocalAudioTrack(audioTrack);
-      } else {
-          // 이미 트랙이 존재하면, 상태를 활성화합니다.
-          //localAudioTrack.mediaStreamTrack.enabled = true;
-          if (localAudioTrack.mediaStreamTrack) {
-              localAudioTrack.mediaStreamTrack.enabled = true;
-          }
-      }
-      setIsMicrophoneEnabled(true);
-  }
-  ///////
-  // async function stopAllMediaStreams() {
-  //     const devices = await navigator.mediaDevices.enumerateDevices();
-  //     const audioInputs = devices.filter(device => device.kind === 'audioinput');
+            await room.localParticipant.publishTrack(audioTrack);
+            setLocalAudioTrack(audioTrack);
+        } else {
+            if (localAudioTrack.mediaStreamTrack) {
+                localAudioTrack.mediaStreamTrack.enabled = true;
+            }
+        }
+        setIsMicrophoneMuted(false);
+    } else {
+        // 마이크 끄기
+        if (localAudioTrack) {
+            await room.localParticipant.unpublishTrack(localAudioTrack);
+            if (localAudioTrack.mediaStreamTrack) {
+                localAudioTrack.mediaStreamTrack.enabled = false;
+            }
+            localAudioTrack.stop();
+            setLocalAudioTrack(null);
+        }
+        setIsMicrophoneMuted(true);
+    }
+};
 
-  //     // 병렬로 모든 오디오 입력 장치 처리
-  //     // const stopPromises = audioInputs.map(async device => {
-  //     //     const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: device.deviceId } });
-  //     //     stream.getTracks().forEach(track => track.stop());
-  //     // });
-  //     // await Promise.all(stopPromises);
-  //     for (const device of audioInputs) {
-  //         const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: device.deviceId } });
-  //             stream.getTracks().forEach(track => {
-  //                 console.log(`Stopping track from device: ${device.label}`);
-  //                 track.stop(); // Stop the individual track
-  //             });
-  //     }
-  // }
-  //마이크 끄기
-  async function disableMicrophone() {
-      if (localAudioTrack) {
-          // 필요시 트랙을 언퍼블리시합니다.
-          await room.localParticipant.unpublishTrack(localAudioTrack);
-          if (localAudioTrack.mediaStreamTrack) {
-              localAudioTrack.mediaStreamTrack.stop(); // 트랙을 완전히 중지합니다.
-          }
-          // 트랙을 중지
-          localAudioTrack.stop();  // 추가: LocalAudioTrack의 stop 메서드를 호출하여 트랙을 정리합니다.
-          setLocalAudioTrack(null);
-      }
-      // 모든 오디오 트랙 중지
-      setIsMicrophoneEnabled(false);
-  }
-  //마이크 토글
-  async function toggleMicrophone() {
-      if (isMicrophoneEnabled) {
-          await disableMicrophone();
-      } else {
-          await enableMicrophone();
-      }
-  }
 
     // 화면 공유
     async function toggleScreenSharing() {
@@ -314,8 +284,8 @@ export default function StudyRoom() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-      const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-      //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+      //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+      const ws = new WebSocket('ws://localhost:9002/ws/chat');
       
       ws.onopen = () => {
       console.log('웹소켓 연결이 설정되었습니다.');
@@ -404,7 +374,7 @@ export default function StudyRoom() {
                                 {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
                             </button>
                             <button className="btn btn-secondary" onClick={toggleMicrophone}>
-                                {isMicrophoneEnabled ? "마이크 끄기" : "마이크 켜기"}
+                                {isMicrophoneMuted ? "마이크 끄기" : "마이크 켜기"}
                             </button>
                           <button
                               className="btn btn-lg btn-success"
@@ -448,12 +418,19 @@ export default function StudyRoom() {
                         ))}
                     </div>
                     <div id="layout-container">
-                        {localTrack && (
-                            <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                        {localTrack &&(
+                            <>
+                                <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                                {localAudioTrack && (
+                                    <AudioComponent track={localAudioTrack} />
+                                )}
+                            </>
                         )}
                         {/* 일반 비디오 및 오디오 트랙 렌더링 */}
                         {remoteTracks
-                            .filter(remoteTrack => remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid)
+                            .filter(remoteTrack =>
+                                remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid
+                            )
                             .map(remoteTrack =>
                                 remoteTrack.trackPublication.kind === "video" ? (
                                     <VideoComponent
@@ -474,7 +451,7 @@ export default function StudyRoom() {
                       {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
                   </button>
                   <button className="btn btn-secondary" onClick={toggleMicrophone}>
-                      {isMicrophoneEnabled ? "마이크 끄기" : "마이크 켜기"}
+                      {isMicrophoneMuted   ? "마이크 끄기" : "마이크 켜기"}
                   </button>
                   <button className="btn btn-secondary" onClick={toggleScreenSharing}>
                       {isScreenSharing ? "화면 공유 중지" : "화면 공유"}
