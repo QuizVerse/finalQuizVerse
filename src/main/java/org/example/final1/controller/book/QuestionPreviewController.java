@@ -1,5 +1,6 @@
 package org.example.final1.controller.book;
 
+import org.example.final1.model.BookDto;
 import org.example.final1.model.QuestionDto;
 import org.example.final1.service.BookService;
 import org.example.final1.service.QuestionService;
@@ -8,15 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/book")
 public class QuestionPreviewController {
 
     private final QuestionService questionService;
+    private final BookService bookService;
 
-    public QuestionPreviewController(QuestionService questionService) {
+    public QuestionPreviewController(QuestionService questionService, BookService bookService) {
         this.questionService = questionService;
+        this.bookService = bookService;
     }
 
     @GetMapping("/questionpreview/{id}")
@@ -32,10 +36,21 @@ public class QuestionPreviewController {
     @PostMapping("/question/saveScore/{id}")
     public ResponseEntity<String> saveQuestionScores(@PathVariable("id") int bookId, @RequestBody List<QuestionDto> questions) {
         try {
-            System.out.println("Received questions: " + questions);  // 디버깅용 출력
+            Optional<BookDto> bookOpt = bookService.getBookById(bookId);
 
-            questionService.updateQuestionPoints(questions);
-            return ResponseEntity.ok("배점 저장 성공");
+            if (bookOpt.isPresent()) {
+                BookDto book = bookOpt.get();
+                book.setBookIspublished(true);
+                bookService.saveBook(book);
+
+                System.out.println("Received questions: " + questions);  // 디버깅용 출력
+                questionService.updateQuestionPoints(questions);
+                // 저장된 책 정보를 클라이언트에 반환
+                return ResponseEntity.ok("배점 저장 성공");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

@@ -68,15 +68,24 @@ public class EditController {
     }
 
     // 책을 임시저장하거나 게시하기 위한 엔드포인트
-    @PostMapping("/edit/publish")
-    public ResponseEntity<BookDto> saveOrUpdateBook(@RequestBody BookDto bookDto, @RequestParam boolean isPublished) {
-        bookDto.setBookIspublished(isPublished);
+    @GetMapping("/edit/publish")
+    public ResponseEntity<BookDto> saveOrUpdateBook(@RequestParam("id") int bookId, @RequestParam("isPublished") boolean isPublished) {
+        Optional<BookDto> bookOpt = bookService.getBookById(bookId);
 
-        // BookService를 통해 책 정보를 저장
-        BookDto savedBook = bookService.saveBook(bookDto);
+        if (bookOpt.isPresent()) {
+            BookDto book = bookOpt.get();
 
-        // 저장된 책 정보를 클라이언트에 반환
-        return ResponseEntity.ok(savedBook);
+            book.setBookIspublished(isPublished);
+
+            // BookService를 통해 책 정보를 저장
+            BookDto savedBook = bookService.saveBook(book);
+
+            // 저장된 책 정보를 클라이언트에 반환
+            return ResponseEntity.ok(savedBook);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     /** 섹션 관련 */
