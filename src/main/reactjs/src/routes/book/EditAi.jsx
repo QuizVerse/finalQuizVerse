@@ -20,7 +20,8 @@ export default function EditAi() {
     /**
      * @description : Alert창 열릴 때
      * */
-    const openAlert = () => {
+    const openAlert = (title) => {
+        setAlertTitle(title)
         setAlertVisible(true);
     };
 
