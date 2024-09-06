@@ -74,7 +74,6 @@ export default function EditChoices({question}) {
     // 답안 추가 핸들러
     const handleAddChoice = () => {
         if (choices.length < 6) {
-            console.log(question);
             const newChoice = {
                     choiceText: "",
                     choiceImage: "",
@@ -87,7 +86,6 @@ export default function EditChoices({question}) {
                 url: '/book/choice/new',
                 data: newChoice
             }).then(res => {
-                console.log(res.data);
                 setChoices([...choices, res.data]);
             })
         } else {

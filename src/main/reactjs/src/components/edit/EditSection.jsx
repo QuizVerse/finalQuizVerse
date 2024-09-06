@@ -105,7 +105,6 @@ export default function EditSection({
             url:'/book/question/new',
             data: newQuestion
         }).then(res=>{
-            console.log(res.data);
             setQuestions([...questions, res.data]);
         })
     };
@@ -161,8 +160,6 @@ export default function EditSection({
             ...updated
         };
         setQuestions(updatedQuestions);
-
-        console.log(updatedQuestions);
     };
 
 

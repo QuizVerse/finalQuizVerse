@@ -152,10 +152,6 @@ public class EditController {
         return ResponseEntity.ok("저장됨");
     }
 
-
-
-
-
     // 섹션 생성
     @PostMapping("/section/new")
     public ResponseEntity<SectionDto> insertSection(@RequestBody SectionDto dto) {
@@ -269,6 +265,27 @@ public class EditController {
     public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
         List<ChoiceDto> list = choiceService.getAllChoices(questionId);
         return ResponseEntity.ok(list);
+    }
+
+    // questionId를 가진 모든 choice 제거
+    @DeleteMapping("/choice/deleteall/{id}")
+    public ResponseEntity<Void> deleteChoice(@PathVariable("id") int questionId) {
+
+        // questionId에 해당하는 모든 Choice를 가져옴
+        List<ChoiceDto> choices = choiceService.getAllChoices(questionId);
+
+        // 각 Choice에 대한 이미지 삭제
+        for (ChoiceDto choice : choices) {
+            String image = choice.getChoiceImage();
+            if (image != null && !image.isEmpty()) {
+                storageService.deleteFile(bucketName, folderName, image);
+            }
+        }
+
+        // 모든 Choice 삭제
+        choiceService.deleteAllChoice(questionId);
+
+        return ResponseEntity.noContent().build();
     }
 
     /**
