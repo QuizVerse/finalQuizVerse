@@ -237,6 +237,12 @@ const toggleMicrophone = async () => {
         }
         setIsMicrophoneMuted(true);
     }
+    // 상대방 오디오 음소거 제어
+    remoteTracks.forEach(remoteTrack => {
+        if (remoteTrack.trackPublication.kind === "audio") {
+            remoteTrack.trackPublication.audioTrack.mediaStreamTrack.enabled = !isMicrophoneMuted;
+        }
+    });
 };
 
     // 화면 공유
@@ -446,7 +452,7 @@ const toggleMicrophone = async () => {
                                     <AudioComponent
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.audioTrack}
-                                        //muted={isMicrophoneMuted} // 음소거 상태 전달
+                                        muted={isMicrophoneMuted} // 음소거 상태 전달
                                     />
                                 )
                             )
