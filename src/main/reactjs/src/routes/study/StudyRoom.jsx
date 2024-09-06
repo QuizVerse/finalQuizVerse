@@ -39,15 +39,15 @@ import {
   let LIVEKIT_URL = "";
   configureUrls();
   
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
+  
   function configureUrls() {
-      APPLICATION_SERVER_URL = "https://openvidu.quizver.kro.kr/";
+      APPLICATION_SERVER_URL = "http://localhost:3000/";
       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
   }
-  
-  // function configureUrls() {
-  //     APPLICATION_SERVER_URL = "http://localhost:3000/";
-  //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  // }
   
   export default function StudyRoom() {
       const [room, setRoom] = useState(undefined);
@@ -367,8 +367,8 @@ import {
     const [socket, setSocket] = useState(null);
   
     useEffect(() => {
-        const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://openvidu.quizver.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
         
         ws.onopen = () => {
         console.log('웹소켓 연결이 설정되었습니다.');
@@ -419,17 +419,8 @@ import {
                                 <Typography variant="h6" sx={{ flexShrink: 0 }}>
                                     {roomName}
                                 </Typography>
-
-                                {/* 방설명 공간 */}
-                                <Box sx={{ flex: 1, textAlign: 'center', maxWidth: 'calc(100% - 160px)' }}>
-                                {/* Placeholder for Room Description */}
-                                <Typography variant="body1" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {/* 요기에다가 방설명을 넣어주삼 */}반갑습니다
-                                </Typography>
-                                </Box>
-
                                 {/* 방나가기버튼입니다 */}
-                                <Button variant="text" color="success" startIcon={<ExitToApp />} onClick={leaveRoom}>
+                                <Button variant="text" color="success" startIcon={<ExitToApp />} onClick={leaveRoom} sx={{marginLeft:'auto'}}>
                                      Leave Room
                                 </Button>
                             </Toolbar>
@@ -467,12 +458,12 @@ import {
                                         required
                                     />
                                 </div>
-                                <button className="btn btn-secondary" onClick={toggleCamera}>
+                                {/* <button className="btn btn-secondary" onClick={toggleCamera}>
                                     {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
                                 </button>
                                 <button className="btn btn-secondary" onClick={toggleMicrophone}>
                                     {isMicrophoneEnabled ? "마이크 끄기" : "마이크 켜기"}
-                                </button>
+                                </button> */}
                                 <button
                                     className="btn btn-lg btn-success"
                                     type="submit"
