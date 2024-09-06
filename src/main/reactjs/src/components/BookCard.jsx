@@ -13,6 +13,7 @@ import CustomConfirm from "./modal/CustomConfirm";
 
 export default function BookCard(props) {
 
+    const siteUrl = "http://localhost:3000"
     const [state, setState] = useState({
         open: false,
         Transition: Fade,
@@ -140,8 +141,8 @@ export default function BookCard(props) {
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
-                    <CopyToClipboard text={props.bookUrl} onCopy={handleCopy}>
-                        <button>링크를 클릭하여 복사 : {props.bookUrl}</button>
+                    <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
+                        <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
                     </CopyToClipboard>
                 }
                 openAlert={alertVisible}
