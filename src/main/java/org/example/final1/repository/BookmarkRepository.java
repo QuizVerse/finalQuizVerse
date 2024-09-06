@@ -17,4 +17,8 @@ public interface BookmarkRepository extends JpaRepository<BookmarkDto, Integer> 
     BookmarkDto findByBookmarkId(int id);
     @Query("SELECT COUNT(b) FROM BookmarkDto b WHERE b.book.bookId = :bookId")
     int countByBookId(@Param("bookId") int bookId);
+
+    // 특정 사용자가 즐겨찾기한 문제집 총 개수 가져오기
+    @Query("select count(bm) from BookmarkDto bm where bm.user.userId=:userId")
+    int countBookmarkByUserId(@Param("userId")int userId);
 }
