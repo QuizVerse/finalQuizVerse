@@ -123,9 +123,14 @@ export default function BookCard(props) {
     };
 
     const formatDate = (dateString) => {
-        if (!dateString) return '날짜 없음';
         const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-        return new Date(dateString).toLocaleDateString("ko-KR", options).replace(/\./g, "-").trim();
+        const formattedDate = new Date(dateString)
+            .toLocaleDateString("ko-KR", options)
+            .replace(/\./g, "-")
+            .replace(/ /g, "");
+        return formattedDate.endsWith("-")
+            ? formattedDate.slice(0, -1)
+            : formattedDate;
     };
 
     return (
