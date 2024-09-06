@@ -12,14 +12,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
 
-// static 폴더의 이미지를 불러오기 위한 경로
-const defaultImage = '/quizverse-logo.png';
 export default function NewBook() {
     // Dropdown state
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
-    const [coverImage, setCoverImage] = useState(defaultImage); // 디폴트 이미지를 초기값으로 설정
-    const [bookName, setBookName] = useState('사진테스트');
+    const [coverImage, setCoverImage] = useState('');
+    const [bookName, setBookName] = useState('디폴트 이미지 테스트');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
     const [isChecked, setIsChecked] = useState(true);
@@ -31,7 +29,6 @@ export default function NewBook() {
     const [error, setError] = useState(null);
     const [classList, setClassList] = useState([]); // 사용자 클래스 목록
     const [selectedClass, setSelectedClass] = useState(''); // 선택된 클래스
-
 
 
     // 사진 업로드
@@ -89,10 +86,12 @@ export default function NewBook() {
         console.log("Selected Class ID:", selectedClass);
         setLoading(true);
         setError(null);
+
         const formData = new FormData();
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
+
         // 클래스 공개가 선택되었고 클래스가 선택된 경우에만 classId를 추가
         if (visibility === '클래스 공개' && selectedClass) {
             formData.append('classId', selectedClass);
@@ -102,16 +101,12 @@ export default function NewBook() {
         formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
         formData.append('bookDivide', isChecked ? 1 : 0);
         formData.append('bookTotalscore', parseInt(totalPoints, 10) || 0);
+
+        // 사진이 없는 경우 빈 문자열로 처리한다냥~
         if (bookPhotoFile) {
             formData.append('upload', bookPhotoFile); // 이미지 파일 추가
-        }
-
-        // 이미지 업로드 여부를 확인하여 처리
-        if (bookPhotoFile) {
-            formData.append('upload', bookPhotoFile); // 사용자가 업로드한 파일
         } else {
-            // 사용자가 사진을 업로드하지 않은 경우 기본 이미지를 설정
-            formData.append('bookImage', '/path/to/quizverse-logo.png'); // 기본 이미지 경로
+            formData.append('upload', ''); // 빈 문자열을 전송한다냥~
         }
 
         axios.post('/book/newbook', formData, {
@@ -121,10 +116,10 @@ export default function NewBook() {
         })
             .then((res) => {
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit/"+res.data.book.bookId);
+                navigate("/book/edit/" + res.data.book.bookId);
             })
             .catch((err) => {
-                console.log("머가 단단히 잘못되었다..");
+                console.log("머가 단단히 잘못되었다냥..");
                 console.error(err);
                 setError('Failed to create new book');
             })
@@ -133,13 +128,14 @@ export default function NewBook() {
             });
     };
 
+
     // Cancel button logic
     const handleCancel = () => {
         setBookName('');
         setBookDescription('');
         setCategory('');
         setVisibility('전체 공개');
-        setCoverImage(defaultImage); // 기본 이미지를 다시 설정
+        setCoverImage('');
         setTotalPoints('100');
         setIsChecked(true);
         setIsTimeLimitEnabled(true);
