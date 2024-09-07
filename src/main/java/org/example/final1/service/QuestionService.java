@@ -53,7 +53,7 @@ public class QuestionService {
     public List<QuestionDto> getQuestionsByBookId(int id) {
         return questionRepository.findAllByBookBookId(id);
     }
-    // 섹션 개수 count
+    // 문제 개수 count
     public int getQuestionCountByBookId(int bookId) {
         return questionRepository.countQuestionByBookId(bookId);
     }
