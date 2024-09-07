@@ -1,5 +1,6 @@
 package org.example.final1.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,6 +72,11 @@ public class UserService {
         return userDaoInter.findById(userId)
                 .map(UserDto::getUserNickname)
                 .orElse(null); // 사용자 ID로 사용자 찾을 수 없는 경우
+    }
+
+    // 닉네임에 일치하는 모든 사용자 목록을 반환
+    public List<UserDto> findUsersByNicknameContaining(String userNickname) {
+        return userDaoInter.findByUserNicknameContaining(userNickname);
     }
 
 
