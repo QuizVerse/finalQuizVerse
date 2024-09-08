@@ -18,10 +18,9 @@ export default function MypageSidebar() {
 
     return (
         <aside className="w-64 p-4 border-r">
-            <Link to={"/"} className={"flex items-center mb-6"}>
-                <img src={""} style={{width: "50px", borderRadius: "100%", marginRight: "10px"}}
+            <Link to={"/"} className={"flex items-center mb-6 justify-center"}>
+                <img src={"/logo192.png"} style={{width: "100px", borderRadius: "100%", marginRight: "10px"}}
                      alt="QuizVerse Logo"/>
-                <span className="text-xl font-bold">QuizVerse</span>
             </Link>
             <nav className="space-y-4">
                 <Link to={"summary"} style={{textDecoration: 'none', color: 'inherit'}}>
