@@ -175,17 +175,15 @@ export default function BookCard(props) {
                         alt="책 이미지"
                         className="w-full h-48 rounded-t"
                     />
-
-
                 </Link>
 
                 <div className="p-4">
                     <Link>
                         <div
-                            className="inline-flex w-fit items-center whitespace-nowrap px-2.5 py-0.5 text-xs font-semibold transition-colors">
+                            className="inline-flex w-fit items-center whitespace-nowrap text-xs transition-colors">
                             {props.nickname || "알 수 없음"} · {formatDate(props.createDate)}
                         </div>
-                        <h3 className="mt-2 text-lg font-bold">{props.title}</h3>
+                        <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
                         <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
                         <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
