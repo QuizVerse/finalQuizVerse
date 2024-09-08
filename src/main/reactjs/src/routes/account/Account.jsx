@@ -5,7 +5,7 @@ export default function Account() {
     return (
         <>
             <MainHeader/>
-            <div className="flex flex-col items-center w-full min-h-screen bg-white">
+            <div className="flex flex-col items-center w-full min-h-screen">
                 <Outlet/>
             </div>
         </>

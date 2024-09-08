@@ -74,7 +74,6 @@ export default function EditChoices({question}) {
     // 답안 추가 핸들러
     const handleAddChoice = () => {
         if (choices.length < 6) {
-            console.log(question);
             const newChoice = {
                     choiceText: "",
                     choiceImage: "",
@@ -87,7 +86,6 @@ export default function EditChoices({question}) {
                 url: '/book/choice/new',
                 data: newChoice
             }).then(res => {
-                console.log(res.data);
                 setChoices([...choices, res.data]);
             })
         } else {
@@ -136,13 +134,21 @@ export default function EditChoices({question}) {
 
     // OX 선택 핸들러
     const handleOxSelect = (selection) => {
-        const updatedChoices = {
-            choiceText: selection,
-            choiceImage: "",
-            choiceIsanswer: false,
-            question: question
-        };
-        setChoices([updatedChoices]);
+        const updatedChoices = [
+            {
+                choiceText: "O",
+                choiceImage: "",
+                choiceIsanswer: selection === "O",
+                question: question
+            },
+            {
+                choiceText: "X",
+                choiceImage: "",
+                choiceIsanswer: selection === "X",
+                question: question
+            }
+        ];
+        setChoices(updatedChoices);
         setOxSelected(selection);
     };
 
@@ -176,11 +182,12 @@ export default function EditChoices({question}) {
         setChoices(updatedChoices);
     };
 
+    // 단답형
     const updateShortAnswer = (e) => {
         const updated = {
             choiceText: e.target.value,
             choiceImage: "",
-            choiceIsanswer: false,
+            choiceIsanswer: true,
             question: question
         }
         setChoices([updated]);

@@ -278,8 +278,8 @@ export default function Signup() {
                             확인
                         </Button>
                     </Box>
-                    <Box sx={{mb: 2}} className={"flex items-center gap-2"}>
-                        <div className={"w-full"}>
+                    <Box sx={{mb: 2}}>
+                        <div className={"w-full flex items-center gap-2"}>
                             <TextField
                                 fullWidth
                                 label="Nickname"
@@ -289,18 +289,19 @@ export default function Signup() {
                                 value={user_nickname}
                                 onChange={(e) => setUser_nickname(e.target.value)}
                             />
-                            <Typography variant="caption" color={nicknamecheck ? 'success.main' : 'error.main'}>
-                                {nicknameMessage}
-                            </Typography>
+                            <Button
+                                variant="outlined"
+                                className={"whitespace-nowrap"}
+                                onClick={checkNickname}
+                                sx={{mt: 1, float: 'right'}}
+                            >
+                                중복확인
+                            </Button>
                         </div>
-                        <Button
-                            variant="outlined"
-                            className={"whitespace-nowrap"}
-                            onClick={checkNickname}
-                            sx={{mt: 1, float: 'right'}}
-                        >
-                            중복확인
-                        </Button>
+
+                        <Typography variant="caption" color={nicknamecheck ? 'success.main' : 'error.main'}>
+                            {nicknameMessage}
+                        </Typography>
                     </Box>
                     <Box sx={{mb: 2}}>
                         <TextField

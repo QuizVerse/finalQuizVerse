@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<QuestionDto,Integer> {
-    List<QuestionDto> findAllBySectionSectionId(int sectionId);
+    List<QuestionDto> findBySectionSectionIdOrderByQuestionOrderAsc(int sectionId);
 
     List<QuestionDto> findAllByBookBookId(int bookId);  // 새로운 메서드 추가
 

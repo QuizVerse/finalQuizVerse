@@ -24,6 +24,8 @@ import NewBook from './routes/book/NewBook';
 import Edit from './routes/book/Edit';
 import EditAi from './routes/book/EditAi';
 import QuestionPreview from './routes/book/QuestionPreview';
+import QuestionPreviewPDF from "./routes/book/QuestionPreviewPDF";
+
 import Test from './routes/book/Test';
 import Score from './routes/book/Score';
 import ScorePreview from './routes/book/ScorePreview';
@@ -220,6 +222,11 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
+                path: '/book/questionpreviewPDF/:bookId',
+                element: <QuestionPreviewPDF />,
+                errorElement: <ErrorPage />,
+            },
+            {
                 path: '/book/test/:bookId/:solvedbookId',
                 element: <Test />,
                 errorElement: <ErrorPage />,
@@ -365,7 +372,7 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
   </React.StrictMode>
 );
 

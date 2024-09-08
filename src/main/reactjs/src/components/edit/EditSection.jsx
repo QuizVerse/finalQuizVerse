@@ -21,7 +21,6 @@ export default function EditSection({
                                     onUpdateSection,
                                     section,
                                     book,
-                                    loading,
                                     setLoading,
                                     onUploadImage
                                 }) {
@@ -84,6 +83,7 @@ export default function EditSection({
         return () => clearTimeout(timer);
     }, [questions]);
 
+
     /**
      * @description : 새로운 질문 추가
      */
@@ -105,7 +105,6 @@ export default function EditSection({
             url:'/book/question/new',
             data: newQuestion
         }).then(res=>{
-            console.log(res.data);
             setQuestions([...questions, res.data]);
         })
     };
@@ -161,8 +160,6 @@ export default function EditSection({
             ...updated
         };
         setQuestions(updatedQuestions);
-
-        console.log(updatedQuestions);
     };
 
 

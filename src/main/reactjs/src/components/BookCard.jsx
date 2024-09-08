@@ -220,7 +220,7 @@ export default function BookCard(props) {
                                 <DeleteIcon />
                             </IconButton>
                             <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">
-                                <Link to={props.bookUrl}>다시 학습하기</Link>
+                                <Link to={`/book/detail/${props.bookId}`}>다시 학습하기</Link>
                             </Button>
                         </div>
                     )}

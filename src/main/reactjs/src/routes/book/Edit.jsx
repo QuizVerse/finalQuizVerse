@@ -14,10 +14,6 @@ export default function Edit() {
 
     const navigate = useNavigate(); // useNavigate를 사용하여 페이지 이동 처리
 
-    // ai로 생성된 문제 받아옴
-    const { state } = useLocation(); // 전달된 데이터를 수신
-    const { data } = state || {}; // 전달된 데이터가 없는 경우 방어 코드 추가
-
     // 데이터 관련 변수
     const {bookId} = useParams(); //URL에서 book_Id를 가져옴
     const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
@@ -39,31 +35,27 @@ export default function Edit() {
     // sectionSort Alert state
     const [sectionSortVisible, setSectionSortVisible] = useState(false);
 
-    const fetchData = async () => {
-        try {
-            axios.get(`/book/edit/${bookId}`)
-                .then((res)=>{
-                    setBookData(res.data.book);
-                    setSections(res.data.sections);
-                });
-            setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
-        } catch (error) {
-            console.error("Error fetching book, section data:", error);
-            setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
-        }
-    };
 
-    useEffect(() => {
-        if (!data) {
-            fetchData();
-        } else {
-            console.log(data);
-            setLoading(false); // 데이터를 이미 받았으므로 로딩 상태 해제
-        }
-    }, [data]);
 
     // bookId에 해당하는 책 데이터를 가져옴
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                axios.get(`/book/edit/${bookId}`)
+                    .then((res)=>{
+                        setBookData(res.data.book);
+                        setSections(res.data.sections);
+                        if(res.data.sections.length === 0){
+                            handleAddSection(res.data.book);
+                        }
+                    });
+                setLoading(false); // 모든 데이터를 성공적으로 가져온 후 로딩 상태를 false로 변경
+            } catch (error) {
+                console.error("Error fetching book, section data:", error);
+                setLoading(false); // 에러 발생 시 로딩을 종료하고 콘솔에 에러 출력
+            }
+        };
+
         fetchData() // 데이터를 가져오는 함수 호출
     }, [bookId]);
 
@@ -83,8 +75,9 @@ export default function Edit() {
         return () => clearTimeout(timer);
     }, [sections]);
 
+
     // side bar에서 섹션 추가
-    const handleAddSection = () => {
+    const handleAddSection = (bookData) => {
         const newSection = {
             sectionNumber: sections.length + 1,
             sectionTitle: "",
@@ -291,7 +284,6 @@ export default function Edit() {
                         key={index}
                         index={index}
                         sectionCount={sections.length}
-                        questions={section.questions}
                         section={section}
                         book={bookData}
                         loading={loading}
@@ -302,7 +294,7 @@ export default function Edit() {
                         onUpdateSection={(updated) => handleUpdateSection(index, updated)}
                     />
                 ))}
-                <EditSidebar onAddSection={handleAddSection} onSortSection={openSortSection}/>
+                <EditSidebar onAddSection={() => handleAddSection(bookData)} onSortSection={openSortSection}/>
 
                 <CustomAlert
                     title={alertTitle}
