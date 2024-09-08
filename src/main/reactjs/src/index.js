@@ -68,6 +68,7 @@ import AlarmModal from "./routes/devtest/AlarmModal";
 import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
+import UpdateBook from "./routes/book/UpdateBook";
 
 const router = createBrowserRouter([
     {
@@ -194,6 +195,11 @@ const router = createBrowserRouter([
             {
                 path: "/book/new",
                 element: <NewBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/update/:bookId",
+                element: <UpdateBook />,
                 errorElement: <ErrorPage />,
             },
             {
