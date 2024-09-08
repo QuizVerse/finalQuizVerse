@@ -60,7 +60,7 @@ export default function ParentComponent() {
   // 타이머를 관리하는 useEffect
   useEffect(() => {
     if (timeLeft === 0) {
-      openConfirm(); // 시간이 다 되면 시험을 종료하는 함수 호출
+      handleAutoSubmit(); // 시간이 다 되면 자동 제출하는 함수 호출
     }
 
     if (timeLeft > 0) {
@@ -103,6 +103,39 @@ export default function ParentComponent() {
       console.log("답안 제출 성공", response.data);
     } catch (error) {
       console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
+    }
+  };
+
+  // 자동 제출을 처리하는 함수
+  const handleAutoSubmit = async () => {
+    console.log("자동 제출 시작. answers:", answers);
+
+    const formattedAnswers = answers.map((answer) => {
+      const answerData = {
+        solvedbook: { solvedbookId: solvedbookId },
+        question: { questionId: answer.questionId },
+        answerOrder: answer.answerOrder,
+      };
+
+      if (Array.isArray(answer.answer)) {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      } else if (typeof answer.answer === "string") {
+        answerData.subjectiveAnswer = answer.answer || null;
+      }
+
+      return answerData;
+    });
+
+    try {
+      const response = await axios.post(`/book/save/answers`, formattedAnswers);
+      console.log("자동 답안 제출 성공", response.data);
+
+      // 제출 후 시험 결과 페이지로 이동
+      navigate(`/book/score/${bookId}`);
+    } catch (error) {
+      console.error("자동 답안 제출 중 오류:", error.response?.data);
     }
   };
 
