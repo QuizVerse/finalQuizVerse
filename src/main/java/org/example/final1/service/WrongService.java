@@ -1,41 +1,37 @@
 package org.example.final1.service;
 
-import org.example.final1.model.*;
-import org.example.final1.repository.WrongbookRepository;
+import lombok.AllArgsConstructor;
+import org.example.final1.model.SolvedbookDto;
+import org.example.final1.model.UserDto;
+import org.example.final1.model.WrongDto;
+import org.example.final1.repository.WrongRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
+
+@AllArgsConstructor
 @Service
 public class WrongService {
-    private final WrongbookRepository wrongbookRepository;
-    public WrongService(WrongbookRepository wrongbookRepository) {
-        this.wrongbookRepository = wrongbookRepository;
-    }
-
-    public void Wronganswer(UserDto user, SolvedbookDto solvedbook, QuestionDto question){
-
-        Optional<WrongDto> existingWrong=wrongbookRepository.findByUserAndSolvedbookAndQuestion(user,solvedbook,question);
-
-        if(existingWrong.isPresent()){
-            //해당 문제집의 대한 오답노트가 이미 있으면 wrong repeat이 1 증가한다.
-            WrongDto wrongDto=existingWrong.get();
-            wrongDto.setWrongRepeat(wrongDto.getWrongRepeat()+1);
-
-            wrongbookRepository.save(wrongDto);
+    private final WrongRepository wrongRepository;
 
 
-        }else{
-            //처음 오답이 생기는 로직임
-            WrongDto wrongDto= WrongDto.builder()
-                    .user(solvedbook.getUser())
-                    .solvedbook(solvedbook)
-                    .question(question)
-                    .wrongRepeat(1)
-                    .build();
+    //1. 해당 solvedbook과 userid를 wrongdto에서 찾아서 만약 dto가 없으면 0을 반환하고, 있으면 하나만 꺼내서 wrong_repeat을 반환해준다.
 
-            wrongbookRepository.save(wrongDto);
+    public int getWrongRepeat(SolvedbookDto solvedbook,UserDto user){
+
+        List<WrongDto> wrongDtoList = wrongRepository.findBySolvedbookAndUser(solvedbook, user);
+
+        // 리스트가 비어있으면 0을 반환
+        if (wrongDtoList.isEmpty()) {
+            return 0;
         }
-
+        // 첫 번째 WrongDto의 wrongRepeat 값 반환
+        return wrongDtoList.get(0).getWrongRepeat();
     }
+
+    //2. 오답노트가 생길때 wrong dto에 저장을 해주는데, wrong_repeat은 1이 더해진값과 이제 틀린 문제들 (qeustion) solvedbook을 저장해주면 된다.
+
+
+
 }

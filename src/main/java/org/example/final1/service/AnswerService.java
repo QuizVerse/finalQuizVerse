@@ -9,7 +9,6 @@ import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ public class AnswerService {
     private SolvedbookRepository solvedbookRepository;
 
     @Autowired
-    private WrongbookRepository wrongRepository;
+    private WrongRepository wrongRepository;
 
     public void saveAnswers(List<AnswerDto> answers) {
         for (AnswerDto answerDto : answers) {
