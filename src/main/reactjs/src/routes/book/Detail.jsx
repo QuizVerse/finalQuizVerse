@@ -108,11 +108,16 @@ export default function Detail() {
   const handleStartExam = async () => {
     try {
       const response = await axios.post('/book/test/start', { bookId: book_Id });
-      const { solvedbookId } = response.data; // 서버 응답에서 solvedbookId 추출
+      // solvedbookId가 어디에 있는지 확인
+      const { solvedBook, wrongRepeat } = response.data;
+
+      // solvedBook 객체 내의 solvedbookId를 추출
+      const solvedbookId = solvedBook.solvedbookId; // 서버 응답에 맞게 수정
+
 
       console.log('Exam started successfully', response.data);
 
-      navigate(`/book/test/${book_Id}/${solvedbookId}`); // solvedbookId를 URL에 포함하여 네비게이션
+      navigate(`/book/test/${book_Id}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);// solvedbookId를 URL에 포함하여 네비게이션
     } catch (error) {
       console.error('Error starting exam:', error);
       alert('시험을 시작하는데 실패했습니다.');
