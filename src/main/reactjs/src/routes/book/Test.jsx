@@ -17,6 +17,22 @@ export default function ParentComponent() {
   const [error, setError] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(null); // 남은 시간을 저장하는 상태
+
+  // 새로고침 경고 추가
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = ""; // Chrome에서는 returnValue를 설정해야 경고창이 나타남
+    };
+
+    // 페이지 떠날 때 경고 표시
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +40,9 @@ export default function ParentComponent() {
         const bookRes = await axios.get(`/book/edit/${bookId}`);
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
+
+        // 서버에서 받은 bookTimer (분 단위) 값을 초로 변환해서 저장
+        setTimeLeft(bookRes.data.book.bookTimer * 60);
 
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
         setQuestions(questionsRes.data);
@@ -37,8 +56,24 @@ export default function ParentComponent() {
 
     fetchData();
   }, [bookId]);
+
+  // 타이머를 관리하는 useEffect
+  useEffect(() => {
+    if (timeLeft === 0) {
+      openConfirm(); // 시간이 다 되면 시험을 종료하는 함수 호출
+    }
+
+    if (timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1); // 1초씩 감소
+      }, 1000);
+
+      return () => clearInterval(timer); // 메모리 누수를 방지하기 위해 타이머 정리
+    }
+  }, [timeLeft]);
+
   const openConfirm = async () => {
-    console.log("answers:", answers);  // 전송될 데이터 확인
+    console.log("answers:", answers); // 전송될 데이터 확인
 
     const formattedAnswers = answers.map((answer) => {
       const answerData = {
@@ -53,7 +88,6 @@ export default function ParentComponent() {
           choiceId: choice.choiceId,
         }));
       }
-
       // 주관식 문제 처리
       else if (typeof answer.answer === "string") {
         answerData.subjectiveAnswer = answer.answer || null;
@@ -62,16 +96,15 @@ export default function ParentComponent() {
       return answerData;
     });
 
-    console.log("전송할 데이터:", formattedAnswers);  // 최종 데이터 확인
+    console.log("전송할 데이터:", formattedAnswers); // 최종 데이터 확인
 
     try {
       const response = await axios.post(`/book/save/answers`, formattedAnswers);
       console.log("답안 제출 성공", response.data);
     } catch (error) {
-      console.error("답안 제출 중 오류:", error.response?.data);  // 에러 메시지 확인
+      console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
     }
   };
-
 
   const closeConfirm = () => {
     setConfirmVisible(false);
@@ -96,14 +129,13 @@ export default function ParentComponent() {
 
       // 객관식일 때 배열로 저장 (다중 선택 가능)
       if (Array.isArray(answer)) {
-        // choiceId만 추출해서 저장
         const choices = answer.map((choice) => {
           if (!choice.choiceId) {
             console.error("Undefined choiceId detected:", choice);
             return null;
           }
           return { choiceId: choice.choiceId };
-        }).filter(choice => choice !== null); // null 값을 제거합니다.
+        }).filter((choice) => choice !== null); // null 값을 제거합니다.
 
         if (existingAnswer) {
           return prevAnswers.map((a) =>
@@ -133,20 +165,31 @@ export default function ParentComponent() {
     });
   };
 
+  // 분:초로 타이머를 변환하여 표시하는 함수
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
             <DensityMediumOutlinedIcon />
-            <span className="text-lg font-semibold">{bookData?.user ? bookData.user.userNickname : "로드 중..."}</span>
+            <span className="text-lg font-semibold">
+            {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
+          </span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg">10/{questions.length} 문항 | 10 섹션</span>
+            <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
             <span className="text-lg">총 {bookData?.bookTotalscore}점</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg font-semibold">{bookData?.bookTitle}</span>
+            <span className="text-lg">남은 시간: {formatTime(timeLeft)}</span> {/* 타이머 표시 */}
+            <Button variant="outlined" onClick={openConfirm}>
+              임시 저장
+            </Button>
             <Button variant="contained" onClick={openConfirm}>
               시험종료
             </Button>
