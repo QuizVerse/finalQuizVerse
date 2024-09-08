@@ -156,7 +156,7 @@ export default function BookList() {
                 navigation={true}
                 modules={[Pagination]}
                 className="mySwiper mb-8"
-                style={{ height: '500px' }}
+                style={{ height: '400px' }}
             >
                 <SwiperSlide>
                     <img

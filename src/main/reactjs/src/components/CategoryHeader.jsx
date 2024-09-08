@@ -1,24 +1,29 @@
-import { Button, IconButton, TableCell, TableRow, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import SearchInput from "./SearchInput"; // useNavigate 훅을 import
+import { Link, useNavigate } from "react-router-dom";
+import SearchInput from "./SearchInput";
 
 export default function CategoryHeader() {
     const [categoryList, setCategoryList] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getDataList();
     }, []);
 
     const getDataList = () => {
-        axios({
-            method: 'get',
-            url: '/category/list',
-        }).then(res => {
-            console.log(res);
-            setCategoryList(res.data);
-        });
+        axios.get('/category/list')
+            .then(res => {
+                setCategoryList(res.data);
+            });
+    };
+
+    // 검색 시 navigate 처리
+    const handleSearch = (keyword) => {
+        if (keyword) {
+            navigate(`/book/searchbook?keyword=${encodeURIComponent(keyword)}`);
+        }
     };
 
     return (
@@ -26,8 +31,7 @@ export default function CategoryHeader() {
             <div className="flex flex-wrap items-center justify-center gap-2">
                 {categoryList &&
                     categoryList.map((row) => (
-                        <Button key={row.categoryId}
-                                className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
+                        <Button key={row.categoryId} className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
                             <Link to={`/book/category?cat=${row.categoryId}`}>{row.categoryName}</Link>
                         </Button>
                     ))
@@ -37,7 +41,7 @@ export default function CategoryHeader() {
                 </Button>
             </div>
             <div>
-                <SearchInput/>
+                <SearchInput onSearch={handleSearch} /> {/* 검색 시 handleSearch 실행 */}
             </div>
         </div>
     );
