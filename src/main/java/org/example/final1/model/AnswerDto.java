@@ -1,10 +1,7 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -23,6 +20,7 @@ public class AnswerDto {
 
     @ManyToOne
     @JoinColumn(name = "solvedbook_id", nullable = false)  // 시험을 푼 책 참조
+    @ToString.Exclude  // 순환 참조 방지
     private SolvedbookDto solvedbook;
 
     @ManyToOne
