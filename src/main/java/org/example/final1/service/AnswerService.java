@@ -1,12 +1,15 @@
 package org.example.final1.service;
 
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.example.final1.model.*;
+import org.example.final1.model.AnswerDto;
+import org.example.final1.model.ChoiceDto;
+import org.example.final1.model.QuestionDto;
+import org.example.final1.model.SolvedbookDto;
 import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +27,9 @@ public class AnswerService {
     private SolvedbookRepository solvedbookRepository;
 
     @Autowired
-    private WrongService wrongService;
+    private WrongRepository wrongRepository;
 
-    @Autowired
-    private JwtService jwtService;
-
-
-
-    public void saveAnswers(List<AnswerDto> answers, int wrongRepeat, HttpServletRequest request) {
+    public void saveAnswers(List<AnswerDto> answers) {
         for (AnswerDto answerDto : answers) {
             AnswerDto answer = new AnswerDto();
 
@@ -45,8 +43,6 @@ public class AnswerService {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid solvedbook ID"));
             answer.setSolvedbook(solvedbook);
 
-            UserDto user=jwtService.getUserFromJwt(request);
-
             // Choice (객관식 답안일 경우) 매핑
             if (answerDto.getChoices() != null && !answerDto.getChoices().isEmpty()) {
                 List<ChoiceDto> choices = answerDto.getChoices().stream()
@@ -58,14 +54,6 @@ public class AnswerService {
                 // 객관식 문제의 경우, 선택한 답안이 정답인지 확인
                 boolean isCorrect = checkMultipleChoiceCorrect(question, choices);
                 answer.setAnswerCorrect(isCorrect);
-
-                System.out.println(answer);
-
-                if (!isCorrect) {
-                    // 틀린 답안인 경우 오답 저장 로직 추가
-                    wrongService.saveWrongAnswer(user, solvedbook, question, wrongRepeat);
-                }
-
             }
 
             // 주관식 답안 처리
@@ -75,12 +63,6 @@ public class AnswerService {
                 // 주관식 문제의 경우, 제출한 답안이 정답인지 확인
                 boolean isCorrect = checkSubjectiveCorrect(question, answerDto.getSubjectiveAnswer());
                 answer.setAnswerCorrect(isCorrect);
-
-                if (!isCorrect) {
-                    // 틀린 답안인 경우 오답 저장 로직 추가
-                    wrongService.saveWrongAnswer(user, solvedbook, question, wrongRepeat);
-                }
-
             }
 
             // 답안 순서 설정
@@ -109,7 +91,7 @@ public class AnswerService {
 
         // 선택한 답안과 정답 비교 (HashSet을 사용하여 선택한 답안과 정답이 일치하는지 확인)
         return new HashSet<>(selectedChoices).containsAll(correctChoices)
-               && new HashSet<>(correctChoices).containsAll(selectedChoices);
+                && new HashSet<>(correctChoices).containsAll(selectedChoices);
 
 
     }
@@ -117,16 +99,8 @@ public class AnswerService {
 
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
-        // 주관식 문제에 해당하는 정답 선택지 (choice_text가 정답임) 가져오기
-        List<ChoiceDto> choices = choiceRepository.findByQuestionQuestionId(question.getQuestionId());
-
-        // 주관식 문제는 정답 선택지가 하나만 있다고 가정
-        ChoiceDto correctChoice = choices.stream()
-                .filter(ChoiceDto::getChoiceIsanswer) // 정답 선택지를 필터링
-                .findFirst()  // 첫 번째 정답을 가져옴
-                .orElseThrow(() -> new IllegalArgumentException("No correct answer found for this question"));
-
-        String correctAnswer = correctChoice.getChoiceText(); // 주관식 정답 (choice_text)
+        // 주관식 문제의 정답 가져오기
+        String correctAnswer = choiceRepository.findByQuestionQuestionId(question.getQuestionId()).toString();
 
         // 대소문자 구분 없이 공백을 제거하고 비교
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
