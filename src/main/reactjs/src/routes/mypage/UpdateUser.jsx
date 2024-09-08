@@ -152,7 +152,7 @@ export default function UpdateUser() {
           <h1 className="mb-6 text-2xl font-bold text-center">회원 정보 수정</h1>
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="flex justify-center mb-4 relative">
-              <div className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full border border-[#FFC038]">
+              <div className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full border border-[#cccccc]">
                 {userData && userData.userImage ? (
                     <img
                         src={userData.userImagePreview ? userData.userImagePreview : `${photopath}/${userData.userImage}`}
