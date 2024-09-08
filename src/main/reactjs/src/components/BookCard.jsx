@@ -196,7 +196,7 @@ export default function BookCard(props, {user}) {
                 onClose={handleSettingClose}
                 MenuListProps={{ 'aria-labelledby': 'basic-button' }}
             >
-                <MenuItem><Link to={"/book/new/"+props.bookId}></Link></MenuItem>
+                <MenuItem><Link to={"/book/update/"+props.bookId}>문제집 설정</Link></MenuItem>
                 <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
                 <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
                 <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
