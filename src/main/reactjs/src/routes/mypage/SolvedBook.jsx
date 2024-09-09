@@ -67,8 +67,8 @@ export default function PublishedBook() {
     }
   }, [userId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message}</div>;
 
   // 현재 페이지에 표시할 항목 계산
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
@@ -105,28 +105,27 @@ export default function PublishedBook() {
             <Table sx={{minWidth: 650}} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>이름</TableCell>
-                  <TableCell>구성원수</TableCell>
-                  <TableCell>가입일시</TableCell>
-                  <TableCell>생성일시</TableCell>
-                  <TableCell>상태</TableCell>
+                  <TableCell>문제집 이름</TableCell>
+                  <TableCell>학습일시</TableCell>
+                  <TableCell>제출일시</TableCell>
+                  <TableCell>정답수/문항수</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
 
                 {currentBooks &&
                     currentBooks.map((row) => (
-
                         <TableRow
                             key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
                             style={{cursor: "pointer"}}
                         >
                           <TableCell component="th" scope="row">
-                            {row.className}
+                            {row.bookTitle}
                           </TableCell>
-                          <TableCell>{row.memberCount}</TableCell>
-                          <TableCell>{row.joinDate ? new Date(row.joinDate).toLocaleString() : '-'}</TableCell>
+                          <TableCell>{row.solvedbookStart ? new Date(row.solvedbookStart).toLocaleString() : '-'}</TableCell>
+                          <TableCell>{row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}</TableCell>
                           <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
                           <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
                         </TableRow>
