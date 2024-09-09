@@ -75,6 +75,23 @@ export default function BookCard(props) {
         });
     };
 
+    // 문제집 복제 기능
+    const handleCopyBook = () => {
+        if (!user) {
+            openAlert("로그인이 필요한 서비스입니다.");
+            return;
+        }
+
+        axios.post('/publishedbook/copy/' + props.bookId, user)
+            .then(res => {
+                setSnackMessage("문제집이 성공적으로 복제되었습니다.");
+                setState({ open: true, Transition: Fade });
+            })
+            .catch(error => {
+                console.error("복제 실패", error);
+            });
+    };
+
     // 북마크 추가 버튼 클릭 이벤트
     const handleBookmarkClick = () => {
         if (!props.isLoggedIn) {
@@ -198,7 +215,7 @@ export default function BookCard(props) {
             >
                 <MenuItem><Link to={"/book/update/"+props.bookId}>문제집 설정</Link></MenuItem>
                 <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
-                <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
+                <MenuItem onClick={handleCopyBook}>복제하기</MenuItem>
                 <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
             </Menu>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
