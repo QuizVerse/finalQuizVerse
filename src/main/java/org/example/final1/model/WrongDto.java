@@ -26,8 +26,10 @@ public class WrongDto {
     @JoinColumn(name = "solvedbook_id", nullable = false)
     private SolvedbookDto solvedbook;
 
-    @Column(name = "wrong_order", nullable = false)
-    private int wrongOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private QuestionDto question;
 
     @Column(name = "wrong_repeat", nullable = false)
     private int wrongRepeat;
