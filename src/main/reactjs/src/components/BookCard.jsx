@@ -6,13 +6,15 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Snackbar from '@mui/material/Snackbar';
 import Fade from '@mui/material/Fade';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import CustomAlert from "./modal/CustomAlert";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
 import axios from "axios";
 
-export default function BookCard(props, {user}) {
+export default function BookCard(props) {
+
+    const { user } = props;
 
     const siteUrl = "http://localhost:3000"
     const [state, setState] = useState({
@@ -54,18 +56,18 @@ export default function BookCard(props, {user}) {
      * */
     const clickBtn2 = () => {
         if(props.bookId === null || props.bookId === "") return;
-        if(user === null || user === "") openAlert("로그인이 필요한 서비스입니다.");
+        if(!user) openAlert("로그인이 필요한 서비스입니다.");
 
-        console.log("bookId", props.bookId);
+        console.log("bookcard", user)
 
-        // axios({
-        //     method:'delete',
-        //     url:'/publishedbook/delete/' + props.bookId,
-        //     params : user
-        // }).then(res=>{
-        //     console.log(res);
-        //     setConfirmVisible(false);
-        // })
+        axios.delete('/publishedbook/delete/' + props.bookId, {
+            data: user // DELETE 요청에서 바디 데이터 전달
+        }).then(res => {
+            console.log(res);
+            setConfirmVisible(false);
+        }).catch(error => {
+            console.error(error);
+        });
     };
 
     // 북마크 추가 버튼 클릭 이벤트

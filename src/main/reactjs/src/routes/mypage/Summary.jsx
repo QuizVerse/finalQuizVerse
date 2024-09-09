@@ -20,21 +20,22 @@ export default function Summary() {
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
     useEffect(() => {
+        // 로그인 정보
+        const fetchUserId = async () => {
+            try {
+                const response = await axios.get('/book/username');
+                if (response.status === 200 && response.data) {
+                    setUser(response.data);
+                    setUserId(response.data.userId);
+                }
+            } catch (error) {
+                setUser(null);
+            }
+        };
+
         fetchUserId();
     }, []);
 
-    // 로그인 정보
-    const fetchUserId = async () => {
-        try {
-            const response = await axios.get('/book/username');
-            if (response.status === 200 && response.data) {
-                setUser(response.data);
-                setUserId(response.data.userId);
-            }
-        } catch (error) {
-            setUser(null);
-        }
-    };
 
     // 내가 만든 문제집 | 나의 클래스 | 나의 학습이력 | 나의 즐겨찾기
     const getBooksCount = async () => {
@@ -56,6 +57,7 @@ export default function Summary() {
     useEffect(() => {
         if (userId) {
             getBooksCount();
+            console.log("user", user);
         }
     }, [userId]);
 

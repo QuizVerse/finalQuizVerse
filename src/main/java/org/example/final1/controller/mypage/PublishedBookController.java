@@ -55,7 +55,7 @@ public class PublishedBookController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
             @PathVariable("id") int id,
-            @RequestParam UserDto user) {
+            @RequestBody UserDto user) {
 
         // 문제집을 ID로 조회
         Optional<BookDto> bookOptional = bookService.getBookById(id);
