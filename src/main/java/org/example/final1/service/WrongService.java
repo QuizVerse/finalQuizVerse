@@ -23,6 +23,8 @@ public class WrongService {
 
         List<WrongDto> wrongDtoList = wrongRepository.findBySolvedbookAndUser(solvedbook, user);
 
+        System.out.println("wrongDtoList"+wrongDtoList);
+
         // 리스트가 비어있으면 0을 반환
         if (wrongDtoList.isEmpty()) {
             return 0;

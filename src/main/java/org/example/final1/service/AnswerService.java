@@ -68,6 +68,8 @@ public class AnswerService {
                 boolean isCorrect = checkMultipleChoiceCorrect(question, choices);
                 answer.setAnswerCorrect(isCorrect);
 
+                answer.setWrongRepeat(wrongRepeat);
+
                 System.out.println(answer);
 
                 if (!isCorrect) {
@@ -84,6 +86,9 @@ public class AnswerService {
                 // 주관식 문제의 경우, 제출한 답안이 정답인지 확인
                 boolean isCorrect = checkSubjectiveCorrect(question, answerDto.getSubjectiveAnswer());
                 answer.setAnswerCorrect(isCorrect);
+                answer.setWrongRepeat(wrongRepeat);
+
+
 
                 if (!isCorrect) {
                     // 틀린 답안인 경우 오답 저장 로직 추가
@@ -95,8 +100,6 @@ public class AnswerService {
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
-            // 정답 여부 처리 (추후 로직 추가 가능)
-            answer.setAnswerCorrect(false);
 
             // 답안 저장
             answerRepository.save(answer);
@@ -107,6 +110,7 @@ public class AnswerService {
 
         }
     }
+
 
 
     // 객관식 답안 채점 로직
@@ -122,28 +126,17 @@ public class AnswerService {
         // 선택한 답안과 정답 비교 (HashSet을 사용하여 선택한 답안과 정답이 일치하는지 확인)
         return new HashSet<>(selectedChoices).containsAll(correctChoices)
                 && new HashSet<>(correctChoices).containsAll(selectedChoices);
-
-
     }
 
-
+    // 주관식 답안 채점 로직
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
-        // 주관식 문제에 해당하는 정답 선택지 (choice_text가 정답임) 가져오기
-        List<ChoiceDto> choices = choiceRepository.findByQuestionQuestionId(question.getQuestionId());
-
-        // 주관식 문제는 정답 선택지가 하나만 있다고 가정
-        ChoiceDto correctChoice = choices.stream()
-                .filter(ChoiceDto::getChoiceIsanswer) // 정답 선택지를 필터링
-                .findFirst()  // 첫 번째 정답을 가져옴
-                .orElseThrow(() -> new IllegalArgumentException("No correct answer found for this question"));
-
-        String correctAnswer = correctChoice.getChoiceText(); // 주관식 정답 (choice_text)
+        // 주관식 문제의 정답 가져오기
+        String correctAnswer = choiceRepository.findByQuestionQuestionId(question.getQuestionId()).toString();
 
         // 대소문자 구분 없이 공백을 제거하고 비교
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
     }
-
 
 }
 
