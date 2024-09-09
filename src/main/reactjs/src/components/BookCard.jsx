@@ -58,8 +58,6 @@ export default function BookCard(props) {
         if(props.bookId === null || props.bookId === "") return;
         if(!user) openAlert("로그인이 필요한 서비스입니다.");
 
-        console.log("bookcard", user)
-
         axios.delete('/publishedbook/delete/' + props.bookId, {
             data: user // DELETE 요청에서 바디 데이터 전달
         }).then(res => {
