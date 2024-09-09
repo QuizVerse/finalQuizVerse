@@ -9,6 +9,7 @@ import org.example.final1.repository.WrongRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -56,6 +57,14 @@ public class WrongService {
 
 
 
+    }
+    // 특정 solvedbookId와 wrongRepeat에 해당하는 틀린 문제 조회
+    public List<QuestionDto> getWrongQuestions(int solvedbookId, int wrongRepeat) {
+        List<WrongDto> wrongAnswers = wrongRepository.findBySolvedbookIdandWrongrepeat(solvedbookId, wrongRepeat);
+        return wrongAnswers.stream()
+                .map(WrongDto::getQuestion)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 
