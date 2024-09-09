@@ -72,6 +72,44 @@ export default function ParentComponent() {
     }
   }, [timeLeft]);
 
+  // 임시 저장 버튼을 눌렀을 때 처리
+  const handleTemporarySave = async () => {
+    console.log("임시 저장 중. answers:", answers);
+
+    const formattedAnswers = answers.map((answer) => {
+      const answerData = {
+        solvedbook: { solvedbookId: solvedbookId },
+        question: { questionId: answer.questionId },
+        answerOrder: answer.answerOrder,
+      };
+
+      if (Array.isArray(answer.answer)) {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      } else if (typeof answer.answer === "string") {
+        answerData.subjectiveAnswer = answer.answer || null;
+      }
+
+      return answerData;
+    });
+
+    const saveData = {
+      answers: formattedAnswers,
+      timeLeft: timeLeft, // 남은 시간도 함께 전송
+    };
+
+    console.log("전송할 데이터:", saveData); // 데이터가 올바르게 구성되었는지 확인
+
+    try {
+      const response = await axios.post(`/book/save/temporary`, saveData);
+      console.log("임시 저장 성공", response.data);
+    } catch (error) {
+      console.error("임시 저장 중 오류:", error.response?.data);
+    }
+  };
+
+
   const openConfirm = async () => {
     console.log("answers:", answers); // 전송될 데이터 확인
 
@@ -220,7 +258,7 @@ export default function ParentComponent() {
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">남은 시간: {formatTime(timeLeft)}</span> {/* 타이머 표시 */}
-            <Button variant="outlined" onClick={openConfirm}>
+            <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>
             <Button variant="contained" onClick={openConfirm}>
