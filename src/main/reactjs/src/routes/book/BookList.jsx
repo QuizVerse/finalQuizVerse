@@ -39,7 +39,7 @@ export default function BookList() {
                             .then(response => ({
                                 categoryId: category.categoryId,
                                 books: response.data
-                                    .filter(book => book.bookStatus === 1) // Filter books based on status
+                                    .filter(book => book.bookStatus === 0 && book.bookIspublished === true) // 0(전체공개) 인 문제집 출력
                                     .map(book => ({
                                         ...book,
                                         isBookmark: bookmarkedBookIds.includes(book.bookId),
