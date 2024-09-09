@@ -1,10 +1,7 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -21,10 +18,15 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_id")
     private int solvedbookId;
 
+
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = true)
+    @ToString.Exclude  // 순환 참조 방지
     //해당 문제집이 삭제되더라도 삭제된 문제집이라고만 뜨게 하기
     private BookDto book;
+
+
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -40,5 +42,6 @@ public class SolvedbookDto {
     private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
+    @ToString.Exclude  // 순환 참조 방지
     private List<AnswerDto> answers;
 }

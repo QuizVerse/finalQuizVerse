@@ -1,6 +1,7 @@
 package org.example.final1.service;
 
 import lombok.AllArgsConstructor;
+import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.model.WrongDto;
@@ -32,6 +33,21 @@ public class WrongService {
 
     //2. 오답노트가 생길때 wrong dto에 저장을 해주는데, wrong_repeat은 1이 더해진값과 이제 틀린 문제들 (qeustion) solvedbook을 저장해주면 된다.
 
+    public void saveWrongAnswer(UserDto user, SolvedbookDto solvedbook, QuestionDto question, int wrongRepeat){
+
+        WrongDto newWrong = WrongDto.builder()
+                .user(user)
+                .solvedbook(solvedbook)
+                .question(question)
+                .wrongRepeat(wrongRepeat + 1)  // URL에서 받은 wrongRepeat에 1을 더함
+                .build();
+
+        // 새로운 오답 기록을 저장
+        wrongRepository.save(newWrong);
+
+
+
+    }
 
 
 }
