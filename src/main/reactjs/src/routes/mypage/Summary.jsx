@@ -57,7 +57,6 @@ export default function Summary() {
     useEffect(() => {
         if (userId) {
             getBooksCount();
-            console.log("user", user);
         }
     }, [userId]);
 
@@ -96,6 +95,10 @@ export default function Summary() {
     // Pagination
     const itemOffset = (page - 1) * ITEMS_PER_PAGE;
     const currentItems = classList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+
+    const handleBookDelete = (bookId) => {
+        setClassList((prevClassList) => prevClassList.filter((book) => book.bookId !== bookId));
+    };
 
     return (
         <main className="flex-1 p-8">
@@ -151,6 +154,7 @@ export default function Summary() {
                                 bookQuestionCount={book.bookQuestionCount}
                                 bookSectionCount={book.bookSectionCount}
                                 status={book.bookStatus}
+                                onDelete={handleBookDelete} // 삭제 핸들러 전달
                             />
                         ))
                     ) : (

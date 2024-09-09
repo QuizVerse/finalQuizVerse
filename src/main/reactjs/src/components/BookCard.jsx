@@ -65,6 +65,11 @@ export default function BookCard(props) {
         }).then(res => {
             console.log(res);
             setConfirmVisible(false);
+
+            // 부모 컴포넌트에 삭제된 책 ID 전달
+            if (props.onDelete) {
+                props.onDelete(props.bookId);
+            }
         }).catch(error => {
             console.error(error);
         });
@@ -73,7 +78,7 @@ export default function BookCard(props) {
     // 북마크 추가 버튼 클릭 이벤트
     const handleBookmarkClick = () => {
         if (!props.isLoggedIn) {
-            alert("로그인이 필요합니다!.");
+            openAlert("로그인이 필요한 서비스 입니다.");
             return;
         }
 
