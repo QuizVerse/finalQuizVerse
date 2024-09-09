@@ -1,10 +1,7 @@
 package org.example.final1.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -23,25 +20,18 @@ public class AnswerDto {
 
     @ManyToOne
     @JoinColumn(name = "solvedbook_id", nullable = false)  // 시험을 푼 책 참조
+    @ToString.Exclude  // 순환 참조 방지
     private SolvedbookDto solvedbook;
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)  // 질문 참조
     private QuestionDto question;
 
-    // 단일 선택형 처리
-    @ManyToOne
-    @JoinColumn(name = "choice_id", nullable = true)  // 객관식 답안일 경우 선택한 선택지
-    private ChoiceDto choice;
-
-    // 다중 선택형 처리 (객관식 다중 선택일 경우)
-    @ManyToMany
-    @JoinTable(
-            name = "answer_choices",  // 중간 테이블 이름
+    @ManyToMany  // 여러 개의 선택지를 참조할 수 있음
+    @JoinTable(name = "tb_answerchoices",
             joinColumns = @JoinColumn(name = "answer_id"),
-            inverseJoinColumns = @JoinColumn(name = "choice_id")
-    )
-    private List<ChoiceDto> choices;
+            inverseJoinColumns = @JoinColumn(name = "choice_id"))
+    private List<ChoiceDto> choices;  // 선택형 답안일 경우 선택한 선택지들
 
     @Column(name = "subjective_answer", length = 1000, nullable = true)  // 주관식 답안
     private String subjectiveAnswer;
@@ -50,5 +40,8 @@ public class AnswerDto {
     private int answerOrder;
 
     @Column(name = "answer_correct", nullable = true)  // 정답 여부
-    private Boolean answerCorrect;  // 추후 정답 여부 계산하는 로직 추가 가능
+    private Boolean answerCorrect;
+
+    @Column(name="wrong_repeat", nullable = false)
+    private int wrongRepeat;
 }

@@ -5,7 +5,7 @@ import Chatbot from "../../components/Chatbot";  // 챗봇 컴포넌트 임포�
 
 export default function Book() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen">
             <MainHeader />
             <CategoryHeader />
             <div className="p-16">

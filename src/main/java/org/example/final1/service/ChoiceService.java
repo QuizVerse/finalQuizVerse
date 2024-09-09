@@ -1,5 +1,6 @@
 package org.example.final1.service;
 
+import jakarta.transaction.Transactional;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
@@ -39,6 +40,7 @@ public class ChoiceService {
         choiceRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAllChoice(int questionId) {
         choiceRepository.deleteAllByQuestionQuestionId(questionId);
     }
