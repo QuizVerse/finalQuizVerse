@@ -63,4 +63,10 @@ public class SolvedbookService {
     }
 
 
+
+    // 사용자가 해당 문제집을 이미 풀었는지 확인하는 메서드
+    public SolvedbookDto findSolvedBookByUserAndBook(UserDto userDto, BookDto bookDto) {
+        // SolvedbookRepository를 사용하여 해당 사용자와 책의 기록을 찾아 반환
+        return solvedBookRepository.findByUserAndBook(userDto, bookDto);
+    }
 }

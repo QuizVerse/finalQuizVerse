@@ -1,6 +1,8 @@
 package org.example.final1.repository;
 
+import org.example.final1.model.BookDto;
 import org.example.final1.model.SolvedbookDto;
+import org.example.final1.model.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,5 +18,6 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
     // 사용자 ID와 bookId를 기반으로 현재 진행 중인 시험(SolvedbookDto) 찾기
     @Query("select c from SolvedbookDto c where c.user.userId=:userId and c.book.bookId=:bookId")
     Optional<SolvedbookDto> findByUserIdAndBookId(@Param("userId") int userId, @Param("bookId") int bookId);
-
+    // 사용자와 bookId로 이미 풀었던 기록을 찾는 쿼리
+    SolvedbookDto findByUserAndBook(UserDto userDto, BookDto bookDto);
 }
