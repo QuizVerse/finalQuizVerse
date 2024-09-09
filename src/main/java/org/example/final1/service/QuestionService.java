@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,8 @@ public class QuestionService {
     }
 
     public List<QuestionDto> getAllQuestions(int sectionId) {
-        return questionRepository.findAllBySectionSectionId(sectionId);
+        // sectionId에 해당하는 질문을 questionOrder 오름차순으로 불러오기
+        return questionRepository.findBySectionSectionIdOrderByQuestionOrderAsc(sectionId);
     }
 
     public void updateQuestionRes(int questionId) {
@@ -53,7 +55,7 @@ public class QuestionService {
     public List<QuestionDto> getQuestionsByBookId(int id) {
         return questionRepository.findAllByBookBookId(id);
     }
-    // 섹션 개수 count
+    // 문제 개수 count
     public int getQuestionCountByBookId(int bookId) {
         return questionRepository.countQuestionByBookId(bookId);
     }
@@ -72,4 +74,13 @@ public class QuestionService {
             questionRepository.save(existingQuestion);
         }
     }
+
+    // bookId에 해당하는 Question 질문 뽑아내고 list 만들어
+    public List<Integer> getQuestionIdsByBookId(int bookId) {
+        List<QuestionDto> questions = questionRepository.findAllByBookBookId(bookId);
+        return questions.stream()
+                .map(QuestionDto::getQuestionId)
+                .collect(Collectors.toList());
+    }
+
 }

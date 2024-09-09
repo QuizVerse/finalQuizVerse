@@ -17,7 +17,7 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('디폴트 이미지 테스트');
+    const [bookName, setBookName] = useState('클래스 멤버들도 문제 만들기');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
     const [isChecked, setIsChecked] = useState(true);
@@ -57,15 +57,17 @@ export default function NewBook() {
                 console.error(err);
             });
     };
+
 //클래스 목록 가져오는 거다냥
     useEffect(() => {
         if (visibility === '클래스 공개') {
-            axios.get('/book/user/classes')
+            axios.get('/myclass/index')
                 .then(res => {
+                    console.log('클래스 목록 불러오기 성공:', res.data); // 성공적으로 가져온 클래스 목록을 콘솔에 출력
                     setClassList(res.data || []); // 만약 res.data가 undefined/null일 경우 기본값을 빈 배열로 설정
                 })
                 .catch(err => {
-                    console.error(err);
+                    console.error('클래스 목록 불러오기 실패:', err); // 에러가 발생한 경우 콘솔에 출력
                     setClassList([]); // API 호출 실패 시 빈 배열로 초기화
                 });
         }

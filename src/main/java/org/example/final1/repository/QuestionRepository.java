@@ -11,12 +11,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<QuestionDto,Integer> {
-    List<QuestionDto> findAllBySectionSectionId(int sectionId);
+    List<QuestionDto> findBySectionSectionIdOrderByQuestionOrderAsc(int sectionId);
 
     List<QuestionDto> findAllByBookBookId(int bookId);  // 새로운 메서드 추가
 
     // 문제 개수 count
     @Query("SELECT COUNT(q) FROM QuestionDto q WHERE q.book.bookId =:bookId")
     int countQuestionByBookId(@Param("bookId") int bookId);
+
 
 }

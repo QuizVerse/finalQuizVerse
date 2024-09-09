@@ -1,51 +1,42 @@
-// v0 by Vercel.
-// https://v0.dev/t/t1MYEyIkCsP
-
-import {Avatar, Button, IconButton} from "@mui/material";
-import SearchInput from "../SearchInput";
-import {useState} from "react";
+import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
+import SearchInput from "../SearchInput";
 
-export default function AddClassMember({ onClose}) {
-    const [nickname,setNickname]=useState("");
-    const [user,setUser]=useState(null);
+export default function AddClassMember({ onClose }) {
+    const [users, setUsers] = useState([]); // 여러 사용자 저장
     const { classId } = useParams();
+    console.log("Current users:", users);
     console.log("Current classId:", classId);
-    const handleInputChange=(event)=>{
-        setNickname(event.target.value);
-    };
 
-    const handleSearch = async () => {
+    // 닉네임 검색 로직
+    const handleSearch = async (nickname) => {
         try {
-            const response = await fetch(`/findNickname?nickname=${nickname}`);
+            const response = await fetch(`/findUsersByNickname?nickname=${nickname}`); // 여러 사용자 검색
             if (response.ok) {
                 const data = await response.json();
                 if (data.exists) {
-                    setUser(data.user); // user 객체를 상태로 설정
+                    setUsers(data.users); // 사용자 리스트 상태로 설정
                 } else {
-                    setUser(null);
+                    setUsers([]);
                     alert(data.message);
                 }
             } else {
-                setUser(null);
+                setUsers([]);
             }
         } catch (e) {
-            console.error("Failed to fetch user", e);
-            setUser(null);
+            console.error("Failed to fetch users", e);
+            setUsers([]);
         }
     };
 
-    const handleInviteClick = async () => {
-        console.log("Current user:", user);
+    const handleInviteClick = async (user) => {
+        console.log("Inviting user:", user);
         console.log("Current classId:", classId);
-
-        if (user&&classId) {
+        if (user && classId) {
             try {
-
-                console.log("Inviting user:", user);
-                console.log("Inviting class:", classId);
                 const response = await axios.post('/myclass/invite', null, {
                     params: {
                         userId: user.userId,
@@ -53,54 +44,43 @@ export default function AddClassMember({ onClose}) {
                     }
                 });
                 if (response.status === 200) {
-                    alert('구성원이 성공적으로 초대되었습니다.');
+                    alert(`${user.userNickname}님이 성공적으로 초대되었습니다.`);
                 } else {
-                    alert('초대에 실패하였습니다.');
+                    alert(`${user.userNickname}님 초대에 실패하였습니다.`);
                 }
             } catch (e) {
                 console.error('Error inviting user:', e);
                 alert('초대 중 오류가 발생하였습니다.');
             }
-        } else {
-            alert('초대할 사용자가 선택되지 않았습니다.');
         }
     };
-
-
-
 
     return (
         <>
             <div className="p-6 space-y-4">
-                <IconButton
-                    aria-label="close"
-                    onClick={onClose}
-                    style={{ position: 'absolute', right: 16, top: 16 }}
-                >
+                <IconButton aria-label="close" onClick={onClose} style={{ position: 'absolute', right: 16, top: 16 }}>
                     <CloseIcon />
                 </IconButton>
 
                 <div className="relative">
-                    <SearchInput
-                        value={nickname}
-                        onChange={handleInputChange}
-                        onSearch={handleSearch}
-
-                    />
+                    <SearchInput onSearch={handleSearch} /> {/* 검색 시 handleSearch 실행 */}
                 </div>
-                {user && (
-                    <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                                <Avatar alt={user.userNickname}  />
-                                <span>{user.userNickname}</span>
-                            </div>
-                            <Button variant={"contained"}
-                            onClick={handleInviteClick}>초대하기</Button>
-                        </div>
-                    </div>
-                )}
 
+                {/* 검색된 사용자 리스트 표시 */}
+                {users.length > 0 && (
+                    <List>
+                        {users.map((user) => (
+                            <ListItem key={user.userId} secondaryAction={
+                                <Button variant={"contained"} onClick={() => handleInviteClick(user)}>초대하기</Button>
+                            }>
+                                <ListItemAvatar>
+                                    <Avatar alt={user.userNickname} />
+                                </ListItemAvatar>
+                                <ListItemText primary={user.userNickname} />
+                            </ListItem>
+                        ))}
+                    </List>
+                )}
             </div>
         </>
     );
