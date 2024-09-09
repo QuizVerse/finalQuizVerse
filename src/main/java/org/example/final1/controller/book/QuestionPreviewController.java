@@ -23,44 +23,44 @@ public class QuestionPreviewController {
         this.bookService = bookService;
     }
 
+    // Fetch questions by book ID
     @GetMapping("/questionpreview/{id}")
     public ResponseEntity<List<QuestionDto>> getQuestionsByBookId(@PathVariable("id") int bookId) {
         List<QuestionDto> questions = questionService.getQuestionsByBookId(bookId);
-        if (questions == null || questions.isEmpty()) {
+        if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(questions);
         }
     }
-    // 배점 저장 요청을 처리하는 엔드포인트
+
+    // Save or update question scores
     @PostMapping("/question/saveScore/{id}")
     public ResponseEntity<String> saveQuestionScores(@PathVariable("id") int bookId, @RequestBody List<QuestionDto> questions) {
         try {
             Optional<BookDto> bookOpt = bookService.getBookById(bookId);
-
             if (bookOpt.isPresent()) {
                 BookDto book = bookOpt.get();
                 book.setBookIspublished(true);
                 bookService.saveBook(book);
 
-                System.out.println("Received questions: " + questions);  // 디버깅용 출력
                 questionService.updateQuestionPoints(questions);
-                // 저장된 책 정보를 클라이언트에 반환
-                return ResponseEntity.ok("배점 저장 성공");
+                return ResponseEntity.ok("Scores saved successfully");
             } else {
                 return ResponseEntity.notFound().build();
             }
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("배점 저장 실패");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save scores");
         }
     }
+
+    // Optionally fetch questions for PDF generation with additional logic if needed
     @GetMapping("/questionpreviewPDF/{id}")
-    public ResponseEntity<List<QuestionDto>> getQuestionsByBookIdToPDF(@PathVariable("id") int bookId) {
+    public ResponseEntity<List<QuestionDto>> getQuestionsByBookIdForPDF(@PathVariable("id") int bookId) {
         List<QuestionDto> questions = questionService.getQuestionsByBookId(bookId);
-        if (questions == null || questions.isEmpty()) {
+        if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(questions);
