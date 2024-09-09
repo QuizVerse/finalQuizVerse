@@ -16,7 +16,6 @@ const SPACING = 2;  // 페이지네이션 사이의 간격
 
 export default function Category() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState('');  // 현재 카테고리 ID 상태
   const [books, setBooks] = useState([]);  // 카테고리에 해당하는 책 목록
   const [loading, setLoading] = useState(true);
