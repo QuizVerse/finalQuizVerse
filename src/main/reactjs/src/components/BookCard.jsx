@@ -98,12 +98,11 @@ export default function BookCard(props) {
     /**
      * @description : 링크 클릭시 발생하는 로직
      * */
-    const handleCopy = () => () => {
+    const handleCopy = () => {
         // snack message 교체
         setSnackMessage("클립보드에 복사되었습니다.");
         setState({ open: true, Transition: Fade });
     };
-
     /**
      * @description : 스낵바 닫힐때 발생하는 로직
      * */
@@ -184,8 +183,10 @@ export default function BookCard(props) {
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
-                    <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
-                        <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
+                    <CopyToClipboard text={siteUrl + "/book/detail/" + (props.bookId || "")} onCopy={handleCopy}>
+                        <button>
+                            링크를 클릭하여 복사 : {siteUrl + "/book/detail/" + (props.bookId || "")}
+                        </button>
                     </CopyToClipboard>
                 }
                 openAlert={copyAlertVisible}

@@ -8,7 +8,6 @@ const ITEMS_PER_PAGE = 4;
 
 export default function Summary() {
     const [classList, setClassList] = useState([]);
-    const [page, setPage] = useState(1);
     const [user, setUser] = useState({});
     const [userId, setUserId] = useState(null);
     const [totalBooksCount, setTotalBooksCount] = useState(0);
@@ -92,10 +91,6 @@ export default function Summary() {
         }
     }, [userId]);
 
-    // Pagination
-    const itemOffset = (page - 1) * ITEMS_PER_PAGE;
-    const currentItems = classList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
-
     const handleBookDelete = (bookId) => {
         setClassList((prevClassList) => prevClassList.filter((book) => book.bookId !== bookId));
     };
@@ -137,16 +132,16 @@ export default function Summary() {
                             </div>
                         </Link>
                     </Button>
-                    {currentItems.length > 0 ? (
-                        currentItems.slice(0, 3).map((book) => (
+                    {classList.length > 0 ? (
+                        classList.slice(0, 3).map((book, index) => (
                             <BookCard
-                                key={book.bookId}
+                                key={index}
                                 bookId={book.bookId}
                                 photo={`${photopath}/${book.bookImage}`}
                                 cardType="B"
                                 nickname={book.user?.userNickname || "Unknown"}
                                 className="flex-1"
-                                user={user}
+                                // user={user}
                                 createDate={book.bookCreatedate}
                                 title={book.bookTitle}
                                 bookUrl={`/book/detail/${book.bookId}`}
