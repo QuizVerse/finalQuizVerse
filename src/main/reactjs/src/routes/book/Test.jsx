@@ -49,22 +49,21 @@ export default function ParentComponent() {
         // 서버에서 받은 bookTimer (분 단위) 값을 초로 변환해서 저장
         setTimeLeft(bookRes.data.book.bookTimer * 60);
 
-        // 질문 미리보기 요청
-        const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-        setQuestions(questionsRes.data);
-
-        // 오답 문제 요청
-        if (wrongRepeat > 0) {
+        // 틀린 문제만 가져오기 (wrongRepeat이 있을 경우)
+        if (wrongRepeat && wrongRepeat > 0) {
           try {
             const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
               params: { solvedbookId, wrongRepeat }
             });
-            setQuestions(wrongQuestionsRes.data);
+            setQuestions(wrongQuestionsRes.data); // 틀린 문제들만 저장
           } catch (error) {
             console.error("오답 문제 요청 중 오류:", error);
           }
+        } else {
+          // 모든 문제 가져오기
+          const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+          setQuestions(questionsRes.data); // 전체 문제를 저장
         }
-
 
         setLoading(false);
       } catch (error) {
@@ -265,7 +264,7 @@ export default function ParentComponent() {
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
-            <DensityMediumOutlinedIcon />
+            <DensityMediumOutlinedIcon/>
             <span className="text-lg font-semibold">
               {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
             </span>
@@ -286,18 +285,29 @@ export default function ParentComponent() {
         </header>
         <div className="space-y-4">
           {sections &&
-              sections.map((section, index) => (
-                  <TestSection
-                      key={index}
-                      index={index}
-                      sectionCount={sections.length}
-                      section={section}
-                      book={bookData}
-                      loading={loading}
-                      setLoading={setLoading}
-                      onAnswerChange={handleAnswerChange}
-                  />
-              ))}
+              sections.map((section, index) => {
+                // 각 섹션에 해당하는 틀린 문제들만 필터링
+                const filteredQuestions = questions.filter(
+                    (question) => question.section.sectionId === section.sectionId
+                );
+
+                // 필터링된 질문이 없으면 해당 섹션을 렌더링하지 않음
+                if (filteredQuestions.length === 0) return null;
+
+                return (
+                    <TestSection
+                        key={index}
+                        index={index}
+                        sectionCount={sections.length}
+                        section={section}
+                        book={bookData}
+                        loading={loading}
+                        setLoading={setLoading}
+                        filterquestions={filteredQuestions} // 필터링된 질문들만 전달
+                        onAnswerChange={handleAnswerChange}
+                    />
+                );
+              })}
         </div>
         <Review
             openConfirm={openConfirm}

@@ -138,7 +138,7 @@ public class TestController {
     @GetMapping("/test/wrong")
     public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam int solvedbookId, @RequestParam int wrongRepeat) {
         List<QuestionDto> wrongQuestions = wrongService.getWrongQuestions(solvedbookId, wrongRepeat);
-        System.out.println("Wrong Repeat: " + wrongRepeat);
+        System.out.println("Controller Wrong Repeat: " + wrongRepeat);
 
 
         return ResponseEntity.ok(wrongQuestions);

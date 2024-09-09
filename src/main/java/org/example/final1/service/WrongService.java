@@ -60,12 +60,23 @@ public class WrongService {
     }
     // 특정 solvedbookId와 wrongRepeat에 해당하는 틀린 문제 조회
     public List<QuestionDto> getWrongQuestions(int solvedbookId, int wrongRepeat) {
-        List<WrongDto> wrongAnswers = wrongRepository.findBySolvedbookIdandWrongrepeat(solvedbookId, wrongRepeat);
+        List<WrongDto> wrongAnswers = wrongRepository.findbySolvedbookandWrongrepeat(solvedbookId, wrongRepeat);
+
+        System.out.println("Service: wrongAnswers: "+wrongAnswers);
+
+
         return wrongAnswers.stream()
                 .map(WrongDto::getQuestion)
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+
+    public List<WrongDto> getWrongBooksByUserId(int userId) {
+        return wrongRepository.findByUserUserId(userId);
+    }
+
+
 
 
 }
