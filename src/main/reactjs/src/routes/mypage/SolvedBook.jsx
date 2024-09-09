@@ -80,23 +80,7 @@ export default function PublishedBook() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">나의 학습이력</h1>
         </div>
-        <div className="flex items-center mb-6 space-x-4 justify-between">
-          <div className="flex items-center space-x-4">
-            <SearchInput/>
-            <TextField
-                id="outlined-select-sort"
-                select
-                value={sort}
-                onChange={handleSortChange}
-            >
-              {conditions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-              ))}
-            </TextField>
-          </div>
-        </div>
+
         <div
             className="rounded-lg border bg-card text-card-foreground shadow-sm"
             data-v0-t="card"
