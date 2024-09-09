@@ -268,6 +268,7 @@ const toggleMicrophone = async () => {
         }
     });
 };
+
 // 화면 공유
 async function toggleScreenSharing() {
     try {

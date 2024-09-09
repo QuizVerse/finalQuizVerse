@@ -112,23 +112,24 @@ export default function Detail() {
   };
   const handleStartExam = async () => {
     try {
+      // 시험 시작 요청을 백엔드로 전송
       const response = await axios.post('/book/test/start', { bookId: book_Id });
-      // solvedbookId가 어디에 있는지 확인
-      const { solvedBook, wrongRepeat } = response.data;
 
-      // solvedBook 객체 내의 solvedbookId를 추출
-      const solvedbookId = solvedBook.solvedbookId; // 서버 응답에 맞게 수정
+      // 서버 응답에서 solvedbookId와 wrongRepeat 값을 추출
+      const { solvedbookId, wrongRepeat } = response.data;
 
+      if (!solvedbookId) {
+        throw new Error("solvedbookId가 없습니다.");
+      }
 
+      // solvedbookId와 wrongRepeat를 URL에 포함하여 네비게이션
       console.log('Exam started successfully', response.data);
-
-      navigate(`/book/test/${book_Id}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);// solvedbookId를 URL에 포함하여 네비게이션
+      navigate(`/book/test/${book_Id}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
     } catch (error) {
       console.error('Error starting exam:', error);
       alert('시험을 시작하는데 실패했습니다.');
     }
   };
-
 
   return (
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
