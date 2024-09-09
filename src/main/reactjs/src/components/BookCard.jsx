@@ -6,7 +6,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Snackbar from '@mui/material/Snackbar';
 import Fade from '@mui/material/Fade';
-import {useEffect, useState} from "react";
+import { useState } from "react";
 import CustomAlert from "./modal/CustomAlert";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
@@ -172,21 +172,11 @@ export default function BookCard(props) {
                 key={state.Transition.name}
                 autoHideDuration={1200}
             />
-
-            {/* 기본 alert */}
-            <CustomAlert
-                title={alertTitle}
-                openAlert={alertVisible}
-                closeAlert={closeAlert} />
-
-            {/* 링크 복사하기 alert */}
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
-                    <CopyToClipboard text={siteUrl + "/book/detail/" + (props.bookId || "")} onCopy={handleCopy}>
-                        <button>
-                            링크를 클릭하여 복사 : {siteUrl + "/book/detail/" + (props.bookId || "")}
-                        </button>
+                    <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
+                        <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
                     </CopyToClipboard>
                 }
                 openAlert={copyAlertVisible}
@@ -239,7 +229,7 @@ export default function BookCard(props) {
                             <IconButton className="text-red-600" onClick={handleBookmarkClick}>
                                 {props.isBookmark ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                             </IconButton>
-                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openAlert}>
+                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openCopyAlert}>
                                 공유하기
                             </Button>
                         </div>
@@ -250,7 +240,7 @@ export default function BookCard(props) {
                             <IconButton className="text-red-600" onClick={handleSettingClick}>
                                 <SettingsIcon />
                             </IconButton>
-                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openAlert}>
+                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openCopyAlert}>
                                 공유하기
                             </Button>
                         </div>

@@ -141,7 +141,7 @@ export default function Summary() {
                                 cardType="B"
                                 nickname={book.user?.userNickname || "Unknown"}
                                 className="flex-1"
-                                // user={user}
+                                user={user}
                                 createDate={book.bookCreatedate}
                                 title={book.bookTitle}
                                 bookUrl={`/book/detail/${book.bookId}`}
