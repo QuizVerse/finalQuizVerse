@@ -26,7 +26,7 @@ public class EditController {
     private final QuestionService questionService;
     private final ChoiceService choiceService;
     private final BookService bookService;
-    final NcpObjectStorageService storageService;
+    private final NcpObjectStorageService storageService;
 
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";

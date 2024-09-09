@@ -10,8 +10,9 @@ import { useState } from "react";
 import CustomAlert from "./modal/CustomAlert";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
+import axios from "axios";
 
-export default function BookCard(props) {
+export default function BookCard(props, {user}) {
 
     const siteUrl = "http://localhost:3000"
     const [state, setState] = useState({
@@ -23,7 +24,9 @@ export default function BookCard(props) {
     const [snackMessage, setSnackMessage] = useState("");
 
     // Alert 창 상태 관리
+    const [alertTitle, setAlertTitle] = useState("");
     const [alertVisible, setAlertVisible] = useState(false);
+    const [copyAlertVisible, setCopyAlertVisible] = useState(false);
 
     // Setting 메뉴 앵커 요소와 상태 관리
     const [anchorEl, setAnchorEl] = useState(null);
@@ -48,10 +51,19 @@ export default function BookCard(props) {
 
     /**
      * @description : 삭제 확인 버튼 클릭시 실행되는 로직
-     * @TODO : 문제집 삭제 기능 추가
      * */
     const clickBtn2 = () => {
-        setConfirmVisible(false);
+        if(props.bookId === null || props.bookId === "") return;
+        if(user === null || user === "") openAlert("로그인이 필요한 서비스입니다.");
+
+        axios({
+            method:'delete',
+            url:'/publishedbook/delete/' + props.bookId,
+            params : user
+        }).then(res=>{
+            console.log(res);
+            setConfirmVisible(false);
+        })
     };
 
     // 북마크 추가 버튼 클릭 이벤트
@@ -93,7 +105,15 @@ export default function BookCard(props) {
     /**
      * @description : Alert창 열릴 때
      * */
-    const openAlert = () => {
+    const openCopyAlert = () => {
+        setCopyAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title)
         setAlertVisible(true);
     };
 
@@ -101,6 +121,7 @@ export default function BookCard(props) {
      * @description : Alert창 닫힐 때
      * */
     const closeAlert = () => {
+        setCopyAlertVisible(false);
         setAlertVisible(false);
     };
 
@@ -143,6 +164,14 @@ export default function BookCard(props) {
                 key={state.Transition.name}
                 autoHideDuration={1200}
             />
+
+            {/* 기본 alert */}
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert} />
+
+            {/* 링크 복사하기 alert */}
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
@@ -150,9 +179,16 @@ export default function BookCard(props) {
                         <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
                     </CopyToClipboard>
                 }
-                openAlert={alertVisible}
-                closeAlert={closeAlert}
-            />
+                openAlert={copyAlertVisible}
+                closeAlert={closeAlert} />
+
+            {/* 문제집 삭제 confirm */}
+            <CustomConfirm
+                id={12}
+                openConfirm={confirmVisible}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2} />
+
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -160,12 +196,11 @@ export default function BookCard(props) {
                 onClose={handleSettingClose}
                 MenuListProps={{ 'aria-labelledby': 'basic-button' }}
             >
-                <MenuItem onClick={handleSettingClose}>문제집 설정</MenuItem>
+                <MenuItem><Link to={"/book/update/"+props.bookId}>문제집 설정</Link></MenuItem>
                 <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
                 <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
-                <MenuItem onClick={handleSettingClose}>삭제하기</MenuItem>
+                <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
             </Menu>
-            <CustomConfirm id={12} openConfirm={confirmVisible} clickBtn1={clickBtn1} clickBtn2={clickBtn2} />
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link to={`/book/detail/${props.bookId}`}>
                     <img
@@ -175,17 +210,14 @@ export default function BookCard(props) {
                         alt="책 이미지"
                         className="w-full h-48 rounded-t"
                     />
-
-
                 </Link>
-
                 <div className="p-4">
                     <Link>
                         <div
-                            className="inline-flex w-fit items-center whitespace-nowrap px-2.5 py-0.5 text-xs font-semibold transition-colors">
+                            className="inline-flex w-fit items-center whitespace-nowrap text-xs transition-colors">
                             {props.nickname || "알 수 없음"} · {formatDate(props.createDate)}
                         </div>
-                        <h3 className="mt-2 text-lg font-bold">{props.title}</h3>
+                        <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
                         <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
                         <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
