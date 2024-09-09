@@ -133,16 +133,6 @@ public class TestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시간 저장 중 오류가 발생했습니다.");
         }
     }
-    // 오답 문제를 필터링하여 반환하는 API
-    // SolvedbookId와 wrongRepeat로 오답 문제들을 조회하는 API
-    @GetMapping("/test/wrong")
-    public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam int solvedbookId, @RequestParam int wrongRepeat) {
-        List<QuestionDto> wrongQuestions = wrongService.getWrongQuestions(solvedbookId, wrongRepeat);
-        System.out.println("Wrong Repeat: " + wrongRepeat);
 
-
-        return ResponseEntity.ok(wrongQuestions);
-
-    }
 
 }
