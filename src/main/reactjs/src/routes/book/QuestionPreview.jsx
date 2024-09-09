@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Typography,
     Button,
@@ -16,7 +16,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 
 export default function QuestionPreview() {
-    const {bookId} = useParams();
+    const { bookId } = useParams();
     const [bookData, setBookData] = useState({});
     const [sections, setSections] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -27,11 +27,10 @@ export default function QuestionPreview() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
-    // 추가: isChecked와 totalPoints 상태 정의
     const [isChecked, setIsChecked] = useState(false);
     const [totalPoints, setTotalPoints] = useState(0);
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,8 +40,7 @@ export default function QuestionPreview() {
                 setBookData(bookData);
                 setSections(bookRes.data.sections);
                 setTotalPoints(bookData.bookTotalscore);
-                // isChecked 설정: bookDivide 값에 따라 설정
-                setIsChecked(bookData.bookDivide === 1);
+                setIsChecked(bookData.bookDivide === 1); // 균등 분배 여부 설정
                 setTotalPoints(bookData.bookTotalscore || 100); // 기본값 100 설정
 
                 const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
@@ -50,7 +48,29 @@ export default function QuestionPreview() {
                     ...question,
                     questionPoint: question.questionPoint || 0
                 }));
-                setQuestions(loadedQuestions);
+
+                // 균등 배점이 체크되었을 경우, 각 문제에 균등 배점 적용
+                if (bookData.bookDivide === 1 && loadedQuestions.length > 0) {
+                    const totalQuestions = loadedQuestions.length;
+                    const totalScore = parseInt(bookData.bookTotalscore, 10) || 0;
+                    const evenScore = Math.floor((totalScore / totalQuestions) * 10) / 10; // 균등 배점 (소수점 처리)
+
+                    let updatedQuestions = loadedQuestions.map(question => ({
+                        ...question,
+                        questionPoint: evenScore
+                    }));
+
+                    // 배점 합계에서 남은 차이를 계산
+                    const totalAllocatedScore = updatedQuestions.reduce((acc, curr) => acc + curr.questionPoint, 0);
+                    const remainingScore = Math.round((totalScore - totalAllocatedScore) * 10) / 10;
+
+                    // 마지막 문항에 잔여 점수를 더해 정확히 총점이 되도록 처리
+                    updatedQuestions[updatedQuestions.length - 1].questionPoint += remainingScore;
+
+                    setQuestions(updatedQuestions); // 균등 배점된 질문 목록 설정
+                } else {
+                    setQuestions(loadedQuestions);
+                }
 
                 setLoading(false);
             } catch (error) {
@@ -62,6 +82,7 @@ export default function QuestionPreview() {
 
         fetchData();
     }, [bookId]);
+
 
     const handleScoreInput = (index, newScore) => {
         const updatedQuestions = [...questions];
@@ -89,12 +110,17 @@ export default function QuestionPreview() {
             const totalQuestions = questions.length;
             const totalScore = parseInt(totalPoints, 10) || 0;
             const evenScore = Math.round((totalScore / totalQuestions) * 10) / 10;
+
+            // questions 배열에 균등 배점 적용
             const updatedQuestions = questions.map((question) => ({
                 ...question,
                 questionPoint: evenScore
             }));
 
             setQuestions(updatedQuestions);
+
+            // 균등 배점이 제대로 적용되었는지 출력
+            console.log("Updated Questions with even score:", updatedQuestions);
         }
 
         const sanitizedQuestions = questions.map(({ questionId, questionPoint }) => ({
@@ -102,16 +128,17 @@ export default function QuestionPreview() {
             questionPoint,
         }));
 
+        console.log("Sanitized Questions before submit:", sanitizedQuestions);
+
         if (sanitizedQuestions.some((question) => question.questionPoint === 0 || question.questionPoint === "")) {
             openAlert("모든 문제에 대해 배점을 해야 합니다. 0점 또는 빈 점수가 있는 문제가 있습니다.");
         } else {
             try {
-                // questions를 배열로 보내야 함
                 const response = await axios.post(`/book/question/saveScore/${bookId}`, sanitizedQuestions);
 
                 if (response.status === 200) {
                     openAlert("배점이 성공적으로 저장되었습니다.");
-                    navigate("/");  // 저장 성공 후 메인 페이지로 이동
+                    navigate("/");
                 } else {
                     openAlert("배점 저장에 실패했습니다.");
                 }
@@ -164,6 +191,7 @@ export default function QuestionPreview() {
                         color="primary">
                         출제하기
                     </Button>
+                    <Button onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
@@ -248,3 +276,5 @@ export default function QuestionPreview() {
         </div>
     );
 }
+
+

@@ -1,3 +1,4 @@
+
 package org.example.final1.service;
 
 
@@ -12,7 +13,9 @@ import org.example.final1.repository.SolvedbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AnswerService {
@@ -25,6 +28,7 @@ public class AnswerService {
     private ChoiceRepository choiceRepository;
     @Autowired
     private SolvedbookRepository solvedbookRepository;
+
 
     public void saveAnswers(List<AnswerDto> answers) {
         for (AnswerDto answerDto : answers) {
@@ -41,10 +45,12 @@ public class AnswerService {
             answer.setSolvedbook(solvedbook);
 
             // Choice (객관식 답안일 경우) 매핑
-            if (answerDto.getChoice() != null) {
-                ChoiceDto choice = choiceRepository.findById(answerDto.getChoice().getChoiceId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid choice ID"));
-                answer.setChoice(choice);
+            if (answerDto.getChoices() != null && !answerDto.getChoices().isEmpty()) {
+                List<ChoiceDto> choices = answerDto.getChoices().stream()
+                        .map(choiceDto -> choiceRepository.findById(choiceDto.getChoiceId())
+                                .orElseThrow(() -> new IllegalArgumentException("Invalid choice ID: " + choiceDto.getChoiceId())))
+                        .collect(Collectors.toList());
+                answer.setChoices(choices);
             }
 
             // 주관식 답안 처리
@@ -56,7 +62,7 @@ public class AnswerService {
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
             // 정답 여부 처리 (추후 로직 추가 가능)
-            answer.setAnswerCorrect(false);  // 정답 여부는 별도로 처리
+            answer.setAnswerCorrect(false);
 
             // 답안 저장
             answerRepository.save(answer);

@@ -13,8 +13,7 @@ export const CallGpt = async ({ prompt }) => {
         4. [Sections]: Sections are arrays that contain multiple sections within an exam. Each section will contain an array of [Questions].
         5. [Questions]: An array of questions within each section. Each question should have the following fields:
             - [Number]: The question number.
-            - [Type]: The type of question ("Multiple Choice" is 0, only one Type).
-            - [Problem]: The question text.
+            - [Problem]: The question text. (only one Type, "Multiple Choice")
             - [Options]: An array of possible answers.
             - [Answer]: The correct answer.
             - [Explanation]: A detailed explanation of the correct answer.
@@ -25,7 +24,7 @@ export const CallGpt = async ({ prompt }) => {
             "sectionTitle": "Title",
             "sectionDescription": "Summary",
             "questions" :   [{
-                "questionType": Problem Type,
+                "questionType": 0,
                 "questionTitle": "Problem",
                 "questionSolution": "Explanation",
                 "questionOrder": Number,

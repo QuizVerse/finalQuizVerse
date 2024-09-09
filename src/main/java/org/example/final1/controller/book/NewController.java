@@ -17,6 +17,7 @@ import org.example.final1.storage.NcpObjectStorageService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -104,6 +105,7 @@ public class NewController {
             throw new RuntimeException("Invalid or missing JWT token");
         }
     }
+
     @GetMapping("/user/classes")
     public ResponseEntity<List<ClassDto>> getUserClasses(HttpServletRequest request) {
 
@@ -120,5 +122,19 @@ public class NewController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    // 문제집 정보를 가져오는 엔드포인트
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<BookDto>> getBookInfo(@PathVariable("id") int bookId) {
+        // Service를 통해 Book 정보를 가져옴
+        Optional<BookDto> bookDto = bookService.getBookById(bookId);
+
+        // 문제가 없을 경우 OK 상태로 Book 정보 반환
+        if (bookDto.isPresent()) {
+            return ResponseEntity.ok(bookDto);
+        } else {
+            // 문제집을 찾지 못한 경우 NOT_FOUND 상태 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 }

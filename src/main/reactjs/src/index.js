@@ -24,6 +24,8 @@ import NewBook from './routes/book/NewBook';
 import Edit from './routes/book/Edit';
 import EditAi from './routes/book/EditAi';
 import QuestionPreview from './routes/book/QuestionPreview';
+import QuestionPreviewPDF from "./routes/book/QuestionPreviewPDF";
+
 import Test from './routes/book/Test';
 import Score from './routes/book/Score';
 import ScorePreview from './routes/book/ScorePreview';
@@ -66,6 +68,7 @@ import AlarmModal from "./routes/devtest/AlarmModal";
 import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
+import UpdateBook from "./routes/book/UpdateBook";
 
 const router = createBrowserRouter([
     {
@@ -195,6 +198,11 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
+                path: "/book/update/:bookId",
+                element: <UpdateBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
                 path: "/book/edit",
                 element: <Edit />,
                 errorElement: <ErrorPage />,
@@ -217,6 +225,11 @@ const router = createBrowserRouter([
             {
                 path: '/book/questionpreview/:bookId',
                 element: <QuestionPreview />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/book/questionpreviewPDF/:bookId',
+                element: <QuestionPreviewPDF />,
                 errorElement: <ErrorPage />,
             },
             {
@@ -365,7 +378,7 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
   </React.StrictMode>
 );
 

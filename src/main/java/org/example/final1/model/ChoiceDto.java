@@ -20,12 +20,15 @@ public class ChoiceDto {
     @Column(name = "choice_id")
     private int choiceId;
 
+
+    //선지 주관식일때 답안임
     @Column(name = "choice_text", nullable = false, length = 255)
     private String choiceText;
 
     @Column(name = "choice_image", length = 255)
     private String choiceImage;
 
+    //질문이 선택형일때 questionid는같지만,choiceisanswer는 false인게 오답이고 true 정답
     @Column(name = "choice_isanswer")
     private Boolean choiceIsanswer;
 
