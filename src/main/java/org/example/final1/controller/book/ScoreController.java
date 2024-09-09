@@ -54,12 +54,12 @@ public class ScoreController {
         }
     }
 
-    @GetMapping("/correct/{bookId}")
-    public Map<Integer, Boolean> getAnswerCorrectByBookId(@PathVariable int bookId) {
-        // bookId로 questionIds를 가져옵니다.
-        List<Integer> questionIds = questionService.getQuestionIdsByBookId(bookId);
-        // questionIds로 정답 여부를 가져옵니다.
-        return answerService.getAnswerCorrectByQuestionIds(questionIds);
-    }
+//    @GetMapping("/correct/{bookId}")
+//    public Map<Integer, Boolean> getAnswerCorrectByBookId(@PathVariable int bookId) {
+//        // bookId로 questionIds를 가져옵니다.
+//        List<Integer> questionIds = questionService.getQuestionIdsByBookId(bookId);
+//        // questionIds로 정답 여부를 가져옵니다.
+//        return answerService.getAnswerCorrectByQuestionIds(questionIds);
+//    }
 
 }

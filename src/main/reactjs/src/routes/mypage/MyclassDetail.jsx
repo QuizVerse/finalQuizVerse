@@ -47,12 +47,15 @@ export default function MyclassDetail() {
       try {
         const userResponse = await axios.get(`/myclass/${classId}/userrole`); // 사용자의 역할을 가져옵니다.
         setUserRole(userResponse.data);
+        console.log("=== userResponse====" + userResponse.data);
 
         const classResponse = await axios.get(`/myclass/${classId}/class`); // 사용자의 역할을 가져옵니다.
         setClassdata(classResponse.data);
+        console.log("===classResponse === "+ classResponse.data);
 
         const membersResponse = await axios.get(`/myclass/${classId}/members`); // 클래스 멤버들을 가져옵니다.
         setMembers(membersResponse.data.map((member) => ({ ...member, isSelected: false }))); // 멤버 리스트를 초기화합니다.
+        console.log("==== memberResponse ===" + membersResponse.data);
 
         const bookResponse = await axios.get(`/myclass/${classId}/books`); // 해당 클래스 책 목록 부르기
         setBooks(
