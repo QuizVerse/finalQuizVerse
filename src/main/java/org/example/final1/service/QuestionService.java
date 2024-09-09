@@ -38,7 +38,8 @@ public class QuestionService {
     }
 
     public List<QuestionDto> getAllQuestions(int sectionId) {
-        return questionRepository.findAllBySectionSectionId(sectionId);
+        // sectionId에 해당하는 질문을 questionOrder 오름차순으로 불러오기
+        return questionRepository.findBySectionSectionIdOrderByQuestionOrderAsc(sectionId);
     }
 
     public void updateQuestionRes(int questionId) {

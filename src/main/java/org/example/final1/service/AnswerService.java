@@ -29,6 +29,7 @@ public class AnswerService {
     @Autowired
     private WrongRepository wrongRepository;
 
+
     public void saveAnswers(List<AnswerDto> answers) {
         for (AnswerDto answerDto : answers) {
             AnswerDto answer = new AnswerDto();
@@ -68,6 +69,9 @@ public class AnswerService {
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
+            // 정답 여부 처리 (추후 로직 추가 가능)
+            answer.setAnswerCorrect(false);
+
             // 답안 저장
             answerRepository.save(answer);
 
@@ -77,6 +81,7 @@ public class AnswerService {
 
         }
     }
+
 
 
     // 객관식 답안 채점 로직
@@ -116,5 +121,7 @@ public class AnswerService {
                 ));
     }
 
+
+}
 
 }

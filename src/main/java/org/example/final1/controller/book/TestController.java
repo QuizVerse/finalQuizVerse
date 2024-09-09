@@ -94,7 +94,7 @@ public class TestController {
     @PostMapping("/save/answers")
     public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers) {
         try {
-            answerService.saveAnswers(answers); // 답안 저장 서비스 호출
+            answerService.saveAnswers(answers);
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
             System.err.println("Error saving answers: " + e.getMessage());
