@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import axios from "axios";
 import Review from "../../components/modal/Review";

@@ -41,4 +41,7 @@ public class AnswerDto {
 
     @Column(name = "answer_correct", nullable = true)  // 정답 여부
     private Boolean answerCorrect;
+
+    @Column(name="wrong_repeat", nullable = false)
+    private int wrongRepeat;
 }
