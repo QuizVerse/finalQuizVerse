@@ -102,8 +102,27 @@ public class TestController {
         }
     }
 
+    // 시간만 저장하는 임시 저장 엔드포인트 수정
+    @PostMapping("/save/temporary")
+    public ResponseEntity<String> saveTime(@RequestBody Map<String, Integer> requestBody, HttpServletRequest request) {
+        try {
+            Integer timeLeft = requestBody.get("timeLeft");
+            Integer bookId = requestBody.get("bookId");
 
+            // JWT에서 사용자 정보 추출 (사용자 검증)
+            UserDto userDto = jwtService.getUserFromJwt(request);
+            if (userDto == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
 
+            // 시간 저장 서비스 호출
+            solvedbookService.saveRemainingTime(userDto, bookId, timeLeft);
+            return ResponseEntity.ok("남은 시간이 성공적으로 저장되었습니다.");
+        } catch (Exception e) {
+            System.err.println("Error saving time: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시간 저장 중 오류가 발생했습니다.");
+        }
+    }
 
 
 }
