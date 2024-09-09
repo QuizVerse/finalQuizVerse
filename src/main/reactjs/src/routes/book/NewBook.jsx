@@ -17,7 +17,7 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('클래스 멤버들도 문제 만들기');
+    const [bookName, setBookName] = useState('배점 균등분배 가보자');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
     const [isChecked, setIsChecked] = useState(true);
