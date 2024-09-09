@@ -9,12 +9,12 @@ const ITEMS_PER_PAGE = 4;
 export default function Summary() {
     const [classList, setClassList] = useState([]);
     const [page, setPage] = useState(1);
+    const [user, setUser] = useState({});
     const [userId, setUserId] = useState(null);
     const [totalBooksCount, setTotalBooksCount] = useState(0);
     const [totalClassCount , setTotalClassCount] = useState(0);
     const [totalSolvedCount, setTotalSolvedCount] = useState(0);
     const [totalBookmarkCount, setTotalBookmarkCount] = useState(0);
-    const [name, setName] = useState('');
     const [error, setError] = useState(null);
 
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
@@ -28,14 +28,11 @@ export default function Summary() {
         try {
             const response = await axios.get('/book/username');
             if (response.status === 200 && response.data) {
+                setUser(response.data);
                 setUserId(response.data.userId);
-                const nicknameRes = await axios.get('/summary/nickname');
-                if (nicknameRes.status === 200) {
-                    setName(nicknameRes.data);
-                }
             }
         } catch (error) {
-            setUserId(null);
+            setUser(null);
         }
     };
 
@@ -112,7 +109,7 @@ export default function Summary() {
             <section className="mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">
-                        <span className="text-blue-500">{name}</span>님이 만든 문제집
+                        <span className="text-blue-500">{user.userNickname}</span>님이 만든 문제집
                     </h2>
                     <Button
                         className="rounded-lg border bg-card text-card-foreground shadow-sm"
@@ -144,6 +141,7 @@ export default function Summary() {
                                 cardType="B"
                                 nickname={book.user?.userNickname || "Unknown"}
                                 className="flex-1"
+                                user={user}
                                 createDate={book.bookCreatedate}
                                 title={book.bookTitle}
                                 bookUrl={`/book/detail/${book.bookId}`}

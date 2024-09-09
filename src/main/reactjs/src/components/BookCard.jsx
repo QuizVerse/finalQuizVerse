@@ -56,14 +56,16 @@ export default function BookCard(props, {user}) {
         if(props.bookId === null || props.bookId === "") return;
         if(user === null || user === "") openAlert("로그인이 필요한 서비스입니다.");
 
-        axios({
-            method:'delete',
-            url:'/publishedbook/delete/' + props.bookId,
-            params : user
-        }).then(res=>{
-            console.log(res);
-            setConfirmVisible(false);
-        })
+        console.log("bookId", props.bookId);
+
+        // axios({
+        //     method:'delete',
+        //     url:'/publishedbook/delete/' + props.bookId,
+        //     params : user
+        // }).then(res=>{
+        //     console.log(res);
+        //     setConfirmVisible(false);
+        // })
     };
 
     // 북마크 추가 버튼 클릭 이벤트
