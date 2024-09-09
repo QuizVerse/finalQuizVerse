@@ -112,6 +112,7 @@ public class AnswerService {
     }
 
 
+
     // 객관식 답안 채점 로직
     private boolean checkMultipleChoiceCorrect(QuestionDto question, List<ChoiceDto> selectedChoices) {
         // 선택한 문제의 모든 선택지 가져오기 (ChoiceRepository에서 questionId를 이용해 찾음)
@@ -127,7 +128,7 @@ public class AnswerService {
                 && new HashSet<>(correctChoices).containsAll(selectedChoices);
     }
 
-
+    // 주관식 답안 채점 로직
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
         // 주관식 문제의 정답 가져오기
