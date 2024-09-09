@@ -9,54 +9,68 @@ import {
     TextField,
     IconButton
 } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // useParams import
 import CreateIcon from '@mui/icons-material/Create';
 
-export default function NewBook() {
-    // Dropdown state
+export default function UpdateBook() {
+    const { bookId } = useParams(); // bookId 가져오기
+    const navigate = useNavigate();
+
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
+
+    // State 초기화
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('배점 균등분배 가보자');
-    const [bookDescription, setBookDescription] = useState('제발');
-    const [totalPoints, setTotalPoints] = useState('100');
+    const [bookName, setBookName] = useState('');
+    const [bookDescription, setBookDescription] = useState('');
+    const [totalPoints, setTotalPoints] = useState('');
     const [isChecked, setIsChecked] = useState(true);
-    const [timeLimit, setTimeLimit] = useState('10');
+    const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(true);
-    const navigate = useNavigate();
     const [categoryList, setCategoryList] = useState([]);
+    const [classList, setClassList] = useState([]);
+    const [selectedClass, setSelectedClass] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [classList, setClassList] = useState([]); // 사용자 클래스 목록
-    const [selectedClass, setSelectedClass] = useState(''); // 선택된 클래스
-
-
-    // 사진 업로드
     const [bookPhotoFile, setBookPhotoFile] = useState(null);
 
+    // 사진 업로드 처리
     const photoUploadEvent = (e) => {
         const uploadFilename = e.target.files[0];
         setBookPhotoFile(uploadFilename);
-
-        // 로컬 파일 URL을 생성하여 미리보기 설정
         const localImageUrl = URL.createObjectURL(uploadFilename);
         setCoverImage(localImageUrl);
     };
 
     // 카테고리 목록 가져오기
     useEffect(() => {
-        getDataList();
+        axios.get('/category/list')
+            .then(res => setCategoryList(res.data))
+            .catch(err => console.error(err));
     }, []);
 
-    const getDataList = () => {
-        axios.get('/category/list')
-            .then(res => {
-                setCategoryList(res.data);
-            })
-            .catch(err => {
-                console.error(err);
-            });
-    };
+    // 책 정보 가져오기
+    useEffect(() => {
+        if (bookId) {
+            axios.get(`/book/${bookId}`)
+                .then(res => {
+                    const book = res.data;
+                    console.log("book", book);
+                    setBookName(book.bookTitle);
+                    setBookDescription(book.bookDescription);
+                    setCategory(book.category.categoryId);
+                    setTotalPoints(book.bookTotalScore);
+                    setTimeLimit(book.bookTimer);
+                    setIsChecked(book.bookDivide === 1 ? true : false);
+                    setIsTimeLimitEnabled(book.bookTimer === 0 ? false : true);
+                    setCoverImage(book.bookImage);
+                    setVisibility(book.bookStatus === 0 ? '전체 공개' : book.bookStatus === 1 ? '클래스 공개' : '비공개');
+                    setSelectedClass(book.class1 !== null? book.class1.className : "");
+                })
+                .catch(err => console.error("Error fetching book data:", err));
+        }
+    }, [bookId]);
 
 //클래스 목록 가져오는 거다냥
     useEffect(() => {
@@ -84,9 +98,9 @@ export default function NewBook() {
     const toggleSwitch = () => setIsChecked(prevState => !prevState);
     const toggleTimeSwitch = () => setIsTimeLimitEnabled(prevState => !prevState);
     const handleClassChange = (event) => setSelectedClass(event.target.value);
-    // Submit new book
+
+    // Form 제출 핸들러
     const handleSubmit = () => {
-        console.log("Selected Class ID:", selectedClass);
         setLoading(true);
         setError(null);
 
@@ -94,12 +108,6 @@ export default function NewBook() {
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
-
-        // 클래스 공개가 선택되었고 클래스가 선택된 경우에만 classId를 추가
-        if (visibility === '클래스 공개' && selectedClass) {
-            formData.append('classId', selectedClass);
-        }
-
         formData.append('category', category);
         formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
         formData.append('bookDivide', isChecked ? 1 : 0);
@@ -119,31 +127,17 @@ export default function NewBook() {
         })
             .then((res) => {
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit/" + res.data.book.bookId);
+                navigate("/book/edit/" + bookId);
             })
-            .catch((err) => {
-                console.log("머가 단단히 잘못되었다냥..");
-                console.error(err);
-                setError('Failed to create new book');
+            .catch(err => {
+                console.error("Update failed:", err);
+                setError('Failed to update book');
             })
-            .finally(() => {
-                setLoading(false);
-            });
+            .finally(() => setLoading(false));
     };
 
-
-    // Cancel button logic
+    // 취소 버튼 핸들러
     const handleCancel = () => {
-        setBookName('');
-        setBookDescription('');
-        setCategory('');
-        setVisibility('전체 공개');
-        setCoverImage('');
-        setTotalPoints('100');
-        setIsChecked(true);
-        setIsTimeLimitEnabled(true);
-        setTimeLimit('10');
-        setBookPhotoFile(null);
         navigate(-1);
     };
 
@@ -152,7 +146,7 @@ export default function NewBook() {
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-2xl">
                 <div className="flex flex-col space-y-1.5 p-6">
                     <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight text-center">
-                        문제집 생성
+                        문제집 수정
                     </h3>
                 </div>
                 <div className="p-6 space-y-4">
@@ -235,18 +229,6 @@ export default function NewBook() {
                             onChange={handleTotalPointsChange}
                         />
                     </div>
-                    <div className="flex justify-between items-center space-x-2">
-                        <label className="text-sm font-medium">점수 균등 분배</label>
-                        <button
-                            type="button"
-                            role="switch"
-                            aria-checked={isChecked}
-                            className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
-                            onClick={toggleSwitch}
-                        >
-                            <span className={`pointer-events-none block h-5 w-5 rounded-full ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
-                        </button>
-                    </div>
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">
                             <label className="text-sm font-medium">제한시간 여부</label>
@@ -281,7 +263,7 @@ export default function NewBook() {
                             </div>
                             <div className="flex justify-center">
                                 <img
-                                    src={coverImage}
+                                    src={photopath + coverImage}
                                     alt="CoverImage"
                                     className="w-36 h-36 object-cover"
                                     width="150"

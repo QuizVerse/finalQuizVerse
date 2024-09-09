@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Button } from "@mui/material";
+import {Box, Button, Checkbox, FormControlLabel, IconButton, Switch, TextField} from "@mui/material";
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import { useNavigate } from "react-router-dom";
+import CreateIcon from "@mui/icons-material/Create";
 
 export default function UpdateUser() {
   const [userData, setUserData] = useState(null);
@@ -56,7 +57,7 @@ export default function UpdateUser() {
       try {
         const response = await axios.get("/update/user/data");
         setUserData(response.data);
-        setUserNickname(response.data.nickname || ""); // 서버에서 가져온 닉네임 설정
+        setUserNickname(response.data.userNickname || ""); // 서버에서 가져온 닉네임 설정
       } catch (e) {
         console.error("Failed to fetch user data:", e);
       }
@@ -112,7 +113,7 @@ export default function UpdateUser() {
 
     const formData = new FormData();
     // 닉네임이 변경된 경우에만 추가
-    if (userNickname && userNickname !== userData.nickname && nicknamecheck) {
+    if (userNickname && userNickname !== userData.userNickname && nicknamecheck) {
       formData.append('userNickname', userNickname);
     }
 
@@ -150,143 +151,92 @@ export default function UpdateUser() {
         <div className="max-w-md mx-auto">
           <h1 className="mb-6 text-2xl font-bold text-center">회원 정보 수정</h1>
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex justify-center mb-4">
-            <span className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full">
-              {userData && userData.userImage ? (
-                  <img
-                      src={userData.userImagePreview ? userData.userImagePreview : `${photopath}/${userData.userImage}`}
-                      alt="User Profile"
-                      className="h-full w-full object-cover rounded-full"
-                  />
-              ) : (
-                  <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">
-                  U
-                </span>
-              )}
-            </span>
-              <button
-                  type="button"
-                  className="ml-2"
-                  onClick={() => fileInputRef.current.click()}
-              >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5"
-                >
-                  <path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10"></path>
-                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                  <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z"></path>
-                </svg>
-              </button>
-              <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-              />
+            <div className="flex justify-center mb-4 relative">
+              <div className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-full border border-[#cccccc]">
+                {userData && userData.userImage ? (
+                    <img
+                        src={userData.userImagePreview ? userData.userImagePreview : `${photopath}/${userData.userImage}`}
+                        alt="User Profile"
+                        className="h-full w-full object-cover rounded-full"
+                    />
+                ) : (
+                    <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">
+                    U
+                  </span>
+                )}
+              </div>
+              <div className={"absolute top-0 right-0"}>
+                <IconButton type="button" onClick={() => fileInputRef.current.click()}>
+                  <CreateIcon/>
+                </IconButton>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{display: "none"}}
+                    onChange={handleFileChange}
+                />
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <label
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
-                  htmlFor="nickname"
-              >
-                Nickname
-              </label>
-              <input
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+              <TextField
+                  fullWidth
+                  variant={"standard"}
+                  label={"Nickname"}
                   id="nickname"
                   placeholder="닉네임"
                   value={userNickname}
                   onChange={(e) => setUserNickname(e.target.value)}
               />
-              <button
-                  type="button"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-shrink-0"
-                  onClick={checkNickname}
-              >
-                중복확인
-              </button>
+              <Button type="button"
+                      onClick={checkNickname}
+                      variant={"outlined"}
+                      className={"whitespace-nowrap"}
+              >중복확인</Button>
             </div>
             <p className={`text-xs ${nicknamecheck ? 'text-green-500' : 'text-red-500'}`}>
               {nicknameMessage}
             </p>
-            <Button variant="contained" onClick={handlePasswordReset}>
+            <Button fullWidth
+                    variant="outlined"
+                    onClick={handlePasswordReset}>
               비밀번호 재설정
             </Button>
-            <div className="flex items-center space-x-2">
-              <label
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
-                  htmlFor="email-notifications"
-              >
-                이메일 정보 수신
-              </label>
-              <button
-                  type="button"
-                  role="switch"
-                  aria-checked="true"
-                  data-state="checked"
-                  value="on"
-                  className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
-                  id="email-notifications"
-                  onClick={() => setEmailNotification(!emailNotification)}
-              >
-              <span
-                  data-state="checked"
-                  className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
-              ></span>
-              </button>
-              <input
-                  type="checkbox"
-                  aria-hidden="true"
-                  tabIndex="-1"
-                  checked=""
-                  value="on"
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <label
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1"
-                  htmlFor="kakao-notifications"
-              >
-                카카오톡 정보 수신
-              </label>
-              <button
-                  type="button"
-                  role="switch"
-                  aria-checked="false"
-                  data-state="unchecked"
-                  value="on"
-                  className="peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input"
-                  id="kakao-notifications"
-                  onClick={() => setKakaoNotification(!kakaoNotification)}
-              >
-              <span
-                  data-state="unchecked"
-                  className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
-              ></span>
-              </button>
-              <input
-                  type="checkbox"
-                  aria-hidden="true"
-                  tabIndex="-1"
-                  value="on"
-              />
-            </div>
-            <button
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+            <Box>
+              <Box>
+                <FormControlLabel
+                    control={
+                      <Checkbox
+                          checked={emailNotification}
+                          onChange={() => setEmailNotification(!emailNotification)}
+                          name="email-notifications"
+                          color="primary"
+                      />
+                    }
+                    label="이메일 정보 수신"
+                />
+              </Box>
+              <Box>
+                <FormControlLabel
+                    control={
+                      <Checkbox
+                          checked={kakaoNotification}
+                          onChange={() => setKakaoNotification(!kakaoNotification)}
+                          name="kakao-notifications"
+                          color="primary"
+                      />
+                    }
+                    label="카카오톡 정보 수신"
+                />
+              </Box>
+            </Box>
+            <Button
+                fullWidth
+                variant="contained"
                 onClick={handleSubmit}
             >
               확인
-            </button>
+            </Button>
           </form>
         </div>
 

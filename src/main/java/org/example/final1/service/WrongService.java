@@ -1,7 +1,6 @@
 package org.example.final1.service;
 
 import lombok.AllArgsConstructor;
-import org.example.final1.model.QuestionDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.model.WrongDto;

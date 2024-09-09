@@ -4,11 +4,17 @@ package org.example.final1.service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.final1.model.*;
 import org.example.final1.repository.*;
+import org.example.final1.model.AnswerDto;
+import org.example.final1.model.ChoiceDto;
+import org.example.final1.model.QuestionDto;
+import org.example.final1.model.SolvedbookDto;
+import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +34,9 @@ public class AnswerService {
 
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private WrongRepository wrongRepository;
+
 
 
 
@@ -86,6 +95,9 @@ public class AnswerService {
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
+            // 정답 여부 처리 (추후 로직 추가 가능)
+            answer.setAnswerCorrect(false);
+
             // 답안 저장
             answerRepository.save(answer);
 
@@ -132,5 +144,7 @@ public class AnswerService {
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
     }
 
+
+}
 
 }

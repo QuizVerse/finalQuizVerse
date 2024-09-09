@@ -68,7 +68,7 @@ import AlarmModal from "./routes/devtest/AlarmModal";
 import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
-import {createTheme, ThemeProvider} from "@mui/material";
+import UpdateBook from "./routes/book/UpdateBook";
 
 const router = createBrowserRouter([
     {
@@ -195,6 +195,11 @@ const router = createBrowserRouter([
             {
                 path: "/book/new",
                 element: <NewBook />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: "/book/update/:bookId",
+                element: <UpdateBook />,
                 errorElement: <ErrorPage />,
             },
             {
@@ -370,23 +375,10 @@ const router = createBrowserRouter([
 
 ]);
 
-const colorTheme = createTheme({
-    palette: {
-        primary: {
-            main: '#FFC038',
-            // light: will be calculated from palette.primary.main,
-            // dark: will be calculated from palette.primary.main,
-            // contrastText: will be calculated to contrast with palette.primary.main
-        }
-    }
-});
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <ThemeProvider theme={colorTheme}>
         <RouterProvider router={router} />
-      </ThemeProvider>
   </React.StrictMode>
 );
 

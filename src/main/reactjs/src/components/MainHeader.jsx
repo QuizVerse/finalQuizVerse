@@ -80,10 +80,10 @@ export default function MainHeader() {
     return (
         <div>
 
-                <header className="flex items-center justify-between w-full px-4 py-2 border-b bg-[#171717]">
+                <header className="flex items-center justify-between w-full px-4 py-2 border-b">
                     <Link to='/'>
                         <h1 className="text-xl font-bold">
-                            <img src="/favicon.svg" alt="quizverse"/>
+                            <img src="/logo192.png" alt="quizverse" style={{width: "50px", borderRadius: "100%"}}/>
                         </h1>
                     </Link>
                     <nav className="flex items-center space-x-4">
@@ -109,7 +109,7 @@ export default function MainHeader() {
                                         src={userData.userImagePreview ? userData.userImagePreview : `${photopath}/${userData.userImage}`}
                                         alt="User Profile"
                                         style={{ width: '48px', height: '48px'}}
-                                        className="h-full w-full object-cover rounded-full border border-[#FFC038]"
+                                        className="h-full w-full object-cover rounded-full border border-[#cccccc]"
                                     />
                                 ) : (
                                     <span>User</span>

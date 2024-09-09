@@ -58,9 +58,7 @@ export default function Login() {
         window.location.href = "http://localhost:9002/oauth2/authorization/kakao";
     }
 
-    const [value, setValue] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [timerActive, setTimerActive] = useState(false);
 
     const onSetValue = (value) => {
         setUser_password(value);

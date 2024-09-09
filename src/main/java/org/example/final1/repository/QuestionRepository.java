@@ -19,4 +19,5 @@ public interface QuestionRepository extends JpaRepository<QuestionDto,Integer> {
     @Query("SELECT COUNT(q) FROM QuestionDto q WHERE q.book.bookId =:bookId")
     int countQuestionByBookId(@Param("bookId") int bookId);
 
+
 }
