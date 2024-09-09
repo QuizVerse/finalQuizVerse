@@ -4,6 +4,7 @@ import BookCard from "../../components/BookCard";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Button, MenuItem, TextField } from '@mui/material';
+import SearchInput from "../../components/SearchInput";
 
 // 필터 조건
 const conditions = [
@@ -103,24 +104,23 @@ export default function PublishedBook() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">나의 출제이력</h1>
         </div>
-        <div className="flex items-center mb-6 space-x-4">
-          <input
-              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-              placeholder="Search..."
-          />
-          <TextField
-              id="outlined-select-sort"
-              select
-              value={sort}
-              onChange={handleSortChange}
-          >
-            {conditions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-            ))}
-          </TextField>
-          <Button variant="contained">문제출제하기</Button>
+        <div className="flex items-center mb-6 space-x-4 justify-between">
+          <div className="flex items-center space-x-4">
+            <SearchInput/>
+            <TextField
+                id="outlined-select-sort"
+                select
+                value={sort}
+                onChange={handleSortChange}
+            >
+              {conditions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+              ))}
+            </TextField>
+          </div>
+          <Button variant="contained" size={"large"}>문제출제하기</Button>
         </div>
 
         {/* BookCard 출력 */}
