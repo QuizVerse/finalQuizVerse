@@ -75,35 +75,19 @@ public class TestController {
 
         // 시험 시작 관련 비즈니스 로직 처리
         try {
-            BookDto bookDto=bookService.getBookByBookId(bookId);
-
-            // 사용자의 해당 문제집(solvedbookId)이 있는지 조회
-            SolvedbookDto solvedBook = solvedbookService.findSolvedBookByUserAndBook(userDto, bookDto);
-            System.out.println("Controller solvedbookid: "+solvedBook);
+            SolvedbookDto solvedBook = solvedbookService.startTest(bookId, userDto); // 시험을 시작하고 solvedBook 반환
+            int wrongRepeat = wrongService.getWrongRepeat(solvedBook, userDto);//wrongrepeat값 반환
 
 
-            int wrongRepeat = 0;
-
-            if (solvedBook == null) {
-                // 처음 푸는 문제집일 경우 새로운 기록 생성
-                solvedBook = solvedbookService.startTest(bookId, userDto);
-            } else {
-                // 이미 푼 문제집일 경우, 오답 횟수 조회
-                wrongRepeat = wrongService.getWrongRepeat(solvedBook, userDto);
-            }
-
-            // 응답 데이터 생성
+            // 두 값을 Map에 담아 응답
             Map<String, Object> response = new HashMap<>();
             response.put("solvedBook", solvedBook);
             response.put("wrongRepeat", wrongRepeat);
-
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
     // 사용자가 제출한 답안을 저장하는 API 엔드포인트
 
     // 답안을 저장하는 엔드포인트

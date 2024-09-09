@@ -68,6 +68,8 @@ public class AnswerService {
                 boolean isCorrect = checkMultipleChoiceCorrect(question, choices);
                 answer.setAnswerCorrect(isCorrect);
 
+                answer.setWrongRepeat(wrongRepeat);
+
                 System.out.println(answer);
 
                 if (!isCorrect) {
@@ -84,6 +86,9 @@ public class AnswerService {
                 // 주관식 문제의 경우, 제출한 답안이 정답인지 확인
                 boolean isCorrect = checkSubjectiveCorrect(question, answerDto.getSubjectiveAnswer());
                 answer.setAnswerCorrect(isCorrect);
+                answer.setWrongRepeat(wrongRepeat);
+
+
 
                 if (!isCorrect) {
                     // 틀린 답안인 경우 오답 저장 로직 추가
@@ -95,8 +100,6 @@ public class AnswerService {
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
-            // 정답 여부 처리 (추후 로직 추가 가능)
-            answer.setAnswerCorrect(false);
 
             // 답안 저장
             answerRepository.save(answer);
@@ -123,11 +126,9 @@ public class AnswerService {
         // 선택한 답안과 정답 비교 (HashSet을 사용하여 선택한 답안과 정답이 일치하는지 확인)
         return new HashSet<>(selectedChoices).containsAll(correctChoices)
                 && new HashSet<>(correctChoices).containsAll(selectedChoices);
-
-
     }
 
-
+    // 주관식 답안 채점 로직
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
         // 주관식 문제의 정답 가져오기
@@ -137,7 +138,6 @@ public class AnswerService {
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
     }
 
-
 }
 
-}
+
