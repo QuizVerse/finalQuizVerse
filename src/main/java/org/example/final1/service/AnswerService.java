@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +104,16 @@ public class AnswerService {
 
         // 대소문자 구분 없이 공백을 제거하고 비교
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
+    }
+
+    // 주어진 questionIds에 대해 AnswerDto에서 answerCorrect 값을 가져옴
+    public Map<Integer, Boolean> getAnswerCorrectByQuestionIds(List<Integer> questionIds) {
+        List<AnswerDto> answers = answerRepository.findAllByQuestionQuestionIdIn(questionIds);
+        return answers.stream()
+                .collect(Collectors.toMap(
+                        answer -> answer.getQuestion().getQuestionId(),
+                        AnswerDto::getAnswerCorrect
+                ));
     }
 
 

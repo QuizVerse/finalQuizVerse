@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,4 +73,13 @@ public class QuestionService {
             questionRepository.save(existingQuestion);
         }
     }
+
+    // bookId에 해당하는 Question 질문 뽑아내고 list 만들어
+    public List<Integer> getQuestionIdsByBookId(int bookId) {
+        List<QuestionDto> questions = questionRepository.findAllByBookBookId(bookId);
+        return questions.stream()
+                .map(QuestionDto::getQuestionId)
+                .collect(Collectors.toList());
+    }
+
 }
