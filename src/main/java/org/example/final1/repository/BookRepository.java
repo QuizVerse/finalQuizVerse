@@ -20,4 +20,12 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
 
     List<BookDto> findByClass1_ClassId(Integer classId);
 
+    // 북마크 수가 많은 상위 5개의 책을 가져오는 쿼리
+    @Query("SELECT b, COUNT(bm.book) AS bookmarkCount " +
+            "FROM BookDto b LEFT JOIN BookmarkDto bm ON b.bookId = bm.book.bookId " +
+            "WHERE b.category.categoryId = :categoryId " +
+            "GROUP BY b.bookId " +
+            "ORDER BY bookmarkCount DESC")
+    List<Object[]> findTop5ByCategoryIdOrderByBookmarkCountDesc(@Param("categoryId") Integer categoryId);
+
 }
