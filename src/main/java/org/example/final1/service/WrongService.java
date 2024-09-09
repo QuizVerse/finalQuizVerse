@@ -19,20 +19,27 @@ public class WrongService {
 
     //1. 해당 solvedbook과 userid를 wrongdto에서 찾아서 만약 dto가 없으면 0을 반환하고, 있으면 하나만 꺼내서 wrong_repeat을 반환해준다.
 
-    public int getWrongRepeat(SolvedbookDto solvedbook,UserDto user){
+    public int getWrongRepeat(SolvedbookDto solvedbook, UserDto user) {
 
         List<WrongDto> wrongDtoList = wrongRepository.findBySolvedbookAndUser(solvedbook, user);
 
-        System.out.println("wrongDtoList"+wrongDtoList);
+        System.out.println("wrongDtoList: " + wrongDtoList);
 
         // 리스트가 비어있으면 0을 반환
         if (wrongDtoList.isEmpty()) {
             return 0;
         }
-        // 첫 번째 WrongDto의 wrongRepeat 값 반환
-        return wrongDtoList.get(0).getWrongRepeat();
-    }
 
+        System.out.println("wrongDtoList: " + wrongDtoList.stream()
+                .mapToInt(WrongDto::getWrongRepeat) // wrongRepeat 값을 가져옴
+                .max() );
+
+        // wrongRepeat 값 중 가장 큰 값을 반환
+        return wrongDtoList.stream()
+                .mapToInt(WrongDto::getWrongRepeat) // wrongRepeat 값을 가져옴
+                .max() // 가장 큰 값을 찾음
+                .orElse(0); // 만약 max 값이 없으면(리스트가 비어있으면) 0 반환
+    }
     //2. 오답노트가 생길때 wrong dto에 저장을 해주는데, wrong_repeat은 1이 더해진값과 이제 틀린 문제들 (qeustion) solvedbook을 저장해주면 된다.
 
     public void saveWrongAnswer(UserDto user, SolvedbookDto solvedbook, QuestionDto question, int wrongRepeat){
