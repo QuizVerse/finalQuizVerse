@@ -112,42 +112,23 @@ export default function Detail() {
   };
   const handleStartExam = async () => {
     try {
-      // 서버에 요청을 보내고 응답을 기다림
       const response = await axios.post('/book/test/start', { bookId: book_Id });
+      // solvedbookId가 어디에 있는지 확인
+      const { solvedBook, wrongRepeat } = response.data;
 
-      // 응답 데이터가 JSON 문자열이므로 파싱 필요
-      const parsedData = JSON.parse(response.data);
+      // solvedBook 객체 내의 solvedbookId를 추출
+      const solvedbookId = solvedBook.solvedbookId; // 서버 응답에 맞게 수정
 
-      // 서버로부터 받은 전체 응답 데이터를 출력하여 확인
-      console.log("Parsed Response data:", parsedData);
 
-      // 응답에서 solvedBook과 wrongRepeat를 구조 분해 할당으로 추출
-      const { solvedBook, wrongRepeat } = parsedData;
+      console.log('Exam started successfully', response.data);
 
-      // solvedBook이 정상적으로 존재하는지 확인
-      if (!solvedBook) {
-        console.error('SolvedBook is undefined:', parsedData);
-        return; // solvedBook이 없으면 여기서 중단
-      }
-
-      // solvedbookId가 있는지 확인
-      if (!solvedBook.solvedbookId) {
-        console.error('SolvedbookId is missing:', solvedBook);
-        return; // solvedbookId가 없으면 여기서 중단
-      }
-
-      // 정상적인 경우 solvedbookId를 가져와서 출력하고 처리
-      const solvedbookId = solvedBook.solvedbookId;
-      console.log('SolvedbookId:', solvedbookId);
-
-      // 네비게이션 처리
-      navigate(`/book/test/${book_Id}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
+      navigate(`/book/test/${book_Id}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);// solvedbookId를 URL에 포함하여 네비게이션
     } catch (error) {
-      // 오류가 발생한 경우 콘솔에 오류 메시지를 출력하고 사용자에게 알림
       console.error('Error starting exam:', error);
       alert('시험을 시작하는데 실패했습니다.');
     }
   };
+
 
   return (
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
