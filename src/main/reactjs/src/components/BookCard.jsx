@@ -212,7 +212,7 @@ export default function BookCard(props) {
                 MenuListProps={{ 'aria-labelledby': 'basic-button' }}
             >
                 <MenuItem><Link to={"/book/update/"+props.bookId}>문제집 설정</Link></MenuItem>
-                <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
+                <MenuItem><Link to={"/book/questionpreviewPDF/"+props.bookId}>문제집 미리보기</Link></MenuItem>
                 <MenuItem onClick={handleCopyBook}>복제하기</MenuItem>
                 <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
             </Menu>
@@ -235,7 +235,7 @@ export default function BookCard(props) {
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
                         <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
-                        <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
+                        <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "공개" : props.status === 1 ? "클래스 공개" : "비공개"}</p>
                     </Link>
 
                     {/*A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/}
