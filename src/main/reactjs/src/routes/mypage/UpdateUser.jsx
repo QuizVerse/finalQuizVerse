@@ -57,7 +57,7 @@ export default function UpdateUser() {
       try {
         const response = await axios.get("/update/user/data");
         setUserData(response.data);
-        setUserNickname(response.data.nickname || ""); // 서버에서 가져온 닉네임 설정
+        setUserNickname(response.data.userNickname || ""); // 서버에서 가져온 닉네임 설정
       } catch (e) {
         console.error("Failed to fetch user data:", e);
       }
@@ -113,7 +113,7 @@ export default function UpdateUser() {
 
     const formData = new FormData();
     // 닉네임이 변경된 경우에만 추가
-    if (userNickname && userNickname !== userData.nickname && nicknamecheck) {
+    if (userNickname && userNickname !== userData.userNickname && nicknamecheck) {
       formData.append('userNickname', userNickname);
     }
 

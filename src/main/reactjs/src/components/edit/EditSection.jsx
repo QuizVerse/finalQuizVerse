@@ -315,7 +315,7 @@ export default function EditSection({
                         </div>
                     </div>
                     <div className="flex gap-4 justify-end">
-                        <Tooltip title="섹션 복사">
+                        <Tooltip title="섹션 복제">
                             <IconButton onClick={onDuplicate}>
                                 <ContentCopyIcon/>
                             </IconButton>
