@@ -3,6 +3,7 @@ import axios from 'axios';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import {
+  Button,
   MenuItem,
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import {
 } from '@mui/material';
 import SearchInput from "../../components/SearchInput";
 import Paper from "@mui/material/Paper";
+import {Link} from "react-router-dom";
 
 // 필터 조건
 const conditions = [
@@ -64,8 +66,19 @@ export default function PublishedBook() {
 
   useEffect(() => {
     if (userId) {
+      axios.get(`/solvedbook/getall/${userId}`)
+          .then((response) => {
+            console.log("books", response.data);
+            setBookList(response.data); // 가져온 데이터를 bookList에 저장
+            setLoading(false); // 로딩 완료
+          })
+          .catch((error) => {
+            setError(error); // 에러 발생 시 처리
+            setLoading(false);
+          });
     }
   }, [userId]);
+
 
   // if (loading) return <div>Loading...</div>;
   // if (error) return <div>Error: {error.message}</div>;
@@ -92,30 +105,42 @@ export default function PublishedBook() {
                   <TableCell>문제집 이름</TableCell>
                   <TableCell>학습일시</TableCell>
                   <TableCell>제출일시</TableCell>
-                  <TableCell>정답수/문항수</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-
-                {currentBooks &&
+                {currentBooks.length > 0 ? (
                     currentBooks.map((row) => (
                         <TableRow
-                            key={row.classId}
-                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                            style={{cursor: "pointer"}}
+                            key={row.bookId}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            style={{ cursor: 'pointer' }}
                         >
                           <TableCell component="th" scope="row">
                             {row.bookTitle}
                           </TableCell>
-                          <TableCell>{row.solvedbookStart ? new Date(row.solvedbookStart).toLocaleString() : '-'}</TableCell>
-                          <TableCell>{row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}</TableCell>
-                          <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
-                          <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
+                          <TableCell>
+                            {row.solvedbookStart ? new Date(row.solvedbookStart).toLocaleString() : '-'}
+                          </TableCell>
+                          <TableCell>
+                            {row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant={"outlined"}>
+                              <Link to={"/book/score/"+row.bookId}>성적 확인</Link>
+                            </Button>
+                          </TableCell>
                         </TableRow>
                     ))
-                }
+                ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center">
+                        학습한 이력이 없습니다.
+                      </TableCell>
+                    </TableRow>
+                )}
               </TableBody>
+
             </Table>
           </TableContainer>
         </div>

@@ -2,6 +2,7 @@ package org.example.final1.service;
 
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.SolvedBookInfoDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.repository.BookRepository;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SolvedbookService {
@@ -76,5 +79,30 @@ public class SolvedbookService {
     public SolvedbookDto findSolvedBookByUserAndBook(UserDto userDto, BookDto bookDto) {
         // SolvedbookRepository를 사용하여 해당 사용자와 책의 기록을 찾아 반환
         return solvedBookRepository.findByUserAndBook(userDto, bookDto);
+    }
+
+
+    public List<SolvedBookInfoDto> getSolvedBooksByUserId(int userId) {
+        // 사용자의 다 푼 문제집 리스트 가져오기
+        List<SolvedbookDto> solvedBooks = solvedBookRepository.findByUserUserId(userId);
+
+        // SolvedBookInfoDto 리스트로 변환
+        return solvedBooks.stream().map(solvedBook -> {
+            BookDto book = solvedBook.getBook();
+
+            // BookDto와 SolvedbookDto의 정보를 합쳐서 새로운 DTO로 변환
+            return SolvedBookInfoDto.builder()
+                    .bookId(book.getBookId())
+                    .bookImage(book.getBookImage())
+                    .bookTitle(book.getBookTitle())
+                    .bookDescription(book.getBookDescription())
+                    .bookStatus(book.getBookStatus())
+                    .bookTimer(book.getBookTimer())
+                    .bookCreatedate(book.getBookCreatedate())
+                    .solvedbookStart(solvedBook.getSolvedbookStart())
+                    .solvedbookEnd(solvedBook.getSolvedbookEnd())
+                    .solvedbookTimer(solvedBook.getSolvedbookTimer())
+                    .build();
+        }).collect(Collectors.toList());
     }
 }
