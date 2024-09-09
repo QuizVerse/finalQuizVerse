@@ -16,12 +16,43 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import QuestionButtons from "../QuestionButtons";
 import Choices from "./EditChoices";
+import CustomConfirm from "../modal/CustomConfirm";
+import axios from "axios";
 
 const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
 
 export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete, totalQuestions, question, onUpdateQuestion, onUploadImage}) {
 
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
+
+    // confirm state
+    const [confirmVisible, setConfirmVisible] = useState(false);
+    const [confirmStatus, setConfirmStatus] = useState(0);
+
+    /**
+     * @description : Confirm창 열릴 때
+     * */
+    const openConfirm = (e) => {
+        setConfirmVisible(true);
+        setConfirmStatus(e.target.value);
+    };
+
+    /**
+     * @description : 취소 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn1 = () => {
+        setConfirmVisible(false);
+        setConfirmStatus(0);
+    };
+
+    /**
+     * @description : 확인 버튼 클릭시 실행되는 로직
+     * */
+    const clickBtn2 = () => {
+        setConfirmVisible(false);
+        onUpdateQuestion({questionType: confirmStatus})
+        setConfirmStatus(0);
+    };
 
     /** 드래그앤 드롭 관련 코드 */
     const ref = React.useRef(null); // 드래그 앤 드롭을 위한 요소 참조
@@ -130,7 +161,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                                 value={question.questionType}
                                 label="문제 형식"
                                 variant={"standard"}
-                                onChange={(e) => onUpdateQuestion({questionType: e.target.value})}
+                                onChange={(e) => openConfirm(e)}
                             >
                                 <MenuItem value={0}>선택형</MenuItem>
                                 <MenuItem value={1}>다중선택형</MenuItem>
@@ -232,7 +263,13 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
         </div>
     )
 }
+            {/* type 변경 Confirm */}
+            <CustomConfirm
+                id={17}
+                openConfirm={confirmVisible}
+                clickBtn1={clickBtn1}
+                clickBtn2={clickBtn2}
+            ></CustomConfirm>
 </div>
-)
-    ;
+);
 }

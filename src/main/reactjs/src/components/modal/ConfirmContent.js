@@ -118,6 +118,13 @@ const confirmContent = [
         btn1Text: "계속 출제하기",
         btn2Text: "마이페이지로 이동",
     },
+    {
+        id: 17,
+        title: "문제 형식을 변경하시겠습니까?",
+        content: "문제 형식을 변경하면 현재 작성한 답안은 모두 삭제됩니다.",
+        btn1Text: "",
+        btn2Text: "",
+    },
 ]
 
 export default confirmContent;

@@ -48,8 +48,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
+
+        System.out.println(request.getHeader(JwtProperties.HEADER_STRING).replace("Bearer ", ""));
         //jwt토큰을 검증을해서 정상적인 사용자인지 확인
         String jwtToken=request.getHeader(JwtProperties.HEADER_STRING).replace("Bearer ", "");
+
         String userEmail= JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().
                 verify(jwtToken).
                 getClaim("userEmail").

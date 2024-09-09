@@ -155,7 +155,7 @@ export default function PublishedBook() {
                       bookmarkCount={book.bookmarkCount}
                       bookQuestionCount={book.bookmarkCount}
                       bookSectionCount={book.bookSectionCount}
-
+                      status={book.bookStatus}
                   />
               ))
           ) : (

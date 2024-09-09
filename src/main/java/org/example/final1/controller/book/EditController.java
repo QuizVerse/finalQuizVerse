@@ -1,5 +1,6 @@
 package org.example.final1.controller.book;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.ChoiceDto;
@@ -14,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.example.final1.storage.NcpObjectStorageService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,7 +86,72 @@ public class EditController {
 
     }
 
-    /** 섹션 관련 */
+    // ai문제 추가
+    @PostMapping("/edit/ai/save")
+    public ResponseEntity<String> saveSectionWithQuestions(@RequestBody Map<String, Object> requestData) {
+
+        // ObjectMapper를 사용하여 JSON 데이터를 BookDto로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // BookDto 변환
+        BookDto bookDto = objectMapper.convertValue(requestData.get("book"), BookDto.class);
+
+        // Section 정보를 JSON에서 추출 및 변환
+        SectionDto sectionDto = new SectionDto();
+        int sectionNumber = sectionService.getAllSectionsByBook(bookDto).size() + 1;
+
+        sectionDto.setSectionNumber(sectionNumber);
+        sectionDto.setSectionTitle((String) requestData.get("sectionTitle"));
+        sectionDto.setSectionImage("");
+        sectionDto.setBook(bookDto);
+        sectionDto.setSectionDescription((String) requestData.get("sectionDescription"));
+
+        // 섹션 저장
+        SectionDto savedSection = sectionService.saveSection(sectionDto);
+
+        // Questions가 있는지 확인 후 처리
+        List<Map<String, Object>> questions = (List<Map<String, Object>>) requestData.get("questions");
+        if (questions != null) {
+            for (Map<String, Object> questionData : questions) {
+                // QuestionDto 생성 및 저장
+                QuestionDto questionDto = new QuestionDto();
+
+                // questionType을 Integer에서 Short로 변환
+                Integer questionTypeInt = (Integer) questionData.get("questionType");
+                questionDto.setQuestionType(questionTypeInt.shortValue());
+
+                questionDto.setQuestionTitle((String) questionData.get("questionTitle"));
+                questionDto.setQuestionSolution((String) questionData.get("questionSolution"));
+                questionDto.setQuestionOrder((Integer) questionData.get("questionOrder"));
+                questionDto.setQuestionDescriptionimage("");
+                questionDto.setQuestionDescription("");
+                questionDto.setQuestionSolutionimage("");
+                questionDto.setSection(savedSection);
+                questionDto.setBook(bookDto);
+
+                // 질문 저장
+                QuestionDto savedQuestion = questionService.saveQuestion(questionDto);
+
+                // Choices가 있는지 확인 후 처리
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) questionData.get("choices");
+                if (choices != null) {
+                    for (Map<String, Object> choiceData : choices) {
+                        // ChoiceDto 생성 및 저장
+                        ChoiceDto choiceDto = new ChoiceDto();
+                        choiceDto.setChoiceText((String) choiceData.get("choiceText"));
+                        choiceDto.setQuestion(savedQuestion);  // 저장된 질문 ID 설정
+                        choiceDto.setChoiceIsanswer(choiceData.get("choiceText").equals(questionData.get("correctAnswer")));
+                        choiceDto.setChoiceImage("");
+                        // 선택지 저장
+                        choiceService.saveChoice(choiceDto);
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.ok("저장됨");
+    }
+
     // 섹션 생성
     @PostMapping("/section/new")
     public ResponseEntity<SectionDto> insertSection(@RequestBody SectionDto dto) {
@@ -202,6 +265,27 @@ public class EditController {
     public ResponseEntity<List<ChoiceDto>> getAllChoices(@PathVariable("questionId") int questionId) {
         List<ChoiceDto> list = choiceService.getAllChoices(questionId);
         return ResponseEntity.ok(list);
+    }
+
+    // questionId를 가진 모든 choice 제거
+    @DeleteMapping("/choice/deleteall/{id}")
+    public ResponseEntity<Void> deleteChoice(@PathVariable("id") int questionId) {
+
+        // questionId에 해당하는 모든 Choice를 가져옴
+        List<ChoiceDto> choices = choiceService.getAllChoices(questionId);
+
+        // 각 Choice에 대한 이미지 삭제
+        for (ChoiceDto choice : choices) {
+            String image = choice.getChoiceImage();
+            if (image != null && !image.isEmpty()) {
+                storageService.deleteFile(bucketName, folderName, image);
+            }
+        }
+
+        // 모든 Choice 삭제
+        choiceService.deleteAllChoice(questionId);
+
+        return ResponseEntity.noContent().build();
     }
 
     /**

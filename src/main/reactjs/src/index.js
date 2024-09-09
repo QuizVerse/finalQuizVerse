@@ -24,6 +24,8 @@ import NewBook from './routes/book/NewBook';
 import Edit from './routes/book/Edit';
 import EditAi from './routes/book/EditAi';
 import QuestionPreview from './routes/book/QuestionPreview';
+import QuestionPreviewPDF from "./routes/book/QuestionPreviewPDF";
+
 import Test from './routes/book/Test';
 import Score from './routes/book/Score';
 import ScorePreview from './routes/book/ScorePreview';
@@ -217,6 +219,11 @@ const router = createBrowserRouter([
             {
                 path: '/book/questionpreview/:bookId',
                 element: <QuestionPreview />,
+                errorElement: <ErrorPage />,
+            },
+            {
+                path: '/book/questionpreviewPDF/:bookId',
+                element: <QuestionPreviewPDF />,
                 errorElement: <ErrorPage />,
             },
             {
