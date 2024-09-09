@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import axios from "axios";
 import Review from "../../components/modal/Review";
@@ -17,6 +17,12 @@ export default function ParentComponent() {
   const [error, setError] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
+  const { search } = useLocation();
+
+
+  const queryParmas=new URLSearchParams(search);
+  const wrongRepeat=queryParmas.get("wrongRepeat");
+
   const [timeLeft, setTimeLeft] = useState(null); // 남은 시간을 저장하는 상태
 
   // 새로고침 경고 추가
@@ -111,7 +117,7 @@ export default function ParentComponent() {
 
 
   const openConfirm = async () => {
-    console.log("answers:", answers); // 전송될 데이터 확인
+    console.log("answers:", answers);  // 전송될 데이터 확인
 
     const formattedAnswers = answers.map((answer) => {
       const answerData = {
@@ -137,11 +143,13 @@ export default function ParentComponent() {
     console.log("전송할 데이터:", formattedAnswers); // 최종 데이터 확인
 
     try {
-      const response = await axios.post(`/book/save/answers`, formattedAnswers);
+      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
       console.log("답안 제출 성공", response.data);
     } catch (error) {
+
       console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
     }
+
   };
 
   // 자동 제출을 처리하는 함수
