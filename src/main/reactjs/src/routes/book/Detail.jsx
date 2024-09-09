@@ -23,7 +23,8 @@ export default function Detail() {
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
   const [reviewData, setReviewData] = useState([]);
-  const [error, setError] = useState(null); // 에러 상태 추가
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [error, setError] = useState(null); // 에러 상태
 
   //사진
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
@@ -62,11 +63,13 @@ export default function Detail() {
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const response = await axios.get(`/book/detail/${book_Id}`); // 책 정보 엔드포인트 호출
+        const response = await axios.get(`/book/detail/${book_Id}`);
         setBookData(response.data);
-        console.log(response.data);
       } catch (error) {
+        setError("책 데이터를 불러오는 데 실패했습니다.");
         console.error("Error fetching book data:", error);
+      } finally {
+        setLoading(false); // 로딩 상태 해제
       }
     };
 
@@ -83,6 +86,10 @@ export default function Detail() {
     fetchBookData(); // 책 정보 가져오기 호출
     fetchReviewData(); // 리뷰 데이터 가져오기 호출
   }, [book_Id]);
+  // 로딩 중일 때 표시할 UI
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
 
   if (error) {
     return <div>{error}</div>; // 에러가 있을 때 표시
@@ -103,8 +110,6 @@ export default function Detail() {
         ? formattedDate.slice(0, -1)
         : formattedDate;
   };
-
-
   const handleStartExam = async () => {
     try {
       const response = await axios.post('/book/test/start', { bookId: book_Id });

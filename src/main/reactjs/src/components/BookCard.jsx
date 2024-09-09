@@ -12,7 +12,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CustomConfirm from "./modal/CustomConfirm";
 import axios from "axios";
 
-export default function BookCard(props, {user}) {
+export default function BookCard(props) {
+
+    const { user } = props;
 
     const siteUrl = "http://localhost:3000"
     const [state, setState] = useState({
@@ -54,22 +56,44 @@ export default function BookCard(props, {user}) {
      * */
     const clickBtn2 = () => {
         if(props.bookId === null || props.bookId === "") return;
-        if(user === null || user === "") openAlert("로그인이 필요한 서비스입니다.");
+        if(!user) openAlert("로그인이 필요한 서비스입니다.");
 
-        axios({
-            method:'delete',
-            url:'/publishedbook/delete/' + props.bookId,
-            params : user
-        }).then(res=>{
+        axios.delete('/publishedbook/delete/' + props.bookId, {
+            data: user // DELETE 요청에서 바디 데이터 전달
+        }).then(res => {
             console.log(res);
             setConfirmVisible(false);
-        })
+
+            // 부모 컴포넌트에 삭제된 책 ID 전달
+            if (props.onDelete) {
+                props.onDelete(props.bookId);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    };
+
+    // 문제집 복제 기능
+    const handleCopyBook = () => {
+        if (!user) {
+            openAlert("로그인이 필요한 서비스입니다.");
+            return;
+        }
+
+        axios.post('/publishedbook/copy/' + props.bookId, user)
+            .then(res => {
+                setSnackMessage("문제집이 성공적으로 복제되었습니다.");
+                setState({ open: true, Transition: Fade });
+            })
+            .catch(error => {
+                console.error("복제 실패", error);
+            });
     };
 
     // 북마크 추가 버튼 클릭 이벤트
     const handleBookmarkClick = () => {
         if (!props.isLoggedIn) {
-            alert("로그인이 필요합니다!.");
+            openAlert("로그인이 필요한 서비스 입니다.");
             return;
         }
 
@@ -89,12 +113,11 @@ export default function BookCard(props, {user}) {
     /**
      * @description : 링크 클릭시 발생하는 로직
      * */
-    const handleCopy = () => () => {
+    const handleCopy = () => {
         // snack message 교체
         setSnackMessage("클립보드에 복사되었습니다.");
         setState({ open: true, Transition: Fade });
     };
-
     /**
      * @description : 스낵바 닫힐때 발생하는 로직
      * */
@@ -164,14 +187,6 @@ export default function BookCard(props, {user}) {
                 key={state.Transition.name}
                 autoHideDuration={1200}
             />
-
-            {/* 기본 alert */}
-            <CustomAlert
-                title={alertTitle}
-                openAlert={alertVisible}
-                closeAlert={closeAlert} />
-
-            {/* 링크 복사하기 alert */}
             <CustomAlert
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
@@ -197,8 +212,8 @@ export default function BookCard(props, {user}) {
                 MenuListProps={{ 'aria-labelledby': 'basic-button' }}
             >
                 <MenuItem><Link to={"/book/update/"+props.bookId}>문제집 설정</Link></MenuItem>
-                <MenuItem onClick={handleSettingClose}>문제집 PDF 보기</MenuItem>
-                <MenuItem onClick={handleSettingClose}>복제하기</MenuItem>
+                <MenuItem><Link to={"/book/questionpreviewPDF/"+props.bookId}>문제집 미리보기</Link></MenuItem>
+                <MenuItem onClick={handleCopyBook}>복제하기</MenuItem>
                 <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
             </Menu>
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
@@ -220,7 +235,7 @@ export default function BookCard(props, {user}) {
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
                         <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
-                        <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "비공개" : "공개"}</p>
+                        <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "공개" : props.status === 1 ? "클래스 공개" : "비공개"}</p>
                     </Link>
 
                     {/*A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/}
@@ -229,7 +244,7 @@ export default function BookCard(props, {user}) {
                             <IconButton className="text-red-600" onClick={handleBookmarkClick}>
                                 {props.isBookmark ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                             </IconButton>
-                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openAlert}>
+                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openCopyAlert}>
                                 공유하기
                             </Button>
                         </div>
@@ -240,7 +255,7 @@ export default function BookCard(props, {user}) {
                             <IconButton className="text-red-600" onClick={handleSettingClick}>
                                 <SettingsIcon />
                             </IconButton>
-                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openAlert}>
+                            <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded" onClick={openCopyAlert}>
                                 공유하기
                             </Button>
                         </div>

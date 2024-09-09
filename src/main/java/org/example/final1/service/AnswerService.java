@@ -1,6 +1,9 @@
 package org.example.final1.service;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.example.final1.model.*;
+import org.example.final1.repository.*;
 import org.example.final1.model.AnswerDto;
 import org.example.final1.model.ChoiceDto;
 import org.example.final1.model.QuestionDto;
@@ -27,10 +30,17 @@ public class AnswerService {
     private SolvedbookRepository solvedbookRepository;
 
     @Autowired
+    private WrongService wrongService;
+
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
     private WrongRepository wrongRepository;
 
 
-    public void saveAnswers(List<AnswerDto> answers) {
+
+
+    public void saveAnswers(List<AnswerDto> answers, int wrongRepeat, HttpServletRequest request) {
         for (AnswerDto answerDto : answers) {
             AnswerDto answer = new AnswerDto();
 
@@ -44,6 +54,8 @@ public class AnswerService {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid solvedbook ID"));
             answer.setSolvedbook(solvedbook);
 
+            UserDto user=jwtService.getUserFromJwt(request);
+
             // Choice (객관식 답안일 경우) 매핑
             if (answerDto.getChoices() != null && !answerDto.getChoices().isEmpty()) {
                 List<ChoiceDto> choices = answerDto.getChoices().stream()
@@ -55,6 +67,16 @@ public class AnswerService {
                 // 객관식 문제의 경우, 선택한 답안이 정답인지 확인
                 boolean isCorrect = checkMultipleChoiceCorrect(question, choices);
                 answer.setAnswerCorrect(isCorrect);
+
+                answer.setWrongRepeat(wrongRepeat);
+
+                System.out.println(answer);
+
+                if (!isCorrect) {
+                    // 틀린 답안인 경우 오답 저장 로직 추가
+                    wrongService.saveWrongAnswer(user, solvedbook, question, wrongRepeat);
+                }
+
             }
 
             // 주관식 답안 처리
@@ -64,13 +86,20 @@ public class AnswerService {
                 // 주관식 문제의 경우, 제출한 답안이 정답인지 확인
                 boolean isCorrect = checkSubjectiveCorrect(question, answerDto.getSubjectiveAnswer());
                 answer.setAnswerCorrect(isCorrect);
+                answer.setWrongRepeat(wrongRepeat);
+
+
+
+                if (!isCorrect) {
+                    // 틀린 답안인 경우 오답 저장 로직 추가
+                    wrongService.saveWrongAnswer(user, solvedbook, question, wrongRepeat);
+                }
+
             }
 
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
 
-            // 정답 여부 처리 (추후 로직 추가 가능)
-            answer.setAnswerCorrect(false);
 
             // 답안 저장
             answerRepository.save(answer);
@@ -97,11 +126,9 @@ public class AnswerService {
         // 선택한 답안과 정답 비교 (HashSet을 사용하여 선택한 답안과 정답이 일치하는지 확인)
         return new HashSet<>(selectedChoices).containsAll(correctChoices)
                 && new HashSet<>(correctChoices).containsAll(selectedChoices);
-
-
     }
 
-
+    // 주관식 답안 채점 로직
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
         // 주관식 문제의 정답 가져오기
@@ -111,17 +138,6 @@ public class AnswerService {
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
     }
 
-    // 주어진 questionIds에 대해 AnswerDto에서 answerCorrect 값을 가져옴
-    public Map<Integer, Boolean> getAnswerCorrectByQuestionIds(List<Integer> questionIds) {
-        List<AnswerDto> answers = answerRepository.findAllByQuestionQuestionIdIn(questionIds);
-        return answers.stream()
-                .collect(Collectors.toMap(
-                        answer -> answer.getQuestion().getQuestionId(),
-                        AnswerDto::getAnswerCorrect
-                ));
-    }
-
-
 }
 
-}
+

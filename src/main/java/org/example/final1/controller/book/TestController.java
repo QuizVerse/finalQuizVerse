@@ -1,6 +1,7 @@
 package org.example.final1.controller.book;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.example.final1.model.*;
 import org.example.final1.repository.WrongRepository;
 import org.example.final1.service.*;
@@ -30,6 +31,7 @@ public class TestController {
     private WrongRepository wrongbookRepository;
     @Autowired
     private WrongService wrongService;
+
 
     public TestController(BookService bookService) {
         this.bookService = bookService;
@@ -86,15 +88,18 @@ public class TestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
     // 사용자가 제출한 답안을 저장하는 API 엔드포인트
 
     // 답안을 저장하는 엔드포인트
 
     @PostMapping("/save/answers")
-    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers) {
+    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers, @RequestParam int wrongRepeat, HttpServletRequest request) {
         try {
-            answerService.saveAnswers(answers);
+            answerService.saveAnswers(answers,wrongRepeat,request);
+
+            System.out.println("Wrong Repeat: " + wrongRepeat);
+
+
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
             System.err.println("Error saving answers: " + e.getMessage());
