@@ -109,6 +109,7 @@ public class AnswerService {
     }
 
 
+
     // 객관식 답안 채점 로직
     private boolean checkMultipleChoiceCorrect(QuestionDto question, List<ChoiceDto> selectedChoices) {
         // 선택한 문제의 모든 선택지 가져오기 (ChoiceRepository에서 questionId를 이용해 찾음)
@@ -129,16 +130,8 @@ public class AnswerService {
 
     // 주관식 답안 채점 로직
     private boolean checkSubjectiveCorrect(QuestionDto question, String subjectiveAnswer) {
-        // 주관식 문제에 해당하는 정답 선택지 (choice_text가 정답임) 가져오기
-        List<ChoiceDto> choices = choiceRepository.findByQuestionQuestionId(question.getQuestionId());
-
-        // 주관식 문제는 정답 선택지가 하나만 있다고 가정
-        ChoiceDto correctChoice = choices.stream()
-                .filter(ChoiceDto::getChoiceIsanswer) // 정답 선택지를 필터링
-                .findFirst()  // 첫 번째 정답을 가져옴
-                .orElseThrow(() -> new IllegalArgumentException("No correct answer found for this question"));
-
-        String correctAnswer = correctChoice.getChoiceText(); // 주관식 정답 (choice_text)
+        // 주관식 문제의 정답 가져오기
+        String correctAnswer = choiceRepository.findByQuestionQuestionId(question.getQuestionId()).toString();
 
         // 대소문자 구분 없이 공백을 제거하고 비교
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
@@ -147,4 +140,4 @@ public class AnswerService {
 
 }
 
-
+}
