@@ -55,7 +55,7 @@ public class PublishedBookController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
             @PathVariable("id") int id,
-            @RequestParam UserDto user) {
+            @RequestBody UserDto user) {
 
         // 문제집을 ID로 조회
         Optional<BookDto> bookOptional = bookService.getBookById(id);
@@ -81,6 +81,42 @@ public class PublishedBookController {
 
         return ResponseEntity.noContent().build(); // 성공적으로 삭제되면 204 반환
     }
+
+    // 문제집 복제
+    @PostMapping("/copy/{id}")
+    public ResponseEntity<BookDto> copyBook(
+            @PathVariable("id") int id,
+            @RequestBody UserDto user) {
+
+        // 문제집을 ID로 조회
+        Optional<BookDto> bookOptional = bookService.getBookById(id);
+
+        // 문제집이 존재하지 않으면 404 응답 반환
+        if (!bookOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        BookDto originalBook = bookOptional.get();
+
+        // 문제집 소유자가 복제 요청한 사용자와 일치하는지 확인 (null 안전성 확보)
+        if (!Objects.equals(originalBook.getUser().getUserId(), user.getUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 Forbidden 반환
+        }
+
+        // 문제집 복사본 생성
+        BookDto copiedBook = new BookDto();
+        copiedBook.setBookTitle(originalBook.getBookTitle() + " (복제본)");
+        copiedBook.setBookDescription(originalBook.getBookDescription());
+        copiedBook.setBookImage(originalBook.getBookImage());
+        copiedBook.setUser(user); // 복사한 사용자에게 소유권 설정
+
+        // 복제된 문제집 저장
+        BookDto savedCopiedBook = bookService.saveBook(copiedBook);
+
+        // 복제된 문제집 반환
+        return ResponseEntity.ok(savedCopiedBook);
+    }
+
 
 
 }
