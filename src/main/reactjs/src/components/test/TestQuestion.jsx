@@ -66,22 +66,6 @@ export default function TestQuestion({
                         </div>
                     </div>
                     <TestChoices question={question} onAnswerChange={onAnswerChange}/>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex gap-4">
-                            <Typography>{question.questionSolution}</Typography>
-                        </div>
-                        <div className={"flex justify-center"}>
-                            {/* Image Preview */}
-                            {question.questionSolutionimage !== "" ?
-                                <img
-                                    src={imagePath + question.questionSolutionimage}
-                                    alt="Cover"
-                                    className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
-                                /> : ""}
-                        </div>
-                    </div>
                 </div>
             )}
         </div>

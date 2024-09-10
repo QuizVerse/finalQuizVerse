@@ -12,6 +12,7 @@ import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +137,20 @@ public class AnswerService {
 
         // 대소문자 구분 없이 공백을 제거하고 비교
         return correctAnswer.trim().equalsIgnoreCase(subjectiveAnswer.trim());
+    }
+
+    public Map<String, Object> calculateScore(int bookId, int solvedId, int wrongRepeat) {
+        // 전체 문항 수
+        int totalQuestions = questionRepository.countByBookBookId(bookId);
+        // 정답 개수 조회
+        long correctAnswersCount = answerRepository.countBySolvedbookSolvedIdAndWrongRepeat(solvedId, wrongRepeat);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("correctAnswersCount", correctAnswersCount);
+        result.put("totalQuestions", totalQuestions);
+        result.put("score", (double) correctAnswersCount / totalQuestions * 100);
+
+        return result;
     }
 
 }
