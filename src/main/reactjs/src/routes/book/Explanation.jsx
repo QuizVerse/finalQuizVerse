@@ -9,7 +9,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import PanoramaFishEyeOutlinedIcon from "@mui/icons-material/PanoramaFishEyeOutlined";
 import { Button } from "@mui/material";
 import { CircularProgress, Alert } from "@mui/material";
-import ExplanationSection from "../../components/ExplanationSection";
+import ExplanationSection from "../../components/explanation/ExplanationSection";
 
 
 export default function Explanation() {

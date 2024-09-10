@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {IconButton, Typography} from "@mui/material";
-import PreviewQuestion from "./questionPreview/PreviewQuestion";
+import ExplanationPreviewQuestion from "./ExplanationPreviewQuestion";
 import axios from "axios";
 
 
@@ -79,7 +79,7 @@ export default function ExplanationSection({
                 </div>
             )}
             {questions.map((question, index) => (
-                <PreviewQuestion
+                <ExplanationPreviewQuestion
                     key={index}
                     index={index}
                     totalQuestions={questions.length}
