@@ -147,7 +147,7 @@ export default function UpdateUser() {
 
 
   return (
-      <main className="flex-1 p-8">
+      <main className="flex-1 py-12 px-6">
         <div className="max-w-md mx-auto">
           <h1 className="mb-6 text-2xl font-bold text-center">회원 정보 수정</h1>
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>

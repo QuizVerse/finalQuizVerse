@@ -192,7 +192,7 @@ const PdfPage = React.forwardRef(
         <table className="min-w-full p-4 border-2 border-gray-300">
           <tbody>
             <tr>
-              <td className="w-1/4 font-semibold text-lg bg-gray-100 py-3 border border-gray-300 text-center">
+              <td className="w-1/4 font-semibold text-lg bg-[#F7F7F7] py-3 border border-gray-300 text-center">
                 나의 점수
               </td>
               <td
@@ -203,7 +203,7 @@ const PdfPage = React.forwardRef(
               </td>
             </tr>
             <tr>
-              <td className="w-1/4 font-semibold text-lg py-3 bg-gray-100 border border-gray-300 text-center">
+              <td className="w-1/4 font-semibold text-lg py-3 bg-[#F7F7F7] border border-gray-300 text-center">
                 백분율 환산 점수
               </td>
               <td
@@ -214,13 +214,13 @@ const PdfPage = React.forwardRef(
               </td>
             </tr>
             <tr>
-              <td className="w-1/4 font-semibold text-lg py-3 bg-gray-100 border border-gray-300 text-center">
+              <td className="w-1/4 font-semibold text-lg py-3 bg-[#F7F7F7] border border-gray-300 text-center">
                 정답 문항 수
               </td>
               <td className="w-1/4 text-lg pr-5 border border-gray-300 text-end">
                 7 / 15개
               </td>
-              <td className="w-1/4 font-semibold text-lg bg-gray-100 border border-gray-300 text-center">
+              <td className="w-1/4 font-semibold text-lg bg-[#F7F7F7] border border-gray-300 text-center">
                 소요시간
               </td>
               <td className="w-1/4 text-lg pr-5 border border-gray-300 text-end">
@@ -250,7 +250,7 @@ const PdfPage = React.forwardRef(
                           <td
                             key={`number-${index}`}
                             style={{ width: "10%" }}
-                            className="text-center text-base bg-gray-100 font-semibold py-3 border border-gray-300"
+                            className="text-center text-base bg-[#F7F7F7] font-semibold py-3 border border-gray-300"
                           >
                             {answer.number}
                           </td>
