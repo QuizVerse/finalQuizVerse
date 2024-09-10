@@ -272,8 +272,13 @@ const Explanation = () => {
 
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
-                                    나의 답안: {userAnswer?.map(answer => `${getChoiceNumber(question.choices.indexOf(answer))} ${answer.choiceText}`).join(', ')}
+                                    나의 답안: {userAnswer?.map(answer => {
+                                    // 선택된 답안의 인덱스를 찾기
+                                    const index = question.choices.findIndex(choice => choice.choiceId === answer.choiceId);
+                                    return `${getChoiceNumber(index)} ${answer.choiceText}`;  // 번호와 텍스트를 표시
+                                  }).join(', ')}
                                   </Typography>
+
                                 </div>
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
@@ -285,7 +290,7 @@ const Explanation = () => {
                                 </div>
                                 <div className="w-full h-36 bg-blue-100 border rounded-lg mt-6 mb-10">
                                   <span className="block m-4 text-sm">[ 해 설 ]</span>
-                                  <p className="px-4">{question.explanation}</p>
+                                  <p className="px-4">{question.questionSolution}</p>
                                 </div>
                               </div>
                           );
