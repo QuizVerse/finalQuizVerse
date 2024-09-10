@@ -104,22 +104,7 @@ export default function PublishedBook() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">나의 출제이력</h1>
         </div>
-        <div className="flex items-center mb-6 space-x-4 justify-between">
-          <div className="flex items-center space-x-4">
-            <SearchInput/>
-            <TextField
-                id="outlined-select-sort"
-                select
-                value={sort}
-                onChange={handleSortChange}
-            >
-              {conditions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-              ))}
-            </TextField>
-          </div>
+        <div className="flex items-center space-x-4 justify-end mb-4">
           <Button variant="contained" size={"large"}>문제출제하기</Button>
         </div>
 
@@ -147,7 +132,6 @@ export default function PublishedBook() {
               <div>No books available</div>
           )}
         </div>
-
         {/* 페이지네이션 */}
         <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
           <Pagination

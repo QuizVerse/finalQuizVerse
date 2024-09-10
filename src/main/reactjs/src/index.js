@@ -238,7 +238,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/score/:bookId',
+                path: '/book/score/:bookId/:solvedbookId',
                 element: <Score />,
                 errorElement: <ErrorPage />,
             },
@@ -253,7 +253,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/book/explanation',
+                path: '/book/explanation/:bookId',
                 element: <Explanation />,
                 errorElement: <ErrorPage />,
             },

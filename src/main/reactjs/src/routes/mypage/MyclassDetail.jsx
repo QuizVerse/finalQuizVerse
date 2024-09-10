@@ -4,6 +4,8 @@ import AddClassMember from "../../components/modal/AddClassMember";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ConfirmRoleChangeModal from "../../components/modal/ConfirmRoleChangeModal";
+import {Button} from "@mui/material";
+import SearchInput from "../../components/SearchInput";
 
 export default function MyclassDetail() {
   const { classId } = useParams(); // URL 파라미터에서 classId를 가져옵니다.
@@ -47,12 +49,15 @@ export default function MyclassDetail() {
       try {
         const userResponse = await axios.get(`/myclass/${classId}/userrole`); // 사용자의 역할을 가져옵니다.
         setUserRole(userResponse.data);
+        console.log("=== userResponse====" + userResponse.data);
 
         const classResponse = await axios.get(`/myclass/${classId}/class`); // 사용자의 역할을 가져옵니다.
         setClassdata(classResponse.data);
+        console.log("===classResponse === "+ classResponse.data);
 
         const membersResponse = await axios.get(`/myclass/${classId}/members`); // 클래스 멤버들을 가져옵니다.
         setMembers(membersResponse.data.map((member) => ({ ...member, isSelected: false }))); // 멤버 리스트를 초기화합니다.
+        console.log("==== memberResponse ===" + membersResponse.data);
 
         const bookResponse = await axios.get(`/myclass/${classId}/books`); // 해당 클래스 책 목록 부르기
         setBooks(
@@ -222,6 +227,11 @@ export default function MyclassDetail() {
     }
   };
 
+  // 검색 시 navigate 처리
+  const handleSearch = (keyword) => {
+    setSearchQuery(keyword);
+  };
+
   return (
       <main className="flex-1 p-6">
         <h1 className="mb-6 text-2xl font-bold">
@@ -230,42 +240,20 @@ export default function MyclassDetail() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <input
-                  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-                  placeholder="Name, email, etc..."
+              <SearchInput
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-              />
+                  onSearch={handleSearch}/>
+
             </div>
             <div className="space-x-2">
               {userRole === 1 && (
                   <>
-                    <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                        onClick={memberAdd}
-                    >
-                      구성원 추가
-                    </button>
-                    <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                        onClick={memberDelete}
-                    >
-                      구성원 삭제
-                    </button>
-                    <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-                        onClick={changeRole}
-                    >
-                      방장 권한 부여
-                    </button>
+                    <Button variant={"outlined"} onClick={memberAdd}>구성원 추가</Button>
+                    <Button variant={"outlined"} onClick={memberDelete}>구성원 삭제</Button>
+                    <Button variant={"outlined"} onClick={changeRole}>방장 권한 부여</Button>
                   </>
               )}
-              <button
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                  onClick={leaveClass}
-              >
-                클래스 나가기
-              </button>
+              <Button variant={"contained"} onClick={leaveClass}>클래스 나가기</Button>
             </div>
           </div>
           {openAdd && (
@@ -399,9 +387,6 @@ export default function MyclassDetail() {
         </div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">클래스 공개 문제집</h2>
-          <a className="text-sm text-muted-foreground" href="#">
-            전체보기
-          </a>
         </div>
         <div className="grid grid-cols-4 gap-4">
           {books.map((book) => (

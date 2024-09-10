@@ -43,5 +43,12 @@ public class BookListController {
         return ResponseEntity.ok(true);  // 로그인 됨
     }
 
+    // 북마크 수가 많은 상위 5개의 책을 가져오는 엔드포인트
+    @GetMapping("/top5")
+    public ResponseEntity<List<BookDto>> getTop5BooksByBookmarkCount(@RequestParam("categoryId") Integer categoryId) {
+        List<BookDto> top5Books = bookService.getTop5BooksByBookmarkCount(categoryId);
+        return ResponseEntity.ok(top5Books);
+    }
+
 }
 

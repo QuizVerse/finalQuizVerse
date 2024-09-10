@@ -17,7 +17,7 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('배점 균등분배 가보자');
+    const [bookName, setBookName] = useState('클래스 멤버들도 문제 만들기');
     const [bookDescription, setBookDescription] = useState('제발');
     const [totalPoints, setTotalPoints] = useState('100');
     const [isChecked, setIsChecked] = useState(true);
@@ -234,18 +234,6 @@ export default function NewBook() {
                             value={totalPoints}
                             onChange={handleTotalPointsChange}
                         />
-                    </div>
-                    <div className="flex justify-between items-center space-x-2">
-                        <label className="text-sm font-medium">점수 균등 분배</label>
-                        <button
-                            type="button"
-                            role="switch"
-                            aria-checked={isChecked}
-                            className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
-                            onClick={toggleSwitch}
-                        >
-                            <span className={`pointer-events-none block h-5 w-5 rounded-full ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
-                        </button>
                     </div>
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">

@@ -65,7 +65,6 @@ export default function EditAi() {
             jsonData &&
             jsonData.sectionTitle &&
             jsonData.sectionDescription &&
-            jsonData.questions.questionType === 0 &&
             Array.isArray(jsonData.questions) &&
             jsonData.questions.length > 0
         );
@@ -84,6 +83,7 @@ export default function EditAi() {
                 setHistory((prevHistory) => [...prevHistory, { prompt: userInput, result: jsonData }]); // 히스토리에 추가
                 console.log(jsonData);
             } else {
+                console.log(jsonData);
                 openAlert("데이터를 불러오지 못했습니다. 다시 시도해 주세요.");
             }
         } catch (error) {
