@@ -73,27 +73,7 @@ export default function StudyRoom() {
         if (isCamOn) {
             startVideoPreview(); 
         } else {
-            stopVideoPreview();
-            if (localTrack) {
-                localTrack.stop(); // 비디오 트랙을 중지합니다.
-                await room.localParticipant.unpublishTrack(localTrack); // 방에서 트랙 언퍼블리시
-                setLocalTrack(null); // 트랙을 비활성화하여 화면에서 제거
-            }
-        }
-        // 카메라 상태가 꺼져 있을 때 카메라 켜기 로직 추가
-        if (isCamOn) {
-            try {
-                // 사용자의 비디오 장치에서 비디오 스트림을 생성
-                const stream = navigator.mediaDevices.getUserMedia({ video: true });
-                const videoTrack = stream.getVideoTracks()[0];
-                const localVideoTrack = new LocalVideoTrack(videoTrack);
-
-                // 화상방에 로컬 비디오 트랙을 퍼블리시
-                await room.localParticipant.publishTrack(localVideoTrack);
-                setLocalTrack(localVideoTrack); // 트랙을 상태에 설정
-            } catch (error) {
-                console.error("카메라를 켜는 도중 오류가 발생했습니다:", error);
-            }
+            await stopVideoPreview();
         }
         setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
     };
@@ -118,17 +98,14 @@ export default function StudyRoom() {
         try {
             // 사용자의 비디오 장치에서 비디오 스트림을 생성
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            //const videoTrack = stream.getVideoTracks()[0];
             setPreviewStream(stream); // 미리보기 스트림 설정
-            //const startVideoTrack = new LocalVideoTrack(videoTrack);
-            //setLocalTrack(startVideoTrack);
         } catch (error) {
             console.error("비디오 미리보기를 활성화할 수 없습니다:", error);
         }
     };
 
     // 방에 참가하지 않으면 미리보기 종료
-    const stopVideoPreview = () => {
+    const stopVideoPreview = async () => {
         if (previewStream) {
             previewStream.getTracks().forEach((track) => track.stop());
             setPreviewStream(null);
@@ -146,13 +123,6 @@ export default function StudyRoom() {
     }, [room]); // room 상태 변경에 따라 미리보기 상태를 관리
 
     async function joinRoom() {
-        // if (isCamOn) {
-        //     console.log("카메라 끈 상태로 입장 중"); // 카메라가 꺼진 상태로 입장
-        //     setLocalTrack(null); // 로컬 비디오 트랙 비활성화
-        // } else {
-        //     startVideoPreview(); // 카메라가 켜진 상태로 입장
-        // }
-
         // 새 Room 객체 초기화
         const room = new Room();
         setRoom(room);
@@ -281,47 +251,34 @@ export default function StudyRoom() {
         }
     }    
 
-    // //카메라 켜기
-    // async function enableCamera() {
-    //     // // 사용자의 비디오 장치에서 비디오 스트림을 생성
-    //     // const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //     // const videoTrack = stream.getVideoTracks()[0];
-    //     // const localVideoTrack = new LocalVideoTrack(videoTrack);
-    //     // await room.localParticipant.publishTrack(localVideoTrack);
-    //     // setLocalTrack(localVideoTrack);
-    //     // setIsCameraEnabled(true); // 카메라가 켜졌다고 설정
-    //     if (isCamOn) {
-    //         // 사용자의 비디오 장치에서 비디오 스트림을 생성
-    //         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //         const videoTrack = stream.getVideoTracks()[0];
-    //         const localVideoTrack = new LocalVideoTrack(videoTrack);
-    
-    //         // 화상방에 로컬 비디오 트랙을 퍼블리시
-    //         await room.localParticipant.publishTrack(localVideoTrack);
-    
-    //         // 로컬 트랙을 상태에 설정
-    //         setLocalTrack(localVideoTrack);
-    //         setIsCamOn(true); // 카메라가 켜졌다고 설정
-    //     }
-    // }
-    // //카메라 끄기
-    // async function disableCamera() {
-    //     if (localTrack) {
-    //         await room.localParticipant.unpublishTrack(localTrack);
-    //         localTrack.stop(); // 비디오 트랙을 중지합니다.
-    //         setLocalTrack(null);
-    //     }
-    //     setIsCameraEnabled(false);
-    // }
-    // //카메라 토글 함수
-    // async function toggleCamera() {
-    //     if (isCameraEnabled) {
-    //         await disableCamera();
-    //     } else {
-    //         await enableCamera();
-    //     }
-    //     setIsCameraEnabled(!isCameraEnabled);
-    // }
+    //카메라 켜기
+    async function enableCamera() {
+        // // 사용자의 비디오 장치에서 비디오 스트림을 생성
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoTrack = stream.getVideoTracks()[0];
+        const localVideoTrack = new LocalVideoTrack(videoTrack);
+        await room.localParticipant.publishTrack(localVideoTrack);
+        setLocalTrack(localVideoTrack);
+        setIsCameraEnabled(true); // 카메라가 켜졌다고 설정
+    }
+    //카메라 끄기
+    async function disableCamera() {
+        if (localTrack) {
+            await room.localParticipant.unpublishTrack(localTrack);
+            localTrack.stop(); // 비디오 트랙을 중지합니다.
+            setLocalTrack(null);
+        }
+        setIsCameraEnabled(false);
+    }
+    //카메라 토글 함수
+    async function toggleCamera() {
+        if (isCameraEnabled) {
+            await disableCamera();
+        } else {
+            await enableCamera();
+        }
+        setIsCameraEnabled(!isCameraEnabled);
+    }
     // 마이크 음소거 기능
     const toggleMicrophone = async () => {
     if (isMicrophoneMuted) {
@@ -661,7 +618,7 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                 ))}
                             </div>
                             <div id="layout-container" className="flex-grow h-[80vh]">
-                                {isCamOn && localTrack && (
+                                {!isCamOn && localTrack && (
                                     <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
                                 )}
                                 {/* 일반 비디오 및 오디오 트랙 렌더링 */}
