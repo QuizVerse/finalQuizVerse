@@ -73,7 +73,7 @@ export default function Wrong() {
   const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
   return (
-      <main className="flex-1 p-6">
+      <main className="flex-1 py-12 px-6">
         <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
         {/* BookCard 목록 출력 */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

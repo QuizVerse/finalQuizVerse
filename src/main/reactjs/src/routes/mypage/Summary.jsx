@@ -96,7 +96,7 @@ export default function Summary() {
     };
 
     return (
-        <main className="flex-1 p-8">
+        <main className="flex-1 py-12 px-6">
             <section className="mb-8">
                 <h2 className="mb-4 text-2xl font-bold">개요</h2>
                 <div className="grid grid-cols-4 gap-4">
