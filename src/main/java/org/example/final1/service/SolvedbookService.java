@@ -2,6 +2,7 @@ package org.example.final1.service;
 
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.SolvedBookInfoDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.repository.BookRepository;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SolvedbookService {
@@ -26,7 +29,15 @@ public class SolvedbookService {
         BookDto book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
 
-        // 시험 응시 기록 생성 및 저장 (SolvedBook)
+        // 이미 존재하는 Solvedbook을 찾기
+        SolvedbookDto existingSolvedBook = findSolvedBookByUserAndBook(userDto, book);
+
+        if (existingSolvedBook != null) {
+            // 이미 풀었던 문제집일 경우 기존 solvedBook 반환
+            return existingSolvedBook;
+        }
+
+        // 기록이 없으면 새로 생성하여 저장
         SolvedbookDto solvedBook = SolvedbookDto.builder()
                 .book(book)
                 .user(userDto)
@@ -35,7 +46,7 @@ public class SolvedbookService {
 
         // 저장
         SolvedbookDto savedSolvedBook = solvedBookRepository.save(solvedBook);
-        return savedSolvedBook; // 저장된 solvedBook 반환
+        return savedSolvedBook; // 새로 저장된 solvedBook 반환
     }
 
     // 사용자 ID가 응시한 문제집 총 개수 가져오기
@@ -44,7 +55,7 @@ public class SolvedbookService {
     }
 
     // 시간만 저장하는 로직
-    public void saveRemainingTime(UserDto userDto, int bookId, int timeLeft) {
+  /*  public void saveRemainingTime(UserDto userDto, int bookId, int timeLeft) {
         // 사용자 정보(userDto)와 연관된 solvedbook 엔티티에서 남은 시간 저장
         Optional<SolvedbookDto> solvedBookOpt = solvedBookRepository.findByUserIdAndBookId(userDto.getUserId(), bookId);
 
@@ -60,7 +71,7 @@ public class SolvedbookService {
             // 만약 해당 사용자의 시험 기록이 없으면 예외 처리 혹은 새로운 레코드 생성 가능
             System.out.println("해당 사용자의 시험 기록을 찾을 수 없습니다.");
         }
-    }
+    }*/
 
 
 
@@ -68,5 +79,30 @@ public class SolvedbookService {
     public SolvedbookDto findSolvedBookByUserAndBook(UserDto userDto, BookDto bookDto) {
         // SolvedbookRepository를 사용하여 해당 사용자와 책의 기록을 찾아 반환
         return solvedBookRepository.findByUserAndBook(userDto, bookDto);
+    }
+
+
+    public List<SolvedBookInfoDto> getSolvedBooksByUserId(int userId) {
+        // 사용자의 다 푼 문제집 리스트 가져오기
+        List<SolvedbookDto> solvedBooks = solvedBookRepository.findByUserUserId(userId);
+
+        // SolvedBookInfoDto 리스트로 변환
+        return solvedBooks.stream().map(solvedBook -> {
+            BookDto book = solvedBook.getBook();
+
+            // BookDto와 SolvedbookDto의 정보를 합쳐서 새로운 DTO로 변환
+            return SolvedBookInfoDto.builder()
+                    .bookId(book.getBookId())
+                    .bookImage(book.getBookImage())
+                    .bookTitle(book.getBookTitle())
+                    .bookDescription(book.getBookDescription())
+                    .bookStatus(book.getBookStatus())
+                    .bookTimer(book.getBookTimer())
+                    .bookCreatedate(book.getBookCreatedate())
+                    .solvedbookStart(solvedBook.getSolvedbookStart())
+                    .solvedbookEnd(solvedBook.getSolvedbookEnd())
+                    .solvedbookTimer(solvedBook.getSolvedbookTimer())
+                    .build();
+        }).collect(Collectors.toList());
     }
 }

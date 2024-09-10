@@ -132,7 +132,6 @@ export default function PublishedBook() {
               <div>No books available</div>
           )}
         </div>
-
         {/* 페이지네이션 */}
         <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
           <Pagination
