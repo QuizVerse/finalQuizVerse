@@ -558,12 +558,12 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                 ) : (
                     <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[80vh]">
 
-                        <div className="flex flex-col bg-gray-100 p-4 h-[80vh]">
-                            사용자들이 나올 화면<br/>
-                            시바타 유니<br/>
-                            정상혁<br/>
-                            우태형<br/>
-                            도훈하윤<br/>
+                        <div className="flex flex-col bg-[#F7F7F7] p-4 h-[80vh]">
+                            사용자들이 나올 화면<br />
+                            시바타 유니<br />
+                            정상혁<br />
+                            우태형<br />
+                            도훈하윤<br />
                             막내 aka 민지박
                         </div>
 
