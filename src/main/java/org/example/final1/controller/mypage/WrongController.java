@@ -1,12 +1,19 @@
 package org.example.final1.controller.mypage;
 
 
+<<<<<<< HEAD
 import jakarta.servlet.http.HttpServletRequest;
+=======
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
+>>>>>>> b1f3b313129f5eb791b2934ee150a4a7be597199
 import org.example.final1.model.UserDto;
 import org.example.final1.model.WrongDto;
 import org.example.final1.service.JwtService;
 import org.example.final1.service.WrongService;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -50,4 +57,35 @@ public class WrongController {
         return ResponseEntity.ok(wrongNotes);
     }
 
+=======
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+
+@AllArgsConstructor
+@Controller
+public class WrongController {
+
+    @Autowired
+    private final WrongService wrongService;
+
+    @Autowired
+    private final JwtService jwtService;
+
+
+
+    //오답노트 목록 불러오기
+    @GetMapping("/wrongbook/user")
+    public List<WrongDto> getWrongBooksByUserId(HttpServletRequest request) {
+        UserDto userDto=jwtService.getUserFromJwt(request);
+        int userId=userDto.getUserId();
+
+        return wrongService.getWrongBooksByUserId(userId);
+    }
+>>>>>>> b1f3b313129f5eb791b2934ee150a4a7be597199
 }
