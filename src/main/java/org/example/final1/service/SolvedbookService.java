@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,4 +104,22 @@ public class SolvedbookService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+
+    public SolvedbookDto getSolvedBookById(Integer solvedbookId) {
+        return solvedBookRepository.findBySolvedbookId(solvedbookId)
+                .map(this::convertToDto)
+                .orElse(null); // solvedbookId로 존재하는 solvedBook을 반환, 없으면 null
+    }
+
+    private SolvedbookDto convertToDto(SolvedbookDto solvedbook) {
+        // 엔티티를 Dto로 변환하는 로직
+        SolvedbookDto solvedbookDto = new SolvedbookDto();
+        solvedbookDto.setSolvedbookId(solvedbook.getSolvedbookId());
+        solvedbookDto.setSolvedbookId(solvedbook.getBook().getBookId());
+        // 필요한 필드들 추가
+        return solvedbookDto;
+    }
+
+
 }

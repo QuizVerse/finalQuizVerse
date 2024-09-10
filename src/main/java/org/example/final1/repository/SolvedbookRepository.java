@@ -23,4 +23,7 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
     SolvedbookDto findByUserAndBook(UserDto userDto, BookDto bookDto);
 
     List<SolvedbookDto> findByUserUserId(int userId);
+
+    Optional<SolvedbookDto> findBySolvedbookId(Integer solvedbookId);
+
 }

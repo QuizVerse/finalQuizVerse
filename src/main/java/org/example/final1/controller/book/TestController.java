@@ -145,4 +145,38 @@ public class TestController {
 
     }
 
+    // 시험 종료 요청 처리
+    @PostMapping("/test/finish")
+    public ResponseEntity<Map<String, Object>> finishTest(@RequestBody Map<String, Integer> requestBody, HttpServletRequest request) {
+        Integer bookId = requestBody.get("bookId");
+        Integer solvedbookId = requestBody.get("solvedbookId");
+
+        // JWT에서 사용자 정보 추출
+        UserDto userDto = jwtService.getUserFromJwt(request);
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        try {
+            // solvedbookId로 기존 solvedBook 정보 조회
+            SolvedbookDto solvedBook = solvedbookService.getSolvedBookById(solvedbookId);
+            if (solvedBook == null || !solvedBook.getBook().equals(bookId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            int wrongRepeat = wrongService.getWrongRepeat(solvedBook, userDto); // wrongRepeat 값 반환
+
+            // 응답 데이터 생성
+            Map<String, Object> response = new HashMap<>();
+            response.put("solvedbookId", solvedBook.getSolvedbookId());
+            response.put("solvedBook", solvedBook);
+            response.put("wrongRepeat", wrongRepeat);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 }
