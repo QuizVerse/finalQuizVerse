@@ -166,7 +166,7 @@ public class MyclassController {
     }
 
     @GetMapping("/{classId}/leave")
-    public ResponseEntity<String> leaveClass(@PathVariable Integer classId, HttpServletRequest request) {
+    public ResponseEntity<String> leaveClass(@PathVariable("classId") Integer classId, HttpServletRequest request) {
 
         UserDto userDto = jwtService.getUserFromJwt(request);
         if (userDto != null) {
@@ -229,9 +229,9 @@ public class MyclassController {
 
 
     @GetMapping("/{classId}/books")
-    public ResponseEntity<List<BookDto>> roleMembers(@PathVariable Integer classId) {
+    public ResponseEntity<List<BookDto>> roleMembers(@PathVariable("classId") Integer classId) {
         List<BookDto> books;
-        books = bookRepository.findByClass1_ClassId(classId);
+        books = bookRepository.findByClass1ClassId(classId);
         return ResponseEntity.ok(books);
     }
 
@@ -240,7 +240,7 @@ public class MyclassController {
     @PostMapping("/{classId}/changeLeader")
     @Transactional
     public ResponseEntity<String> changeLeader(
-            @PathVariable Integer classId,
+            @PathVariable("classId") Integer classId,
             @RequestBody Map<String, Integer> request,
             HttpServletRequest httpServletRequest) {
 
@@ -278,7 +278,7 @@ public class MyclassController {
     }
     @Transactional
     @GetMapping("/{classId}/delete")
-    public ResponseEntity<String> deleteClass(@PathVariable Integer classId){
+    public ResponseEntity<String> deleteClass(@PathVariable("classId") Integer classId){
         try {
             classRepository.deleteById(classId);
             System.out.println("시작이젤무서워 미루니");

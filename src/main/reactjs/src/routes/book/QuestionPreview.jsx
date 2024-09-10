@@ -137,12 +137,16 @@ export default function QuestionPreview() {
                     <Typography variant="h6">
                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        color="primary">
-                        출제하기
-                    </Button>
+                    <div className={"space-x-2"}>
+                        <Button variant={"outlined"}
+                                onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
+                        <Button
+                            onClick={handleSubmit}
+                            variant="contained"
+                            color="primary">
+                            출제하기
+                        </Button>
+                    </div>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
                     <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
