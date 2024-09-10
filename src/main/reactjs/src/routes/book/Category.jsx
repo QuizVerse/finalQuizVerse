@@ -155,7 +155,9 @@ export default function Category() {
         </div>
         <section className="grid grid-cols-5 gap-4">
           {currentItems.length > 0 ? (
-              currentItems.map(book => (
+              currentItems
+                  .filter(book => book.bookStatus === 0 || book.bookStatus ===1)  // status가 0 또는 1일 때만 필터링
+                  .map(book => (
                   <div key={book.bookId}>
                     <BookCard
                         cardType="A"
@@ -170,6 +172,7 @@ export default function Category() {
                         isBookmark={book.isBookmark}
                         updateBookmark={() => clickBookmark(book.bookId)}
                         isLoggedIn={isLoggedIn}
+                        status={book.bookStatus}
                     />
                   </div>
               ))
