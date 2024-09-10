@@ -1,28 +1,49 @@
+import React from 'react';
+import { Box, Typography, Avatar, IconButton } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
 
-export default function StudyRoomCard(props) {
+export default function StudyRoomCard({ image, title, description, nowMember, totalMember, status, onClick }) {
+
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/study/";
+
     return (
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm flex items-center p-4"
-             data-v0-t="card"
-             onClick={props.onClick} // 클릭 핸들러 추가
-             style={{ cursor: "pointer" }} // 클릭 가능한 느낌을 주기 위해 커서 스타일 추가
-             >
-            <span className="relative flex shrink-0 overflow-hidden rounded-full w-16 h-16">
-                <img src={props.image}/>
-            </span>
-            <div className="flex flex-col flex-1 ml-4">
-                <h2 className="text-lg font-semibold">{props.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                    {props.description}
-                </p>
-            </div>
-            <div className="flex items-center gap-2 flex-col justify-between">
-                <span className="text-sm">{props.nowMember}/{props.totalMember}</span>
-                    {props.status === "0" ? <LockOpenIcon/> : <LockIcon/>}
-            </div>
-        </div>
+        <Box
+            sx={{
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: 'divider',
+                backgroundColor: 'background.paper',
+                boxShadow: 1,
+                display: 'flex',
+                alignItems: 'center',
+                p: 2,
+                cursor: 'pointer'
+            }}
+            data-v0-t="card"
+            onClick={onClick}
+        >
+            <Avatar
+                src={photopath + image}
+                alt={title}
+                sx={{ width: 64, height: 64 }}
+            />
+            <Box sx={{ flex: 1, ml: 2 }}>
+                <Typography variant="h6" component="h2">
+                    {title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {description}
+                </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 1 }}>
+                <Typography variant="body2">
+                    {nowMember}/{totalMember}
+                </Typography>
+                <IconButton>
+                    {status === 1 ? <LockOpenIcon /> : <LockIcon />}
+                </IconButton>
+            </Box>
+        </Box>
     );
 }
-
-

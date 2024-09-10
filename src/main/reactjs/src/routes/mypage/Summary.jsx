@@ -96,7 +96,7 @@ export default function Summary() {
     };
 
     return (
-        <main className="flex-1 p-8">
+        <main className="flex-1 py-12 px-6">
             <section className="mb-8">
                 <h2 className="mb-4 text-2xl font-bold">개요</h2>
                 <div className="grid grid-cols-4 gap-4">
@@ -109,7 +109,7 @@ export default function Summary() {
             <section className="mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">
-                        <span className="text-blue-500">{user.userNickname}</span>님이 만든 문제집
+                        <span className="text-[#3877BB]">{user.userNickname}</span>님이 만든 문제집
                     </h2>
                     <Button
                         className="rounded-lg border bg-card text-card-foreground shadow-sm"
@@ -162,7 +162,7 @@ export default function Summary() {
 }
 
 const Card = ({ title, count }) => (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4" data-v0-t="card">
+    <div className="rounded-lg border bg-card text-card-foreground shadow-lg p-4" data-v0-t="card">
         <div className="p-6">
             <h3 className="mb-2 text-lg font-semibold">{title}</h3>
             <div className="text-3xl font-bold">{count}개</div>

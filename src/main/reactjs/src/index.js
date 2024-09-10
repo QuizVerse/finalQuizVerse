@@ -37,7 +37,6 @@ import Category from './routes/book/Category';
 // Study 관련 컴포넌트
 import StudyList from './routes/study/StudyList';
 import StudyRoom from './routes/study/StudyRoom';
-import SearchRoom from './routes/study/SearchRoom';
 
 // MyPage 관련 컴포넌트
 import Book from "./routes/book/book";
@@ -69,6 +68,7 @@ import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
 import UpdateBook from "./routes/book/UpdateBook";
+import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 
 const router = createBrowserRouter([
     {
@@ -294,12 +294,6 @@ const router = createBrowserRouter([
                 element: <StudyRoom />,
                 errorElement: <ErrorPage />,
             },
-            {
-                path: '/study/searchroom',
-                element: <SearchRoom />,
-                errorElement: <ErrorPage />,
-            },
-
         ]
     },
     {
@@ -374,12 +368,31 @@ const router = createBrowserRouter([
 
 
 ]);
+const colorTheme = createTheme({
+    palette: {
+        primary: {
+            main: '#1F4976',
+        },
+    },
+    components: {
+        MuiTableHead: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: '#F7F7F7', // 테이블 헤더 배경색 변경
+                },
+            },
+        },
+    },
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-        <RouterProvider router={router} />
-  </React.StrictMode>
+    <React.StrictMode>
+        <ThemeProvider theme={colorTheme}>
+            <CssBaseline />
+            <RouterProvider router={router} />
+        </ThemeProvider>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

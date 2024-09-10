@@ -12,7 +12,8 @@ export default function TestSection({
                                     index,
                                     sectionCount,
                                     section,
-                                    setLoading,
+                                        filterquestions,
+                                        setLoading,
                                         onAnswerChange
                                 }) {
 
@@ -142,7 +143,7 @@ export default function TestSection({
                     </div>
                 </div>
             )}
-            {questions.map((question, index) => (
+            {filterquestions.map((question, index) => (
                 <TestQuestion
                     key={index}
                     index={index}

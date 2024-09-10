@@ -15,6 +15,10 @@ const ITEMS_PER_PAGE = 5;  // 한 페이지당 보여줄 아이템 수
 const SPACING = 2;  // 페이지네이션 사이의 간격
 
 export default function Category() {
+
+  const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
+
+
   const location = useLocation();
   const [categoryId, setCategoryId] = useState('');  // 현재 카테고리 ID 상태
   const [books, setBooks] = useState([]);  // 카테고리에 해당하는 책 목록
@@ -155,13 +159,18 @@ export default function Category() {
         </div>
         <section className="grid grid-cols-5 gap-4">
           {currentItems.length > 0 ? (
-              currentItems.map(book => (
+              currentItems
+                  .filter(book => book.bookStatus === 0 || book.bookStatus ===1)  // status가 0 또는 1일 때만 필터링
+                  .map(book => (
                   <div key={book.bookId}>
                     <BookCard
+                        Key={book.bookId}
+                        bookId={book.bookId}
                         cardType="A"
                         nickname={book.userNickname}  // 사용자 닉네임 표시
                         createDate={book.bookCreatedate}
                         title={book.bookTitle}
+                        photo={`${photopath}/${book.bookImage}`}
                         category={book.category?.categoryName || 'Unknown'}
                         viewCount={book.bookViewCount}
                         bookQuestionCount={book.bookQuestionCount}
@@ -170,6 +179,8 @@ export default function Category() {
                         isBookmark={book.isBookmark}
                         updateBookmark={() => clickBookmark(book.bookId)}
                         isLoggedIn={isLoggedIn}
+                        status={book.bookStatus}
+                        bookUrl={`/book/detail/${book.bookId}`}
                     />
                   </div>
               ))
