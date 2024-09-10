@@ -1,59 +1,52 @@
-<<<<<<< HEAD
-// v0 by Vercel.
-// https://v0.dev/t/3SShzm6vJSF
-
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import { Stack, Pagination, TextField, MenuItem } from "@mui/material";
 import BookCardH from "../../components/BookCardH";
 import axios from "axios";
-=======
-import React, {useEffect, useState} from 'react';
-import { Stack, Pagination, TextField, MenuItem } from "@mui/material";
 import BookCard from "../../components/BookCard";
-import axios from "axios";
 
 // 필터 옵션
 const conditions = [
-  { value: 'popular', label: '인기순' },
-  { value: 'recent', label: '최신순' },
-  { value: 'old', label: '오래된순' },
-  { value: 'title', label: '가나다순' },
+  { value: "popular", label: "인기순" },
+  { value: "recent", label: "최신순" },
+  { value: "old", label: "오래된순" },
+  { value: "title", label: "가나다순" },
 ];
->>>>>>> b1f3b313129f5eb791b2934ee150a4a7be597199
 
 const ITEMS_PER_PAGE = 8; // 한 페이지에 표시할 아이템 수
 const SPACING = 2; // 페이지네이션 버튼 간의 간격
 
 export default function Wrong() {
-<<<<<<< HEAD
-  // 데이터 배열 생성: 반복되는 이미지와 내용을 포함
-=======
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
   const [bookList, setBookList] = useState([]); // 오답 목록 저장
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
   const [error, setError] = useState(null); // 에러 상태 관리
   const [page, setPage] = useState(1); // 페이지 상태 관리
   const [userId, setUserId] = useState(1); // 유저 ID (임의로 설정)
->>>>>>> b1f3b313129f5eb791b2934ee150a4a7be597199
 
   // 책 목록 가져오기
   const getWrongBooks = async () => {
     try {
       const res = await axios.get(`/wrongbook/user`);
-      const bookWithDetails = await Promise.all(res.data.map(async (book) => {
-        const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
-          axios.get(`/bookmark/countBookmarks/${book.book.bookId}`),  // 북마크 수 가져오기
-          axios.get(`/book/question/count/${book.book.bookId}`),      // 문항 수 가져오기
-          axios.get(`/book/section/count/${book.book.bookId}`)        // 섹션 수 가져오기
-        ]);
+      const bookWithDetails = await Promise.all(
+          res.data.map(async (book) => {
+            const [
+              bookmarkCountResponse,
+              questionCountResponse,
+              sectionCountResponse,
+            ] = await Promise.all([
+              axios.get(`/bookmark/countBookmarks/${book.book.bookId}`), // 북마크 수 가져오기
+              axios.get(`/book/question/count/${book.book.bookId}`), // 문항 수 가져오기
+              axios.get(`/book/section/count/${book.book.bookId}`), // 섹션 수 가져오기
+            ]);
 
-        return {
-          ...book.book, // book 정보를 직접 활용
-          bookmarkCount: bookmarkCountResponse.data,
-          bookQuestionCount: questionCountResponse.data,
-          bookSectionCount: sectionCountResponse.data,
-        };
-      }));
+            return {
+              ...book.book, // book 정보를 직접 활용
+              bookmarkCount: bookmarkCountResponse.data,
+              bookQuestionCount: questionCountResponse.data,
+              bookSectionCount: sectionCountResponse.data,
+            };
+          })
+      );
 
       setBookList(bookWithDetails); // 책 목록 상태 업데이트
     } catch (error) {
@@ -68,19 +61,20 @@ export default function Wrong() {
     getWrongBooks();
   }, []);
 
-  const[items,setItems]=useState([]);
+  const [items, setItems] = useState([]);
 
-    useEffect(() => {
-        axios
-            .get("/wrong/get/booklist")
-            .then((response) => {
-                console.log("Fetched data: ", response.data); // 데이터를 콘솔에 출력해서 확인
-                setItems(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching wrong note data:", error);
-            });
-    }, []);
+  useEffect(() => {
+    axios
+        .get("/wrong/get/booklist")
+        .then((response) => {
+          console.log("Fetched data: ", response.data); // 데이터를 콘솔에 출력해서 확인
+          setItems(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching wrong note data:", error);
+        });
+  }, []);
+
   // 페이지 변경 시 처리 함수
   const handleChange = (event, value) => {
     setPage(value);
@@ -93,33 +87,6 @@ export default function Wrong() {
   const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
   return (
-<<<<<<< HEAD
-    <main className="flex-1 p-6">
-      <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
-      <div className="flex items-center mb-6 space-x-4">
-        <input
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-          placeholder="Name, email, etc..."
-        />
-
-      </div>
-
-
-      {/* BookCard 목록 출력 */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {currentItems.map((item, index) => (
-          <BookCardH
-            key={index}
-            cardType="C"
-            className={"flex-1"}
-            photo={item.photo}
-            createDate={item.createDate}
-            nickname={item.nickname}
-            title={item.title}
-            category={item.category}
-            solvedbookId={item.solvedbookId}    // solvedbookId 전달
-            wrongRepeat={item.wrongRepeat}      // wrongRepeat 전달
-=======
       <main className="flex-1 p-6">
         <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
 
@@ -138,7 +105,7 @@ export default function Wrong() {
           </TextField>
         </div>
 
-        {/* BookCard 출력 */}
+        {/* BookCard 목록 출력 */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {loading ? (
               <div>Loading...</div>
@@ -149,7 +116,11 @@ export default function Wrong() {
                   <BookCard
                       key={book.bookId}
                       bookId={book.bookId}
-                      photo={book.bookImage ? `${photopath}/${book.bookImage}` : '/default-image.jpg'} // 이미지가 없을 경우 대체 이미지 사용
+                      photo={
+                        book.bookImage
+                            ? `${photopath}/${book.bookImage}`
+                            : "/default-image.jpg"
+                      } // 이미지가 없을 경우 대체 이미지 사용
                       cardType="B"
                       nickname={book.userNickname || "Unknown"}
                       createDate={book.bookCreatedate}
@@ -174,7 +145,6 @@ export default function Wrong() {
               onChange={handleChange}
               showFirstButton
               showLastButton
->>>>>>> b1f3b313129f5eb791b2934ee150a4a7be597199
           />
         </Stack>
       </main>
