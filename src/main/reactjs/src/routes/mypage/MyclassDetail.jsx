@@ -227,7 +227,7 @@ export default function MyclassDetail() {
     }
   };
 
-  // 검색 시 navigate 처리
+  // 검색
   const handleSearch = (keyword) => {
     setSearchQuery(keyword);
   };

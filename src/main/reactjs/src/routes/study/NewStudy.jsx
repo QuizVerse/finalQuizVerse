@@ -5,6 +5,9 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 export default function NewStudy() {
+
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/study/";
+
     // Dropdown state
     const [visibility, setVisibility] = useState('');
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
@@ -26,15 +29,6 @@ export default function NewStudy() {
     const handleRoomNameChange = (e) => setStudyTitle(e.target.value);
     const handleRoomDescriptionChange = (e) => setStudyDescription(e.target.value);
 
-    // Image Upload
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setCoverImage(imageUrl);
-        }
-    };
-
     // Submit new study
     const handleSubmit = () => {
         const newRoomData = {
@@ -54,6 +48,24 @@ export default function NewStudy() {
             .catch((err) => {
                 console.error("Error:", err.response ? err.response.data : err.message);
             });
+    };
+
+    // Image Upload
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+
+        const uploadForm=new FormData();
+        uploadForm.append("upload",file);
+
+        axios({
+            method:'post',
+            url:'/studys/upload',
+            data:uploadForm,
+            headers:{'Content-Type':'multipart/form-data'},
+        }).then(res=>{
+            console.log("saved picture", res.data.photo);
+            setCoverImage(res.data.photo);
+        })
     };
 
     // Cancel button logic
@@ -135,7 +147,7 @@ export default function NewStudy() {
                                 <div className={"flex justify-center"}>
                                     {/* Image Preview */}
                                     <img
-                                        src={coverImage}
+                                        src={photopath + coverImage}
                                         alt="Cover"
                                         className="w-36 h-36 object-cover"
                                         width="150"
@@ -146,7 +158,8 @@ export default function NewStudy() {
                                         type="file"
                                         id="file-input"
                                         accept="image/*"
-                                        onChange={handleFileChange}
+                                        onChange={(e) =>
+                                            handleFileChange(e)}
                                         style={{display: 'none'}} // Hide the file input
                                     />
                                 </div>

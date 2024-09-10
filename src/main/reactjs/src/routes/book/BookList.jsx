@@ -178,29 +178,6 @@ export default function BookList() {
 
     return (
         <>
-            <Swiper
-                pagination={{ type: 'fraction' }}
-                navigation={true}
-                modules={[Pagination]}
-                className="mySwiper mb-8"
-                style={{ height: '400px' }}
-            >
-                <SwiperSlide>
-                    <img
-                        src="/banner2.png"
-                        style={{cursor: 'pointer'}}
-                    /></SwiperSlide>
-                <SwiperSlide>
-                    <img
-                    src="/banner1.png"
-                    style={{cursor: 'pointer'}}
-                /></SwiperSlide>
-                <SwiperSlide>
-                    <img
-                    src="/banner3.png"
-                    style={{cursor: 'pointer'}}
-                /></SwiperSlide>
-            </Swiper>
             {categories.map(category => (
                 <section className="mb-8" key={category.categoryId}>
                     <div className="flex items-center justify-between mb-4">
