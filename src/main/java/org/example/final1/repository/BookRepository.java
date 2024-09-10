@@ -18,6 +18,6 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
 
     BookDto findByBookId(int bookId);
 
-    List<BookDto> findByClass1_ClassId(Integer classId);
+    List<BookDto> findByClass1ClassId(int classId);
 
 }
