@@ -3,6 +3,9 @@ import BookCard from "../../components/BookCard";
 import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import ConfirmRoleChangeModal from "../../components/modal/ConfirmRoleChangeModal";
+import {Button} from "@mui/material";
+import SearchInput from "../../components/SearchInput";
 
 // 필터 옵션 정의
 const conditions = [
@@ -145,22 +148,166 @@ export default function Category() {
     }
   };
 
+  // 검색 시 navigate 처리
+  const handleSearch = (keyword) => {
+    setSearchQuery(keyword);
+  };
+
   return (
-      <main className="p-4">
-        <div className="flex items-center mb-6 space-x-4">
-          <TextField
-              id="outlined-select-currency"
-              select
-              value={sortCondition}  // 정렬 기준 상태를 사용
-              onChange={handleSortChange}  // 정렬 기준 변경 시 호출되는 함수
-          >
-            {conditions &&
-                conditions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                ))}
-          </TextField>
+      <main className="flex-1 p-6">
+        <h1 className="mb-6 text-2xl font-bold">
+          {classdata ? classdata.className : 'Loading...'}
+        </h1>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <SearchInput
+                  value={searchQuery}
+                  onSearch={handleSearch}/>
+
+            </div>
+            <div className="space-x-2">
+              {userRole === 1 && (
+                  <>
+                    <Button variant={"outlined"} onClick={memberAdd}>구성원 추가</Button>
+                    <Button variant={"outlined"} onClick={memberDelete}>구성원 삭제</Button>
+                    <Button variant={"outlined"} onClick={changeRole}>방장 권한 부여</Button>
+                  </>
+              )}
+              <Button variant={"contained"} onClick={leaveClass}>클래스 나가기</Button>
+            </div>
+          </div>
+          {openAdd && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-md shadow-lg relative w-full max-w-md">
+                  <AddClassMember onClose={handleClose}/>
+                </div>
+              </div>
+          )}
+          {openRoleChange.isOpen && (
+              <ConfirmRoleChangeModal
+                  members={members}
+                  onClose={() => setOpenRoleChange(false)}
+                  onConfirm={confirmRoleChange}
+              />
+          )}
+          <div className="relative w-full overflow-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="[&_tr]:border-b">
+              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 w-10">
+                  <input
+                      type="checkbox"
+                      aria-hidden="true"
+                      tabIndex="-1"
+                      value="on"
+                      checked={allSelected}
+                      onChange={handleSelectAll}
+                  />
+                </th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                  이름
+                </th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                  프로필사진
+                </th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                  이메일
+                </th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                  등록일시
+                </th>
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                  상태
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              {currentMembers.map((member) => (
+                  <tr
+                      key={member.classmemberId}
+                      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  >
+                    <td className="p-4 align-middle">
+                      <input
+                          type="checkbox"
+                          aria-hidden="true"
+                          tabIndex="-1"
+                          value="on"
+                          checked={member.isSelected || false}
+                          onChange={() => handleSelectMember(member.classmemberId)}
+                      />
+                    </td>
+                    <td className="p-4 align-middle">{member.user.userNickname}</td>
+                    <td className="p-4 align-middle">
+                      {member.user.userImage ? (
+                          <img
+                              src={`${photopath}/${member.user.userImage}`} // photopath와 userImage를 결합하여 이미지 URL 생성
+                              alt={member.user.userNickname}
+                              style={{
+                                width: "60px",
+                                height: "60px",
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                              }}
+                          />
+                      ) : (
+                          <span>No Image</span> // 이미지가 없을 때 표시할 텍스트
+                      )}
+                    </td>
+
+                    <td className="p-4 align-middle">{member.user.userEmail}</td>
+                    <td className="p-4 align-middle">
+                      {new Date(member.classmemberDate).toLocaleString()}
+                    </td>
+                    <td className="p-4 align-middle">
+                      <div
+                          className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+                        {member.classmemberRole === 2 ? "멤버" : "방장"}
+                      </div>
+                    </td>
+                  </tr>
+              ))}
+              </tbody>
+            </table>
+          </div>
+          {/* 페이지네이션 버튼 */}
+          <div className="flex justify-center mt-4">
+            {/* 이전 버튼 */}
+            {pageGroup > 0 && (
+                <button
+                    onClick={prevPageGroup}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200"
+                >
+                  이전
+                </button>
+            )}
+
+            {pageNumbers.map((pageNumber) => (
+                <button
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    className={`mx-1 px-3 py-1 rounded ${
+                        currentPage === pageNumber ? "bg-primary text-white" : "bg-gray-200"
+                    }`}
+                >
+                  {pageNumber}
+                </button>
+            ))}
+
+            {/* 다음 버튼 */}
+            {endPage < totalPages && (
+                <button
+                    onClick={nextPageGroup}
+                    className="mx-1 px-3 py-1 rounded bg-gray-200"
+                >
+                  다음
+                </button>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold">클래스 공개 문제집</h2>
         </div>
         <section className="grid grid-cols-5 gap-4">
           {currentItems.length > 0 ? (

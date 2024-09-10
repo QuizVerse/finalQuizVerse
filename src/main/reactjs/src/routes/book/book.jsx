@@ -12,10 +12,10 @@ export default function Book() {
                 <Outlet />
             </div>
 
-            {/* 챗봇을 화면의 오른쪽 하단에 고정 */}
-            <div className="fixed bottom-4 right-4">
-                <Chatbot />
-            </div>
+            {/*/!* 챗봇을 화면의 오른쪽 하단에 고정 *!/*/}
+            {/*<div className="fixed bottom-4 right-4">*/}
+            {/*    <Chatbot />*/}
+            {/*</div>*/}
         </div>
     );
 }
