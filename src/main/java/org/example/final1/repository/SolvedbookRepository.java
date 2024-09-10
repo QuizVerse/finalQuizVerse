@@ -26,4 +26,8 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
 
     Optional<SolvedbookDto> findBySolvedbookId(Integer solvedbookId);
 
+
+    // solvedbookId로 SolvedBook을 조회
+    Optional<SolvedbookDto> findBySolvedbookId(int solvedbookId);
+
 }

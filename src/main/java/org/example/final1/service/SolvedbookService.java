@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +23,8 @@ public class SolvedbookService {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private SolvedbookRepository solvedbookRepository;
 
     public SolvedbookDto startTest(Integer bookId, UserDto userDto) {
         // 문제집 정보 가져오기
@@ -119,6 +122,11 @@ public class SolvedbookService {
         solvedbookDto.setSolvedbookId(solvedbook.getBook().getBookId());
         // 필요한 필드들 추가
         return solvedbookDto;
+    }
+
+    // solvedbookId로 SolvedBook을 찾아 BookId 반환
+    public Optional<SolvedbookDto> getBookIdBySolvedbookId(int solvedbookId) {
+        return solvedbookRepository.findBySolvedbookId(solvedbookId);
     }
 
 
