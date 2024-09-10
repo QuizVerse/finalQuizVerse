@@ -12,7 +12,6 @@ const Explanation = () => {
   const [sections, setSections] = useState([]);
   const [questionsBySection, setQuestionsBySection] = useState({});
   const [loading, setLoading] = useState(true);
-  const [userAnswers, setUserAnswers] = useState({});
   const [user, setUser] = useState({});
   const [selectedAnswers, setSelectedAnswers] = useState({});  // 사용자의 선택된 답안
 
@@ -89,6 +88,17 @@ const Explanation = () => {
     fetchUserData();
     fetchSectionsAndQuestions();
   }, [bookId]);
+
+  // 질문이 로딩된 후에 답안을 가져오는 로직 추가
+  useEffect(() => {
+    if (!loading) {
+      Object.keys(questionsBySection).forEach(sectionId => {
+        questionsBySection[sectionId].questions.forEach(question => {
+          fetchUserAnswers(question.questionId);  // 각 질문에 대해 사용자의 선택된 답안 가져오기
+        });
+      });
+    }
+  }, [loading, questionsBySection]);
 
   // PDF 생성 함수
   const generatePDF = () => {
@@ -267,7 +277,10 @@ const Explanation = () => {
                                 </div>
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
-                                    정답: {question.choices.filter(choice => choice.choiceIsanswer).map((choice, index) => `${getChoiceNumber(index)} ${choice.choiceText}`).join(', ')}
+                                    정답: {question.choices.filter(choice => choice.choiceIsanswer).map((choice) => {
+                                    const index = question.choices.indexOf(choice);
+                                    return `${getChoiceNumber(index)} ${choice.choiceText}`;
+                                  }).join(', ')}
                                   </Typography>
                                 </div>
                                 <div className="w-full h-36 bg-blue-100 border rounded-lg mt-6 mb-10">
