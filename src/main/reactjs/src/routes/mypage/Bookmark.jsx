@@ -2,6 +2,7 @@ import { MenuItem, Pagination, Stack, TextField } from "@mui/material";
 import BookCard from "../../components/BookCard";
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 // 필터
 const conditions = [
@@ -23,6 +24,26 @@ export default function Bookmark() {
   const [error, setError] = useState(null);
   const [sortCondition, setSortCondition] = useState('popular');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status state
+
+  // alert state
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+
+  /**
+   * @description : Alert창 열릴 때
+   * */
+  const openAlert = (title) => {
+    setAlertTitle(title);
+    setAlertVisible(true);
+  };
+
+  /**
+   * @description : Alert창 닫힐 때
+   * */
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
 
   useEffect(() => {
     // user 정보 확인
@@ -72,7 +93,7 @@ export default function Bookmark() {
 
   const clickBookmark = async (bookId) => {
     if (!isLoggedIn) {
-      alert("로그인이 필요합니다.");
+      openAlert("로그인이 필요한 서비스입니다.");
       return;
     }
 
@@ -157,6 +178,11 @@ export default function Bookmark() {
               showLastButton
           />
         </Stack>
+        <CustomAlert
+            title={alertTitle}
+            openAlert={alertVisible}
+            closeAlert={closeAlert}
+        />
       </main>
   );
 }
