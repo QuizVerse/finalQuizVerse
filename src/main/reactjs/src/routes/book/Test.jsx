@@ -18,27 +18,22 @@ export default function ParentComponent() {
   const [answers, setAnswers] = useState([]);
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
   const { search } = useLocation();
-
   const queryParams = new URLSearchParams(search);
   const wrongRepeat = queryParams.get("wrongRepeat");
+  const [timeElapsed, setTimeElapsed] = useState(0); // 0부터 시작하는 타이머
 
-  const [timeLeft, setTimeLeft] = useState(null); // 남은 시간을 저장하는 상태
-
-  // 새로고침 경고 추가
+  // 페이지 떠날 때 경고 표시
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
       event.returnValue = ""; // Chrome에서는 returnValue를 설정해야 경고창이 나타남
     };
 
-    // 페이지 떠날 때 경고 표시
     window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
+  // 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,23 +41,14 @@ export default function ParentComponent() {
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
 
-        // 서버에서 받은 bookTimer (분 단위) 값을 초로 변환해서 저장
-        setTimeLeft(bookRes.data.book.bookTimer * 60);
-
-        // 틀린 문제만 가져오기 (wrongRepeat이 있을 경우)
         if (wrongRepeat && wrongRepeat > 0) {
-          try {
-            const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
-              params: { solvedbookId, wrongRepeat }
-            });
-            setQuestions(wrongQuestionsRes.data); // 틀린 문제들만 저장
-          } catch (error) {
-            console.error("오답 문제 요청 중 오류:", error);
-          }
+          const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
+            params: { solvedbookId, wrongRepeat },
+          });
+          setQuestions(wrongQuestionsRes.data);
         } else {
-          // 모든 문제 가져오기
           const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-          setQuestions(questionsRes.data); // 전체 문제를 저장
+          setQuestions(questionsRes.data);
         }
 
         setLoading(false);
@@ -75,26 +61,43 @@ export default function ParentComponent() {
     fetchData();
   }, [bookId, wrongRepeat, solvedbookId]);
 
-  // 타이머를 관리하는 useEffect
+  // 로컬 스토리지에서 임시 저장된 데이터 복원
   useEffect(() => {
-    if (timeLeft === 0) {
-      handleAutoSubmit(); // 시간이 다 되면 자동 제출하는 함수 호출
+    const savedData = localStorage.getItem("temporarySave");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setAnswers(parsedData.answers || []);
+      setTimeElapsed(parsedData.timeElapsed || 0); // 복원 시 타이머 시간도 복원
     }
+  }, []);
 
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1); // 1초씩 감소
-      }, 1000);
+  useEffect(() => {
+    const saveDataToLocalStorage = () => {
+      const saveData = {
+        answers: answers,
+        timeElapsed: timeElapsed,
+      };
+      localStorage.setItem("temporarySave", JSON.stringify(saveData));
+    };
 
-      return () => clearInterval(timer); // 메모리 누수를 방지하기 위해 타이머 정리
-    }
-  }, [timeLeft]);
+    window.addEventListener("beforeunload", saveDataToLocalStorage);
 
-  // 임시 저장 버튼을 눌렀을 때 처리
-  const handleTemporarySave = async () => {
-    console.log("임시 저장 중. answers:", answers);
+    return () => {
+      window.removeEventListener("beforeunload", saveDataToLocalStorage);
+    };
+  }, [answers, timeElapsed]);
 
-    const formattedAnswers = answers.map((answer) => {
+  // 타이머 관리 (시간이 흘러가는 방식)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeElapsed((prevTime) => prevTime + 1);
+    }, 1000); // 1초마다 시간 증가
+
+    return () => clearInterval(timer); // 메모리 누수를 방지하기 위해 타이머 정리
+  }, []);
+
+  const formatAnswers = () => {
+    return answers.map((answer) => {
       const answerData = {
         solvedbook: { solvedbookId: solvedbookId },
         question: { questionId: answer.questionId },
@@ -102,103 +105,37 @@ export default function ParentComponent() {
       };
 
       if (Array.isArray(answer.answer)) {
-        answerData.choices = answer.answer.map((choice) => ({
-          choiceId: choice.choiceId,
-        }));
+        answerData.choices = answer.answer.map((choice) => ({ choiceId: choice.choiceId }));
       } else if (typeof answer.answer === "string") {
         answerData.subjectiveAnswer = answer.answer || null;
       }
 
       return answerData;
     });
+  };
 
+  const handleTemporarySave = () => {
     const saveData = {
-      answers: formattedAnswers,
-      timeLeft: timeLeft, // 남은 시간도 함께 전송
+      answers: formatAnswers(),
+      timeElapsed: timeElapsed,
     };
 
-    console.log("전송할 데이터:", saveData); // 데이터가 올바르게 구성되었는지 확인
+    localStorage.setItem("temporarySave", JSON.stringify(saveData));
 
-    try {
-      const response = await axios.post(`/book/save/temporary`, saveData);
-      console.log("임시 저장 성공", response.data);
-    } catch (error) {
-      console.error("임시 저장 중 오류:", error.response?.data);
-    }
+    navigate("/");
   };
 
   const openConfirm = async () => {
-    console.log("answers:", answers); // 전송될 데이터 확인
-
-    const formattedAnswers = answers.map((answer) => {
-      const answerData = {
-        solvedbook: { solvedbookId: solvedbookId },
-        question: { questionId: answer.questionId },
-        answerOrder: answer.answerOrder,
-      };
-
-      // 객관식 문제 처리: choiceId 배열로 전송
-      if (Array.isArray(answer.answer)) {
-        answerData.choices = answer.answer.map((choice) => ({
-          choiceId: choice.choiceId,
-        }));
-      }
-      // 주관식 문제 처리
-      else if (typeof answer.answer === "string") {
-        answerData.subjectiveAnswer = answer.answer || null;
-      }
-
-      return answerData;
-    });
-
-    console.log("전송할 데이터:", formattedAnswers); // 최종 데이터 확인
-    navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
-
     try {
-      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
+      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formatAnswers());
       console.log("답안 제출 성공", response.data);
+      navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
     } catch (error) {
-      console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
+      console.error("답안 제출 중 오류:", error.response?.data);
     }
   };
 
-  // 자동 제출을 처리하는 함수
-  const handleAutoSubmit = async () => {
-    console.log("자동 제출 시작. answers:", answers);
-
-    const formattedAnswers = answers.map((answer) => {
-      const answerData = {
-        solvedbook: { solvedbookId: solvedbookId },
-        question: { questionId: answer.questionId },
-        answerOrder: answer.answerOrder,
-      };
-
-      if (Array.isArray(answer.answer)) {
-        answerData.choices = answer.answer.map((choice) => ({
-          choiceId: choice.choiceId,
-        }));
-      } else if (typeof answer.answer === "string") {
-        answerData.subjectiveAnswer = answer.answer || null;
-      }
-
-      return answerData;
-    });
-
-    try {
-      const response = await axios.post(`/book/save/answers`, formattedAnswers);
-      console.log("자동 답안 제출 성공", response.data);
-
-      // 제출 후 시험 결과 페이지로 이동
-      navigate(`/book/score/${bookId}`);
-    } catch (error) {
-      console.error("자동 답안 제출 중 오류:", error.response?.data);
-    }
-  };
-
-  const closeConfirm = () => {
-    setConfirmVisible(false);
-  };
-
+  const closeConfirm = () => setConfirmVisible(false);
   const passbtn = () => {
     closeConfirm();
     navigate(`/book/score/${bookId}`);
@@ -209,14 +146,12 @@ export default function ParentComponent() {
     navigate(`/book/score/${bookId}/${solvedbookId}`);
   };
 
-  // TestSection에서 답안을 전달받아 업데이트
   const handleAnswerChange = (questionId, answer) => {
     setAnswers((prevAnswers) => {
       const existingAnswer = prevAnswers.find((a) => a.questionId === questionId);
       const newAnswerOrder = answerOrderCount;
       setAnswerOrderCount(answerOrderCount + 1);
 
-      // 객관식일 때 배열로 저장 (다중 선택 가능)
       if (Array.isArray(answer)) {
         const choices = answer.map((choice) => {
           if (!choice.choiceId) {
@@ -224,58 +159,56 @@ export default function ParentComponent() {
             return null;
           }
           return { choiceId: choice.choiceId };
-        }).filter((choice) => choice !== null); // null 값을 제거합니다.
+        }).filter((choice) => choice !== null);
 
-        if (existingAnswer) {
-          return prevAnswers.map((a) =>
-              a.questionId === questionId
-                  ? { ...a, answer: choices, answerOrder: newAnswerOrder }
-                  : a
-          );
-        } else {
-          return [...prevAnswers, { questionId, answer: choices, answerOrder: newAnswerOrder }];
-        }
+        return existingAnswer
+            ? prevAnswers.map((a) =>
+                a.questionId === questionId
+                    ? { ...a, answer: choices, answerOrder: newAnswerOrder }
+                    : a
+            )
+            : [...prevAnswers, { questionId, answer: choices, answerOrder: newAnswerOrder }];
       }
 
-      // 주관식일 때
       if (typeof answer === "string") {
-        if (existingAnswer) {
-          return prevAnswers.map((a) =>
-              a.questionId === questionId
-                  ? { ...a, answer, answerOrder: newAnswerOrder }
-                  : a
-          );
-        } else {
-          return [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
-        }
+        return existingAnswer
+            ? prevAnswers.map((a) =>
+                a.questionId === questionId
+                    ? { ...a, answer, answerOrder: newAnswerOrder }
+                    : a
+            )
+            : [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
       }
 
       return prevAnswers;
     });
   };
 
-  // 분:초로 타이머를 변환하여 표시하는 함수
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  if (loading) {
+    return <div>Loading...</div>; // 로딩 중일 때 표시할 내용
+  }
+
   return (
-      <div className={"space-y-8"}>
+      <div className="space-y-8">
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
-            <DensityMediumOutlinedIcon/>
+            <DensityMediumOutlinedIcon />
             <span className="text-lg font-semibold">
-              {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
-            </span>
+            {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
+          </span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
             <span className="text-lg">총 {bookData?.bookTotalscore}점</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg">남은 시간: {formatTime(timeLeft)}</span> {/* 타이머 표시 */}
+            <span className="text-lg">경과 시간: {formatTime(timeElapsed)}</span>
             <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>
@@ -285,30 +218,28 @@ export default function ParentComponent() {
           </div>
         </header>
         <div className="space-y-4">
-          {sections &&
-              sections.map((section, index) => {
-                // 각 섹션에 해당하는 틀린 문제들만 필터링
-                const filteredQuestions = questions.filter(
-                    (question) => question.section.sectionId === section.sectionId
-                );
+          {sections.map((section, index) => {
+            const filteredQuestions = questions.filter(
+                (question) => question.section.sectionId === section.sectionId
+            );
 
-                // 필터링된 질문이 없으면 해당 섹션을 렌더링하지 않음
-                if (filteredQuestions.length === 0) return null;
+            if (filteredQuestions.length === 0) return null;
 
-                return (
-                    <TestSection
-                        key={index}
-                        index={index}
-                        sectionCount={sections.length}
-                        section={section}
-                        book={bookData}
-                        loading={loading}
-                        setLoading={setLoading}
-                        filterquestions={filteredQuestions} // 필터링된 질문들만 전달
-                        onAnswerChange={handleAnswerChange}
-                    />
-                );
-              })}
+            return (
+                <TestSection
+                    key={index}
+                    index={index}
+                    sectionCount={sections.length}
+                    section={section}
+                    book={bookData}
+                    loading={loading}
+                    setLoading={setLoading}
+                    filterquestions={filteredQuestions}
+                    onAnswerChange={handleAnswerChange}
+                    savedAnswer={answers} // Pass saved answers
+                />
+            );
+          })}
         </div>
         <Review
             openConfirm={openConfirm}

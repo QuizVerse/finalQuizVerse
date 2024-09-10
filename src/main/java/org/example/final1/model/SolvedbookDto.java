@@ -33,13 +33,13 @@ public class SolvedbookDto {
     @JoinColumn(name = "user_id", nullable = false)
     private UserDto user;
 
-    @Column(name = "solvedbook_start", nullable = false)
+    @Column(name = "solvedbook_start")
     private Timestamp solvedbookStart;
 
     @Column(name = "solvedbook_end")
     private Timestamp solvedbookEnd;
 
-    @Column(name = "solvedbook_timer", length = 100)
+    @Column(name = "solvedbook_timer", length = 100,nullable = false)
     private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)

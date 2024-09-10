@@ -1,85 +1,117 @@
+import React, { useEffect, useState } from "react";
 import { Button, Checkbox, FormControlLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
-import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CustomAlert from "../modal/CustomAlert";
 
-export default function TestChoices({ question, onAnswerChange }) {
+export default function TestChoices({ question, onAnswerChange, savedAnswer }) {
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
 
-    const [choices, setChoices] = useState([]); // 선택지 데이터를 저장하는 상태
-    const [oxSelected, setOxSelected] = useState(""); // OX 문제에서 선택된 값(O 또는 X)을 관리하는 상태
-    const [subjectiveAnswer, setSubjectiveAnswer] = useState(""); // 주관식 답변을 저장하는 상태
-    const [loading, setLoading] = useState(true); // 데이터를 로딩하는 상태를 관리
-    const [error, setError] = useState(null); // 에러가 발생했을 때 에러 메시지를 저장
-    const [alertVisible, setAlertVisible] = useState(false); // 알림 창의 표시 여부를 관리하는 상태
+    const [choices, setChoices] = useState([]);
+    const [oxSelected, setOxSelected] = useState("");
+    const [subjectiveAnswer, setSubjectiveAnswer] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [alertVisible, setAlertVisible] = useState(false);
 
-    // 선택지 데이터를 가져오는 로직
+    // 선택지를 가져오는 useEffect는 한번만 실행되도록 설정
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true); // 로딩 상태를 true로 설정
+            setLoading(true);
             try {
-                // API 호출을 통해 해당 questionId에 대한 선택지 데이터를 가져옴
-                const res = await axios.get('/book/choice/getall/' + question.questionId);
+                const res = await axios.get(`/book/choice/getall/${question.questionId}`);
                 const fetchedChoices = res.data.map(choice => ({
                     ...choice,
-                    choiceIsanswer: false // 선택지 초기화: 모두 선택되지 않은 상태로 설정
+                    choiceIsanswer: false
                 }));
-                setChoices(fetchedChoices); // 선택지 데이터를 초기화 상태로 저장
-                setOxSelected(""); // OX 문제의 선택 초기화
-                setSubjectiveAnswer(""); // 주관식 답변 초기화
-                setLoading(false); // 데이터를 성공적으로 가져왔으면 로딩 상태를 false로 설정
+                setChoices(fetchedChoices);
+
+                // 로컬 스토리지에서 임시 저장된 답변을 가져와 설정
+                const localStorageAnswer = JSON.parse(localStorage.getItem(`answer_${question.questionId}`)) || [];
+
+                if (question.questionType === 0 || question.questionType === 1) {
+                    const selectedChoices = localStorageAnswer.map(ans => ans.choiceId);
+                    const updatedChoices = fetchedChoices.map(choice => ({
+                        ...choice,
+                        choiceIsanswer: selectedChoices.includes(choice.choiceId),  // 선택된 항목 설정
+                    }));
+                    setChoices(updatedChoices);
+                } else if (question.questionType === 2) {
+                    setOxSelected(localStorageAnswer[0]?.choiceText || "");
+                } else if (question.questionType === 3) {
+                    setSubjectiveAnswer(localStorageAnswer || "");
+                }
+                setLoading(false);
             } catch (error) {
-                setError("Error fetching choices"); // 에러 발생 시 에러 메시지를 설정
-                setLoading(false); // 에러가 발생했어도 로딩 상태를 false로 설정
+                setError("Error fetching choices");
+                setLoading(false);
             }
         };
-        fetchData(); // 선택지 데이터를 가져오는 함수 호출
-    }, [question.questionId]); // question의 ID가 변경될 때마다 데이터를 다시 불러옴
 
-    // OX 문제에서 O 또는 X를 선택했을 때의 로직
+        // 첫 로딩시에만 선택지를 가져옴
+        fetchData();
+    }, [question.questionId]);
+
+    // 상태 업데이트는 로컬 스토리지에 저장할 때만 발생
+    useEffect(() => {
+        const saveAnswerToLocalStorage = () => {
+            let answerToSave;
+            if (question.questionType === 0 || question.questionType === 1) {
+                // 저장할 선택지를 필터링하여 로컬스토리지에 저장
+                answerToSave = choices.filter(choice => choice.choiceIsanswer).map(choice => ({
+                    choiceId: choice.choiceId,
+                    choiceText: choice.choiceText,
+                    choiceIsanswer: choice.choiceIsanswer
+                }));
+            } else if (question.questionType === 2) {
+                answerToSave = [{ choiceText: oxSelected }];
+            } else if (question.questionType === 3) {
+                answerToSave = subjectiveAnswer;
+            }
+            // 저장된 답변 로컬스토리지에 저장
+            localStorage.setItem(`answer_${question.questionId}`, JSON.stringify(answerToSave));
+        };
+
+        if (!loading) {
+            saveAnswerToLocalStorage();  // 상태 변경마다 로컬 스토리지 저장
+        }
+    }, [choices, oxSelected, subjectiveAnswer, question.questionId, loading]);
+
+    // OX 문제 선택
     const handleOxSelect = (selection) => {
-        setOxSelected(selection); // 선택한 값을 상태에 저장
-
+        setOxSelected(selection);
         const selectedChoice = choices.find(choice => choice.choiceText === selection);
-
         if (!selectedChoice) {
             console.error(`선택한 텍스트 (${selection})에 해당하는 선택지가 없습니다.`);
             return;
         }
-
         const updatedChoice = [{ choiceId: selectedChoice.choiceId, choiceText: selection, choiceIsanswer: selection === "O", question }];
-
         onAnswerChange(question.questionId, updatedChoice);
     };
 
-    // 다중 선택형에서 체크박스를 클릭했을 때 선택지 상태 업데이트
+    // 체크박스 선택
     const updateCheckBox = (index) => {
         const updatedChoices = [...choices];
-        updatedChoices[index].choiceIsanswer = !updatedChoices[index].choiceIsanswer;
+        updatedChoices[index].choiceIsanswer = !updatedChoices[index].choiceIsanswer;  // 선택 여부 반전
         setChoices(updatedChoices);
-
         const selectedChoices = updatedChoices.filter(choice => choice.choiceIsanswer).map(choice => ({
             choiceId: choice.choiceId,
             choiceText: choice.choiceText,
             choiceIsanswer: choice.choiceIsanswer
         }));
-
         onAnswerChange(question.questionId, selectedChoices);
     };
 
-    // 선택형 문제에서 라디오 버튼이 선택됐을 때의 로직
+    // 라디오 버튼 선택
     const handleChange = (event) => {
         const val = event.target.value;
         const updatedChoices = [...choices];
         updatedChoices.forEach((e, index) => {
-            e.choiceIsanswer = index === Number(val);
+            e.choiceIsanswer = index === Number(val);  // 하나만 선택
         });
         setChoices(updatedChoices);
-
         const selectedChoice = updatedChoices.find(choice => choice.choiceIsanswer);
-
         onAnswerChange(question.questionId, [{
             choiceId: selectedChoice.choiceId,
             choiceText: selectedChoice.choiceText,
@@ -87,7 +119,7 @@ export default function TestChoices({ question, onAnswerChange }) {
         }]);
     };
 
-    // 주관식 문제에서 답변이 입력됐을 때의 로직
+    // 주관식 답변 입력
     const handleSubjectiveAnswer = (event) => {
         const answer = event.target.value;
         setSubjectiveAnswer(answer);
@@ -99,7 +131,7 @@ export default function TestChoices({ question, onAnswerChange }) {
 
     return (
         <>
-            {question.questionType === 0 && ( // 선택형 문제일 경우
+            {question.questionType === 0 && (
                 <RadioGroup value={choices.findIndex(choice => choice.choiceIsanswer)} onChange={handleChange}>
                     {choices.map((choice, index) => (
                         <div key={index}>
@@ -115,7 +147,7 @@ export default function TestChoices({ question, onAnswerChange }) {
                     ))}
                 </RadioGroup>
             )}
-            {question.questionType === 1 && ( // 다중 선택형 문제일 경우
+            {question.questionType === 1 && (
                 choices.map((choice, index) => (
                     <div key={index}>
                         <Checkbox checked={choice.choiceIsanswer} onChange={() => updateCheckBox(index)} />
@@ -130,7 +162,7 @@ export default function TestChoices({ question, onAnswerChange }) {
                     </div>
                 ))
             )}
-            {question.questionType === 2 && ( // OX 문제일 경우
+            {question.questionType === 2 && (
                 <div className="flex gap-4">
                     <Button variant={oxSelected === "O" ? "contained" : "outlined"} onClick={() => handleOxSelect("O")}>
                         <PanoramaFishEyeIcon fontSize="large" />
@@ -140,7 +172,7 @@ export default function TestChoices({ question, onAnswerChange }) {
                     </Button>
                 </div>
             )}
-            {question.questionType === 3 && ( // 주관식 문제일 경우
+            {question.questionType === 3 && (
                 <TextField
                     label="답변을 입력하세요"
                     multiline
