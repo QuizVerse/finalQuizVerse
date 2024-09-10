@@ -125,27 +125,9 @@ export default function Bookmark() {
   const pageCount = Math.ceil(books.length / ITEMS_PER_PAGE);
 
   return (
-      <main className="flex-1 p-6">
+      <main className="flex-1 py-12 px-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">즐겨찾기</h1>
-          <div className="flex items-center space-x-4">
-            <input
-                className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-                placeholder="Name, email, etc..."
-            />
-            <TextField
-                id="outlined-select-currency"
-                select
-                defaultValue="popular"
-                onChange={(e) => setSortCondition(e.target.value)}
-            >
-              {conditions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-              ))}
-            </TextField>
-          </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {currentItems.map((book) => (

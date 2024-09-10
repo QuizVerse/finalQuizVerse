@@ -251,7 +251,7 @@ export default function MyclassDetail() {
   };
 
   return (
-      <main className="flex-1 p-6">
+      <main className="flex-1 py-12 px-6">
         <h1 className="mb-6 text-2xl font-bold">
           {classdata ? classdata.className : 'Loading...'}
         </h1>
