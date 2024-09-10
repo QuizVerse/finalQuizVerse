@@ -98,7 +98,7 @@ public class TestController {
     // 답안을 저장하는 엔드포인트
 
     @PostMapping("/save/answers")
-    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers, @RequestParam int wrongRepeat, HttpServletRequest request) {
+    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers, @RequestParam("wrongRepeat") int wrongRepeat, HttpServletRequest request) {
         try {
             answerService.saveAnswers(answers,wrongRepeat,request);
 
@@ -136,7 +136,7 @@ public class TestController {
     // 오답 문제를 필터링하여 반환하는 API
     // SolvedbookId와 wrongRepeat로 오답 문제들을 조회하는 API
     @GetMapping("/test/wrong")
-    public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam int solvedbookId, @RequestParam int wrongRepeat) {
+    public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam("solvedbookId") int solvedbookId, @RequestParam("wrongRepeat") int wrongRepeat) {
         List<QuestionDto> wrongQuestions = wrongService.getWrongQuestions(solvedbookId, wrongRepeat);
         System.out.println("Wrong Repeat: " + wrongRepeat);
 
