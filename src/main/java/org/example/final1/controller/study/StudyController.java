@@ -11,6 +11,9 @@ import org.example.final1.model.StudymemberDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.service.JwtService;
 import org.example.final1.service.StudyService;
+import org.example.final1.storage.NcpObjectStorageService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,11 +45,32 @@ public class StudyController {
     }
 
     @PostMapping("/inserts")
-    public void insertRoom(@RequestBody StudyDto dto)
+    public void insertRoom(
+            @RequestBody StudyDto studyDto,
+            HttpServletRequest request)
     {
-        studyService.insertRoom(dto);
-    }   
-    
+        // JWT 토큰에서 사용자 정보 가져오기
+        UserDto userDto = jwtService.getUserFromJwt(request);
+        if (userDto == null) return ; // 유효하지 않은 JWT 토큰 처리
+
+        studyDto.setUser(userDto);
+
+        // 스터디 저장
+        studyService.insertRoom(studyDto);
+    }
+
+    //사진만 먼저 업로드
+    @PostMapping("/upload")
+    public Map<String, String> uploadPhoto(@RequestParam("upload") MultipartFile upload)
+    {
+        System.out.println("photo upload>>"+upload.getOriginalFilename());
+        //스토리지에 업로드후 업로드된 파일명 반환
+        String photo=storageService.uploadFile(bucketName, folderName, upload);
+        Map<String, String> map=new HashMap<>();
+        map.put("photo", photo);
+        return map;
+    }
+
     @GetMapping("/dtos")
     public StudyDto StudyRoomDto(@RequestParam("study_id") int studyId)
     {
