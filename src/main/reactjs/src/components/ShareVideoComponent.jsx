@@ -4,33 +4,34 @@ import { useEffect, useRef } from "react";
 
 export default function ShareVideoComponent({ track, participantIdentity, local = false}) {
     const videoElement = useRef(null);
-
+    
     useEffect(() => {
-        if (videoElement.current) {
-            //track.attach(videoElement.current);
+        const video = videoElement.current;
+
+        if (video) {
             if (track instanceof MediaStreamTrack) {
-                // MediaStreamTrack을 사용하는 경우
-                videoElement.current.srcObject = new MediaStream([track]);
-            } else if (track.attach) {
-                // LiveKit 트랙을 사용하는 경우
-                track.attach(videoElement.current);
+                video.srcObject = new MediaStream([track]);
+            } else if (track instanceof LocalVideoTrack || track instanceof RemoteVideoTrack) {
+                track.attach(video);
             }
+        } else {
+            console.error("videoElement.current is null");
         }
 
         return () => {
             //track.detach();
             if (track instanceof MediaStreamTrack) {
                 // MediaStreamTrack을 사용하는 경우
-                //videoElement.current.srcObject = null;
-            } else if (track.detach) {
+                video.srcObject = null;
+            } else if (track instanceof LocalVideoTrack || track instanceof RemoteVideoTrack) {
                 // LiveKit 트랙을 사용하는 경우
-                track.detach();
+                track.detach(video);
             }
         };
     }, [track]);
 
-    return (
-        <div id={"camera-" + participantIdentity} className="sharevideo-container">
+    return ( //id={"camera-" + participantIdentity}
+        <div className="sharevideo-container">
             <div className="participant-data">
                 <p>{participantIdentity + (local ? " (Share - You)" : " (Share)")}</p>
             </div>
