@@ -153,6 +153,7 @@ export default function ParentComponent() {
     });
 
     console.log("전송할 데이터:", formattedAnswers); // 최종 데이터 확인
+    navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
 
     try {
       const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
@@ -206,7 +207,7 @@ export default function ParentComponent() {
 
   const submitbtn = () => {
     closeConfirm();
-    navigate(`/book/score/${bookId}`);
+    navigate(`/book/score/${bookId}/${solvedbookId}`);
   };
 
   // TestSection에서 답안을 전달받아 업데이트
