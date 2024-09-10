@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -174,6 +171,12 @@ public class AnswerService {
         int sum = questionPoints.stream().mapToInt(Integer::intValue).sum();
         return sum;
     }
+
+
+    public List<AnswerDto> getAnswersBySolvedbookAndWrongRepeat(int solvedbookId, int wrongRepeat) {
+        return answerRepository.findCorrectAnswers(solvedbookId, wrongRepeat);
+    }
+
 }
 
 

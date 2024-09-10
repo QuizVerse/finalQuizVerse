@@ -1,7 +1,9 @@
 package org.example.final1.controller.book;
 
 
+import org.example.final1.model.AnswerDto;
 import org.example.final1.model.BookDto;
+import org.example.final1.model.QuestionDto;
 import org.example.final1.service.AnswerService;
 import org.example.final1.service.BookService;
 import org.example.final1.service.QuestionService;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,13 +23,11 @@ public class ScoreController {
     private final BookService bookService;
     private final QuestionService questionService;
     private final AnswerService answerService;
-    private final ScoreService scoreService;
 
     public ScoreController(BookService bookService, QuestionService questionService, AnswerService answerService, ScoreService scoreService) {
         this.bookService = bookService;
         this.questionService = questionService;
         this.answerService = answerService;
-        this.scoreService = scoreService;
     }
 
     @GetMapping("/score/{id}")
@@ -63,5 +65,20 @@ public class ScoreController {
     public ResponseEntity<Integer> getTotalCorrectPoints(@PathVariable("solvedbookId") int solvedbookId) {
         int totalPoints = answerService.calculateTotalCorrectPoints(solvedbookId);
         return ResponseEntity.ok(totalPoints);
+    }
+
+    @GetMapping("/score/questions/{book}")
+    public ResponseEntity<List<QuestionDto>> getQuestionsByBookId(@PathVariable("book") int book) {
+        List<QuestionDto> questions = questionService.getQuestionsByBookId(book);
+        if (questions == null || questions.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(questions);
+    }
+    @GetMapping("/score/answers/{solvedbookId}/{wrongRepeat}")
+    public ResponseEntity<List<AnswerDto>> getAnswers(@PathVariable("solvedbookId") int solvedbookId,
+                                                      @PathVariable("wrongRepeat") int wrongRepeat) {
+        List<AnswerDto> answers = answerService.getAnswersBySolvedbookAndWrongRepeat(solvedbookId, wrongRepeat);
+        return ResponseEntity.ok(answers);
     }
 }

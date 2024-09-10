@@ -14,11 +14,13 @@ export default function Score() {
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
 
     const [username, setUsername] = useState("");
+    const [userphoto, setUserphoto] = useState("");
     const [userScore,setUserScore] = useState(0);
     const {bookId, solvedbookId} = useParams(); // bookId 가져올 변수
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
     const { search } = useLocation();
+    const [questions, setQuestions] = useState([]); // 빈 배열로 초기화
     const [bookData, setBookData] = useState({
         correctAnswersCount: 0,     // 맞힌 문제 수
         totalQuestions: 0,          // 전체 문제 수
@@ -48,6 +50,8 @@ export default function Score() {
                 // 사용자 정보
                 const userResponse = await axios.get(`/book/username`);
                 setUsername(userResponse.data.userNickname);
+                console.log(userResponse.data);
+                setUserphoto(userResponse.data.userImage);
 
                 //문제집 정보
                 const bookResponse = await axios.get(`/book/score/${bookId}`);
@@ -56,8 +60,6 @@ export default function Score() {
                     ...bookResponse.data
                 }));
 
-
-                // setBookData(bookResponse.data);
                 console.log(bookResponse.data);
                 console.log(bookData.bookTotalscore);
 
@@ -67,15 +69,25 @@ export default function Score() {
                 setLoading(false);
             }
         };
+        const fetchQuestions = async () => {
+            try {
+                const answersResponse = await axios.get(`/book/score/answers/${solvedbookId}/${wrongRepeat}`);
+                setQuestions(answersResponse.data);
+
+                console.log("setQuestion 업데이트 : " , answersResponse.data);
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+            }
+        };
         fetchData();
-        // fetchUserPoints();
+        fetchQuestions();
     }, [bookId, solvedbookId]);
 
     if (!bookData) {
         return <div>No data found</div>; // 데이터가 없을 때 표시
     }
 
-    const { correctAnswersCount, totalQuestions, backscore, startDay, bookTotalscore } = bookData;
+    const { correctAnswersCount, totalQuestions, backscore, startDay } = bookData;
 
   return (
     <div className="w-full min-h-screen bg-gray-100">
@@ -90,7 +102,7 @@ export default function Score() {
             <img
               className="aspect-square h-full w-full"
               alt="User Avatar"
-              src="/placeholder-user.jpg"
+              src ={photopath/userphoto}
               style={{ width: "30px", height: "30px" }}
             />
             <span>{username}</span>
@@ -214,49 +226,45 @@ export default function Score() {
 
       <div className="p-4">
         <div className="relative w-full overflow-auto">
-          <table className="w-full caption-bottom text-sm">
-            <thead className="[&amp;_tr]:border-b">
-              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  문항번호
-                </th>
-                <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  배점
-                </th>
-                <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  정답여부
-                </th>
-                <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  정답률
-                </th>
-              </tr>
-            </thead>
-            {/*<tbody className="[&amp;_tr:last-child]:border-0">*/}
-            {/*  {questions.map((question, index) => (*/}
-            {/*    <tr*/}
-            {/*      key={index}*/}
-            {/*      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"*/}
-            {/*    >*/}
-            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
-            {/*        {question.number}*/}
-            {/*      </td>*/}
-            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
-            {/*        {question.score}*/}
-            {/*      </td>*/}
-            {/*      <td className="p-4 align-middle item-center [&amp;:has([role=checkbox])]:pr-0">*/}
-            {/*        {question.correct ? (*/}
-            {/*          <CheckIcon color="success" />*/}
-            {/*        ) : (*/}
-            {/*          <ClearIcon color="warning" />*/}
-            {/*        )}*/}
-            {/*      </td>*/}
-            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
-            {/*        {question.accuracy}*/}
-            {/*      </td>*/}
-            {/*    </tr>*/}
-            {/*  ))}*/}
-            {/*</tbody>*/}
-          </table>
+            <table className="w-full caption-bottom text-sm">
+                <thead className="[&amp;_tr]:border-b">
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        문항번호
+                    </th>
+                    <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        배점
+                    </th>
+                    <th className="h-12 px-4 text-lg text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                        정답여부
+                    </th>
+                </tr>
+                </thead>
+                <tbody className="[&amp;_tr:last-child]:border-0">
+                {questions.map((question, index) => (
+                    <tr
+                        key={index}
+                        className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                    >
+                        <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                            {index+1}번
+                        </td>
+                        <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                            {/*{question.score}*/}
+                            {question.question.questionPoint}점
+                            {/*{question.questionPoint}점*/}
+                        </td>
+                        <td className="p-4 align-middle item-center [&amp;:has([role=checkbox])]:pr-0">
+                            {question.answerCorrect === true ? (
+                                <CheckIcon color="success" />
+                            ) : (
+                                <ClearIcon color="warning" />
+                            )}
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
         </div>
       </div>
     </div>
