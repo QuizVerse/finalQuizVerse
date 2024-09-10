@@ -1,564 +1,597 @@
 import {
-  LocalAudioTrack,
-  LocalVideoTrack,
-  Room,
-  RoomEvent
-} from "livekit-client";
-import "./StudyRoom.css";
-import React, { useEffect, useState } from "react";
-import VideoComponent from "../../components/VideoComponent";
-import AudioComponent from "../../components/AudioComponent";
-import ShareVideoComponent from "../../components/ShareVideoComponent";
-import StartVideoComponent from "../../components/StartVideoComponent";
-import { LiveKitRoom, LayoutContextProvider, Chat } from "@livekit/components-react";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-
-let APPLICATION_SERVER_URL = "";
-let LIVEKIT_URL = "";
-configureUrls();
-
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
-
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
-
-export default function StudyRoom() {
-    const [room, setRoom] = useState(undefined);
-    const [localTrack, setLocalTrack] = useState(undefined);
-    const [localAudioTrack, setLocalAudioTrack] = useState(null);
-    const [remoteTracks, setRemoteTracks] = useState([]);
-    const [participantName, setParticipantName] = useState("");
-    const [roomName, setRoomName] = useState("");
-    const [token, setToken] = useState(null);
-    const [isCameraEnabled, setIsCameraEnabled] = useState(true);
-    const [isScreenSharing, setIsScreenSharing] = useState(false);
-    const [screenTrack, setScreenTrack] = useState(null);
-    const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const {study_id,studyTitle } = useParams(); // URL에서 studyId 추출
-    const [sharedScreenTrackSid, setSharedScreenTrackSid] = useState(null);
-    const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
-    const navi = useNavigate();
-
-    
-    //사용자 정보를 가져오는 함수
-    const getUserDto = () => {
-        axios.get(`/book/username`).then((res) => {
-            //닉네임불러오기
-            setParticipantName(res.data.userNickname);
-          });
-    };
-
-    useEffect(() => {
-        getUserDto();
-        setRoomName(studyTitle);
-    },[]); 
-    
-    // 방에 참가하기 전 카메라 미리보기 활성화 함수
-    const startVideoPreview = async () => {
-        try {
-            // 사용자의 비디오 장치에서 비디오 스트림을 생성
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            const videoTrack = stream.getVideoTracks()[0];
-            setPreviewStream(stream); // 미리보기 스트림 설정
-            const startVideoTrack = new LocalVideoTrack(videoTrack);
-            setLocalTrack(startVideoTrack);
-        } catch (error) {
-        console.error("비디오 미리보기를 활성화할 수 없습니다:", error);
-        }
-    };
-
-    // 방에 참가하지 않으면 미리보기 종료
-    const stopVideoPreview = () => {
-        if (previewStream) {
-        previewStream.getTracks().forEach((track) => track.stop());
-        setPreviewStream(null);
-        }
-    };
-
-    useEffect(() => {
-        if (!room) {
-        startVideoPreview(); // 방에 참가하지 않은 상태에서는 미리보기를 시작
-        } else {
-        stopVideoPreview(); // 방에 참가할 경우 미리보기 중지
-        }
-
-        return () => stopVideoPreview(); // 컴포넌트 언마운트 시 미리보기 종료
-    }, [room]); // room 상태 변경에 따라 미리보기 상태를 관리
-
-  async function joinRoom() {
-      // 새 Room 객체 초기화
-      const room = new Room();
-      setRoom(room);
-
-      // Room에서 이벤트 발생 시 동작 지정
-      // 새로운 Track을 받을 때...
-      room.on(
-          RoomEvent.TrackSubscribed,
-          (_track, publication, participant) => {
-              setRemoteTracks((prev) => [
-                  ...prev,
-                  { trackPublication: publication, participantIdentity: participant.identity }
-              ]);
+    LocalAudioTrack,
+    LocalVideoTrack,
+    Room,
+    RoomEvent,
+    Track 
+  } from "livekit-client";
+  import "./StudyRoom.css";
+  import React, { useEffect, useState } from "react";
+  import VideoComponent from "../../components/VideoComponent";
+  import AudioComponent from "../../components/AudioComponent";
+  import ShareVideoComponent from "../../components/ShareVideoComponent";
+  import StartVideoComponent from "../../components/StartVideoComponent";
+  import { LiveKitRoom, LayoutContextProvider, Chat } from "@livekit/components-react";
+  import axios from "axios";
+  import { useNavigate, useParams } from "react-router-dom";
+  
+  let APPLICATION_SERVER_URL = "";
+  let LIVEKIT_URL = "";
+  configureUrls();
+  
+  // function configureUrls() {
+  //     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+  //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  // }
+  
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "http://localhost:3000/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
+  
+  export default function StudyRoom() {
+      const [room, setRoom] = useState(undefined);
+      const [localTrack, setLocalTrack] = useState(undefined);
+      const [localAudioTrack, setLocalAudioTrack] = useState(null);
+      const [remoteTracks, setRemoteTracks] = useState([]);
+      const [participantName, setParticipantName] = useState("");
+      const [roomName, setRoomName] = useState("");
+      const [token, setToken] = useState(null);
+      const [isCameraEnabled, setIsCameraEnabled] = useState(true);
+      const [screenTrack, setScreenTrack] = useState(null);
+      const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
+      const {study_id,studyTitle } = useParams(); // URL에서 studyId 추출
+      const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
+      const navi = useNavigate();
+  
+      
+      //사용자 정보를 가져오는 함수
+      const getUserDto = () => {
+          axios.get(`/book/username`).then((res) => {
+              //닉네임불러오기
+              setParticipantName(res.data.userNickname);
+            });
+      };
+  
+      useEffect(() => {
+          getUserDto();
+          setRoomName(studyTitle);
+      },[]); 
+      
+      // 방에 참가하기 전 카메라 미리보기 활성화 함수
+      const startVideoPreview = async () => {
+          try {
+              // 사용자의 비디오 장치에서 비디오 스트림을 생성
+              const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+              const videoTrack = stream.getVideoTracks()[0];
+              setPreviewStream(stream); // 미리보기 스트림 설정
+              const startVideoTrack = new LocalVideoTrack(videoTrack);
+              setLocalTrack(startVideoTrack);
+          } catch (error) {
+          console.error("비디오 미리보기를 활성화할 수 없습니다:", error);
           }
-      );
-
-       // Track이 삭제될 때...
-      room.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
-          setRemoteTracks((prev) => prev.filter((track) => track.trackPublication.trackSid !== publication.trackSid));
-      });
-    
-      try {
-          // 방 이름과 참가자 이름으로 애플리케이션 서버에서 토큰 가져오기
-          const token = await getToken(roomName, participantName);
-          setToken(token);
-
-          // LiveKit URL과 토큰으로 방에 연결
-          await room.connect(LIVEKIT_URL, token);
-
-          // 카메라와 마이크 활성화
-          await room.localParticipant.enableCameraAndMicrophone();
-          // 로컬 비디오 트랙 가져오기
-          //setLocalTrack(room.localParticipant.videoTrackPublications.values().next().value.videoTrack);
-          const LocalVideoTrack = room.localParticipant.videoTrackPublications.values().next().value?.videoTrack;
-          if (LocalVideoTrack) {
-              setLocalTrack(LocalVideoTrack);
+      };
+  
+      // 방에 참가하지 않으면 미리보기 종료
+      const stopVideoPreview = () => {
+          if (previewStream) {
+          previewStream.getTracks().forEach((track) => track.stop());
+          setPreviewStream(null);
+          }
+      };
+  
+      useEffect(() => {
+          if (!room) {
+          startVideoPreview(); // 방에 참가하지 않은 상태에서는 미리보기를 시작
           } else {
-              console.warn("참가자의 비디오 트랙을 찾을 수 없습니다.");
+          stopVideoPreview(); // 방에 참가할 경우 미리보기 중지
           }
-      } catch (error) {
-          console.log("방에 연결하는 중 오류가 발생 : ", error.message);
-          await leaveRoom();
-      }
-  }
-
-    //방 나가기
-    async function leaveRoom() {
-        // 'disconnect' 메서드를 호출하여 방에서 나가기
-        await room?.disconnect();
-        // 비디오 미리보기 종료
-        stopVideoPreview(); // 추가: 미리보기 종료
-        // 상태 초기화
-        setRoom(undefined);
-        setLocalTrack(undefined);
-        setPreviewStream(undefined);
-        setRemoteTracks([]);
-        //공유화면, ?
-        if (isScreenSharing && screenTrack) {
-            await screenTrack.stop();
-            setScreenTrack(null);
-        }
-        navi(`/study/list`);
-    }
-
-  async function getToken(roomName, participantName) {
-      try {
-          const response = await fetch(APPLICATION_SERVER_URL + "token", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                  roomName: roomName,
-                  participantName: participantName
-              })
-          });
-          
-          if (!response.ok) {
-              const error = await response.json();
-              throw new Error(`토큰 가져오기 실패: ${error.errorMessage}`);
-          }
+          return () => stopVideoPreview(); // 컴포넌트 언마운트 시 미리보기 종료
+      }, [room]); // room 상태 변경에 따라 미리보기 상태를 관리
   
-          const data = await response.json();
-          return data.token;
-      } catch (error) {
-          console.error("토큰 가져오기 실패:", error);
-          throw error;
-      }
-  }
-  //카메라 켜기
-  async function enableCamera() {
-      // 사용자의 비디오 장치에서 비디오 스트림을 생성
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const videoTrack = stream.getVideoTracks()[0];
-      const localVideoTrack = new LocalVideoTrack(videoTrack);
-      await room.localParticipant.publishTrack(localVideoTrack);
-      setLocalTrack(localVideoTrack);
-  }
-  //카메라 끄기
-  async function disableCamera() {
-    if (localTrack) {
-        await room.localParticipant.unpublishTrack(localTrack);
-        localTrack.stop(); // 비디오 트랙을 중지합니다.
-        setLocalTrack(null);
-    }
-    setIsCameraEnabled(false);
-  }
-  //카메라 토글 함수
-  async function toggleCamera() {
-      if (isCameraEnabled) {
-          await disableCamera();
-      } else {
-          await enableCamera();
-      }
-      setIsCameraEnabled(!isCameraEnabled);
-  }
-
-// 마이크 음소거 기능
-const toggleMicrophone = async () => {
-    if (isMicrophoneMuted) {
-        // 마이크 켜기
-        if (!localAudioTrack) {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const track = mediaStream.getAudioTracks()[0];
-            const audioTrack = new LocalAudioTrack(track);
-            await room.localParticipant.publishTrack(audioTrack);
-            setLocalAudioTrack(audioTrack);
-        } else {
-            if (localAudioTrack.mediaStreamTrack) {
-                localAudioTrack.mediaStreamTrack.enabled = true;
+    async function joinRoom() {
+        // 새 Room 객체 초기화
+        const room = new Room();
+        setRoom(room);
+  
+        // Room에서 이벤트 발생 시 동작 지정
+        // 새로운 Track을 받을 때...
+        room.on(
+            RoomEvent.TrackSubscribed,
+            (_track, publication, participant) => {
+                console.log("수신된 트랙 소스:", publication.source, "트랙 ID:", publication.trackSid);
+                if (publication.source === Track.Source.ScreenShare) {
+                    console.log("화면 공유 트랙이 수신되었습니다. 트랙 ID:", publication.trackSid);
+                    setSharedScreenTrackSid(publication.trackSid); // 공유 트랙 ID 저장
+                    setScreenSharingParticipant(participant.identity); // 화면 공유 중인 참가자 저장
+                }
+                setRemoteTracks((prev) => [
+                    ...prev,
+                    { trackPublication: publication, participantIdentity: participant.identity }
+                ]);
             }
-        }
-        setIsMicrophoneMuted(false);
-    } else {
-        // 마이크 끄기
-        if (localAudioTrack) {
-            await room.localParticipant.unpublishTrack(localAudioTrack);
-            if (localAudioTrack.mediaStreamTrack) {
-                localAudioTrack.mediaStreamTrack.enabled = false;
+        );
+  
+         // Track이 삭제될 때...
+        room.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+            if (publication.source === Track.Source.ScreenShare) {
+                setSharedScreenTrackSid(null); // 공유 트랙 ID 초기화
+                setScreenSharingParticipant(null); // 화면 공유 중인 참가자 초기화
             }
-            localAudioTrack.stop();
-            setLocalAudioTrack(null);
-        }
-        setIsMicrophoneMuted(true);
-    }
-    // 상대방 오디오 음소거 제어
-    remoteTracks.forEach(remoteTrack => {
-        if (remoteTrack.trackPublication.kind === "audio") {
-            remoteTrack.trackPublication.audioTrack.mediaStreamTrack.enabled = !isMicrophoneMuted;
-        }
-    });
-};
-// 상태를 정의합니다
-const [screenSharingParticipantId, setScreenSharingParticipantId] = useState(null);
-
-    // 화면 공유
-    async function toggleScreenSharing() {
+            setRemoteTracks((prev) => prev.filter((track) => track.trackPublication.trackSid !== publication.trackSid));
+        });
+      
         try {
-            if (isScreenSharing) {
-                // 화면 공유 중지
-                if (screenTrack) {
-                    try {
-                        console.log("Stopping screen sharing:", screenTrack);
-                        screenTrack.stop();
-                        await room.localParticipant.unpublishTrack(screenTrack);
-                        setScreenTrack(null);
-                        setSharedScreenTrackSid(null); // 화면 공유 중지 시, 식별자도 초기화
-                        setScreenSharingParticipantId(null); // 화면 공유 참가자 ID 초기화
-                        //handleScreenSharingChange(false); // 화면 공유 상태 변경 알림
-                    } catch (error) {
-                        console.error("화면 공유 중지 중 에러 발생:", error);
-                        alert("화면 공유를 중지하는 동안 문제가 발생했습니다.");
-                    }
-                }
-            } else {
-                // 화면 공유 시작
-                try {
-                    // 다른 참가자가 이미 화면 공유를 하고 있다면
-                    if (sharedScreenTrackSid) {
-                        alert("이미 다른 참가자가 화면을 공유 중입니다.");
-                        return;
-                    }
-
-                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                    const track = stream.getVideoTracks()[0];
-                    await room.localParticipant.publishTrack(track);
-                    setScreenTrack(track);
-                    setSharedScreenTrackSid(track.id); // 화면 공유 시, 고유 식별자 설정
-                    setScreenSharingParticipantId(room.localParticipant.identity); // 화면 공유 참가자 ID 설정
-                    
-                    // 확인용 로그
-                    console.log("Started screen sharing with SID:", track.id);
-                    console.log("Screen sharing participant ID:", room.localParticipant.identity);
-                    //handleScreenSharingChange(true); // 화면 공유 상태 변경 알림
-                } catch (error) {
-                    console.error("화면 공유 시작 중 에러 발생:", error);
-                    alert("화면 공유를 시작하는 동안 문제가 발생했습니다. 권한을 허용했는지 확인하세요.");
-                }
+            // 방 이름과 참가자 이름으로 애플리케이션 서버에서 토큰 가져오기
+            const token = await getToken(roomName, participantName);
+            setToken(token);
+  
+            // LiveKit URL과 토큰으로 방에 연결
+            await room.connect(LIVEKIT_URL, token);
+  
+            // 카메라와 마이크 활성화
+            await room.localParticipant.enableCameraAndMicrophone();
+            // 로컬 비디오 트랙 가져오기
+            const LocalVideoTrack = room.localParticipant.videoTrackPublications.values().next().value?.videoTrack;
+            if (LocalVideoTrack) {
+                setLocalTrack(LocalVideoTrack);
             }
-            // 화면 공유 상태 토글
-            //setIsScreenSharing(!isScreenSharing);
-            setIsScreenSharing(prevState => !prevState);
         } catch (error) {
-            console.error("화면 공유 토글 중 에러 발생:", error);
-            alert("화면 공유 상태를 변경하는 동안 문제가 발생했습니다.");
+            console.log("방에 연결하는 중 오류가 발생 : ", error.message);
+            await leaveRoom();
+        }
+    }
+  
+      //방 나가기
+      async function leaveRoom() {
+          // 'disconnect' 메서드를 호출하여 방에서 나가기
+          await room?.disconnect();
+          // 비디오 미리보기 종료
+          stopVideoPreview(); // 추가: 미리보기 종료
+          // 상태 초기화
+          setRoom(undefined);
+          setLocalTrack(undefined);
+          setPreviewStream(undefined);
+          setRemoteTracks([]);
+          //공유화면, ?
+          if (isScreenSharing && screenTrack) {
+              await screenTrack.stop();
+              setScreenTrack(null);
+          }
+        navi(`/study/list`);
+      }
+  
+    async function getToken(roomName, participantName) {
+        try {
+            const response = await fetch(APPLICATION_SERVER_URL + "token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    roomName: roomName,
+                    participantName: participantName
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`토큰 가져오기 실패: ${error.errorMessage}`);
+            }
+    
+            const data = await response.json();
+            return data.token;
+        } catch (error) {
+            console.error("토큰 가져오기 실패:", error);
+            throw error;
         }
     }
 
-    // 화면 공유 트랙을 렌더링하기 위한 조건
-const isScreenShareTrack = (track, sharedScreenTrackSid) => {
-    console.log("Checking Screen Share Track:");
-    console.log("Track SID:", track.trackPublication.trackSid);
-    console.log("Shared Screen Track SID:", sharedScreenTrackSid);
+    async function sendScreenShareStatus(roomName, participantName, isSharing) {
+        console.log(`화면 공유 상태 전송: ${isSharing ? '시작' : '중지'}`);
+        try {
+            console.log(`보낼 데이터:`, JSON.stringify({ roomName, participantName, isSharing }));
+            // 서버에 화면 공유 상태를 전송하는 API 요청
+            const response = await fetch(APPLICATION_SERVER_URL + "screen-share", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    roomName: roomName,
+                    participantName: participantName,
+                    isSharing: isSharing // true면 화면 공유 시작, false면 중지
+                })
+            });
 
-    if (!track.trackPublication) {
-        console.error("track.trackPublication is undefined or null");
-        return false;
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`화면 공유 상태 전송 실패: ${error.errorMessage}`);
+            }
+    
+            const data = await response.json();
+            return data.success;
+        } catch (error) {
+            console.error("화면 공유 상태 전송 실패:", error);
+            throw error;
+        }
+    }    
+
+    //카메라 켜기
+    async function enableCamera() {
+        // 사용자의 비디오 장치에서 비디오 스트림을 생성
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoTrack = stream.getVideoTracks()[0];
+        const localVideoTrack = new LocalVideoTrack(videoTrack);
+        await room.localParticipant.publishTrack(localVideoTrack);
+        setLocalTrack(localVideoTrack);
     }
-
-    return track.trackPublication.kind === "video" &&
-           track.trackPublication.videoTrack &&
-           track.trackPublication.trackSid === sharedScreenTrackSid;
-};
-
-// 원격 비디오 트랙을 렌더링하기 위한 조건
-const isRegularVideoTrack = (track, sharedScreenTrackSid) => {
-    return track.trackPublication.kind === "video" &&
-           track.trackPublication.videoTrack &&
-           track.trackPublication.trackSid !== sharedScreenTrackSid;
-};
-
-// 원격 오디오 트랙을 렌더링하기 위한 조건
-const isAudioTrack = (track) => {
-    return track.trackPublication.kind === "audio" &&
-           track.trackPublication.audioTrack;
-};
-
-// 화면 공유 비디오 트랙을 모든 참가자에게 렌더링
-const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
-    return remoteTracks.filter(track => isScreenShareTrack(track, sharedScreenTrackSid));
-};
-
-// // 모든 참가자들이 화면 공유 비디오를 렌더링하도록 수정된 함수
-// const renderScreenShareTracks = () => {
-//     return remoteTracks.map(remoteTrack => {
-//         if (remoteTrack.participantIdentity === participantName || screenSharingParticipantId) {
-//             // 현재 참가자가 화면을 공유 중이거나, 다른 참가자가 화면 공유를 하고 있을 경우
-//             return (
-//                 <ShareVideoComponent
-//                     key={remoteTrack.trackPublication.trackSid}
-//                     track={remoteTrack.trackPublication.videoTrack}
-//                     participantIdentity={remoteTrack.participantIdentity}
-//                 />
-//             );
-//         }
-//         return null;
-//     });
-// };
-
-  //채팅
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-      //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-      const ws = new WebSocket('ws://localhost:9002/ws/chat');
-      
-      ws.onopen = () => {
-      console.log('웹소켓 연결이 설정되었습니다.');
-      };
-
-      ws.onmessage = (event) => {
-      console.log('메시지 수신됨:', event.data);
-      setMessages((prevMessages) => [...prevMessages, `${event.data}`]);
-      };
-  
-      ws.onclose = () => {
-      console.log('웹소켓 연결이 종료되었습니다.');
-      };
-  
-      ws.onerror = (error) => {
-      console.error('웹소켓 오류 발생:', error);
-      };
-
-      setSocket(ws);
-      
-      return () => {
-          ws.close();
-      };
-      }, [participantName]);
-
-  const sendMessage = (e) => {
-      e.preventDefault();
-      if (socket && message) {
-          let sending = participantName + " : " + message;
-          socket.send(sending);
-          setMessage(''); // 메시지 입력란 비우기
+    //카메라 끄기
+    async function disableCamera() {
+      if (localTrack) {
+          await room.localParticipant.unpublishTrack(localTrack);
+          localTrack.stop(); // 비디오 트랙을 중지합니다.
+          setLocalTrack(null);
       }
-      else {
-          console.warn('소켓이 열려 있지 않거나 메시지가 비어 있습니다.');
+      setIsCameraEnabled(false);
+    }
+    //카메라 토글 함수
+    async function toggleCamera() {
+        if (isCameraEnabled) {
+            await disableCamera();
+        } else {
+            await enableCamera();
+        }
+        setIsCameraEnabled(!isCameraEnabled);
+    }
+  
+  // 마이크 음소거 기능
+  const toggleMicrophone = async () => {
+      if (isMicrophoneMuted) {
+          // 마이크 켜기
+          if (!localAudioTrack) {
+              const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              const track = mediaStream.getAudioTracks()[0];
+              const audioTrack = new LocalAudioTrack(track);
+              await room.localParticipant.publishTrack(audioTrack);
+              setLocalAudioTrack(audioTrack);
+          } else {
+              if (localAudioTrack.mediaStreamTrack) {
+                  localAudioTrack.mediaStreamTrack.enabled = true;
+              }
+          }
+          setIsMicrophoneMuted(false);
+      } else {
+          // 마이크 끄기
+          if (localAudioTrack) {
+              await room.localParticipant.unpublishTrack(localAudioTrack);
+              if (localAudioTrack.mediaStreamTrack) {
+                  localAudioTrack.mediaStreamTrack.enabled = false;
+              }
+              localAudioTrack.stop();
+              setLocalAudioTrack(null);
+          }
+          setIsMicrophoneMuted(true);
       }
+      // 상대방 오디오 음소거 제어
+      remoteTracks.forEach(remoteTrack => {
+          if (remoteTrack.trackPublication.kind === "audio") {
+              remoteTrack.trackPublication.audioTrack.mediaStreamTrack.enabled = !isMicrophoneMuted;
+          }
+      });
   };
+  
+const [isScreenSharing, setIsScreenSharing] = useState(false);
+const [sharedScreenTrackSid, setSharedScreenTrackSid] = useState(null); // 현재 화면 공유 중인 트랙 ID
+const [screenSharingParticipant, setScreenSharingParticipant] = useState(null); // 현재 화면 공유 중인 참가자
 
-  return (
-      <LiveKitRoom> 
-          {/* token={token} serverUrl={LIVEKIT_URL} connect={!!token} */}
-          <LayoutContextProvider>
-          {!room ? (
-              <div id="join">
-                  <div id="join-dialog">
-                  <h2 id="room-title">{roomName}</h2>
-                  &nbsp;
-                    <button className="btn btn-danger" id="leave-room-button" onClick={leaveRoom}>
-                        Leave Room
-                    </button>
-                        {/* 미리보는 화상창 */}
-                        {previewStream && (
-                        <StartVideoComponent
-                            track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
-                            local={true}
-                        />
-                        )}
-                      <form
-                          onSubmit={(e) => {
-                              joinRoom();
-                              e.preventDefault();
-                          }}
-                      >
-                          <div>
-                              {/* <label htmlFor="participant-name">참가자</label> */}
-                              <input
-                                  id="participant-name"
-                                  className="form-control"
-                                  type="text"
-                                  value={participantName}
-                                  onChange={(e) => setParticipantName(e.target.value)}
-                                  required
-                              />
-                          </div>
-                          <div>
-                              {/* <label htmlFor="room-name">Room</label> */}
-                              <input
-                                  id="room-name"
-                                  className="form-control"
-                                  type="hidden"
-                                  value={roomName}
-                                  onChange={(e) => setRoomName(e.target.value)}
-                                  required
-                              />
-                          </div>
-                            <button className="btn btn-secondary" onClick={toggleCamera}>
-                                {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
-                            </button>
-                            <button className="btn btn-secondary" onClick={toggleMicrophone}>
-                                {isMicrophoneMuted ? "마이크 끄기" : "마이크 켜기"}
-                            </button>
-                          <button
-                              className="btn btn-lg btn-success"
-                              type="submit"
-                              disabled={!roomName || !participantName}
-                            >
-                              입장
-                          </button>
-                      </form>
-                  </div>
-              </div>
-          ) : (
-              <div id="room">
-                  <div id="room-header">
-                      <h2 id="room-title">{roomName}</h2>
+      // 화면 공유
+      async function toggleScreenSharing() {
+          try {
+              if (isScreenSharing && screenTrack) {
+                // 화면 공유 중지
+                screenTrack.stop(); // 트랙 중지
+                await room.localParticipant.unpublishTrack(screenTrack); // 방에서 공유 해제
+                setScreenTrack(null); // 상태 초기화
+                setIsScreenSharing(false);
+                await sendScreenShareStatus(roomName, participantName, false); // 중지 상태 전송
+              } else {
+                  // 화면 공유 시작
+                  try {
+                    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    const screenTrack = stream.getVideoTracks()[0];
+
+                    // 트랙을 '화면 공유' 소스로 설정하여 게시
+                    await room.localParticipant.publishTrack(screenTrack, { source: Track.Source.ScreenShare });
+
+                    setScreenTrack(screenTrack);
+                    setIsScreenSharing(true);
+                    await sendScreenShareStatus(roomName, participantName, true); // 시작 상태 전송
+                  } catch (error) {
+                      console.error("화면 공유 시작 중 에러 발생:", error);
+                      alert("화면 공유를 시작하는 동안 문제가 발생했습니다. 권한을 허용했는지 확인하세요.");
+                  }
+              }
+          } catch (error) {
+              console.error("화면 공유 토글 중 에러 발생:", error);
+              alert("화면 공유 상태를 변경하는 동안 문제가 발생했습니다.");
+          }
+      }
+  
+  // 원격 비디오 트랙을 렌더링하기 위한 조건
+  const isRegularVideoTrack = (track, sharedScreenTrackSid) => {
+      return track.trackPublication.kind === "video" &&
+             track.trackPublication.videoTrack &&
+             track.trackPublication.trackSid !== sharedScreenTrackSid;
+  };
+  
+  // 원격 오디오 트랙을 렌더링하기 위한 조건
+  const isAudioTrack = (track) => {
+      return track.trackPublication.kind === "audio" &&
+             track.trackPublication.audioTrack;
+  };
+  
+  // 화면 공유 비디오 트랙을 모든 참가자에게 렌더링
+  const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
+    console.log("현재 공유된 화면 트랙 ID:", sharedScreenTrackSid);
+    console.log("원격 트랙:", remoteTracks);
+    
+    return remoteTracks.filter(track => {
+        const isScreenShare = track.trackPublication.kind === "video" &&
+                              track.trackPublication.videoTrack &&
+                              track.trackPublication.trackSid === sharedScreenTrackSid;
+        console.log("트랙이 화면 공유인지 확인:", isScreenShare, "트랙 ID:", track.trackPublication.trackSid);
+        return isScreenShare;
+    });
+  };
+  // 화면 공유 WebSocket
+    useEffect(() => {
+        const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+        
+        screenShareWs.onopen = () => {
+            console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
+        };
+
+        screenShareWs.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log('화면 공유 메시지 수신됨:', message);
+            // 화면 공유 상태 업데이트 로직
+            if (message.isSharing) {
+                console.log(`${message.participantName}가 화면 공유를 시작했습니다.`);
+                // 화면 공유 트랙을 설정
+                setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
+                setScreenSharingParticipant(message.participantName);  // 화면 공유 중인 사람 설정
+                setIsScreenSharing(true);  // 화면 공유 상태로 설정
+            } else {
+                console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
+                // 화면 공유 중지 처리
+                setSharedScreenTrackSid(null);  // 트랙 ID 초기화
+                setScreenSharingParticipant(null);  // 공유 중인 참가자 초기화
+                setIsScreenSharing(false);  // 화면 공유 상태 해제
+            }
+        };
+
+        screenShareWs.onclose = () => {
+            console.log('화면 공유 웹소켓 연결이 종료되었습니다.');
+        };
+
+        screenShareWs.onerror = (error) => {
+            console.error('화면 공유 웹소켓 오류 발생:', error);
+        };
+
+        return () => {
+            screenShareWs.close(); // 컴포넌트가 언마운트될 때 연결 종료
+        };
+    }, [participantName]);
+  
+    //채팅
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [socket, setSocket] = useState(null);
+  
+    useEffect(() => {
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        
+        ws.onopen = () => {
+        console.log('웹소켓 연결이 설정되었습니다.');
+        };
+  
+        ws.onmessage = (event) => {
+        console.log('메시지 수신됨:', event.data);
+        setMessages((prevMessages) => [...prevMessages, `${event.data}`]);
+        };
+    
+        ws.onclose = () => {
+        console.log('웹소켓 연결이 종료되었습니다.');
+        };
+    
+        ws.onerror = (error) => {
+        console.error('웹소켓 오류 발생:', error);
+        };
+  
+        setSocket(ws);
+        
+        return () => {
+            ws.close();
+        };
+        }, [participantName]);
+  
+    const sendMessage = (e) => {
+        e.preventDefault();
+        if (socket && message) {
+            let sending = participantName + " : " + message;
+            socket.send(sending);
+            setMessage(''); // 메시지 입력란 비우기
+        }
+        else {
+            console.warn('소켓이 열려 있지 않거나 메시지가 비어 있습니다.');
+        }
+    };
+  
+    return (
+        <LiveKitRoom> 
+            {/* token={token} serverUrl={LIVEKIT_URL} connect={!!token} */}
+            <LayoutContextProvider>
+            {!room ? (
+                <div id="join">
+                    <div id="join-dialog">
+                    <h2 id="room-title">{roomName}</h2>
+                    &nbsp;
                       <button className="btn btn-danger" id="leave-room-button" onClick={leaveRoom}>
                           Leave Room
                       </button>
-                  </div>
-                  <div id="layout-container-share">
-                        {/* 화면 공유 비디오 표시 */}
-                        {isScreenSharing && screenTrack && ( //isScreenSharing
-                            <ShareVideoComponent
-                                track={screenTrack} // 화면 공유 비디오 트랙
-                                participantIdentity={participantName} // 화면 공유를 나타내는 고유 이름
-                                local={true}
-                            />
-                        )}
-                        {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
-                        {/* {remoteTracks //filteredRemoteTracks
-                            .filter(track => isScreenShareTrack(track, sharedScreenTrackSid)) //isScreenShareTrack
-                            //(remoteTrack =>
-                            //     remoteTrack.trackPublication.kind === "video" &&
-                            //     remoteTrack.trackPublication.videoTrack &&
-                            //     remoteTrack.trackPublication.trackSid === sharedScreenTrackSid
-                            // )
-                            .map(remoteTrack => (
-                                <ShareVideoComponent
-                                    key={remoteTrack.trackPublication.trackSid}
-                                    track={remoteTrack.trackPublication.videoTrack}
-                                    participantIdentity={remoteTrack.participantIdentity}
+                          {/* 미리보는 화상창 */}
+                          {previewStream && (
+                          <StartVideoComponent
+                              track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
+                              local={true}
+                          />
+                          )}
+                        <form
+                            onSubmit={(e) => {
+                                joinRoom();
+                                e.preventDefault();
+                            }}
+                        >
+                            <div>
+                                {/* <label htmlFor="participant-name">참가자</label> */}
+                                <input
+                                    id="participant-name"
+                                    className="form-control"
+                                    type="text"
+                                    value={participantName}
+                                    onChange={(e) => setParticipantName(e.target.value)}
+                                    required
                                 />
-                        ))} */}
-                        {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).length > 0 && (
-                        getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
-                            <ShareVideoComponent
-                                key={remoteTrack.trackPublication.trackSid}
-                                track={remoteTrack.trackPublication.videoTrack}
-                                participantIdentity={remoteTrack.participantIdentity}
-                            />
-                        ))
-                    )}
+                            </div>
+                            <div>
+                                {/* <label htmlFor="room-name">Room</label> */}
+                                <input
+                                    id="room-name"
+                                    className="form-control"
+                                    type="hidden"
+                                    value={roomName}
+                                    onChange={(e) => setRoomName(e.target.value)}
+                                    required
+                                />
+                            </div>
+                              <button className="btn btn-secondary" onClick={toggleCamera}>
+                                  {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
+                              </button>
+                              <button className="btn btn-secondary" onClick={toggleMicrophone}>
+                                  {isMicrophoneMuted ? "마이크 끄기" : "마이크 켜기"}
+                              </button>
+                            <button
+                                className="btn btn-lg btn-success"
+                                type="submit"
+                                disabled={!roomName || !participantName}
+                              >
+                                입장
+                            </button>
+                        </form>
                     </div>
-                    <div id="layout-container">
-                        {localTrack &&(
-                            <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
-                        )}
-                        {/* 일반 비디오 및 오디오 트랙 렌더링 */}
-                        {remoteTracks //filteredRemoteTracks
-                            .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
-                            // (remoteTrack =>
-                            //     remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid &&
-                            //     remoteTrack.trackPublication.videoTrack
-                            // )
-                            .map(remoteTrack =>
-                                remoteTrack.trackPublication.kind === "video" ? (
-                                    <VideoComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.videoTrack}
-                                        participantIdentity={remoteTrack.participantIdentity}
-                                    />
-                                    //+":"
-                                ) : (
-                                    <AudioComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.audioTrack}
-                                        muted={isMicrophoneMuted} // 음소거 상태 전달
-                                    />
-                                )
+                </div>
+            ) : (
+                <div id="room">
+                    <div id="room-header">
+                        <h2 id="room-title">{roomName}</h2>
+                        <button className="btn btn-danger" id="leave-room-button" onClick={leaveRoom}>
+                            Leave Room
+                        </button>
+                    </div>
+                    <div id="layout-container-share">
+                          {/* 화면 공유 비디오 표시 */}
+                          {isScreenSharing && screenTrack && (
+                              <ShareVideoComponent
+                                //   track={screenTrack} // 화면 공유 비디오 트랙
+                                //   participantIdentity={participantName} // 화면 공유를 나타내는 고유 이름
+                                //   local={true}
+                                track={screenTrack} // 화면 공유 비디오 트랙
+                                participantIdentity={screenSharingParticipant || participantName} // 화면 공유를 나타내는 고유 이름
+                                local={screenSharingParticipant === participantName} // 본인이 공유 중인 경우 local로 설정
+                              />
+                          )}
+                          {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
+                          {/* {remoteTracks //filteredRemoteTracks
+                              .filter(track => isScreenShareTrack(track, sharedScreenTrackSid)) //isScreenShareTrack
+                              //(remoteTrack =>
+                              //     remoteTrack.trackPublication.kind === "video" &&
+                              //     remoteTrack.trackPublication.videoTrack &&
+                              //     remoteTrack.trackPublication.trackSid === sharedScreenTrackSid
+                              // )
+                              .map(remoteTrack => (
+                                  <ShareVideoComponent
+                                      key={remoteTrack.trackPublication.trackSid}
+                                      track={remoteTrack.trackPublication.videoTrack}
+                                      participantIdentity={remoteTrack.participantIdentity}
+                                  />
+                          ))} */}
+                          {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
+                              <ShareVideoComponent
+                                  key={remoteTrack.trackPublication.trackSid}
+                                  track={remoteTrack.trackPublication.videoTrack}
+                                  participantIdentity={remoteTrack.participantIdentity}
+                              />
                             )
-                        }
+                      )}
+                      </div>
+                      <div id="layout-container">
+                          {localTrack &&(
+                              <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                          )}
+                          {/* 일반 비디오 및 오디오 트랙 렌더링 */}
+                          {remoteTracks //filteredRemoteTracks
+                              .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
+                              // (remoteTrack =>
+                              //     remoteTrack.trackPublication.trackSid !== sharedScreenTrackSid &&
+                              //     remoteTrack.trackPublication.videoTrack
+                              // )
+                              .map(remoteTrack =>
+                                  remoteTrack.trackPublication.kind === "video" ? (
+                                      <VideoComponent
+                                          key={remoteTrack.trackPublication.trackSid}
+                                          track={remoteTrack.trackPublication.videoTrack}
+                                          participantIdentity={remoteTrack.participantIdentity}
+                                      />
+                                  ) : (
+                                      <AudioComponent
+                                          key={remoteTrack.trackPublication.trackSid}
+                                          track={remoteTrack.trackPublication.audioTrack}
+                                          muted={isMicrophoneMuted} // 음소거 상태 전달
+                                      />
+                                  )
+                              )
+                          }
+                      </div>
+                    <button className="btn btn-secondary" onClick={toggleCamera}>
+                        {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
+                    </button>
+                    <button className="btn btn-secondary" onClick={toggleMicrophone}>
+                        {isMicrophoneMuted ? "마이크 끄기" : "마이크 켜기"}
+                    </button>
+                    <button className="btn btn-secondary" onClick={toggleScreenSharing}>
+                        {isScreenSharing  ? "화면 공유 중지" : "화면 공유"}
+                    </button>
+                    <div className="chat-container">
+                        <ul id="messages">
+                        {messages.map((msg, index) => (
+                            <li key={index}>{msg}</li>
+                        ))}
+                        </ul>
+                        <form onSubmit={sendMessage}>
+                        <input
+                            autoComplete="off"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="메시지를 입력하세요"
+                        />
+                        <button type="submit">Send</button>
+                        </form>
                     </div>
-                  <button className="btn btn-secondary" onClick={toggleCamera}>
-                      {isCameraEnabled ? "카메라 끄기" : "카메라 켜기"}
-                  </button>
-                  <button className="btn btn-secondary" onClick={toggleMicrophone}>
-                      {isMicrophoneMuted ? "마이크 끄기" : "마이크 켜기"}
-                  </button>
-                  <button className="btn btn-secondary" onClick={toggleScreenSharing}>
-                      {isScreenSharing  ? "화면 공유 중지" : "화면 공유"}
-                  </button>
-                  <div className="chat-container">
-                      <ul id="messages">
-                      {messages.map((msg, index) => (
-                          <li key={index}>{msg}</li>
-                      ))}
-                      </ul>
-                      <form onSubmit={sendMessage}>
-                      <input
-                          autoComplete="off"
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          placeholder="메시지를 입력하세요"
-                      />
-                      <button type="submit">Send</button>
-                      </form>
-                  </div>
-              </div>
-          )}
-          </LayoutContextProvider>
-      </LiveKitRoom>
-  );
-}
-
+                </div>
+            )}
+            </LayoutContextProvider>
+        </LiveKitRoom>
+    );
+  }
