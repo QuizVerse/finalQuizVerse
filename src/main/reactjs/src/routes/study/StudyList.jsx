@@ -57,17 +57,20 @@ export default function StudyList() {
     // 페이지네이션에 맞게 현재 페이지의 항목을 계산
     const currentItems = filteredRoom.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(filteredRoom.length / ITEMS_PER_PAGE); // 총 페이지 수
+    
+    // 검색
+    const handleSearch = (keyword) => {
+        setSearchQuery(keyword);
+    };
 
     return (
         <main className="flex flex-col items-center w-full p-4 md:p-10">
-            <div className="flex items-center w-full max-w-5xl mb-6">
-                <input
-                    className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-                    placeholder="roomName, createId"
+            <div className="flex items-center w-full max-w-5xl mb-6 justify-between">
+                <SearchInput
+                    placeholder="스터디 이름 입력해보세요."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)} // 검색어 변경 시 상태 업데이트
-                />
-                <Button onClick={NewRoom}>방생성</Button>
+                    onSearch={handleSearch}/>
+                <Button variant={"contained"} size={"large"} onClick={NewRoom}>방생성</Button>
             </div>
             <div className="grid grid-cols-2 w-full max-w-5xl gap-4">
                 {/* 페이지네이션을 적용한 리스트 */}
@@ -79,7 +82,7 @@ export default function StudyList() {
                             description={item.studyDescription}
                             nowMember={0}
                             totalMember={item.studyMemberlimit}
-                            status={1}
+                            status={item.studyStatus}
                             image={item.studyImage}
                             onClick={() => GoRoomEvent(item.studyId, item.studyTitle)} // 방 클릭 시 이벤트
                         />

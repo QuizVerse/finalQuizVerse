@@ -18,6 +18,8 @@ export default function BookList() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
+    const [top5Books, setTop5Books] = useState([]);
+
 
     useEffect(() => {
         const fetchCategoriesAndBooks = async () => {
@@ -39,7 +41,7 @@ export default function BookList() {
                             .then(response => ({
                                 categoryId: category.categoryId,
                                 books: response.data
-                                    .filter(book => book.bookStatus === 1) // Filter books based on status
+                                    .filter(book => book.bookStatus === 0 && book.bookIspublished === true) // 0(전체공개) 인 문제집 출력
                                     .map(book => ({
                                         ...book,
                                         isBookmark: bookmarkedBookIds.includes(book.bookId),
@@ -71,14 +73,28 @@ export default function BookList() {
                             const countSectionResponse = await axios.get(`/book/section/count/${book.bookId}`);
                             const countSection = countSectionResponse.data;
 
-                            setBooksByCategory(prevState => ({
-                                ...prevState,
-                                [categoryId]: prevState[categoryId].map(b =>
+                            setBooksByCategory(prevState => {
+                                // 북마크 순으로 정렬
+                                const sortedBooks = prevState[categoryId].map(b =>
                                     b.bookId === book.bookId
                                         ? { ...b, bookmarkCount: countBookmark, bookSectionCount: countSection, bookQuestionCount: countQuestion }
                                         : b
-                                )
-                            }));
+                                ).sort((a, b) => b.bookmarkCount - a.bookmarkCount); // bookmarkCount 기준 내림차순 정렬
+
+                                return {
+                                    ...prevState,
+                                    [categoryId]: sortedBooks
+                                };
+                            });
+
+                            // setBooksByCategory(prevState => ({
+                            //     ...prevState,
+                            //     [categoryId]: prevState[categoryId].map(b =>
+                            //         b.bookId === book.bookId
+                            //             ? { ...b, bookmarkCount: countBookmark, bookSectionCount: countSection, bookQuestionCount: countQuestion }
+                            //             : b
+                            //     )
+                            // }));
                         })
                     )
                 );
@@ -108,8 +124,19 @@ export default function BookList() {
             }
         };
 
+        const fetchTop5Books = async () => {
+            try {
+                const response = await axios.get('/books/top5?categoryId=1');  // categoryId는 필요에 맞게 설정
+                setTop5Books(response.data);  // API로부터 받은 데이터를 상태에 저장
+            } catch (error) {
+                console.error("Failed to fetch top 5 books by bookmark count", error);
+            }
+        };
+
         checkLoginStatus();
         fetchCategoriesAndBooks();
+        fetchTop5Books();
+
     }, [isLoggedIn]);  // 로그인 상태 변경 시마다 데이터 새로고침
 
     useEffect(() => {
@@ -151,29 +178,6 @@ export default function BookList() {
 
     return (
         <>
-            <Swiper
-                pagination={{ type: 'fraction' }}
-                navigation={true}
-                modules={[Pagination]}
-                className="mySwiper mb-8"
-                style={{ height: '400px' }}
-            >
-                <SwiperSlide>
-                    <img
-                        src="/banner2.png"
-                        style={{cursor: 'pointer'}}
-                    /></SwiperSlide>
-                <SwiperSlide>
-                    <img
-                    src="/banner1.png"
-                    style={{cursor: 'pointer'}}
-                /></SwiperSlide>
-                <SwiperSlide>
-                    <img
-                    src="/banner3.png"
-                    style={{cursor: 'pointer'}}
-                /></SwiperSlide>
-            </Swiper>
             {categories.map(category => (
                 <section className="mb-8" key={category.categoryId}>
                     <div className="flex items-center justify-between mb-4">
@@ -184,7 +188,7 @@ export default function BookList() {
                         </Link>
                     </div>
                     <div className="grid grid-cols-5 gap-4">
-                        {booksByCategory[category.categoryId]?.slice(0, 5).map((book) => (
+                        {booksByCategory[category.categoryId]?.slice(0, 5)?.map((book) => (
                             <BookCard
                                 key={book.bookId}
                                 bookId={book.bookId}

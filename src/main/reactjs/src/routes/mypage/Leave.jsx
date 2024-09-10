@@ -152,7 +152,7 @@ export default function Leave() {
 
 
   return (
-    <main className="flex-1 p-8">
+    <main className="flex-1 py-12 px-6">
       <div className="max-w-md mx-auto">
         <h1 className="mb-6 text-2xl font-bold text-center">회원 탈퇴</h1>
         <div className="space-y-4">

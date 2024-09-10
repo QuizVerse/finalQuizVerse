@@ -5,33 +5,41 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 export default function Score() {
     const [bookData, setBookData] = useState(null);
     const [username, setUsername] = useState("");
-    const {bookId} = useParams(); // bookId 가져올 변수
+    const {bookId, solvedbookId} = useParams(); // bookId 가져올 변수
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
+    const { search } = useLocation();
 
-
+    const queryParmas=new URLSearchParams(search);
+    const wrongRepeat=queryParmas.get("wrongRepeat");
 
     useEffect(() => {
-        const fetchData =async () => {
+        const fetchData = async () => {
+            console.log("solvedbookId", solvedbookId);
             try {
-                //문제집 정보
-                const bookResponse = await axios.get(`/book/score/${bookId}`);
-                console.log(bookResponse.data);
-                setBookData(bookResponse.data);
+                // 성적 정보
+                const scoreResponse = await axios.get(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
+                console.log(scoreResponse.data);
+                setBookData(scoreResponse.data);
+
                 // 사용자 정보
                 const userResponse = await axios.get(`/book/username`);
                 setUsername(userResponse.data.userNickname);
-            } catch (error) {console.log("Error : " , error);}
+            } catch (error) {
+                console.log("Error : ", error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchData();
-    }, [bookId]);
+    }, [bookId, solvedbookId]);
 
     if (!bookData) {
         return <div>No data found</div>; // 데이터가 없을 때 표시
@@ -45,9 +53,10 @@ export default function Score() {
     correct: true,
     accuracy: "91%",
   }));
+    const { correctAnswersCount, totalQuestions, score } = bookData;
 
   return (
-    <div className="w-full min-h-screen bg-gray-100">
+    <div className="w-full min-h-screen bg-[#F7F7F7]">
       {/*  헤더  */}
       <header className="flex items-center justify-between p-4 bg-gray-200 pr-4">
         <div className="flex items-center space-x-4">
@@ -67,7 +76,7 @@ export default function Score() {
 
           <div className="flex items-center gap-2  pr-4">
             <MenuBookIcon />
-            <span>16/20 문항</span>
+            <span>{correctAnswersCount}/{totalQuestions}문항</span>
           </div>
           <div className="flex items-center gap-2  pr-4">
             <CheckCircleOutlineIcon />
