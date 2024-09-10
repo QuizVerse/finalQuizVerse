@@ -162,7 +162,7 @@ export default function Summary() {
 }
 
 const Card = ({ title, count }) => (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4" data-v0-t="card">
+    <div className="rounded-lg border bg-card text-card-foreground shadow-lg p-4" data-v0-t="card">
         <div className="p-6">
             <h3 className="mb-2 text-lg font-semibold">{title}</h3>
             <div className="text-3xl font-bold">{count}개</div>
