@@ -68,6 +68,7 @@ import ChatbotModal from "./routes/devtest/ChatbotModal";
 import NewStudy from "./routes/study/NewStudy";
 import Study from "./routes/study/Study";
 import UpdateBook from "./routes/book/UpdateBook";
+import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 
 const router = createBrowserRouter([
     {
@@ -368,11 +369,55 @@ const router = createBrowserRouter([
 
 ]);
 
+const colorTheme = createTheme({
+    palette: {
+        primary: {
+            main: '#1F4976',
+        },
+        // secondary : {
+        //     main : "#eeeeee"
+        // }
+    },
+    // components: {
+    //     MuiTextField: {
+    //         styleOverrides: {
+    //             root: {
+    //                 "& .MuiOutlinedInput-root, & .MuiFilledInput-root, & .MuiInput-root": {
+    //                     "& fieldset, &:before, &:after": {
+    //                         borderColor: "#eeeeee", // 기본 테두리 색상
+    //                     },
+    //                     "&:hover fieldset, &:hover:not(.Mui-disabled):before": {
+    //                         borderColor: '#FFC038', // 호버 시 테두리 색상 변경
+    //                     },
+    //                     "&.Mui-focused fieldset, &.Mui-focused:before, &.Mui-focused:after": {
+    //                         borderColor: '#FFC038', // 포커스 시 테두리 색상
+    //                     },
+    //                 },
+    //                 input: {
+    //                     color: "#ffffff", // 입력 텍스트 색상
+    //                 },
+    //                 "& .MuiInputBase-input": {
+    //                     backgroundColor: "#171717", // 배경색 설정
+    //                     "&::placeholder": {
+    //                         color: "#eeeeee", // Placeholder 색상 설정 (밝게)
+    //                         opacity: 1, // 투명도 설정
+    //                     },
+    //                 },
+    //             },
+    //         },
+    //     },
+    // },
+});
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-        <RouterProvider router={router} />
-  </React.StrictMode>
+    <React.StrictMode>
+        <ThemeProvider theme={colorTheme}>
+            <CssBaseline />
+            <RouterProvider router={router} />
+        </ThemeProvider>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

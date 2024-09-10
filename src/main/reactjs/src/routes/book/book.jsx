@@ -4,7 +4,8 @@ import CategoryHeader from "../../components/CategoryHeader";
 import Chatbot from "../../components/Chatbot";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Pagination} from "swiper/modules";
-import React from "react";  // 챗봇 컴포넌트 임포트
+import React from "react";
+import MainFooter from "../../components/MainFooter";  // 챗봇 컴포넌트 임포트
 
 export default function Book() {
     const location = useLocation();
@@ -55,6 +56,7 @@ export default function Book() {
             {/*<div className="fixed bottom-4 right-4">*/}
             {/*    <Chatbot />*/}
             {/*</div>*/}
+            <MainFooter/>
         </div>
     );
 }

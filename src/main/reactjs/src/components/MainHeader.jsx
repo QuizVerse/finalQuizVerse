@@ -80,19 +80,19 @@ export default function MainHeader() {
     return (
         <div>
 
-                <header className="flex items-center justify-between w-full px-4 py-2 border-b">
+                <header className="flex items-center justify-between w-full px-4 py-2 bg-[#E9F5FF]">
                     <Link to='/'>
                         <h1 className="text-xl font-bold">
-                            <img src="/logo192.png" alt="quizverse" style={{width: "50px", borderRadius: "100%"}}/>
+                            <img src="/logooo.png" alt="quizverse" style={{height: "50px"}}/>
                         </h1>
                     </Link>
                     <nav className="flex items-center space-x-4">
-                        <Button>
+                        <Button size={"large"}>
                             <Link to='/book/list'>
                                 문제집 목록
                             </Link>
                         </Button>
-                        <Button>
+                        <Button size={"large"}>
                             <Link to='/study/list'>
                                 화상스터디
                             </Link>
@@ -100,7 +100,7 @@ export default function MainHeader() {
                     </nav>
                     {isLoggedIn ? (
                         <div className="flex items-center space-x-4">
-                            <Button onClick={handleLogout}>
+                            <Button onClick={handleLogout} size={"large"}>
                                 로그아웃
                             </Button>
                             <Link to='/mypage'>
@@ -118,10 +118,10 @@ export default function MainHeader() {
                         </div>
                     ) : (
                         <div className="flex items-center space-x-2">
-                            <Button>
+                            <Button size={"large"}>
                                 <Link to='/account/login'>로그인</Link>
                             </Button>
-                            <Button>
+                            <Button size={"large"} variant={"outlined"}>
                                 <Link to='/account/signup'>회원가입</Link>
                             </Button>
                         </div>

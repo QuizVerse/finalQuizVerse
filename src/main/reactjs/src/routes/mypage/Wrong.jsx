@@ -4,13 +4,6 @@ import BookCardH from "../../components/BookCardH";
 import axios from "axios";
 import BookCard from "../../components/BookCard";
 
-// 필터 옵션
-const conditions = [
-  { value: "popular", label: "인기순" },
-  { value: "recent", label: "최신순" },
-  { value: "old", label: "오래된순" },
-  { value: "title", label: "가나다순" },
-];
 
 const ITEMS_PER_PAGE = 8; // 한 페이지에 표시할 아이템 수
 const SPACING = 2; // 페이지네이션 버튼 간의 간격
@@ -22,11 +15,18 @@ export default function Wrong() {
   const [error, setError] = useState(null); // 에러 상태 관리
   const [page, setPage] = useState(1); // 페이지 상태 관리
   const [userId, setUserId] = useState(1); // 유저 ID (임의로 설정)
+    const [items, setItems] = useState([]);
 
   // 책 목록 가져오기
   const getWrongBooks = async () => {
     try {
-      const res = await axios.get(`/wrongbook/user`);
+      const res = await axios.get(`/wrong/get/booklist`)
+          .then((response) => {
+            console.log("Fetched data: ", response.data); // 데이터를 콘솔에 출력해서 확인
+            setItems(response.data);
+          }).catch((error) => {
+              console.error("Error fetching wrong note data:", error);
+          });
       const bookWithDetails = await Promise.all(
           res.data.map(async (book) => {
             const [
@@ -58,21 +58,7 @@ export default function Wrong() {
 
   // 컴포넌트가 마운트될 때 사용자 정보 및 책 목록 가져오기
   useEffect(() => {
-    getWrongBooks();
-  }, []);
-
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    axios
-        .get("/wrong/get/booklist")
-        .then((response) => {
-          console.log("Fetched data: ", response.data); // 데이터를 콘솔에 출력해서 확인
-          setItems(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching wrong note data:", error);
-        });
+      getWrongBooks();
   }, []);
 
   // 페이지 변경 시 처리 함수
@@ -89,22 +75,6 @@ export default function Wrong() {
   return (
       <main className="flex-1 p-6">
         <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
-
-        {/* 필터 및 검색 */}
-        <div className="flex items-center mb-6 space-x-4">
-          <input
-              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-              placeholder="책 제목, 카테고리 검색"
-          />
-          <TextField id="outlined-select-currency" select defaultValue="popular">
-            {conditions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-            ))}
-          </TextField>
-        </div>
-
         {/* BookCard 목록 출력 */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {loading ? (
