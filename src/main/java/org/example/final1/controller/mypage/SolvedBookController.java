@@ -1,16 +1,3 @@
-package org.example.final1.controller.mypage;
-
-import org.example.final1.model.BookDto;
-import org.example.final1.model.SolvedBookInfoDto;
-import org.example.final1.model.UserDto;
-import org.example.final1.service.SolvedbookService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +17,12 @@ public class SolvedBookController {
 
         return new ResponseEntity<>(solvedBookInfo, HttpStatus.OK);
     }
+
+
+   /* @PostMapping("/test/finish")
+    public ResponseEntity<Object> finishSolvedBook(@RequestBody SolvedBookInfoDto solvedBookInfo) {
+
+    }*/
+
+
 }
