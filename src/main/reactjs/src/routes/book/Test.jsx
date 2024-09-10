@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import axios from "axios";
 import Review from "../../components/modal/Review";
@@ -19,9 +19,8 @@ export default function ParentComponent() {
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
   const { search } = useLocation();
 
-
-  const queryParmas=new URLSearchParams(search);
-  const wrongRepeat=queryParmas.get("wrongRepeat");
+  const queryParams = new URLSearchParams(search);
+  const wrongRepeat = queryParams.get("wrongRepeat");
 
   const [timeLeft, setTimeLeft] = useState(null); // 남은 시간을 저장하는 상태
 
@@ -50,8 +49,22 @@ export default function ParentComponent() {
         // 서버에서 받은 bookTimer (분 단위) 값을 초로 변환해서 저장
         setTimeLeft(bookRes.data.book.bookTimer * 60);
 
+        // 질문 미리보기 요청
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
         setQuestions(questionsRes.data);
+
+        // 오답 문제 요청
+        if (wrongRepeat > 0) {
+          try {
+            const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
+              params: { solvedbookId, wrongRepeat }
+            });
+            setQuestions(wrongQuestionsRes.data);
+          } catch (error) {
+            console.error("오답 문제 요청 중 오류:", error);
+          }
+        }
+
 
         setLoading(false);
       } catch (error) {
@@ -61,7 +74,7 @@ export default function ParentComponent() {
     };
 
     fetchData();
-  }, [bookId]);
+  }, [bookId, wrongRepeat, solvedbookId]);
 
   // 타이머를 관리하는 useEffect
   useEffect(() => {
@@ -115,9 +128,8 @@ export default function ParentComponent() {
     }
   };
 
-
   const openConfirm = async () => {
-    console.log("answers:", answers);  // 전송될 데이터 확인
+    console.log("answers:", answers); // 전송될 데이터 확인
 
     const formattedAnswers = answers.map((answer) => {
       const answerData = {
@@ -146,10 +158,8 @@ export default function ParentComponent() {
       const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
       console.log("답안 제출 성공", response.data);
     } catch (error) {
-
       console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
     }
-
   };
 
   // 자동 제출을 처리하는 함수
@@ -257,8 +267,8 @@ export default function ParentComponent() {
           <div className="flex items-center space-x-4">
             <DensityMediumOutlinedIcon />
             <span className="text-lg font-semibold">
-            {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
-          </span>
+              {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
+            </span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
