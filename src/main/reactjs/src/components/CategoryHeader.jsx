@@ -27,7 +27,7 @@ export default function CategoryHeader() {
     };
 
     return (
-        <div className="flex justify-between px-12 py-4 items-center">
+        <div className="flex justify-between px-8 py-4 items-center">
             <div className="flex flex-wrap items-center justify-center gap-2">
                 {categoryList &&
                     categoryList.map((row) => (

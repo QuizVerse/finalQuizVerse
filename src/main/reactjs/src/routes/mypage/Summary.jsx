@@ -109,7 +109,7 @@ export default function Summary() {
             <section className="mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">
-                        <span className="text-blue-500">{user.userNickname}</span>님이 만든 문제집
+                        <span className="text-[#3877BB]">{user.userNickname}</span>님이 만든 문제집
                     </h2>
                     <Button
                         className="rounded-lg border bg-card text-card-foreground shadow-sm"
