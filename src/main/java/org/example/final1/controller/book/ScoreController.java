@@ -50,6 +50,7 @@ public class ScoreController {
         }
     }
 
+
     @GetMapping("/score/{bookId}/{solvedId}")
     public ResponseEntity<Map<String, Object>> getScore(
             @PathVariable("bookId") int bookId,
