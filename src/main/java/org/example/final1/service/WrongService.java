@@ -68,4 +68,10 @@ public class WrongService {
     }
 
 
+    public List<WrongDto> getWrongBooksByUserId(Integer userId) {
+        // 특정 사용자 ID로 오답 데이터를 가져옵니다.
+        return wrongRepository.findAllByUser_UserId(userId);
+    }
+
+
 }

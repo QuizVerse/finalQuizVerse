@@ -18,4 +18,7 @@ public interface WrongRepository extends JpaRepository<WrongDto, Integer> {
     @Query("SELECT w FROM WrongDto w WHERE w.solvedbook.solvedbookId = :solvedbookId AND w.wrongRepeat >= :wrongRepeat")
     List<WrongDto> findBySolvedbookIdandWrongrepeat(@Param("solvedbookId") int solvedbookId, @Param("wrongRepeat") int wrongRepeat);
 
+
+    List<WrongDto> findAllByUser_UserId(Integer userId);
+
 }
