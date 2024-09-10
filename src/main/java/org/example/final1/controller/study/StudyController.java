@@ -7,10 +7,12 @@ import java.util.Map;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.ClassDto;
 import org.example.final1.model.StudyDto;
+import org.example.final1.model.StudymemberDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.service.JwtService;
 import org.example.final1.service.StudyService;
 import org.example.final1.storage.NcpObjectStorageService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,9 +38,10 @@ public class StudyController {
     private String folderName="final/study";
 
     @GetMapping("/lists")
-    public List<StudyDto> getAllRoom()
+    public ResponseEntity<List<StudyDto>> getAllRoom()
     {
-        return studyService.getAllRoom();
+        List<StudyDto> studyList = studyService.getAllRoom();
+        return ResponseEntity.ok(studyList);
     }
 
     @PostMapping("/inserts")
@@ -67,7 +70,6 @@ public class StudyController {
         map.put("photo", photo);
         return map;
     }
-
 
     @GetMapping("/dtos")
     public StudyDto StudyRoomDto(@RequestParam("study_id") int studyId)
