@@ -234,7 +234,7 @@ export default function BookCard(props) {
                         </div>
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         <p className="mt-1 text-sm text-gray-600">{props.category}</p>
-                        <p className="mt-1 text-sm text-gray-600">저장수 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
+                        <p className="mt-1 text-sm text-gray-600">즐겨찾기 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
                         <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "공개" : props.status === 1 ? "클래스 공개" : "비공개"}</p>
                     </Link>
 

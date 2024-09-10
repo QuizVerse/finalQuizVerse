@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integer> {
@@ -20,4 +21,6 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
     Optional<SolvedbookDto> findByUserIdAndBookId(@Param("userId") int userId, @Param("bookId") int bookId);
     // 사용자와 bookId로 이미 풀었던 기록을 찾는 쿼리
     SolvedbookDto findByUserAndBook(UserDto userDto, BookDto bookDto);
+
+    List<SolvedbookDto> findByUserUserId(int userId);
 }
