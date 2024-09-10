@@ -235,18 +235,6 @@ export default function NewBook() {
                             onChange={handleTotalPointsChange}
                         />
                     </div>
-                    <div className="flex justify-between items-center space-x-2">
-                        <label className="text-sm font-medium">점수 균등 분배</label>
-                        <button
-                            type="button"
-                            role="switch"
-                            aria-checked={isChecked}
-                            className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isChecked ? "bg-blue-600" : "bg-gray-300"}`}
-                            onClick={toggleSwitch}
-                        >
-                            <span className={`pointer-events-none block h-5 w-5 rounded-full ${isChecked ? "translate-x-5 bg-white" : "translate-x-0 bg-gray-500"}`}></span>
-                        </button>
-                    </div>
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">
                             <label className="text-sm font-medium">제한시간 여부</label>

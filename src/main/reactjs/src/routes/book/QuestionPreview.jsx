@@ -65,18 +65,11 @@ export default function QuestionPreview() {
         const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
         updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
 
-        const currentTotal = updatedQuestions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
-
-        if (currentTotal > targetTotal) {
-            const excess = currentTotal - targetTotal;
-            updatedQuestions[index].questionPoint = Math.round((parsedScore - excess) * 10) / 10;
-            openAlert(`총 점수가 목표 점수를 초과했습니다. 현재 문항의 배점이 ${targetTotal}점에 맞춰 조정되었습니다.`);
-        } else {
-            updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
-        }
+        updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
 
         setQuestions(updatedQuestions);
     };
+
 
     const totalScore = questions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
