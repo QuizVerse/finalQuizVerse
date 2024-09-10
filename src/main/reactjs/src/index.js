@@ -37,7 +37,6 @@ import Category from './routes/book/Category';
 // Study 관련 컴포넌트
 import StudyList from './routes/study/StudyList';
 import StudyRoom from './routes/study/StudyRoom';
-import SearchRoom from './routes/study/SearchRoom';
 
 // MyPage 관련 컴포넌트
 import Book from "./routes/book/book";
@@ -294,12 +293,6 @@ const router = createBrowserRouter([
                 element: <StudyRoom />,
                 errorElement: <ErrorPage />,
             },
-            {
-                path: '/study/searchroom',
-                element: <SearchRoom />,
-                errorElement: <ErrorPage />,
-            },
-
         ]
     },
     {
