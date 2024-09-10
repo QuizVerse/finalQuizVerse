@@ -10,28 +10,57 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 export default function Score() {
-    const [bookData, setBookData] = useState(null);
+
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+
     const [username, setUsername] = useState("");
+    const [userScore,setUserScore] = useState(0);
     const {bookId, solvedbookId} = useParams(); // bookId 가져올 변수
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
     const { search } = useLocation();
+    const [bookData, setBookData] = useState({
+        correctAnswersCount: 0,     // 맞힌 문제 수
+        totalQuestions: 0,          // 전체 문제 수
+        backscore: 0,               // 백분율점수
+        startDay: '',               // 시험 응시 날짜
+        userpoint: 0,               // 사용자의 점수 (문제 배점들의 합)
+        questionIds: [],            // 사용자가 푼 문제의 questionId 리스트
+        bookTotalscore: 0,          // 문제집 총점
+    });
+
 
     const queryParmas=new URLSearchParams(search);
     const wrongRepeat=queryParmas.get("wrongRepeat");
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log("solvedbookId", solvedbookId);
             try {
                 // 성적 정보
                 const scoreResponse = await axios.get(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
                 console.log(scoreResponse.data);
                 setBookData(scoreResponse.data);
 
+                const userScoreResponse = await axios.get(`/book/score/userpoint/${solvedbookId}`);
+                console.log(userScoreResponse.data);
+                setUserScore(userScoreResponse.data);
+
                 // 사용자 정보
                 const userResponse = await axios.get(`/book/username`);
                 setUsername(userResponse.data.userNickname);
+
+                //문제집 정보
+                const bookResponse = await axios.get(`/book/score/${bookId}`);
+                setBookData(prevState => ({
+                    ...prevState,
+                    ...bookResponse.data
+                }));
+
+
+                // setBookData(bookResponse.data);
+                console.log(bookResponse.data);
+                console.log(bookData.bookTotalscore);
+
             } catch (error) {
                 console.log("Error : ", error);
             } finally {
@@ -39,21 +68,14 @@ export default function Score() {
             }
         };
         fetchData();
+        // fetchUserPoints();
     }, [bookId, solvedbookId]);
 
     if (!bookData) {
         return <div>No data found</div>; // 데이터가 없을 때 표시
     }
 
-
-  // 일단 문제 개수를 20개로 지정
-  const questions = Array.from({ length: 20 }, (_, index) => ({
-    number: `${index + 1}번`,
-    score: "5p",
-    correct: true,
-    accuracy: "91%",
-  }));
-    const { correctAnswersCount, totalQuestions, score } = bookData;
+    const { correctAnswersCount, totalQuestions, backscore, startDay, bookTotalscore } = bookData;
 
   return (
     <div className="w-full min-h-screen bg-gray-100">
@@ -80,7 +102,7 @@ export default function Score() {
           </div>
           <div className="flex items-center gap-2  pr-4">
             <CheckCircleOutlineIcon />
-            <span>80점</span>
+            <span>{backscore}점</span>
           </div>
         </div>
         <h1 className="text-xl font-bold items-end">{bookData.bookTitle}</h1>
@@ -103,7 +125,7 @@ export default function Score() {
                     textAlign: "center",
                   }}
                 >
-                  80점
+                  {backscore}점
                 </span>
               </div>
               <div className="flex items-center space-x-2">
@@ -117,7 +139,7 @@ export default function Score() {
                     textAlign: "center",
                   }}
                 >
-                  16/20문항
+                    {bookData.correctAnswersCount}/{bookData.totalQuestions} 문항
                 </span>
               </div>
               <div className="flex items-center space-x-2">
@@ -132,21 +154,7 @@ export default function Score() {
                     alignContent: "end",
                   }}
                 >
-                  2024년 7월 28일 12시 31분
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span style={{ width: "80px" }}>소요시간</span>
-                <span
-                  className="font-bold"
-                  style={{
-                    width: "220px",
-                    backgroundColor: "white",
-                    color: "#626262",
-                    textAlign: "center",
-                  }}
-                >
-                  20분 54초
+                  {bookData.startDay}
                 </span>
               </div>
             </div>
@@ -178,7 +186,7 @@ export default function Score() {
                 className="block text-2xl font-bold"
                 style={{ color: "#626262" }}
               >
-                80/{bookData.bookTotalscore}점
+                {userScore}/{bookData.bookTotalscore}점
               </span>
             </div>
           </div>
@@ -223,31 +231,31 @@ export default function Score() {
                 </th>
               </tr>
             </thead>
-            <tbody className="[&amp;_tr:last-child]:border-0">
-              {questions.map((question, index) => (
-                <tr
-                  key={index}
-                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                >
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    {question.number}
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    {question.score}
-                  </td>
-                  <td className="p-4 align-middle item-center [&amp;:has([role=checkbox])]:pr-0">
-                    {question.correct ? (
-                      <CheckIcon color="success" />
-                    ) : (
-                      <ClearIcon color="warning" />
-                    )}
-                  </td>
-                  <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                    {question.accuracy}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {/*<tbody className="[&amp;_tr:last-child]:border-0">*/}
+            {/*  {questions.map((question, index) => (*/}
+            {/*    <tr*/}
+            {/*      key={index}*/}
+            {/*      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"*/}
+            {/*    >*/}
+            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
+            {/*        {question.number}*/}
+            {/*      </td>*/}
+            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
+            {/*        {question.score}*/}
+            {/*      </td>*/}
+            {/*      <td className="p-4 align-middle item-center [&amp;:has([role=checkbox])]:pr-0">*/}
+            {/*        {question.correct ? (*/}
+            {/*          <CheckIcon color="success" />*/}
+            {/*        ) : (*/}
+            {/*          <ClearIcon color="warning" />*/}
+            {/*        )}*/}
+            {/*      </td>*/}
+            {/*      <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">*/}
+            {/*        {question.accuracy}*/}
+            {/*      </td>*/}
+            {/*    </tr>*/}
+            {/*  ))}*/}
+            {/*</tbody>*/}
           </table>
         </div>
       </div>

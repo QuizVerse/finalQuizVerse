@@ -12,6 +12,9 @@ import org.example.final1.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,30 +92,17 @@ public class AnswerService {
                 answer.setAnswerCorrect(isCorrect);
                 answer.setWrongRepeat(wrongRepeat);
 
-
-
                 if (!isCorrect) {
                     // 틀린 답안인 경우 오답 저장 로직 추가
                     wrongService.saveWrongAnswer(user, solvedbook, question, wrongRepeat);
                 }
-
             }
-
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());
-
-
             // 답안 저장
             answerRepository.save(answer);
-
-
-
-
-
         }
     }
-
-
 
     // 객관식 답안 채점 로직
     private boolean checkMultipleChoiceCorrect(QuestionDto question, List<ChoiceDto> selectedChoices) {
@@ -145,14 +135,45 @@ public class AnswerService {
         // 정답 개수 조회
         long correctAnswersCount = answerRepository.countBySolvedbookSolvedIdAndWrongRepeat(solvedId, wrongRepeat);
 
+        // solvedbookId로 SolvedbookDto 가져오기
+        SolvedbookDto solvedbookDto = solvedbookRepository.findBySolvedbookId(solvedId)
+                .orElseThrow(() -> new IllegalArgumentException("Solvedbook not found"));
+
+        // Timestamp를 LocalDateTime으로 변환
+        Timestamp startDayTimestamp = solvedbookDto.getSolvedbookStart();
+        LocalDateTime startDay = startDayTimestamp.toLocalDateTime();
+
+        // LocalDateTime을 "yyyy-MM-dd" 형식으로 포맷팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+        String formattedStartDay = startDay.format(formatter);
+
+        // 백엔드 점수 계산 및 소숫점 첫째 자리까지만 표시
+        double rawScore = (double) correctAnswersCount / totalQuestions * 100;
+        String formattedBackscore = String.format("%.1f", rawScore); // 소숫점 첫째 자리까지만 포맷
+
+
+        // 결과 맵에 값 추가
         Map<String, Object> result = new HashMap<>();
         result.put("correctAnswersCount", correctAnswersCount);
         result.put("totalQuestions", totalQuestions);
-        result.put("score", (double) correctAnswersCount / totalQuestions * 100);
+        result.put("backscore", formattedBackscore);
+        result.put("startDay", formattedStartDay); // 포맷된 날짜 추가
 
         return result;
     }
 
+    // solvedbookId로 맞힌 문제의 총 점수 계산
+    public int calculateTotalCorrectPoints(int solvedbookId) {
+        // 맞힌 문제들의 questionId 리스트를 가져옴
+        List<Integer> correctQuestionIds = answerRepository.findCorrectQuestionIdsBySolvedbookId(solvedbookId);
+
+        // 해당 문제들의 배점을 가져옴
+        List<Integer> questionPoints = questionRepository.findQuestionPointsByIds(correctQuestionIds);
+
+        // 배점들의 합을 계산
+        int sum = questionPoints.stream().mapToInt(Integer::intValue).sum();
+        return sum;
+    }
 }
 
 
