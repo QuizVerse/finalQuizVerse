@@ -1,12 +1,27 @@
 .startvideo-container {
     position: relative;
-    background: #3b3b3b;
+    background: #777777;
     aspect-ratio: 16/9;
     border-radius: 6px;
     overflow: hidden;
     width: 80%; /* 전체 너비의 80%로 설정 */
     max-width: 800px; /* 최대 너비를 600px로 제한 */
     margin: 0 auto; /* 중앙 정렬 */
+}
+
+.startvideo-container2 {
+    position: relative;
+    background: #f8f8f8;
+    aspect-ratio: 16/9;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 80%; /* 전체 너비의 80%로 설정 */
+    max-width: 800px; /* 최대 너비를 600px로 제한 */
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
 }
 
 .startvideo-container video {

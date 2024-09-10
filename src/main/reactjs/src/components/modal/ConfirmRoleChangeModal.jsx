@@ -53,7 +53,7 @@ function ConfirmRoleChangeModal({ members, onClose, onConfirm, action }) {
                         취소
                     </button>
                     <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                        className="px-4 py-2 bg-[#EEF7FF]0 text-white rounded"
                         onClick={handleConfirm}
                     >
                         확인

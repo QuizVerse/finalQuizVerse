@@ -153,7 +153,7 @@ export default function Myclass() {
 
 
   return (
-      <main className="flex-1 p-6">
+      <main className="flex-1 py-12 px-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">나의 클래스</h1>
         </div>

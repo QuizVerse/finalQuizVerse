@@ -256,7 +256,7 @@ export default function EditSection({
     };
 
     return (
-        <div className="flex flex-col gap-4 bg-blue-50 px-10 py-4 rounded">
+        <div className="flex flex-col gap-4 bg-[#EEF7FF] px-10 py-4 rounded">
             <div className="flex items-center space-x-2 justify-between">
                 <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>

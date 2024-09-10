@@ -3,7 +3,7 @@
 
 export default function TestWrong() {
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center w-full min-h-screen bg-[#F7F7F7]">
       <header className="flex items-center justify-between w-full p-4 bg-white border-b">
         <div className="flex items-center space-x-4">
           <svg

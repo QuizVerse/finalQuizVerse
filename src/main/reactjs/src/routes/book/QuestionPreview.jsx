@@ -149,7 +149,7 @@ export default function QuestionPreview() {
                     </div>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">
                             문항번호
                         </div>
@@ -191,7 +191,7 @@ export default function QuestionPreview() {
                         ))}
                     </Swiper>
 
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">현재 배점 합계</div>
                         <div
                             className={`${isTotalEqual ? 'text-blue-500' : 'text-red-500'} font-bold whitespace-nowrap p-2`}>
@@ -199,7 +199,7 @@ export default function QuestionPreview() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">총점</div>
                         <div className="text-blue-500 font-bold whitespace-nowrap p-2">
                             {bookData.bookTotalscore}점
