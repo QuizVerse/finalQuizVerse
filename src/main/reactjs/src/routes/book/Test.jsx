@@ -131,7 +131,7 @@ export default function ParentComponent() {
       const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formatAnswers());
       setConfirmVisible(true);
       console.log("답안 제출 성공", response.data);
-      // navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
+      //navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
     } catch (error) {
       console.error("답안 제출 중 오류:", error.response?.data);
     }
