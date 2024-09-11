@@ -244,7 +244,7 @@ export default function Detail() {
             <Box sx={{ mt: 2 }}>
               {Array.isArray(reviewData) && reviewData.length > 0 ? (
                   reviewData
-                      .slice(0, showMoreReviews ? undefined : 5)
+                      .slice(0, showMoreReviews ? undefined : 3)
                       .map((review) => (
                           <Card key={review.reviewId} sx={{ mb: 2 }}>
                             <CardContent sx={{ padding: 2 }}>
@@ -302,7 +302,7 @@ export default function Detail() {
                     아직 작성된 리뷰가 없습니다.
                   </Typography>
               )}
-              {reviewData.length > 5 && (
+              {reviewData.length > 3 && (
                   <Button
                       onClick={toggleMoreReviews}
                       sx={{
@@ -311,10 +311,18 @@ export default function Detail() {
                         textAlign: "center",
                         mt: 2,
                       }}
-                      startIcon={<ExpandMore />}
+                      startIcon={
+                        <ExpandMore
+                            sx={{
+                              transform: showMoreReviews ? "rotate(180deg)" : "rotate(0deg)",
+                              transition: "transform 0.3s ease-in-out", // 부드러운 회전 애니메이션 추가
+                            }}
+                        />
+                      }
                   >
                     {showMoreReviews ? "리뷰 접기" : "리뷰 더보기"}
                   </Button>
+
               )}
             </Box>
           </Container>

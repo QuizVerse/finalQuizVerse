@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
-    private static final String DEFAULT_USER_IMAGE_URL = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/loopy.png";
+    private static final String DEFAULT_USER_IMAGE_URL = "20240911_6ac956c7-d28e-4d24-b2ce-60726afe29a6";
 
 
     @Autowired
