@@ -58,10 +58,10 @@ export default function Wrong() {
         window.scrollTo(0, 0); // 페이지 변경 시 스크롤을 위로 이동
     };
 
-    // // 현재 페이지에 표시할 아이템 계산
-    // const itemOffset = (page - 1) * ITEMS_PER_PAGE;
-    // const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
-    // const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
+    // 현재 페이지에 표시할 아이템 계산
+    const itemOffset = (page - 1) * ITEMS_PER_PAGE;
+    const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
+    const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
     return (
         <main className="flex-1 py-12 px-6">
@@ -94,16 +94,16 @@ export default function Wrong() {
                     <div>No books available</div>
                 )}
             </div>
-            {/*/!* 페이지네이션 *!/*/}
-            {/*<Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>*/}
-            {/*    <Pagination*/}
-            {/*        count={pageCount}*/}
-            {/*        page={page}*/}
-            {/*        onChange={handleChange}*/}
-            {/*        showFirstButton*/}
-            {/*        showLastButton*/}
-            {/*    />*/}
-            {/*</Stack>*/}
+            {/* 페이지네이션 */}
+            <Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>
+                <Pagination
+                    count={pageCount}
+                    page={page}
+                    onChange={handleChange}
+                    showFirstButton
+                    showLastButton
+                />
+            </Stack>
         </main>
     );
 }
