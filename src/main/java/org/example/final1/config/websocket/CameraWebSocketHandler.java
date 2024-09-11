@@ -24,7 +24,7 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
         // 메시지를 모든 연결된 클라이언트에게 브로드캐스트
         synchronized (sessions) {
             for (WebSocketSession webSocketSession : sessions) {
-                if (webSocketSession.isOpen()) {
+                if (webSocketSession.isOpen() && !session.equals(webSocketSession)) {
                     webSocketSession.sendMessage(message);
                 }
             }

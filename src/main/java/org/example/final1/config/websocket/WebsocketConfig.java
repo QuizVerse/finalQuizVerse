@@ -52,8 +52,9 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 				.addInterceptors(new HttpSessionHandshakeInterceptor());
 		//카메라 
 		registry.addHandler(cameraWebSocketHandler(), "/ws/camera")
-        .setAllowedOrigins("http://localhost:3000") // React 앱 주소
-        .addInterceptors(new HttpSessionHandshakeInterceptor());
+			.setAllowedOrigins("http://localhost:3000") // React 앱 주소
+			//.setAllowedOrigins("https://www.quizverse.kro.kr")
+			.addInterceptors(new HttpSessionHandshakeInterceptor());
 
 	 }	
 }
