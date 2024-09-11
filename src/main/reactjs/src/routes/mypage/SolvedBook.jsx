@@ -97,7 +97,7 @@ export default function PublishedBook() {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             style={{ cursor: 'pointer' }}
                         >
-                          <TableCell component="th" scope="row">
+                          <TableCell scope="row">
                             {row.bookTitle}
                           </TableCell>
                           <TableCell>
