@@ -1,5 +1,5 @@
 import BookCard from "../../components/BookCard";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddClassMember from "../../components/modal/AddClassMember";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -235,6 +235,26 @@ export default function MyclassDetail() {
     setSearchQuery(keyword);
   };
 
+  const clickBookmark = async (bookId) => {
+    try {
+      const book = books.find(book => book.bookId === bookId);
+      const newIsBookmark = !book.isBookmark;
+
+      // 서버에 북마크 토글 요청
+      await axios.post('/bookmark/toggle', { bookId });
+
+      // UI 상태 업데이트
+      setBooks(books.map(book =>
+          book.bookId === bookId
+              ? { ...book, isBookmark: newIsBookmark }
+              : book
+      ));
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
+  };
+
+
   return (
       <main className="flex-1 py-12 px-6">
         <h1 className="mb-6 text-2xl font-bold">
@@ -374,15 +394,21 @@ export default function MyclassDetail() {
           {books.map((book) => (
               <BookCard
                   key={book.bookId}
-                  cardType="A" // 필요에 따라 cardType 설정
-                  nickname={book.user.userNickname}
-                  createDate={new Date(book.bookCreatedate).toLocaleDateString()}
+                  bookId={book.bookId}
+                  photo={`${photopath}/${book.bookImage}`}
+                  cardType="A"
+                  nickname={book.user?.userNickname || 'Unknown'}
+                  createDate={book.bookCreatedate}
                   title={book.bookTitle}
-                  category={book.category.categoryName} // 카테고리명
-                  viewCount="10" // 임의로 설정, 필요에 따라 수정
-                  questionCount="20" // 임의로 설정, 필요에 따라 수정
-                  sectionCoune="4" // 임의로 설정, 필요에 따라 수정
-                  status={book.bookStatus === 1 ? "Published" : "Draft"}
+                  category={book.category?.categoryName || 'Unknown'}
+                  bookmarkCount={book.bookmarkCount}
+                  bookQuestionCount={book.bookQuestionCount}
+                  bookSectionCount={book.bookSectionCount}
+                  status={book.bookStatus}
+                  bookUrl={`/book/detail/${book.bookId}`}
+                  updateBookmark={() => clickBookmark(book.bookId)}
+                  isBookmark={book.isBookmark}
+                  isLoggedIn={true}
               />
           ))}
         </div>

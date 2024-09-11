@@ -21,7 +21,6 @@ export default function AddClassMember({ onClose }) {
                 const data = await response.json();
                 if (data.exists) {
                     setUsers(data.users); // 사용자 리스트 상태로 설정
-                    console.log("야ㅑ", data.users)
                 } else {
                     setUsers([]);
                     alert(data.message);
