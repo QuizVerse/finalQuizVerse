@@ -31,10 +31,11 @@ public class SolvedbookService {
         BookDto book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("Book not found"));
 
+        System.out.println(book);
+        System.out.println(userDto);
+
         // 이미 존재하는 Solvedbook을 찾기
         SolvedbookDto existingSolvedBook = findSolvedBookByUserAndBook(userDto, book);
-        System.out.println("existingSolvedBook"+existingSolvedBook);
-
 
         if (existingSolvedBook != null) {
             // 이미 풀었던 문제집일 경우 기존 solvedBook 반환

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import axios from "axios";
 import Review from "../../components/modal/Review";
@@ -19,22 +19,11 @@ export default function ParentComponent() {
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
   const { search } = useLocation();
 
-  const queryParams = new URLSearchParams(search);
-  const wrongRepeat = queryParams.get("wrongRepeat");
-  const [timeElapsed, setTimeElapsed] = useState(0); // 0부터 시작하는 타이머
 
-  // 페이지 떠날 때 경고 표시
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue = ""; // Chrome에서는 returnValue를 설정해야 경고창이 나타남
-    };
+  const queryParmas=new URLSearchParams(search);
+  const wrongRepeat=queryParmas.get("wrongRepeat");
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
 
-  // 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,15 +31,8 @@ export default function ParentComponent() {
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
 
-        if (wrongRepeat && wrongRepeat > 0) {
-          const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
-            params: { solvedbookId, wrongRepeat },
-          });
-          setQuestions(wrongQuestionsRes.data);
-        } else {
-          const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-          setQuestions(questionsRes.data);
-        }
+        const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+        setQuestions(questionsRes.data);
 
         setLoading(false);
       } catch (error) {
@@ -60,203 +42,137 @@ export default function ParentComponent() {
     };
 
     fetchData();
-  }, [bookId, wrongRepeat, solvedbookId]);
+  }, [bookId]);
+  const openConfirm = async () => {
+    console.log("answers:", answers);  // 전송될 데이터 확인
 
-  // 로컬 스토리지에서 임시 저장된 데이터 복원
-  useEffect(() => {
-    const savedData = localStorage.getItem("temporarySave");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setAnswers(parsedData.answers || []);
-      setTimeElapsed(parsedData.timeElapsed || 0); // 복원 시 타이머 시간도 복원
-    }
-  }, []);
-
-  useEffect(() => {
-    const saveDataToLocalStorage = () => {
-      const saveData = {
-        answers: answers,
-        timeElapsed: timeElapsed,
-      };
-      localStorage.setItem("temporarySave", JSON.stringify(saveData));
-    };
-
-    window.addEventListener("beforeunload", saveDataToLocalStorage);
-
-    return () => {
-      window.removeEventListener("beforeunload", saveDataToLocalStorage);
-    };
-  }, [answers, timeElapsed]);
-
-  // 타이머 관리 (시간이 흘러가는 방식)
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeElapsed((prevTime) => prevTime + 1);
-    }, 1000); // 1초마다 시간 증가
-
-    return () => clearInterval(timer); // 메모리 누수를 방지하기 위해 타이머 정리
-  }, []);
-
-  const formatAnswers = () => {
-    return answers.map((answer) => {
+    const formattedAnswers = answers.map((answer) => {
       const answerData = {
         solvedbook: { solvedbookId: solvedbookId },
         question: { questionId: answer.questionId },
         answerOrder: answer.answerOrder,
       };
 
+      // 객관식 문제 처리: choiceId 배열로 전송
       if (Array.isArray(answer.answer)) {
-        answerData.choices = answer.answer.map((choice) => ({ choiceId: choice.choiceId }));
-      } else if (typeof answer.answer === "string") {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      }
+
+      // 주관식 문제 처리
+      else if (typeof answer.answer === "string") {
         answerData.subjectiveAnswer = answer.answer || null;
       }
 
       return answerData;
     });
-  };
 
-  const handleTemporarySave = async () => {
-    const saveData = {
-      answers: formatAnswers(),
-      timeElapsed: timeElapsed,
-    };
+    console.log("전송할 데이터:", formattedAnswers);  // 최종 데이터 확인
 
-    localStorage.setItem("temporarySave", JSON.stringify(saveData));
-    console.log("임시 저장 완료");
-  };
-
-  const openConfirm = async () => {
     try {
-      await handleTemporarySave(); // 답안 저장
-
-      const currentTime = new Date(); // 현재 시간
-      localStorage.removeItem("temporarySave");
-      const dataToSend = {
-        answers: formatAnswers(),  // 사용자가 입력한 답안을 전송
-        timeElapsed: timeElapsed,  // 경과 시간(타이머 값)
-        currentTime: currentTime,  // 제출 시간
-      };
-
-      // 서버로 데이터 전송
-      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}&solvedbookId=${solvedbookId}`, dataToSend);
-
-      setConfirmVisible(true);
+      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
       console.log("답안 제출 성공", response.data);
     } catch (error) {
       console.error("답안 제출 중 오류:", error.response?.data);
     }
+
   };
+
 
   const closeConfirm = () => {
     setConfirmVisible(false);
   };
 
-  const passbtn = async () => {
-    await handleTemporarySave(); // 임시 저장
+  const passbtn = () => {
     closeConfirm();
-    navigate(`/book/score/${bookId}`); // 네비게이션
+    navigate(`/book/score/${bookId}`);
   };
 
-  const submitbtn = async () => {
-    await handleTemporarySave(); // 임시 저장
+  const submitbtn = () => {
     closeConfirm();
-    navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`); // 네비게이션
+    navigate(`/book/score/${bookId}`);
   };
 
+  // TestSection에서 답안을 전달받아 업데이트
   const handleAnswerChange = (questionId, answer) => {
     setAnswers((prevAnswers) => {
       const existingAnswer = prevAnswers.find((a) => a.questionId === questionId);
       const newAnswerOrder = answerOrderCount;
       setAnswerOrderCount(answerOrderCount + 1);
 
+      // 객관식일 때 배열로 저장 (다중 선택 가능)
       if (Array.isArray(answer)) {
+        // choiceId만 추출해서 저장
         const choices = answer.map((choice) => {
           if (!choice.choiceId) {
             console.error("Undefined choiceId detected:", choice);
             return null;
           }
           return { choiceId: choice.choiceId };
-        }).filter((choice) => choice !== null);
+        }).filter(choice => choice !== null); // null 값을 제거합니다.
 
-        return existingAnswer
-            ? prevAnswers.map((a) =>
-                a.questionId === questionId
-                    ? { ...a, answer: choices, answerOrder: newAnswerOrder }
-                    : a
-            )
-            : [...prevAnswers, { questionId, answer: choices, answerOrder: newAnswerOrder }];
+        if (existingAnswer) {
+          return prevAnswers.map((a) =>
+              a.questionId === questionId
+                  ? { ...a, answer: choices, answerOrder: newAnswerOrder }
+                  : a
+          );
+        } else {
+          return [...prevAnswers, { questionId, answer: choices, answerOrder: newAnswerOrder }];
+        }
       }
 
+      // 주관식일 때
       if (typeof answer === "string") {
-        return existingAnswer
-            ? prevAnswers.map((a) =>
-                a.questionId === questionId
-                    ? { ...a, answer, answerOrder: newAnswerOrder }
-                    : a
-            )
-            : [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
+        if (existingAnswer) {
+          return prevAnswers.map((a) =>
+              a.questionId === questionId
+                  ? { ...a, answer, answerOrder: newAnswerOrder }
+                  : a
+          );
+        } else {
+          return [...prevAnswers, { questionId, answer, answerOrder: newAnswerOrder }];
+        }
       }
 
       return prevAnswers;
     });
   };
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-  };
-
-  if (loading) {
-    return <div>Loading...</div>; // 로딩 중일 때 표시할 내용
-  }
 
   return (
-      <div className="space-y-8">
+      <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
             <DensityMediumOutlinedIcon />
-            <span className="text-lg font-semibold">
-              {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
-            </span>
+            <span className="text-lg font-semibold">{bookData?.user ? bookData.user.userNickname : "로드 중..."}</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
+            <span className="text-lg">10/{questions.length} 문항 | 10 섹션</span>
             <span className="text-lg">총 {bookData?.bookTotalscore}점</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg">경과 시간: {formatTime(timeElapsed)}</span>
-            <Button variant="outlined" onClick={handleTemporarySave}>
-              임시 저장
-            </Button>
+            <span className="text-lg font-semibold">{bookData?.bookTitle}</span>
             <Button variant="contained" onClick={openConfirm}>
               시험종료
             </Button>
           </div>
         </header>
         <div className="space-y-4">
-          {sections.map((section, index) => {
-            const filteredQuestions = questions.filter(
-                (question) => question.section.sectionId === section.sectionId
-            );
-
-            if (filteredQuestions.length === 0) return null;
-
-            return (
-                <TestSection
-                    key={index}
-                    index={index}
-                    sectionCount={sections.length}
-                    section={section}
-                    book={bookData}
-                    loading={loading}
-                    setLoading={setLoading}
-                    filterquestions={filteredQuestions}
-                    onAnswerChange={handleAnswerChange}
-                    savedAnswer={answers} // Pass saved answers
-                />
-            );
-          })}
+          {sections &&
+              sections.map((section, index) => (
+                  <TestSection
+                      key={index}
+                      index={index}
+                      sectionCount={sections.length}
+                      section={section}
+                      book={bookData}
+                      loading={loading}
+                      setLoading={setLoading}
+                      onAnswerChange={handleAnswerChange}
+                  />
+              ))}
         </div>
         <Review
             openConfirm={openConfirm}

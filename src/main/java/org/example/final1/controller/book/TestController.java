@@ -79,23 +79,28 @@ public class TestController {
 
         try {
             // 이미 존재하는 solvedBook을 찾거나 없으면 새로운 solvedBook 생성
-            SolvedbookDto solvedBook = solvedbookService.startTest(bookId, userDto); // 해당 메서드가 알아서 생성 여부를 처리
+            SolvedbookDto solvedBook = solvedbookService.startTest(bookId, userDto);
             System.out.println("Solvedbook 컨트롤러: " + solvedBook);
 
-            int wrongRepeat = wrongService.getWrongRepeat(solvedBook, userDto); // wrongrepeat 값 반환
+            int wrongRepeat = wrongService.getWrongRepeat(solvedBook, userDto);
             System.out.println("wrongRepeat 컨트롤러: " + wrongRepeat);
 
             // 응답 데이터 생성
             Map<String, Object> response = new HashMap<>();
-            response.put("solvedbookId", solvedBook.getSolvedbookId()); // solvedbookId를 명시적으로 추가
+            response.put("solvedbookId", solvedBook.getSolvedbookId());
             response.put("solvedBook", solvedBook);
             response.put("wrongRepeat", wrongRepeat);
 
+            System.out.println("응답 데이터: " + response);  // 로그로 응답 데이터 확인
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            // 예외가 발생하면 예외 메시지를 로그에 출력
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     // 사용자가 제출한 답안을 저장하는 API 엔드포인트
     @PostMapping("/save/answers")
