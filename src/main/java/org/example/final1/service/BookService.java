@@ -1,6 +1,7 @@
 package org.example.final1.service;
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.BookResponseDto;
 import org.example.final1.repository.BookRepository;
 import org.example.final1.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,12 @@ public class BookService {
 
     @Autowired
     private final CategoryRepository categoryRepository;
+    @Autowired
+    private BookmarkService bookmarkService;
+    @Autowired
+    private SectionService sectionService;
+    @Autowired
+    private QuestionService questionService;
 
     public List<BookDto> getBooksByCategory(Integer categoryId) {
         // 카테고리 ID에 해당하는 책 목록을 가져옵니다.
@@ -50,9 +57,34 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public List<BookDto> searchBooks(String keyword) {
-        return bookRepository.searchByTitleOrDescription(keyword);
+    // 책 검색
+    public List<BookResponseDto> searchBooks(String keyword){
+        // 책 검색 로직
+        List<BookDto> books = bookRepository.searchByTitleOrDescription(keyword);
+
+        // BookResponseDto로 변환
+        return books.stream().map(book -> {
+            boolean isBookmark = false;
+            int bookmarkCount = bookmarkService.getBookmarkCountByBookId(book.getBookId());
+            int sectionCount = sectionService.getSectionCountByBookId(book.getBookId());
+            int questionCount = questionService.getQuestionCountByBookId(book.getBookId());
+
+            return BookResponseDto.builder()
+                    .bookId(book.getBookId())
+                    .bookImage(book.getBookImage())
+                    .bookTitle(book.getBookTitle())
+                    .bookDescription(book.getBookDescription())
+                    .bookStatus(book.getBookStatus())
+                    .bookTimer(book.getBookTimer())
+                    .bookIspublished(book.isBookIspublished())
+                    .isBookmark(isBookmark)
+                    .bookmarkCount(bookmarkCount)
+                    .bookSectionCount(sectionCount)
+                    .bookQuestionCount(questionCount)
+                    .build();
+        }).collect(Collectors.toList());
     }
+
     public BookDto getBookByBookId(int id) {
         return bookRepository.findByBookId(id);
     }
