@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class SignupController {
-    private static final String DEFAULT_USER_IMAGE_URL = "20240904_be1aaec1-c3fb-4025-96de-9d52ec447cf8";
+    private static final String DEFAULT_USER_IMAGE_URL = "20240911_6ac956c7-d28e-4d24-b2ce-60726afe29a6";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;

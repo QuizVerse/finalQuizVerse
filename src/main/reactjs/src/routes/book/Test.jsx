@@ -160,7 +160,7 @@ export default function ParentComponent() {
   const submitbtn = async () => {
     await handleTemporarySave(); // 임시 저장
     closeConfirm();
-    navigate(`/book/score/${bookId}/${solvedbookId}`); // 네비게이션
+    navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`); // 네비게이션
   };
 
   const handleAnswerChange = (questionId, answer) => {
