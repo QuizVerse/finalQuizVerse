@@ -69,6 +69,10 @@ public class BookService {
             int sectionCount = sectionService.getSectionCountByBookId(book.getBookId());
             int questionCount = questionService.getQuestionCountByBookId(book.getBookId());
 
+            // UserDto에서 닉네임 가져오기
+            String userNickname = book.getUser() != null ? book.getUser().getUserNickname() : "Unknown";
+            String categoryName = book.getCategory() != null ? book.getCategory().getCategoryName() : "Unknown";
+
             return BookResponseDto.builder()
                     .bookId(book.getBookId())
                     .bookImage(book.getBookImage())
@@ -81,6 +85,8 @@ public class BookService {
                     .bookmarkCount(bookmarkCount)
                     .bookSectionCount(sectionCount)
                     .bookQuestionCount(questionCount)
+                    .userNickname(userNickname)  // userNickname 추가
+                    .categoryName(categoryName)  // userNickname 추가
                     .build();
         }).collect(Collectors.toList());
     }
