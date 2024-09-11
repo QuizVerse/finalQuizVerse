@@ -11,6 +11,8 @@ export default function AddClassMember({ onClose }) {
     console.log("Current users:", users);
     console.log("Current classId:", classId);
 
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user/";
+
     // 닉네임 검색 로직
     const handleSearch = async (nickname) => {
         try {
@@ -19,6 +21,7 @@ export default function AddClassMember({ onClose }) {
                 const data = await response.json();
                 if (data.exists) {
                     setUsers(data.users); // 사용자 리스트 상태로 설정
+                    console.log("야ㅑ", data.users)
                 } else {
                     setUsers([]);
                     alert(data.message);
@@ -74,7 +77,7 @@ export default function AddClassMember({ onClose }) {
                                 <Button variant={"contained"} onClick={() => handleInviteClick(user)}>초대하기</Button>
                             }>
                                 <ListItemAvatar>
-                                    <Avatar alt={user.userNickname} />
+                                    <Avatar alt={user.userNickname} src={photopath + user.userImage}/>
                                 </ListItemAvatar>
                                 <ListItemText primary={user.userNickname} />
                             </ListItem>
