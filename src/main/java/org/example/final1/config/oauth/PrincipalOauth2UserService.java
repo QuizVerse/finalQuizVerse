@@ -108,7 +108,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .userProvider(user_provider)
                     .userProviderid(user_providerId)
                     .userImage(DEFAULT_USER_IMAGE_URL)
-                    .userAccessToken(accessToken)
                     .build();
             userDaoInter.save(userDto);
 

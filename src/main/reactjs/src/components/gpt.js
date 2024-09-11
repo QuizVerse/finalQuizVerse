@@ -20,7 +20,6 @@ export const CallGpt = async ({ prompt }) => {
         
         Please output the following structure in Korean:
         {
-            "sectionNumber": 1,
             "sectionTitle": "Title",
             "sectionDescription": "Summary",
             "questions" :   [{

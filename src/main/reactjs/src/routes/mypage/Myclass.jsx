@@ -153,32 +153,19 @@ export default function Myclass() {
 
 
   return (
-      <main className="flex-1 p-6">
-
-        <h1 className="mb-6 text-2xl font-bold">나의 클래스</h1>
-        <div className="flex items-center mb-4 space-x-4">
-        <input
-            className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-            placeholder="Name, email, etc..."
-          />
-          <TextField
-              id="outlined-select-currency"
-              select
-              defaultValue="popular"
-          >
-            {conditions &&
-                conditions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-            ))}
-          </TextField>
+      <main className="flex-1 py-12 px-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">나의 클래스</h1>
+        </div>
+        <div className="flex items-center space-x-4 justify-end">
           <Button
               onClick={openConfirm}
               variant="contained"
               className="whitespace-nowrap">
             클래스 생성
           </Button>
+        </div>
+        <div className="flex items-center mb-4 space-x-4 justify-between">
           <CustomConfirm
               id={9} // CustomConfirm에서 id 확인하여 입력
               // props으로도 입력 가능 (title, content, btn1Text,  btn2Text)
@@ -225,8 +212,8 @@ export default function Myclass() {
                         <TableRow
                             key={row.classId}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                            onClick={()=>classClick(row.classId)}
-                            style={{cursor:"pointer"}}
+                            onClick={() => classClick(row.classId)}
+                            style={{cursor: "pointer"}}
                         >
                           <TableCell component="th" scope="row">
                             {row.className}
@@ -254,5 +241,5 @@ export default function Myclass() {
           </Stack>
         </div>
       </main>
-);
+  );
 }

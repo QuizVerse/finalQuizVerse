@@ -5,15 +5,18 @@ export default function VideoComponent({ track, participantIdentity, local = fal
     const videoElement = useRef(null);
 
     useEffect(() => {
-        if (videoElement.current) {
-            //track.attach(videoElement.current);
+        const video = videoElement.current;
+        console.log("Video Element:", video);
+        console.log("Track prop:", track);
+        
+        if (video) {
             if (track instanceof MediaStreamTrack) {
-                // MediaStreamTrack을 사용하는 경우
-                videoElement.current.srcObject = new MediaStream([track]);
+                video.srcObject = new MediaStream([track]);
             } else if (track.attach) {
-                // LiveKit 트랙을 사용하는 경우
-                track.attach(videoElement.current);
+                track.attach(video);
             }
+        } else {
+            console.error("videoElement.current is null");
         }
 
         return () => {
@@ -23,7 +26,7 @@ export default function VideoComponent({ track, participantIdentity, local = fal
                 //videoElement.current.srcObject = null;
             } else if (track.detach) {
                 // LiveKit 트랙을 사용하는 경우
-                track.detach();
+                track.detach(video);
             }
         };
     }, [track]);

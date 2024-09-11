@@ -27,7 +27,6 @@ export default function QuestionPreview() {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
-    const [isChecked, setIsChecked] = useState(false);
     const [totalPoints, setTotalPoints] = useState(0);
 
     const navigate = useNavigate();
@@ -39,8 +38,6 @@ export default function QuestionPreview() {
                 const bookData = bookRes.data.book;
                 setBookData(bookData);
                 setSections(bookRes.data.sections);
-                setTotalPoints(bookData.bookTotalscore);
-                setIsChecked(bookData.bookDivide === 1); // 균등 분배 여부 설정
                 setTotalPoints(bookData.bookTotalscore || 100); // 기본값 100 설정
 
                 const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
@@ -49,28 +46,7 @@ export default function QuestionPreview() {
                     questionPoint: question.questionPoint || 0
                 }));
 
-                // 균등 배점이 체크되었을 경우, 각 문제에 균등 배점 적용
-                if (bookData.bookDivide === 1 && loadedQuestions.length > 0) {
-                    const totalQuestions = loadedQuestions.length;
-                    const totalScore = parseInt(bookData.bookTotalscore, 10) || 0;
-                    const evenScore = Math.floor((totalScore / totalQuestions) * 10) / 10; // 균등 배점 (소수점 처리)
-
-                    let updatedQuestions = loadedQuestions.map(question => ({
-                        ...question,
-                        questionPoint: evenScore
-                    }));
-
-                    // 배점 합계에서 남은 차이를 계산
-                    const totalAllocatedScore = updatedQuestions.reduce((acc, curr) => acc + curr.questionPoint, 0);
-                    const remainingScore = Math.round((totalScore - totalAllocatedScore) * 10) / 10;
-
-                    // 마지막 문항에 잔여 점수를 더해 정확히 총점이 되도록 처리
-                    updatedQuestions[updatedQuestions.length - 1].questionPoint += remainingScore;
-
-                    setQuestions(updatedQuestions); // 균등 배점된 질문 목록 설정
-                } else {
-                    setQuestions(loadedQuestions);
-                }
+                setQuestions(loadedQuestions); // 균등 배점 없이 질문 목록 설정
 
                 setLoading(false);
             } catch (error) {
@@ -89,40 +65,16 @@ export default function QuestionPreview() {
         const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
         updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
 
-        const currentTotal = updatedQuestions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
-
-        if (currentTotal > targetTotal) {
-            const excess = currentTotal - targetTotal;
-            updatedQuestions[index].questionPoint = Math.round((parsedScore - excess) * 10) / 10;
-            openAlert(`총 점수가 목표 점수를 초과했습니다. 현재 문항의 배점이 ${targetTotal}점에 맞춰 조정되었습니다.`);
-        } else {
-            updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
-        }
+        updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
 
         setQuestions(updatedQuestions);
     };
+
 
     const totalScore = questions.reduce((acc, curr) => acc + (curr.questionPoint || 0), 0);
     const isTotalEqual = totalScore.toFixed(1) === targetTotal.toFixed(1);
 
     const handleSubmit = async () => {
-        if (isChecked) {
-            const totalQuestions = questions.length;
-            const totalScore = parseInt(totalPoints, 10) || 0;
-            const evenScore = Math.round((totalScore / totalQuestions) * 10) / 10;
-
-            // questions 배열에 균등 배점 적용
-            const updatedQuestions = questions.map((question) => ({
-                ...question,
-                questionPoint: evenScore
-            }));
-
-            setQuestions(updatedQuestions);
-
-            // 균등 배점이 제대로 적용되었는지 출력
-            console.log("Updated Questions with even score:", updatedQuestions);
-        }
-
         const sanitizedQuestions = questions.map(({ questionId, questionPoint }) => ({
             questionId,
             questionPoint,
@@ -185,16 +137,19 @@ export default function QuestionPreview() {
                     <Typography variant="h6">
                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        color="primary">
-                        출제하기
-                    </Button>
-                    <Button onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
+                    <div className={"space-x-2"}>
+                        <Button variant={"outlined"}
+                                onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
+                        <Button
+                            onClick={handleSubmit}
+                            variant="contained"
+                            color="primary">
+                            출제하기
+                        </Button>
+                    </div>
                 </div>
                 <div className="flex items-center bg-white rounded shadow-lg">
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">
                             문항번호
                         </div>
@@ -236,7 +191,7 @@ export default function QuestionPreview() {
                         ))}
                     </Swiper>
 
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">현재 배점 합계</div>
                         <div
                             className={`${isTotalEqual ? 'text-blue-500' : 'text-red-500'} font-bold whitespace-nowrap p-2`}>
@@ -244,7 +199,7 @@ export default function QuestionPreview() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center space-y-2 justify-center bg-blue-50">
+                    <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
                         <div className="font-semibold whitespace-nowrap p-2">총점</div>
                         <div className="text-blue-500 font-bold whitespace-nowrap p-2">
                             {bookData.bookTotalscore}점
@@ -276,5 +231,3 @@ export default function QuestionPreview() {
         </div>
     );
 }
-
-

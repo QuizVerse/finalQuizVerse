@@ -1,5 +1,6 @@
 package org.example.final1.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class AnswerDto {
 
     @ManyToOne
     @JoinColumn(name = "solvedbook_id", nullable = false)  // 시험을 푼 책 참조
+    @JsonBackReference  // 자식-부모 관계에서 자식으로 설정 (JSON에서 역참조를 막음)
     @ToString.Exclude  // 순환 참조 방지
     private SolvedbookDto solvedbook;
 

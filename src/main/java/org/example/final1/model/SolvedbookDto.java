@@ -1,5 +1,6 @@
 package org.example.final1.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,7 @@ public class SolvedbookDto {
     private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
+    @JsonManagedReference  // 부모-자식 관계에서 부모로 설정 (JSON에서 직렬화됨)
     @ToString.Exclude  // 순환 참조 방지
     private List<AnswerDto> answers;
 }

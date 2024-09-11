@@ -2,6 +2,7 @@ import { MenuItem, Pagination, Stack, TextField } from "@mui/material";
 import BookCard from "../../components/BookCard";
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 // 필터
 const conditions = [
@@ -23,6 +24,26 @@ export default function Bookmark() {
   const [error, setError] = useState(null);
   const [sortCondition, setSortCondition] = useState('popular');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status state
+
+  // alert state
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+
+  /**
+   * @description : Alert창 열릴 때
+   * */
+  const openAlert = (title) => {
+    setAlertTitle(title);
+    setAlertVisible(true);
+  };
+
+  /**
+   * @description : Alert창 닫힐 때
+   * */
+  const closeAlert = () => {
+    setAlertVisible(false);
+  };
+
 
   useEffect(() => {
     // user 정보 확인
@@ -72,7 +93,7 @@ export default function Bookmark() {
 
   const clickBookmark = async (bookId) => {
     if (!isLoggedIn) {
-      alert("로그인이 필요합니다.");
+      openAlert("로그인이 필요한 서비스입니다.");
       return;
     }
 
@@ -104,27 +125,9 @@ export default function Bookmark() {
   const pageCount = Math.ceil(books.length / ITEMS_PER_PAGE);
 
   return (
-      <main className="flex-1 p-6">
+      <main className="flex-1 py-12 px-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">즐겨찾기</h1>
-          <div className="flex items-center space-x-4">
-            <input
-                className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-64"
-                placeholder="Name, email, etc..."
-            />
-            <TextField
-                id="outlined-select-currency"
-                select
-                defaultValue="popular"
-                onChange={(e) => setSortCondition(e.target.value)}
-            >
-              {conditions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-              ))}
-            </TextField>
-          </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {currentItems.map((book) => (
@@ -157,6 +160,11 @@ export default function Bookmark() {
               showLastButton
           />
         </Stack>
+        <CustomAlert
+            title={alertTitle}
+            openAlert={alertVisible}
+            closeAlert={closeAlert}
+        />
       </main>
   );
 }

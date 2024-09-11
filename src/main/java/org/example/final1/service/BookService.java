@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -23,6 +24,16 @@ public class BookService {
         List<BookDto> books = bookRepository.findByCategoryCategoryId(categoryId);
         return books;
     }
+
+    // 북마크 수가 큰 상위 5개 책을 가져오는 메소드
+    public List<BookDto> getTop5BooksByBookmarkCount(Integer categoryId) {
+        List<Object[]> results = bookRepository.findTop5ByCategoryIdOrderByBookmarkCountDesc(categoryId);
+
+        return results.stream()
+                .map(result -> (BookDto) result[0])  // 첫 번째 요소는 BookDto
+                .collect(Collectors.toList());
+    }
+
 
     public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;

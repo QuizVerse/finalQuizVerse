@@ -140,11 +140,23 @@ public class MyclassController {
         }
     }
 
+//    @GetMapping("/{classId}/members")
+//    public ResponseEntity<List<ClassmemberDto>> getClassMembers(@PathVariable ("classId") int classId) {
+//        List<ClassmemberDto> members = classmemberService.getClassMembers(classId);
+//        return ResponseEntity.ok(members);
+//    }
+
     @GetMapping("/{classId}/members")
-    public ResponseEntity<List<ClassmemberDto>> getClassMembers(@PathVariable Integer classId) {
-        List<ClassmemberDto> members = classmemberService.getClassMembers(classId);
-        return ResponseEntity.ok(members);
+    public ResponseEntity<List<ClassmemberDto>> getClassMembers(@PathVariable("classId") int classId) {
+        try {
+            List<ClassmemberDto> members = classmemberService.getClassMembers(classId);
+            return ResponseEntity.ok(members);
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외를 로그로 기록
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 서버 오류를 클라이언트에 반환
+        }
     }
+
 
     @PostMapping("/delete/members")
     public ResponseEntity<String> deleteMembers(@RequestBody List<Integer> ids) {
@@ -154,7 +166,7 @@ public class MyclassController {
     }
 
     @GetMapping("/{classId}/leave")
-    public ResponseEntity<String> leaveClass(@PathVariable Integer classId, HttpServletRequest request) {
+    public ResponseEntity<String> leaveClass(@PathVariable("classId") Integer classId, HttpServletRequest request) {
 
         UserDto userDto = jwtService.getUserFromJwt(request);
         if (userDto != null) {
@@ -174,7 +186,7 @@ public class MyclassController {
     }
 
     @GetMapping("/{classId}/userrole")
-    public ResponseEntity<Short> roleMembers(@PathVariable Integer classId, HttpServletRequest request) {
+    public ResponseEntity<Short> roleMembers(@PathVariable("classId") int classId, HttpServletRequest request) {
         // JWT로부터 사용자 정보를 가져옴
         UserDto userDto = jwtService.getUserFromJwt(request);
 
@@ -199,7 +211,7 @@ public class MyclassController {
     }
 
     @GetMapping("/{classId}/class")
-    public ResponseEntity<?> className(@PathVariable Integer classId) {
+    public ResponseEntity<?> className(@PathVariable("classId") int classId) {
         Optional<ClassDto> classDtoOptional = classRepository.findById(classId);
 
         if (classDtoOptional.isPresent()) {
@@ -217,9 +229,9 @@ public class MyclassController {
 
 
     @GetMapping("/{classId}/books")
-    public ResponseEntity<List<BookDto>> roleMembers(@PathVariable Integer classId) {
+    public ResponseEntity<List<BookDto>> roleMembers(@PathVariable("classId") Integer classId) {
         List<BookDto> books;
-        books = bookRepository.findByClass1_ClassId(classId);
+        books = bookRepository.findByClass1ClassId(classId);
         return ResponseEntity.ok(books);
     }
 
@@ -228,7 +240,7 @@ public class MyclassController {
     @PostMapping("/{classId}/changeLeader")
     @Transactional
     public ResponseEntity<String> changeLeader(
-            @PathVariable Integer classId,
+            @PathVariable("classId") Integer classId,
             @RequestBody Map<String, Integer> request,
             HttpServletRequest httpServletRequest) {
 
@@ -266,7 +278,7 @@ public class MyclassController {
     }
     @Transactional
     @GetMapping("/{classId}/delete")
-    public ResponseEntity<String> deleteClass(@PathVariable Integer classId){
+    public ResponseEntity<String> deleteClass(@PathVariable("classId") Integer classId){
         try {
             classRepository.deleteById(classId);
             System.out.println("시작이젤무서워 미루니");
@@ -275,10 +287,6 @@ public class MyclassController {
             throw new RuntimeException(e);
         }
     }
-
-
-
-
 }
 
 
