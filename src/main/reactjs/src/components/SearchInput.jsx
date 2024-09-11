@@ -25,6 +25,7 @@ export default function SearchInput({ value, onChange, onSearch }) {
                 placeholder="검색어를 입력해주세요."
                 className="w-full max-w-md px-4 py-2 border rounded"
                 type="text"
+                size={"small"}
                 style={{ width: "300px" }}
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}

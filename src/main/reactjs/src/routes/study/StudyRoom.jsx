@@ -28,15 +28,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -352,11 +352,39 @@ export default function StudyRoom() {
         }
     }
 
-    // 원격 비디오 트랙을 렌더링하기 위한 조건
-    const isRegularVideoTrack = (track, sharedScreenTrackSid) => {
-        return track.trackPublication.kind === "video" &&
-            track.trackPublication.videoTrack &&
-            track.trackPublication.trackSid !== sharedScreenTrackSid;
+ // 원격 비디오 트랙을 렌더링하기 위한 조건
+ const isRegularVideoTrack = (track, sharedScreenTrackSid) => {
+    return track.trackPublication.kind === "video" &&
+           track.trackPublication.videoTrack &&
+           track.trackPublication.trackSid !== sharedScreenTrackSid;
+};
+
+// 원격 오디오 트랙을 렌더링하기 위한 조건
+const isAudioTrack = (track) => {
+    return track.trackPublication.kind === "audio" &&
+           track.trackPublication.audioTrack;
+};
+
+// 화면 공유 비디오 트랙을 모든 참가자에게 렌더링
+const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
+  console.log("현재 공유된 화면 트랙 ID:", sharedScreenTrackSid);
+  console.log("원격 트랙:", remoteTracks);
+  
+  return remoteTracks.filter(track => {
+      const isScreenShare = track.trackPublication.kind === "video" &&
+                            track.trackPublication.videoTrack &&
+                            track.trackPublication.trackSid === sharedScreenTrackSid;
+      console.log("트랙이 화면 공유인지 확인:", isScreenShare, "트랙 ID:", track.trackPublication.trackSid);
+      return isScreenShare;
+  });
+};
+ // 화면 공유 WebSocket
+ useEffect(() => {
+    const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+    //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+    
+    screenShareWs.onopen = () => {
+        console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
     };
 
     // 원격 오디오 트랙을 렌더링하기 위한 조건
@@ -424,8 +452,8 @@ export default function StudyRoom() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -480,18 +508,16 @@ export default function StudyRoom() {
                 {!room ? (
                     <div id="join">
                         <div id="join-dialog">
-                            <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
                                 <Toolbar>
-                                    <Typography variant="h4" >
-                                        <b>{roomName}</b>
+                                <Typography variant="h5" >
+                                    <b>{roomName}</b>
 
-                                    </Typography>
-                                    <Box sx={{ flexGrow: 1 }} />
-                                    <IconButton color="inherit" onClick={leaveRoom}>
-                                        <ExitToAppIcon sx={{ fontSize: 30 }} />
-                                    </IconButton>
-                                </Toolbar>
-                            </AppBar>
+                                </Typography>
+                                <Box sx={{ flexGrow: 1 }} />
+                                <IconButton onClick={leaveRoom}>
+                                    <ExitToAppIcon sx={{ fontSize: 30 }} />
+                                </IconButton>
+                            </Toolbar>
 
 
                             {/* 미리보는 화상창 */}
@@ -499,6 +525,7 @@ export default function StudyRoom() {
                                 <StartVideoComponent
                                     track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
                                     local={true}
+
                                 />
                             ) : (
                                 <div className="startvideo-container2">
@@ -641,6 +668,7 @@ export default function StudyRoom() {
                                 {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
                                 {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
                                     <ShareVideoComponent
+
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.videoTrack}
                                         participantIdentity={remoteTrack.participantIdentity}
@@ -706,3 +734,4 @@ export default function StudyRoom() {
         </LayoutContextProvider>
     );
 }
+

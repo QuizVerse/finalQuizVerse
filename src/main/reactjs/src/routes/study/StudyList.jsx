@@ -81,7 +81,7 @@ export default function StudyList() {
                     placeholder="스터디 이름 입력해보세요."
                     value={searchQuery}
                     onSearch={handleSearch}/>
-                <Button variant={"contained"} size={"large"} onClick={NewRoom}>방생성</Button>
+                <Button variant={"contained"} onClick={NewRoom}>방생성</Button>
             </div>
             <div className="grid grid-cols-2 w-full max-w-5xl gap-4">
                 {/* 페이지네이션을 적용한 리스트 */}
