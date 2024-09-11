@@ -300,13 +300,7 @@ const Explanation = () => {
                                       "답안이 없습니다."
                                   )}
                                   </Typography>
-
-
-
-
                                 </div>
-
-
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
                                     정답: {question.choices.filter(choice => choice.choiceIsanswer).map((choice) => {
