@@ -16,7 +16,7 @@ export default function BookCard(props) {
 
     const { user } = props;
 
-    const siteUrl = "http://localhost:3000"
+    const siteUrl = "https://www.quizverse.kro.kr"
     const [state, setState] = useState({
         open: false,
         Transition: Fade,
