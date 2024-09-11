@@ -100,7 +100,7 @@ export default function Score() {
           <div className="flex justify-end p-4 space-x-2">
               <Button
                   variant="outlined"
-                  onClick={() => navigate("/book/explanation")}
+                  onClick={() => navigate(`/book/explanation/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`)}
               >
                   해설보기
               </Button>

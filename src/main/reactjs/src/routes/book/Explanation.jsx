@@ -228,23 +228,19 @@ const Explanation = () => {
                                     <div className="bg-sky-500 w-14 text-center rounded-lg">
                                       <span className="text-white font-bold text-lg">Q.{questionIndex + 1}</span>
                                     </div>
-                                    <span className="text-lg font-bold">{question.questionTitle}</span>
-                                    <span className="min-w-14">
-                            {question.questionType === 0
-                                ? "(객관식)"
-                                : question.questionType === 1
-                                    ? "(다중 선택)"
-                                    : question.questionType === 2
-                                        ? "(OX 문제)"
-                                        : "(서술형)"}
-                          </span>
+                                    <span className="text-lg font-bold">
+                                      {question.questionTitle} {question.questionType === 0
+                                        ? "(객관식)"
+                                        : question.questionType === 1
+                                            ? "(다중 선택)"
+                                            : question.questionType === 2
+                                                ? "(OX 문제)"
+                                                : "(서술형)"}</span>
                                   </div>
                                   <div className="bg-neutral-100 w-20 text-center rounded-lg">
                                     <span>{question.questionPoint}점</span>
                                   </div>
                                 </div>
-
-                                <div>{renderAnswerIcon(isCorrect)}</div>
 
                                 <ul className="list-none p-0 pb-4">
                                   {question.choices.map((choice, choiceIndex) => {
@@ -257,9 +253,7 @@ const Explanation = () => {
                                               className={`w-4 h-4 flex items-center justify-center border rounded-full ${
                                                   isCorrectAnswer
                                                       ? 'border-blue-500 text-blue-500'
-                                                      : isSelected
-                                                          ? 'border-red-500 text-red-500'
-                                                          : 'border-black'
+                                                      : 'border-black'
                                               }`}
                                           >
                                             <span className="text-sm">{choiceIndex + 1}</span>
@@ -268,9 +262,7 @@ const Explanation = () => {
                                               className={`text-sm leading-tight ${
                                                   isCorrectAnswer
                                                       ? 'text-blue-500 font-bold'
-                                                      : isSelected
-                                                          ? 'text-red-500 font-bold'
-                                                          : ''
+                                                      : ''
                                               }`}
                                           >
                                 {` ${choice.choiceText}`}
@@ -279,33 +271,6 @@ const Explanation = () => {
                                     );
                                   })}
                                 </ul>
-
-                                <div className="mt-4">
-                                  <Typography className="text-blue-500 font-bold">
-                                    나의 답안: {userAnswer ? (
-                                      (() => {
-                                        // userAnswer에서 선택된 답안의 텍스트를 가져옴
-                                        console.log("사용자의 답안:", userAnswer);  // 사용자가 선택한 답안을 확인
-
-                                        const choiceText = userAnswer.choiceText; // 선택한 답안의 텍스트
-                                        console.log("선택한 답안의 텍스트:", choiceText);  // 선택된 텍스트 확인
-
-                                        if (choiceText) {
-                                          return choiceText;  // 선택된 답안의 텍스트만 표시
-                                        } else {
-                                          return "선택된 답안을 찾을 수 없습니다.";  // 선택된 답안이 없을 경우
-                                        }
-                                      })()
-                                  ) : (
-                                      "답안이 없습니다."
-                                  )}
-                                  </Typography>
-
-
-
-
-                                </div>
-
 
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
