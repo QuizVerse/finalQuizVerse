@@ -5,6 +5,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Button, MenuItem, TextField } from '@mui/material';
 import SearchInput from "../../components/SearchInput";
+import { useNavigate } from 'react-router-dom';
 
 // 필터 조건
 const conditions = [
@@ -17,6 +18,7 @@ const conditions = [
 const ITEMS_PER_PAGE = 8; // 페이지당 아이템 수
 const SPACING = 2; // 페이지네이션 간격
 
+
 export default function PublishedBook() {
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
 
@@ -27,6 +29,8 @@ export default function PublishedBook() {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+
+  const navigate = useNavigate(); // useNavigate 호출
 
   // 페이지 변경 핸들러
   const handleChange = (event, value) => {
@@ -99,13 +103,18 @@ export default function PublishedBook() {
   const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
   const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
+  // 버튼 클릭 핸들러
+  const handleButtonClick = () => {
+    navigate('/book/new'); // '/book/new' 페이지로 이동
+  };  
+
   return (
       <main className="flex-1 py-12 px-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">나의 출제이력</h1>
         </div>
         <div className="flex items-center space-x-4 justify-end mb-4">
-          <Button variant="contained" size={"large"}>문제출제하기</Button>
+          <Button variant="contained" size={"large"} onClick={handleButtonClick}>문제출제하기</Button>
         </div>
 
         {/* BookCard 출력 */}
