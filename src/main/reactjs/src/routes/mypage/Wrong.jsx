@@ -15,6 +15,7 @@ export default function Wrong() {
     const [userId, setUserId] = useState(1); // 유저 ID (임의로 설정)
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
 
+
     // 사용자 로그인 상태 및 ID 가져오기
     const fetchUserInfo = async () => {
         try {
@@ -30,7 +31,7 @@ export default function Wrong() {
     // 책 목록 가져오기 (Controller의 API와 연결)
     const getWrongBooks = async () => {
         try {
-            const res = await axios.get(`/wrong/wrong-info/`+userId);
+            const res = await axios.get(`/wrong/get/booklist`);
             console.log("Fetched data: ", res.data); // 데이터를 콘솔에 출력해서 확인
 
             setBookList(res.data); // 책 목록 상태 업데이트
@@ -84,8 +85,9 @@ export default function Wrong() {
                             nickname={book.userNickname || "Unknown"}
                             createDate={book.bookCreatedate}
                             title={book.bookTitle}
-                            bookQuestionCount={book.wrongCount}
+                            bookQuestionCount={book.wrongCount} // 문항수
                             bookUrl={`/book/detail/${book.bookId}`}
+                            wrongUrl ={`/book/test/${book.bookId}/${book.solvedbookId}?wrongRepeat=1`} // 다시학습하기 버튼 눌렀을때
                             isWrong={true}
                             status={book.bookStatus}
                         />
