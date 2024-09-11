@@ -121,7 +121,7 @@ export default function MainHeader() {
                             <Button size={"large"}>
                                 <Link to='/account/login'>로그인</Link>
                             </Button>
-                            <Button size={"large"} variant={"outlined"}>
+                            <Button size={"large"}>
                                 <Link to='/account/signup'>회원가입</Link>
                             </Button>
                         </div>
