@@ -13,7 +13,7 @@ function Footer() {
             }}
         >
             <Container maxWidth="lg">
-                <Grid container className={"space-x-36"}>
+                <Grid container className={"space-x-44"}>
                     <Grid item >
                         <Typography variant="h6" gutterBottom>
                             <img src="/logooo.png" alt="quizverse" style={{height: "72px"}}/>

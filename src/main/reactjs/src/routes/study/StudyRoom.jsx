@@ -480,18 +480,16 @@ export default function StudyRoom() {
                 {!room ? (
                     <div id="join">
                         <div id="join-dialog">
-                            <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
                                 <Toolbar>
-                                    <Typography variant="h4" >
-                                        <b>{roomName}</b>
+                                <Typography variant="h5" >
+                                    <b>{roomName}</b>
 
-                                    </Typography>
-                                    <Box sx={{ flexGrow: 1 }} />
-                                    <IconButton color="inherit" onClick={leaveRoom}>
-                                        <ExitToAppIcon sx={{ fontSize: 30 }} />
-                                    </IconButton>
-                                </Toolbar>
-                            </AppBar>
+                                </Typography>
+                                <Box sx={{ flexGrow: 1 }} />
+                                <IconButton onClick={leaveRoom}>
+                                    <ExitToAppIcon sx={{ fontSize: 30 }} />
+                                </IconButton>
+                            </Toolbar>
 
 
                             {/* 미리보는 화상창 */}
