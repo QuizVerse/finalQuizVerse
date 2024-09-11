@@ -10,6 +10,7 @@ const SPACING = 2; // 페이지네이션 사이의 간격
 export default function SearchBook() {
     const [searchResults, setSearchResults] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+    const [bookmarkedBooks, setBookmarkedBooks] = useState([]); // 북마크 상태
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const [error, setError] = useState(null); // 에러 상태 추가
@@ -58,30 +59,8 @@ export default function SearchBook() {
                 if (keyword) {
                     const response = await axios.get(`/books/search?keyword=${encodeURIComponent(keyword)}`);
                     const books = response.data;
-
-                    // 북마크 수, 질문 수, 섹션 수 가져오기
-                    const updatedBooks = await Promise.all(
-                        books.map(async (book) => {
-                            try {
-                                const [countBookmarkResponse, countQuestionResponse, countSectionResponse] = await Promise.all([
-                                    axios.get(`/bookmark/countBookmarks/${book.bookId}`),
-                                    axios.get(`/book/question/count/${book.bookId}`),
-                                    axios.get(`/book/section/count/${book.bookId}`)
-                                ]);
-
-                                return {
-                                    ...book,
-                                    bookmarkCount: countBookmarkResponse.data,
-                                    bookQuestionCount: countQuestionResponse.data,
-                                    bookSectionCount: countSectionResponse.data,
-                                };
-                            } catch (error) {
-                                console.error(`Error fetching additional book data for bookId ${book.bookId}`, error);
-                                return book;
-                            }
-                        })
-                    );
-                    setSearchResults(updatedBooks);
+                    setSearchResults(books);
+                    console.log("books", books)
                 }
             } catch (error) {
                 console.error("Error fetching search results:", error);
