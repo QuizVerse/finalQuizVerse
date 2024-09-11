@@ -4,8 +4,10 @@ package org.example.final1.controller.mypage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
+import org.example.final1.model.BookWrongInfoDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.model.WrongDto;
+import org.example.final1.service.BookService;
 import org.example.final1.service.JwtService;
 import org.example.final1.service.WrongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,11 @@ public class WrongController {
         return ResponseEntity.ok(wrongNotes);
     }
 
-
+    // 책 정보 및 틀린 문항 수 가져오기
+    @GetMapping("/wrong-info")
+    public ResponseEntity<List<BookWrongInfoDto>> getBookWrongInfo() {
+        List<BookWrongInfoDto> bookWrongInfo = wrongService.getBookWrongInfo();
+        return ResponseEntity.ok(bookWrongInfo);
+    }
 
 }

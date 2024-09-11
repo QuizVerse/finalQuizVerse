@@ -1,6 +1,7 @@
 package org.example.final1.repository;
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.BookWrongInfoDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,5 +30,15 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
 
     // solvedbookId로 SolvedBook을 조회
     Optional<SolvedbookDto> findBySolvedbookId(int solvedbookId);
+
+    @Query("SELECT new org.example.final1.model.BookWrongInfoDto(" +
+            "b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate, COUNT(w)) " +
+            "FROM SolvedbookDto s " +
+            "JOIN s.book b " +
+            "JOIN b.user u " +
+            "LEFT JOIN WrongDto w ON w.solvedbook = s " +
+            "GROUP BY b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate")
+    List<BookWrongInfoDto> findBookWrongInfo();
+
 
 }

@@ -1,10 +1,8 @@
 package org.example.final1.service;
 
 import lombok.AllArgsConstructor;
-import org.example.final1.model.QuestionDto;
-import org.example.final1.model.SolvedbookDto;
-import org.example.final1.model.UserDto;
-import org.example.final1.model.WrongDto;
+import org.example.final1.model.*;
+import org.example.final1.repository.SolvedbookRepository;
 import org.example.final1.repository.WrongRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class WrongService {
     private final WrongRepository wrongRepository;
-
+    private final SolvedbookRepository solvedbookRepository;
 
     //1. 해당 solvedbook과 userid를 wrongdto에서 찾아서 만약 dto가 없으면 0을 반환하고, 있으면 하나만 꺼내서 wrong_repeat을 반환해준다.
 
@@ -77,9 +75,9 @@ public class WrongService {
         return wrongRepository.findAllByUser_UserId(userId);
     }
 
-
-
-
-
+    // 책 정보 및 틀린 문항 수 조회
+    public List<BookWrongInfoDto> getBookWrongInfo() {
+        return solvedbookRepository.findBookWrongInfo();
+    }
 
 }
