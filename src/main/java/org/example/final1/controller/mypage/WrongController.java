@@ -32,16 +32,14 @@ public class WrongController {
     @Autowired
     private JwtService jwtService;
 
-
     @GetMapping("/get/wronglist")
-    public ResponseEntity<?> getWrongNotesByUserId(HttpServletRequest request) {
-
+    public ResponseEntity<List<WrongDto>> getWrongNotesByUserId(HttpServletRequest request) {
         // JWT에서 사용자 정보 추출
         UserDto userDto = jwtService.getUserFromJwt(request);
 
         // 사용자 정보가 없으면 401 Unauthorized 응답
         if (userDto == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
         // 사용자 ID 추출
@@ -49,9 +47,6 @@ public class WrongController {
 
         // 사용자 ID에 해당하는 오답 데이터를 Service에서 가져옵니다.
         List<WrongDto> wrongNotes = wrongService.getWrongBooksByUserId(userId);
-
-        // 데이터 출력 (디버깅용)
-        System.out.println(wrongNotes);
 
         // 데이터를 클라이언트에 반환
         return ResponseEntity.ok(wrongNotes);

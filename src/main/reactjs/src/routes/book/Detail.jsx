@@ -218,7 +218,7 @@ export default function Detail() {
                         }}
                     />
                     <Typography variant="body1">
-                      {bookData.bookStatus === 0 ? "비공개" : "공개"}
+                      {bookData.bookStatus === 0 ? "공개" : bookData.bookStatus === 1 ? "클래스 공개" : "비공개"}
                     </Typography>
                   </Box>
                 </Box>

@@ -33,4 +33,13 @@ public class WrongDto {
 
     @Column(name = "wrong_repeat", nullable = false)
     private int wrongRepeat;
+
+
+    @Transient
+    private int bookId;
+
+    @Transient
+    private String bookTitle;
+
+
 }
