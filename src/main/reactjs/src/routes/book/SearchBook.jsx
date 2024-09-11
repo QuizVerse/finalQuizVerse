@@ -35,7 +35,6 @@ export default function SearchBook() {
             console.error('Failed to toggle bookmark', error);
         }
     };
-
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
@@ -56,11 +55,26 @@ export default function SearchBook() {
                 const query = new URLSearchParams(location.search);
                 const keyword = query.get("keyword");
 
+                let bookmarkedBookIds = [];
+
                 if (keyword) {
                     const response = await axios.get(`/books/search?keyword=${encodeURIComponent(keyword)}`);
-                    const books = response.data;
+                    let books = response.data;
+
+                    if (isLoggedIn) {
+                        // 로그인된 상태라면 사용자의 북마크 정보 가져오기
+                        const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');
+                        bookmarkedBookIds = bookmarksResponse.data.map(book => book.bookId);
+
+                        // 북마크 정보가 있는 책들에 대해 isBookmark 값 설정
+                        books = books.map(book => ({
+                            ...book,
+                            isBookmark: bookmarkedBookIds.includes(book.bookId)  // bookId가 북마크 목록에 있는지 확인
+                        }));
+                    }
+
                     setSearchResults(books);
-                    console.log("books", books)
+                    console.log("books", books);
                 }
             } catch (error) {
                 console.error("Error fetching search results:", error);
@@ -72,7 +86,8 @@ export default function SearchBook() {
 
         checkLoginStatus();
         fetchSearchResults();
-    }, [location.search]);
+    }, [location.search, isLoggedIn]);
+
 
     // 페이지네이션 관련 계산
     const pageCount = Math.ceil(searchResults.length / ITEMS_PER_PAGE);
@@ -102,11 +117,11 @@ export default function SearchBook() {
                                 <div key={book.bookId}>
                                     <BookCard
                                         cardType="A"
-                                        nickname={book.user.userNickname}  // 사용자 닉네임 표시
+                                        nickname={book.userNickname}  // 사용자 닉네임 표시
                                         createDate={book.bookCreatedate}
                                         title={book.bookTitle}
                                         status={book.bookStatus}
-                                        category={book.category?.categoryName || 'Unknown'}
+                                        category={book.categoryName || 'Unknown'}
                                         viewCount={book.bookViewCount}
                                         bookQuestionCount={book.bookQuestionCount}
                                         bookSectionCount={book.bookSectionCount}
