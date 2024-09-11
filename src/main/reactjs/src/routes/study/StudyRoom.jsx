@@ -28,15 +28,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -380,7 +380,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
 };
  // 화면 공유 WebSocket
  useEffect(() => {
-    const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+    const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+    //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
     
     screenShareWs.onopen = () => {
         console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -424,8 +425,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
