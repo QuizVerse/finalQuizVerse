@@ -28,15 +28,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -76,6 +76,16 @@ export default function StudyRoom() {
             await stopVideoPreview();
         }
         setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
+
+        // 카메라 상태를 웹소켓을 통해 서버로 전송
+        if (socket) {
+            const message = JSON.stringify({
+                type: 'camera_status',
+                participantName: participantName,
+                isCamOn: !isCamOn, // 새로운 상태를 서버로 전송
+            });
+            socket.send(message);
+        }
     };
 
     //사용자 정보를 가져오는 함수
@@ -251,34 +261,34 @@ export default function StudyRoom() {
         }
     }    
 
-    //카메라 켜기
-    async function enableCamera() {
-        // // 사용자의 비디오 장치에서 비디오 스트림을 생성
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const videoTrack = stream.getVideoTracks()[0];
-        const localVideoTrack = new LocalVideoTrack(videoTrack);
-        await room.localParticipant.publishTrack(localVideoTrack);
-        setLocalTrack(localVideoTrack);
-        setIsCameraEnabled(true); // 카메라가 켜졌다고 설정
-    }
-    //카메라 끄기
-    async function disableCamera() {
-        if (localTrack) {
-            await room.localParticipant.unpublishTrack(localTrack);
-            localTrack.stop(); // 비디오 트랙을 중지합니다.
-            setLocalTrack(null);
-        }
-        setIsCameraEnabled(false);
-    }
-    //카메라 토글 함수
-    async function toggleCamera() {
-        if (isCameraEnabled) {
-            await disableCamera();
-        } else {
-            await enableCamera();
-        }
-        setIsCameraEnabled(!isCameraEnabled);
-    }
+    // //카메라 켜기
+    // async function enableCamera() {
+    //     // // 사용자의 비디오 장치에서 비디오 스트림을 생성
+    //     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    //     const videoTrack = stream.getVideoTracks()[0];
+    //     const localVideoTrack = new LocalVideoTrack(videoTrack);
+    //     await room.localParticipant.publishTrack(localVideoTrack);
+    //     setLocalTrack(localVideoTrack);
+    //     setIsCameraEnabled(true); // 카메라가 켜졌다고 설정
+    // }
+    // //카메라 끄기
+    // async function disableCamera() {
+    //     if (localTrack) {
+    //         await room.localParticipant.unpublishTrack(localTrack);
+    //         localTrack.stop(); // 비디오 트랙을 중지합니다.
+    //         setLocalTrack(null);
+    //     }
+    //     setIsCameraEnabled(false);
+    // }
+    // //카메라 토글 함수
+    // async function toggleCamera() {
+    //     if (isCameraEnabled) {
+    //         await disableCamera();
+    //     } else {
+    //         await enableCamera();
+    //     }
+    //     setIsCameraEnabled(!isCameraEnabled);
+    // }
     // 마이크 음소거 기능
     const toggleMicrophone = async () => {
     if (isMicrophoneMuted) {
@@ -380,8 +390,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
 };
  // 화면 공유 WebSocket
  useEffect(() => {
-    const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-    //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+    //const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+    const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
     
     screenShareWs.onopen = () => {
         console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -425,8 +435,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -434,7 +444,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
 
         ws.onmessage = (event) => {
             console.log('메시지 수신됨:', event.data);
-            setMessages(messages.concat([event.data]));
+            //setMessages(messages.concat([event.data]));
+            setMessages(prevMessages => [...prevMessages, event.data]);
         };
 
         ws.onclose = () => {
@@ -450,7 +461,7 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
         return () => {
             ws.close();
         };
-    }, [participantName, messages]);
+    }, [participantName]);
 
     const sendMessage = (e) => {
         e.preventDefault();
@@ -461,6 +472,60 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
         }
         else {
             console.warn('소켓이 열려 있지 않거나 메시지가 비어 있습니다.');
+        }
+    };
+
+    useEffect(() => {
+        // 웹소켓 연결 설정
+        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+    
+        ws.onopen = () => {
+            console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
+        };
+    
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log('카메라 상태 메시지 수신됨:', message);
+    
+            // 다른 참가자의 카메라 상태를 업데이트
+            if (message.type === 'camera_status') {
+                if (message.participantName !== participantName) {
+                    // 다른 참가자가 카메라를 켜거나 껐을 때 해당 상태를 반영
+                    if (message.isCamOn) {
+                        // 카메라 켜기 동작
+                        //enableRemoteCamera(message.participantName);
+                    } else {
+                        // 카메라 끄기 동작
+                        //disableRemoteCamera(message.participantName);
+                    }
+                }
+            }
+        };
+    
+        ws.onclose = () => {
+            console.log('카메라 상태 웹소켓 연결이 종료되었습니다.');
+        };
+    
+        ws.onerror = (error) => {
+            console.error('카메라 상태 웹소켓 오류 발생:', error);
+        };
+    
+        setSocket(ws);
+    
+        return () => {
+            ws.close();
+        };
+    }, [participantName]);
+    
+    // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
+    const sendCameraStatus = (isCamOn) => {
+        if (socket) {
+            const message = JSON.stringify({
+                type: 'camera_status',
+                participantName: participantName,
+                isCamOn: isCamOn,
+            });
+            socket.send(message);
         }
     };
 
