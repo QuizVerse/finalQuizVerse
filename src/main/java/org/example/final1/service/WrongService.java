@@ -75,9 +75,9 @@ public class WrongService {
         return wrongRepository.findAllByUser_UserId(userId);
     }
 
-    // 책 정보 및 틀린 문항 수 조회
-    public List<BookWrongInfoDto> getBookWrongInfo() {
-        return solvedbookRepository.findBookWrongInfo();
+    // 특정 유저 ID에 대한 책 정보 및 틀린 문항 수 조회
+    public List<BookWrongInfoDto> getBookWrongInfoByUserId(int userId) {
+        return solvedbookRepository.findBookWrongInfoByUserId(userId);
     }
 
 }

@@ -16,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -55,10 +57,10 @@ public class WrongController {
         return ResponseEntity.ok(wrongNotes);
     }
 
-    // 책 정보 및 틀린 문항 수 가져오기
-    @GetMapping("/wrong-info")
-    public ResponseEntity<List<BookWrongInfoDto>> getBookWrongInfo() {
-        List<BookWrongInfoDto> bookWrongInfo = wrongService.getBookWrongInfo();
+    // 유저 ID에 따른 책 정보 및 틀린 문항 수 가져오기
+    @GetMapping("/wrong-info/{userId}")
+    public ResponseEntity<List<BookWrongInfoDto>> getBookWrongInfo(@PathVariable("userId") int userId) {
+        List<BookWrongInfoDto> bookWrongInfo = wrongService.getBookWrongInfoByUserId(userId);
         return ResponseEntity.ok(bookWrongInfo);
     }
 
