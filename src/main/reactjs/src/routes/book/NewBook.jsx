@@ -7,7 +7,7 @@ import {
     InputLabel,
     FormControl,
     TextField,
-    IconButton
+    IconButton, Switch
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import CreateIcon from '@mui/icons-material/Create';
@@ -238,15 +238,11 @@ export default function NewBook() {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">
                             <label className="text-sm font-medium">제한시간 여부</label>
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={isTimeLimitEnabled}
-                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                onClick={toggleTimeSwitch}
-                            >
-                                <span className={`pointer-events-none block h-5 w-5 rounded-full ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
-                            </button>
+                            <Switch
+                                checked={isTimeLimitEnabled}
+                                onChange={toggleTimeSwitch}
+                                color="primary"
+                            />
                         </div>
 
                         {isTimeLimitEnabled && (
@@ -263,7 +259,7 @@ export default function NewBook() {
                         <label className="text-sm font-medium">문제집 표지</label>
                         <div className="relative">
                             <div className="flex justify-end">
-                                <IconButton onClick={() => document.getElementById('file-input').click()}>
+                            <IconButton onClick={() => document.getElementById('file-input').click()}>
                                     <CreateIcon />
                                 </IconButton>
                             </div>
