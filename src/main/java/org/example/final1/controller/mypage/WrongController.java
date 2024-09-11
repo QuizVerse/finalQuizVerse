@@ -33,7 +33,7 @@ public class WrongController {
     private JwtService jwtService;
 
 
-    @GetMapping("/get/booklist")
+    @GetMapping("/get/wronglist")
     public ResponseEntity<?> getWrongNotesByUserId(HttpServletRequest request) {
 
         // JWT에서 사용자 정보 추출
