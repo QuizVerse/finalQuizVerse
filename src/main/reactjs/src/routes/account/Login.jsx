@@ -55,7 +55,7 @@ export default function Login() {
         window.location.href = "http://localhost:9002/oauth2/authorization/naver";
     }
     const handleKakaoLogin = () => {
-        window.location.href = "http://localhost:9002/oauth2/authorization/kakao";
+        window.location.href = "https://www.quizverse.kro.kr/oauth2/authorization/kakao";
     }
 
     const [passwordVisible, setPasswordVisible] = useState(false);
