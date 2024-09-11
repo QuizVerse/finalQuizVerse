@@ -2,34 +2,29 @@ import {
     IconButton,
     Typography
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import TestChoices from "./TestChoices";
 
+const ITEM_TYPE = 'QUESTION'; // 드래그 앤 드롭 기능에서 사용할 아이템 타입 정의
+
 export default function TestQuestion({
                                          question,
                                          onUploadImage,
-                                         onAnswerChange,
-                                         savedAnswer = [] // 기본값 설정
+                                         onAnswerChange
                                      }) {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [answer, setAnswer] = useState(savedAnswer);
 
+    /** 일반 코드 */
+        // 질문 접힘 상태 관리
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // 질문 접기/펼치기 핸들러
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
 
-    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
-
-    useEffect(() => {
-        setAnswer(savedAnswer);
-    }, [savedAnswer]);
-
-    const handleAnswerChange = (newAnswer) => {
-        setAnswer(newAnswer);
-        onAnswerChange(question.questionId, newAnswer);
-    };
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"
 
     return (
         <div className="flex flex-col gap-4 px-10 py-4 rounded shadow-lg bg-gray-100">
@@ -37,11 +32,11 @@ export default function TestQuestion({
                 <Typography variant="h5">{question.questionTitle || "문제 질문"}</Typography>
                 <div>
                     <IconButton onClick={toggleCollapse}>
-                        {isCollapsed ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+                        {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
                     </IconButton>
                 </div>
             </div>
-            {!isCollapsed && (
+            {!isCollapsed && (  // 질문이 접혀있지 않을 때만 내용 표시
                 <div className="flex flex-col gap-4">
                     <div className="flex gap-4">
                         <Typography>{question.questionTitle}</Typography>
@@ -50,21 +45,43 @@ export default function TestQuestion({
                         <div className="flex gap-4">
                             <Typography>{question.questionDescription}</Typography>
                         </div>
-                        <div className="flex justify-center">
-                            {question.questionDescriptionimage ? (
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {question.questionDescriptionimage !== "" ?
                                 <img
                                     src={imagePath + question.questionDescriptionimage}
                                     alt="Cover"
                                     className="w-36 h-36 object-cover"
-                                />
-                            ) : ""}
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                            {/* Hidden File Input */}
+                            <input
+                                type="file"
+                                id={'description-image-' + question.questionId}
+                                accept="image/*"
+                                onChange={(e) => onUploadImage(e, "description")}
+                                style={{display: 'none'}} // Hide the file input
+                            />
                         </div>
                     </div>
-                    <TestChoices
-                        question={question}
-                        onAnswerChange={handleAnswerChange}
-                        savedAnswer={answer}
-                    />
+                    <TestChoices question={question} onAnswerChange={onAnswerChange}/>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex gap-4">
+                            <Typography>{question.questionSolution}</Typography>
+                        </div>
+                        <div className={"flex justify-center"}>
+                            {/* Image Preview */}
+                            {question.questionSolutionimage !== "" ?
+                                <img
+                                    src={imagePath + question.questionSolutionimage}
+                                    alt="Cover"
+                                    className="w-36 h-36 object-cover"
+                                    width="150"
+                                    height="150"
+                                /> : ""}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

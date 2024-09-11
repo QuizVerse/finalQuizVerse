@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DensityMediumOutlinedIcon from "@mui/icons-material/DensityMediumOutlined";
 import axios from "axios";
 import Review from "../../components/modal/Review";
@@ -19,10 +19,25 @@ export default function ParentComponent() {
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
   const { search } = useLocation();
 
+  const queryParams = new URLSearchParams(search);
+  const wrongRepeat = queryParams.get("wrongRepeat");
 
-  const queryParmas=new URLSearchParams(search);
-  const wrongRepeat=queryParmas.get("wrongRepeat");
+  const [timeLeft, setTimeLeft] = useState(null); // 남은 시간을 저장하는 상태
 
+  // 새로고침 경고 추가
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = ""; // Chrome에서는 returnValue를 설정해야 경고창이 나타남
+    };
+
+    // 페이지 떠날 때 경고 표시
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,8 +46,25 @@ export default function ParentComponent() {
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
 
+        // 서버에서 받은 bookTimer (분 단위) 값을 초로 변환해서 저장
+        setTimeLeft(bookRes.data.book.bookTimer * 60);
+
+        // 질문 미리보기 요청
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
         setQuestions(questionsRes.data);
+
+        // 오답 문제 요청
+        if (wrongRepeat > 0) {
+          try {
+            const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
+              params: { solvedbookId, wrongRepeat }
+            });
+            setQuestions(wrongQuestionsRes.data);
+          } catch (error) {
+            console.error("오답 문제 요청 중 오류:", error);
+          }
+        }
+
 
         setLoading(false);
       } catch (error) {
@@ -42,9 +74,62 @@ export default function ParentComponent() {
     };
 
     fetchData();
-  }, [bookId]);
+  }, [bookId, wrongRepeat, solvedbookId]);
+
+  // 타이머를 관리하는 useEffect
+  useEffect(() => {
+    if (timeLeft === 0) {
+      handleAutoSubmit(); // 시간이 다 되면 자동 제출하는 함수 호출
+    }
+
+    if (timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1); // 1초씩 감소
+      }, 1000);
+
+      return () => clearInterval(timer); // 메모리 누수를 방지하기 위해 타이머 정리
+    }
+  }, [timeLeft]);
+
+  // 임시 저장 버튼을 눌렀을 때 처리
+  const handleTemporarySave = async () => {
+    console.log("임시 저장 중. answers:", answers);
+
+    const formattedAnswers = answers.map((answer) => {
+      const answerData = {
+        solvedbook: { solvedbookId: solvedbookId },
+        question: { questionId: answer.questionId },
+        answerOrder: answer.answerOrder,
+      };
+
+      if (Array.isArray(answer.answer)) {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      } else if (typeof answer.answer === "string") {
+        answerData.subjectiveAnswer = answer.answer || null;
+      }
+
+      return answerData;
+    });
+
+    const saveData = {
+      answers: formattedAnswers,
+      timeLeft: timeLeft, // 남은 시간도 함께 전송
+    };
+
+    console.log("전송할 데이터:", saveData); // 데이터가 올바르게 구성되었는지 확인
+
+    try {
+      const response = await axios.post(`/book/save/temporary`, saveData);
+      console.log("임시 저장 성공", response.data);
+    } catch (error) {
+      console.error("임시 저장 중 오류:", error.response?.data);
+    }
+  };
+
   const openConfirm = async () => {
-    console.log("answers:", answers);  // 전송될 데이터 확인
+    console.log("answers:", answers); // 전송될 데이터 확인
 
     const formattedAnswers = answers.map((answer) => {
       const answerData = {
@@ -59,7 +144,6 @@ export default function ParentComponent() {
           choiceId: choice.choiceId,
         }));
       }
-
       // 주관식 문제 처리
       else if (typeof answer.answer === "string") {
         answerData.subjectiveAnswer = answer.answer || null;
@@ -68,17 +152,48 @@ export default function ParentComponent() {
       return answerData;
     });
 
-    console.log("전송할 데이터:", formattedAnswers);  // 최종 데이터 확인
+    console.log("전송할 데이터:", formattedAnswers); // 최종 데이터 확인
 
     try {
       const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formattedAnswers);
       console.log("답안 제출 성공", response.data);
     } catch (error) {
-      console.error("답안 제출 중 오류:", error.response?.data);
+      console.error("답안 제출 중 오류:", error.response?.data); // 에러 메시지 확인
     }
-
   };
 
+  // 자동 제출을 처리하는 함수
+  const handleAutoSubmit = async () => {
+    console.log("자동 제출 시작. answers:", answers);
+
+    const formattedAnswers = answers.map((answer) => {
+      const answerData = {
+        solvedbook: { solvedbookId: solvedbookId },
+        question: { questionId: answer.questionId },
+        answerOrder: answer.answerOrder,
+      };
+
+      if (Array.isArray(answer.answer)) {
+        answerData.choices = answer.answer.map((choice) => ({
+          choiceId: choice.choiceId,
+        }));
+      } else if (typeof answer.answer === "string") {
+        answerData.subjectiveAnswer = answer.answer || null;
+      }
+
+      return answerData;
+    });
+
+    try {
+      const response = await axios.post(`/book/save/answers`, formattedAnswers);
+      console.log("자동 답안 제출 성공", response.data);
+
+      // 제출 후 시험 결과 페이지로 이동
+      navigate(`/book/score/${bookId}`);
+    } catch (error) {
+      console.error("자동 답안 제출 중 오류:", error.response?.data);
+    }
+  };
 
   const closeConfirm = () => {
     setConfirmVisible(false);
@@ -103,14 +218,13 @@ export default function ParentComponent() {
 
       // 객관식일 때 배열로 저장 (다중 선택 가능)
       if (Array.isArray(answer)) {
-        // choiceId만 추출해서 저장
         const choices = answer.map((choice) => {
           if (!choice.choiceId) {
             console.error("Undefined choiceId detected:", choice);
             return null;
           }
           return { choiceId: choice.choiceId };
-        }).filter(choice => choice !== null); // null 값을 제거합니다.
+        }).filter((choice) => choice !== null); // null 값을 제거합니다.
 
         if (existingAnswer) {
           return prevAnswers.map((a) =>
@@ -140,20 +254,31 @@ export default function ParentComponent() {
     });
   };
 
+  // 분:초로 타이머를 변환하여 표시하는 함수
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   return (
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
             <DensityMediumOutlinedIcon />
-            <span className="text-lg font-semibold">{bookData?.user ? bookData.user.userNickname : "로드 중..."}</span>
+            <span className="text-lg font-semibold">
+              {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
+            </span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg">10/{questions.length} 문항 | 10 섹션</span>
+            <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
             <span className="text-lg">총 {bookData?.bookTotalscore}점</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-lg font-semibold">{bookData?.bookTitle}</span>
+            <span className="text-lg">남은 시간: {formatTime(timeLeft)}</span> {/* 타이머 표시 */}
+            <Button variant="outlined" onClick={handleTemporarySave}>
+              임시 저장
+            </Button>
             <Button variant="contained" onClick={openConfirm}>
               시험종료
             </Button>
