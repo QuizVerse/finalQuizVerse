@@ -89,7 +89,8 @@ export default function PublishedBook() {
                   <TableCell sx={{width : 350, fontWeight: 'bold'}}> 문제집 이름</TableCell>
                   <TableCell sx={{width : 300, fontWeight: 'bold'}}>학습일시</TableCell>
                   <TableCell sx={{fontWeight: 'bold'}}>제출일시</TableCell>
-                  <TableCell sx={{fontWeight: 'bold'}}>성적 보기</TableCell>
+                  <TableCell sx={{fontWeight: 'bold'}}>상태 여부부</TableCell>
+
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -110,10 +111,23 @@ export default function PublishedBook() {
                             {row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}
                           </TableCell>
                           <TableCell>
+
+                            {row.solvedbookIssubmitted ? (
+                              <Button variant="outlined">
+                                <Link to={`/book/${row.bookId}/${row.solvedbookId}?wrongrepeat=${row.solvedbook.wrongRepeat}`}>이어서 풀기</Link>
+                              </Button>
+                          ) : (
+                              <Button variant="outlined">
+                                <Link to={`/book/score/${row.bookId}`}>성적 확인</Link>
+                              </Button>
+                          )}
+
                             <Button variant={"outlined"}>
                               <Link to={"/book/score/"+row.bookId}>확인하기</Link>
                             </Button>
+
                           </TableCell>
+
                         </TableRow>
                     ))
                 ) : (

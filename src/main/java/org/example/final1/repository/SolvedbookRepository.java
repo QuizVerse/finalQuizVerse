@@ -42,4 +42,9 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
             "GROUP BY b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate")
     List<BookWrongInfoDto> findBookWrongInfoByUserId(@Param("userId") int userId);  // @Param으로 쿼리 파라미터를 명시
 
+
+    @Query("SELECT sb FROM SolvedbookDto sb WHERE sb.solvedbookId = :solvedbookId")
+    Optional<SolvedbookDto> findBySolvedbookId1(@Param("solvedbookId") Integer solvedbookId);
 }
+
+
