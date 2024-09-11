@@ -123,9 +123,10 @@ export default function SearchBook() {
                                 <div key={book.bookId}>
                                     <BookCard
                                         cardType="A"
-                                        nickname={book.userNickname}  // 사용자 닉네임 표시
+                                        nickname={book.user.userNickname}  // 사용자 닉네임 표시
                                         createDate={book.bookCreatedate}
                                         title={book.bookTitle}
+                                        status={book.bookStatus}
                                         category={book.category?.categoryName || 'Unknown'}
                                         viewCount={book.bookViewCount}
                                         bookQuestionCount={book.bookQuestionCount}
