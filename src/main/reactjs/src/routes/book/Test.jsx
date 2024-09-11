@@ -18,6 +18,7 @@ export default function ParentComponent() {
   const [answers, setAnswers] = useState([]);
   const [answerOrderCount, setAnswerOrderCount] = useState(1);
   const { search } = useLocation();
+
   const queryParams = new URLSearchParams(search);
   const wrongRepeat = queryParams.get("wrongRepeat");
   const [timeElapsed, setTimeElapsed] = useState(0); // 0부터 시작하는 타이머
