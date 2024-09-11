@@ -35,16 +35,18 @@ export default function StudyRoomEntry({ studyId, studyTitle, studyPasswd, open,
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>비밀번호 입력</DialogTitle>
-            <DialogContent>
-                <TextField
-                    label="비밀번호"
-                    type="password"
-                    fullWidth
-                    value={inputPasswd}
-                    onChange={(e) => setInputPasswd(e.target.value)}
-                    error={error}
-                    helperText={error ? "비밀번호가 틀렸습니다." : ""}
-                />
+            <DialogContent >
+                <div className={"p-4"}>
+                    <TextField
+                        label="비밀번호"
+                        type="password"
+                        fullWidth
+                        value={inputPasswd}
+                        onChange={(e) => setInputPasswd(e.target.value)}
+                        error={error}
+                        helperText={error ? "비밀번호가 틀렸습니다." : ""}
+                    />
+                </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>취소</Button>
