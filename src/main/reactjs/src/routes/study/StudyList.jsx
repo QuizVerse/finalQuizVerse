@@ -4,8 +4,10 @@ import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
+import StudyRoomEntry from "../../components/modal/StudyRoomEntry";
+import {useNavigate} from "react-router-dom";
+
 
 const ITEMS_PER_PAGE = 10; // 페이지당 항목 수
 const SPACING = 2; // 페이지네이션 버튼 간격
@@ -16,7 +18,9 @@ export default function StudyList() {
     const [roomList, setRoomList] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredRoom, setFilteredRoom] = useState([]);
-    const navi = useNavigate();
+    const [selectedRoom, setSelectedRoom] = useState(null); // 선택된 방 정보
+    const [modalOpen, setModalOpen] = useState(false); // 모달 상태 관리
+    const navigate = useNavigate();
 
     // 페이지네이션에 필요한 항목 처리 함수
     const handleChange = (event, value) => {
@@ -35,29 +39,36 @@ export default function StudyList() {
         getRoomList();
     }, []);
 
-    // 방 들어가기 이벤트 처리 함수
-    const GoRoomEvent = (studyId, studyTitle) => {
-        navi(`/study/room/${studyId}/${studyTitle}`);
-    }
-
     // 방 생성 페이지로 이동하는 함수
     const NewRoom = () => {
-        navi(`/study/new`);
-    }
+        // 방 생성 페이지로 이동
+    };
 
     // 검색어에 따라 방 목록을 필터링
     useEffect(() => {
         const lowerCaseQuery = searchQuery.toLowerCase();
         const filtered = roomList.filter((room) =>
-            room.studyTitle.toLowerCase().includes(lowerCaseQuery) 
-            //room.user.toLowerCase().includes(lowerCaseQuery)
+            room.studyTitle.toLowerCase().includes(lowerCaseQuery)
         );
         setFilteredRoom(filtered)
     }, [searchQuery, roomList]);
+
+    // 방 클릭 시 이벤트 처리 함수
+    const GoRoomEvent = (studyId, studyTitle, studyPasswd, studyStatus) => {
+        if (studyStatus === 0) {
+            // 방 상태가 0일 경우 StudyRoomEntry 모달을 띄움
+            setSelectedRoom({ studyId, studyTitle, studyPasswd });
+            setModalOpen(true);
+        } else {
+            // 비밀번호가 필요 없을 경우 바로 방으로 이동
+            navigate(`/study/room/${studyId}/${studyTitle}`);
+        }
+    };
+
     // 페이지네이션에 맞게 현재 페이지의 항목을 계산
     const currentItems = filteredRoom.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(filteredRoom.length / ITEMS_PER_PAGE); // 총 페이지 수
-    
+
     // 검색
     const handleSearch = (keyword) => {
         setSearchQuery(keyword);
@@ -84,7 +95,7 @@ export default function StudyList() {
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus)} // 방 클릭 시 이벤트
                         />
                     )) || <div>생성된 스터디가 없습니다.</div>
                 }
@@ -102,6 +113,17 @@ export default function StudyList() {
                     />
                 </Stack>
             </div>
+
+            {/* StudyRoomEntry 모달 */}
+            {selectedRoom && (
+                <StudyRoomEntry
+                    studyId={selectedRoom.studyId}
+                    studyTitle={selectedRoom.studyTitle}
+                    studyPasswd={selectedRoom.studyPasswd}
+                    open={modalOpen}
+                    setOpen={setModalOpen}
+                />
+            )}
         </main>
     );
 }
