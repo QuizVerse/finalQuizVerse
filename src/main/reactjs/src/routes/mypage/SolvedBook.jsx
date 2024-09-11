@@ -110,7 +110,7 @@ export default function PublishedBook() {
 
                             {row.solvedbookIssubmitted ? (
                               <Button variant="outlined">
-                                <Link to={`/book/${row.bookId}/${row.solvedbookId}?wrongRepeat=`}>이어서 풀기</Link>
+                                <Link to={`/book/test/${row.bookId}/${row.solvedbookId}?wrongRepeat=`}>이어서 풀기</Link>
                               </Button>
                           ) : (
                               <Button variant="outlined">
