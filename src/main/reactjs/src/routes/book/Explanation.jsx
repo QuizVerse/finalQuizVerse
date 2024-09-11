@@ -47,7 +47,7 @@ const Explanation = () => {
               return {
                 ...question,
                 choices: choicesRes.data,
-                explanation: question.explanation || "해설이 없습니다.",
+                explanation: question.questionSolution || "해설이 없습니다.",
               };
             })
         );
@@ -153,6 +153,16 @@ const Explanation = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  // 사용자가 선택한 답안을 화면에 렌더링하는 함수
+  const renderSelectedAnswer = (question) => {
+    const userAnswer = selectedAnswers[question.questionId];  // 사용자가 선택한 answer 정보
+    if (!userAnswer) return "답안이 없습니다.";
+
+    // 선택된 choice_id에 해당하는 선택지의 텍스트를 찾아 렌더링
+    const selectedChoice = question.choices.find(choice => choice.choiceId === userAnswer.choice_id);
+    return selectedChoice ? selectedChoice.choiceText : "선택한 답안을 찾을 수 없습니다.";
+  };
 
   return (
       <div className="max-w-4xl mx-auto p-4">
@@ -272,14 +282,31 @@ const Explanation = () => {
 
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
-                                    나의 답안: {userAnswer?.map(answer => {
-                                    // 선택된 답안의 인덱스를 찾기
-                                    const index = question.choices.findIndex(choice => choice.choiceId === answer.choiceId);
-                                    return `${getChoiceNumber(index)} ${answer.choiceText}`;  // 번호와 텍스트를 표시
-                                  }).join(', ')}
+                                    나의 답안: {userAnswer ? (
+                                      (() => {
+                                        // userAnswer에서 선택된 답안의 텍스트를 가져옴
+                                        console.log("사용자의 답안:", userAnswer);  // 사용자가 선택한 답안을 확인
+
+                                        const choiceText = userAnswer.choiceText; // 선택한 답안의 텍스트
+                                        console.log("선택한 답안의 텍스트:", choiceText);  // 선택된 텍스트 확인
+
+                                        if (choiceText) {
+                                          return choiceText;  // 선택된 답안의 텍스트만 표시
+                                        } else {
+                                          return "선택된 답안을 찾을 수 없습니다.";  // 선택된 답안이 없을 경우
+                                        }
+                                      })()
+                                  ) : (
+                                      "답안이 없습니다."
+                                  )}
                                   </Typography>
 
+
+
+
                                 </div>
+
+
                                 <div className="mt-4">
                                   <Typography className="text-blue-500 font-bold">
                                     정답: {question.choices.filter(choice => choice.choiceIsanswer).map((choice) => {
