@@ -103,14 +103,14 @@ public class SolvedbookService {
                     .bookStatus(book.getBookStatus())
                     .bookTimer(book.getBookTimer())
                     .bookCreatedate(book.getBookCreatedate())
+                    .solvedbookId(solvedBook.getSolvedbookId())
+                    .solvedbookIssubmitted(solvedBook.isSolvedbookIssubmitted())
                     .solvedbookStart(solvedBook.getSolvedbookStart())
                     .solvedbookEnd(solvedBook.getSolvedbookEnd())
                     .solvedbookTimer(solvedBook.getSolvedbookTimer())
-                    //여기에 임시저장 추가해주기
                     .build();
         }).collect(Collectors.toList());
     }
-
 
     public SolvedbookDto getSolvedBookBysolvedbookId(Integer solvedbookId) {
         // Optional에서 SolvedbookDto 반환, 없으면 예외 처리

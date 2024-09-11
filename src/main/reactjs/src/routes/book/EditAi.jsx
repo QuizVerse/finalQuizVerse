@@ -139,12 +139,11 @@ export default function EditAi() {
                     <ul className="space-y-2">
                         {history.map((item, index) => (
                             <li key={index}>
-                                <button
-                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
-                                    onClick={() => handleHistoryClick(item)}
-                                >
+                                <Button
+                                    fullWidth
+                                    onClick={() => handleHistoryClick(item)}>
                                     {item.prompt} ...
-                                </button>
+                                </Button>
                             </li>
                         ))}
                     </ul>

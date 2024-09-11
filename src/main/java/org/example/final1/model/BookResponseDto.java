@@ -4,25 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.sql.Timestamp;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SolvedBookInfoDto {
-
+public class BookResponseDto {
     private int bookId;
     private String bookImage;
     private String bookTitle;
     private String bookDescription;
     private short bookStatus;
     private int bookTimer;
-    private Timestamp bookCreatedate;
-
-    private int solvedbookId;
-    private boolean solvedbookIssubmitted;
-    private Timestamp solvedbookStart;
-    private Timestamp solvedbookEnd;
-    private String solvedbookTimer;
+    private boolean bookIspublished;
+    private boolean isBookmark;
+    private int bookmarkCount;
+    private int bookSectionCount;
+    private int bookQuestionCount;
 }
