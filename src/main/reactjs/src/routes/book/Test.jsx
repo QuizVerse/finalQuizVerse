@@ -130,7 +130,7 @@ export default function ParentComponent() {
       await handleTemporarySave(); // 답안 저장
 
       const currentTime = new Date(); // 현재 시간
-
+      localStorage.removeItem("temporarySave");
       const dataToSend = {
         answers: formatAnswers(),  // 사용자가 입력한 답안을 전송
         timeElapsed: timeElapsed,  // 경과 시간(타이머 값)
