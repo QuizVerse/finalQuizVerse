@@ -1,9 +1,10 @@
 import { CallGpt } from "../../components/gpt";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { Button, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomAlert from "../../components/modal/CustomAlert";
-import axios from "axios"; // 페이지 이동을 위한 훅
+import axios from "axios";
+import LoadingModal from "../../components/modal/LoadingModal"; // 페이지 이동을 위한 훅
 
 export default function EditAi() {
     const [aiData, setAiData] = useState(null); // 현재 선택된 데이터
@@ -12,6 +13,8 @@ export default function EditAi() {
     const [history, setHistory] = useState([]); // 히스토리 저장
     const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
     const { bookId } = useParams(); //URL에서 book_Id를 가져옴
+    const [loadingVisible, setLoadingVisible] = useState(false);
+
 
     // 데이터 관련 변수
     const [bookData, setBookData] = useState(null); // 책 데이터를 저장할 상태 추가
@@ -72,7 +75,7 @@ export default function EditAi() {
 
     const handleClickAPICall = async () => {
         try {
-            setIsLoading(true);
+            setLoadingVisible(true);
             const jsonData = await CallGpt({
                 prompt: userInput,
             });
@@ -90,7 +93,7 @@ export default function EditAi() {
             console.error("API 호출 중 오류 발생:", error);
             openAlert("API 호출 중 오류가 발생했습니다. 다시 시도해 주세요."); // 에러 발생 시 사용자에게 메시지 표시
         } finally {
-            setIsLoading(false);
+            setLoadingVisible(false);
         }
     };
 
@@ -136,19 +139,22 @@ export default function EditAi() {
                     <ul className="space-y-2">
                         {history.map((item, index) => (
                             <li key={index}>
-                                <button
-                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
-                                    onClick={() => handleHistoryClick(item)}
-                                >
+                                <Button
+                                    fullWidth
+                                    onClick={() => handleHistoryClick(item)}>
                                     {item.prompt} ...
-                                </button>
+                                </Button>
                             </li>
                         ))}
                     </ul>
                 </aside>
                 <section className="flex-1 p-4">
                     <div className="p-4 border rounded-lg shadow-md bg-white">
-                        {isLoading ? (
+                        <LoadingModal
+                            open={loadingVisible}
+                            title="AI 문제 생성중입니다. 잠시만 기다려주세요."
+                        />
+                        {loadingVisible ? (
                             <p>로딩 중...</p>
                         ) : aiData ? (
                             <div>

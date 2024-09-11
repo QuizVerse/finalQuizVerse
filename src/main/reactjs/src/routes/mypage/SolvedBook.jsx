@@ -4,26 +4,15 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import {
   Button,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField
 } from '@mui/material';
-import SearchInput from "../../components/SearchInput";
 import Paper from "@mui/material/Paper";
 import {Link} from "react-router-dom";
-
-// 필터 조건
-const conditions = [
-  { value: 'popular', label: '인기순' },
-  { value: 'recent', label: '최신순' },
-  { value: 'old', label: '오래된순' },
-  { value: 'title', label: '제목순' },
-];
 
 const ITEMS_PER_PAGE = 8; // 페이지당 아이템 수
 const SPACING = 2; // 페이지네이션 간격
@@ -44,10 +33,6 @@ export default function PublishedBook() {
     window.scrollTo(0, 0); // 페이지가 바뀔 때 상단으로 이동
   };
 
-  // 정렬 기준 변경 핸들러
-  const handleSortChange = (event) => {
-    setSort(event.target.value);
-  };
 
   // 사용자 로그인 상태 및 ID 가져오기
   const fetchUserInfo = async () => {
@@ -79,10 +64,6 @@ export default function PublishedBook() {
     }
   }, [userId]);
 
-
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message}</div>;
-
   // 현재 페이지에 표시할 항목 계산
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
   const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
@@ -102,10 +83,10 @@ export default function PublishedBook() {
             <Table sx={{minWidth: 650}} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>문제집 이름</TableCell>
-                  <TableCell>학습일시</TableCell>
-                  <TableCell>제출일시</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell sx={{width : 350, fontWeight: 'bold'}}> 문제집 이름</TableCell>
+                  <TableCell sx={{width : 300, fontWeight: 'bold'}}>학습일시</TableCell>
+                  <TableCell sx={{fontWeight: 'bold'}}>제출일시</TableCell>
+                  <TableCell sx={{fontWeight: 'bold'}}>상태 여부</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -116,7 +97,7 @@ export default function PublishedBook() {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             style={{ cursor: 'pointer' }}
                         >
-                          <TableCell component="th" scope="row">
+                          <TableCell scope="row">
                             {row.bookTitle}
                           </TableCell>
                           <TableCell>
@@ -126,10 +107,18 @@ export default function PublishedBook() {
                             {row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}
                           </TableCell>
                           <TableCell>
-                            <Button variant={"outlined"}>
-                              <Link to={"/book/score/"+row.bookId}>성적 확인</Link>
-                            </Button>
+
+                            {row.solvedbookIssubmitted ? (
+                              <Button variant="outlined">
+                                <Link to={`/book/test/${row.bookId}/${row.solvedbookId}?wrongRepeat=`}>이어서 풀기</Link>
+                              </Button>
+                          ) : (
+                              <Button variant="outlined">
+                                <Link to={`/book/score/${row.bookId}/${row.solvedbookId}?wrongRepeat=`}>성적 확인</Link>
+                              </Button>
+                          )}
                           </TableCell>
+
                         </TableRow>
                     ))
                 ) : (

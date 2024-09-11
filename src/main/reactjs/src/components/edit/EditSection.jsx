@@ -257,10 +257,17 @@ export default function EditSection({
 
     return (
         <div className="flex flex-col gap-4 bg-[#EEF7FF] px-10 py-4 rounded">
-            <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
-                <div>
-                    <span>{index+1} 섹션 / {sectionCount} 섹션</span>
+            <div className="flex items-center space-x-8 justify-between">
+                <TextField
+                    fullWidth
+                    label={"섹션 제목"}
+                    placeholder="질문을 입력하세요."
+                    variant={"standard"}
+                    value={section.sectionTitle}
+                    onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
+                />
+                <div className={"flex items-center"}>
+                    <span className={"whitespace-nowrap"}>{index+1} 섹션 / {sectionCount} 섹션</span>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                     </IconButton>
@@ -268,14 +275,6 @@ export default function EditSection({
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <TextField
-                        fullWidth
-                        label={"섹션 제목"}
-                        placeholder="질문을 입력하세요."
-                        variant={"standard"}
-                        value={section.sectionTitle}
-                        onChange={(e) => onUpdateSection({sectionTitle : e.target.value})}
-                    />
                     <div className="flex flex-col gap-4">
                         {showDescription && (
                             <div className="flex gap-4">
@@ -354,6 +353,14 @@ export default function EditSection({
                     onUploadImage={(e, inputType) => handleFileChange(e, index, inputType)}
                 />
             ))}
+
+            <div className={"flex justify-center"}>
+                <Tooltip title="질문 추가">
+                    <IconButton onClick={handleAddQuestion}>
+                        <AddIcon/>
+                    </IconButton>
+                </Tooltip>
+            </div>
 
             <CustomAlert
                 title={alertTitle}
