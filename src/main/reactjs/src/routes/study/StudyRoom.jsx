@@ -575,57 +575,86 @@ export default function StudyRoom() {
                 ) : (
                     <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[90vh]">
 
-                        <div className="flex flex-col bg-gray-100 p-4 h-[85vh]">
-                            {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
-                            <div className="flex-grow overflow-y-auto">
-                                <div className="flex flex-col space-y-2">
-                                    사용자들이 나올 화면<br />
-                                    시바타 유니<br />
-                                    정상혁<br />
-                                    우태형<br />
-                                    도훈하윤<br />
-                                    막내 aka 민지박
-                                    {/* 많은 사용자 예시 추가 */}
-                                    더 많은 사용자들<br />
-                                    사용자 A<br />
-                                    사용자 B<br />
-                                    사용자 C<br />
-                                    사용자 D<br />
-                                    사용자 E<br />
-                                    사용자 F<br />
-                                    사용자 G<br />
-                                </div>
-                            </div>
+<div className="flex flex-col bg-gray-100 h-[85vh]">
+            {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
+            <div className="flex-grow overflow-y-auto">
+                <div className="flex flex-col space-y-2 h-[40vh]">
+                    사용자들이 나올 화면<br />
+                    시바타 유니<br />
+                    정상혁<br />
+                    우태형<br />
+                    도훈하윤<br />
+                    막내 aka 민지박
+                    {/* 많은 사용자 예시 추가 */}
+                    더 많은 사용자들<br />
+                    사용자 A<br />
+                    사용자 B<br />
+                    사용자 C<br />
+                    사용자 D<br />
+                    사용자 E<br />
+                    사용자 F<br />
+                    사용자 G<br />
+                    사용자 A<br />
+                    사용자 B<br />
+                    사용자 C<br />
+                    사용자 D<br />
+                    사용자 E<br />
+                    사용자 F<br />
+                    사용자 G<br />
+                    사용자 A<br />
+                    사용자 B<br />
+                    사용자 C<br />
+                    사용자 D<br />
+                    사용자 E<br />
+                    사용자 F<br />
+                    사용자 G<br />
+                    사용자 A<br />
+                    사용자 B<br />
+                    사용자 C<br />
+                    사용자 D<br />
+                    사용자 E<br />
+                    사용자 F<br />
+                    사용자 G<br />
+                    사용자 D<br />
+                    사용자 E<br />
+                    사용자 F<br />
+                    사용자 G<br />
+                </div>
+            </div>
 
-                            {/* 버튼 영역 */}
-                            <div className="flex items-center justify-center h-1/2">
-                                <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-around items-center p-4 shadow-xl z-50 h-20">
-                                    {/* 카메라 토글 버튼 */}
-                                    <button className="flex flex-col items-center mx-4" onClick={toggleCam}>
-                                        {isCameraEnabled ? <VideocamIcon fontSize="large" /> : <VideocamOffIcon fontSize="large" />}
-                                        <span className="text-xs mt-1">{isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}</span>
-                                    </button>
+            {/* 버튼 영역 */}
+            <div className="h-[50vh] bg-gray text-white p-4">
+                {/* 빈 공간 */}
+                <div className="h-[50%]" />
 
-                                    {/* 마이크 토글 버튼 */}
-                                    <button className="flex flex-col items-center mx-4" onClick={toggleMicrophone}>
-                                        {isMicrophoneMuted ? <MicIcon fontSize="large" /> : <MicOffIcon fontSize="large" />}
-                                        <span className="text-xs mt-1">{isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}</span>
-                                    </button>
+                {/* 버튼 영역 하단 절반 */}
+                <div className="grid grid-cols-2 grid-rows-2 gap-4 h-[50%]">
+                    {/* 카메라 토글 버튼 */}
+                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleCam}>
+                        {isCameraEnabled ? <VideocamIcon fontSize="medium" /> : <VideocamOffIcon fontSize="medium" />}
+                        <span className="text-s mt-1">{isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}</span>
+                    </button>
 
-                                    {/* 화면 공유 토글 버튼 */}
-                                    <button className="flex flex-col items-center mx-4" onClick={toggleScreenSharing}>
-                                        {isScreenSharing ? <ScreenShareIcon fontSize="large" /> : <ScreenShareIcon fontSize="large" />}
-                                        <span className="text-xs mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
-                                    </button>
+                    {/* 마이크 토글 버튼 */}
+                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleMicrophone}>
+                        {isMicrophoneMuted ? <MicIcon fontSize="medium" /> : <MicOffIcon fontSize="medium" />}
+                        <span className="text-s mt-1">{isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}</span>
+                    </button>
 
-                                    {/* 나가기 버튼 */}
-                                    <button className="flex flex-col items-center mx-4" onClick={leaveRoom}>
-                                        <ExitToAppIcon fontSize="large" />
-                                        <span className="text-xs mt-1">나가기</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    {/* 화면 공유 토글 버튼 */}
+                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleScreenSharing}>
+                        {isScreenSharing ? <ScreenShareIcon fontSize="medium" /> : <ScreenShareIcon fontSize="medium" />}
+                        <span className="text-s mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
+                    </button>
+
+                    {/* 나가기 버튼 */}
+                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={leaveRoom}>
+                        <ExitToAppIcon fontSize="medium" />
+                        <span className="text-s mt-1">나가기</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 
 
                         <div id="room" className="flex flex-col">
