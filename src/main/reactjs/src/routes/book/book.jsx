@@ -29,12 +29,12 @@ export default function Book() {
                 >
                     <SwiperSlide>
                         <Link to={"/account/login"} className={"w-full"}>
-                            <img src="/banner2.png"/>
+                            <img src="/banner1.png"/>
                         </Link>
                     </SwiperSlide>
                     <SwiperSlide>
                         <Link to={"/account/login"} className={"w-full"}>
-                            <img src="/banner1.png"/>
+                            <img src="/banner2.png"/>
                         </Link>
                     </SwiperSlide>
                     <SwiperSlide>
