@@ -82,12 +82,12 @@ export default function Wrong() {
                                     : "/default-image.jpg"
                             } // 이미지가 없을 경우 대체 이미지 사용
                             cardType="C"
-                            nickname={book.userNickname || "Unknown"}
+                            nickname={book.wrongRepeat+"번째 오답노트" || "Unknown"}
                             createDate={book.bookCreatedate}
                             title={book.bookTitle}
                             bookQuestionCount={book.wrongCount} // 문항수
                             bookUrl={`/book/detail/${book.bookId}`}
-                            wrongUrl ={`/book/test/${book.bookId}/${book.solvedbookId}?wrongRepeat=1`} // 다시학습하기 버튼 눌렀을때
+                            wrongUrl={`/book/test/${book.bookId}/${book.solvedbook.solvedbookId}?wrongRepeat=${book.wrongRepeat}`}  // 다시학습하기 버튼 눌렀을때
                             isWrong={true}
                             status={book.bookStatus}
                         />
