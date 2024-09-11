@@ -500,6 +500,7 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                 <StartVideoComponent
                                     track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
                                     local={true}
+
                                 />
                             ) : (
                                 <div className="startvideo-container2">
@@ -612,6 +613,7 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                 {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
                                 {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
                                     <ShareVideoComponent
+
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.videoTrack}
                                         participantIdentity={remoteTrack.participantIdentity}
@@ -701,3 +703,4 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
         </LayoutContextProvider>
     );
 }
+
