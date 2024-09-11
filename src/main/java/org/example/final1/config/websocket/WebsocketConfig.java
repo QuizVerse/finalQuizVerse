@@ -22,12 +22,17 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	public ScreenShareWebSocketHandler screenShareWebSocketHandler() {
 		return new ScreenShareWebSocketHandler();
 	}
+
+	@Bean
+    public CameraWebSocketHandler cameraWebSocketHandler() {
+        return new CameraWebSocketHandler();
+    }
 	
     @Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**") // 모든 엔드포인트에서 CORS 설정
-				//.allowedOrigins("http://localhost:3000")
-				.allowedOrigins("https://www.quizverse.kro.kr") //react 주소
+				.allowedOrigins("http://localhost:3000")
+				//.allowedOrigins("https://www.quizverse.kro.kr") //react 주소
 				.allowedMethods("GET","POST","PUT","DELETE","OPTIONS")// 허용할 HTTP 메서드
 				.allowedHeaders("*") //적용할 헤더
 				.allowCredentials(true);
@@ -36,14 +41,19 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	 @Override
 	 public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		 registry.addHandler(new ChatWebSocketHandler(), "/ws/chat")
-	             //.setAllowedOrigins("http://localhost:3000") // React 앱 주소
-	             .setAllowedOrigins("https://www.quizverse.kro.kr")
+	             .setAllowedOrigins("http://localhost:3000") // React 앱 주소
+	             //.setAllowedOrigins("https://www.quizverse.kro.kr")
 	             .addInterceptors(new HttpSessionHandshakeInterceptor());
 
 		// 화면 공유 WebSocket 핸들러 등록
 		registry.addHandler(screenShareWebSocketHandler(), "/ws/screen-share")
-				//.setAllowedOrigins("http://localhost:3000") // React 앱 주소
-				.setAllowedOrigins("https://www.quizverse.kro.kr")
+				.setAllowedOrigins("http://localhost:3000") // React 앱 주소
+				//.setAllowedOrigins("https://www.quizverse.kro.kr")
 				.addInterceptors(new HttpSessionHandshakeInterceptor());
+		//카메라 
+		registry.addHandler(cameraWebSocketHandler(), "/ws/camera")
+        .setAllowedOrigins("http://localhost:3000") // React 앱 주소
+        .addInterceptors(new HttpSessionHandshakeInterceptor());
+
 	 }	
 }
