@@ -33,6 +33,7 @@ export default function MainHeader() {
                     const response = await axios.get("/update/user/data");
                     setUserData(response.data);
                     setUserNickname(response.data.nickname || ""); // 서버에서 가져온 닉네임 설정
+                    console.log("나야~~~!!!", response.data);
                 } catch (e) {
                     console.error("Failed to fetch user data:", e);
                 }
