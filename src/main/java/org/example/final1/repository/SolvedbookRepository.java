@@ -1,6 +1,7 @@
 package org.example.final1.repository;
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.BookWrongInfoDto;
 import org.example.final1.model.SolvedbookDto;
 import org.example.final1.model.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,20 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
     // solvedbookId로 SolvedBook을 조회
     Optional<SolvedbookDto> findBySolvedbookId(int solvedbookId);
 
+
+    @Query("SELECT new org.example.final1.model.BookWrongInfoDto(" +
+            "b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate, COUNT(w)) " +
+            "FROM SolvedbookDto s " +
+            "JOIN s.book b " +
+            "JOIN b.user u " +
+            "LEFT JOIN WrongDto w ON w.solvedbook = s " +
+            "WHERE u.userId = :userId " +  // userId 파라미터를 명시적으로 사용
+            "GROUP BY b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate")
+    List<BookWrongInfoDto> findBookWrongInfoByUserId(@Param("userId") int userId);  // @Param으로 쿼리 파라미터를 명시
+
+
+    @Query("SELECT sb FROM SolvedbookDto sb WHERE sb.solvedbookId = :solvedbookId")
+    Optional<SolvedbookDto> findBySolvedbookId1(@Param("solvedbookId") Integer solvedbookId);
 }
+
+

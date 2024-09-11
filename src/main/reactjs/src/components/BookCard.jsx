@@ -233,9 +233,17 @@ export default function BookCard(props) {
                             {props.nickname || "알 수 없음"} · {formatDate(props.createDate)}
                         </div>
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
-                        <p className="mt-1 text-sm text-gray-600">{props.category}</p>
-                        <p className="mt-1 text-sm text-gray-600">즐겨찾기 {props.bookmarkCount} | 문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
-                        <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "공개" : props.status === 1 ? "클래스 공개" : "비공개"}</p>
+                        {props.isWrong && (
+                            <p className="mt-1 text-sm text-gray-600">문항수 {props.bookQuestionCount}</p>
+                        )}
+                        {!props.isWrong && (
+                            <>
+                                <p className="mt-1 text-sm text-gray-600">{props.category}</p>
+                                <p className="mt-1 text-sm text-gray-600">즐겨찾기 {props.bookmarkCount} |
+                                    문항수 {props.bookQuestionCount} | 섹션수 {props.bookSectionCount}</p>
+                                <p className="mt-1 text-sm text-gray-600">{props.status === 0 ? "공개" : props.status === 1 ? "클래스 공개" : "비공개"}</p>
+                            </>
+                        )}
                     </Link>
 
                     {/*A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/}
@@ -267,7 +275,7 @@ export default function BookCard(props) {
                                 <DeleteIcon />
                             </IconButton>
                             <Button className="px-4 py-2 text-gray-600 border border-gray-600 rounded">
-                                <Link to={`/book/detail/${props.bookId}`}>다시 학습하기</Link>
+                                <Link to={props.wrongUrl}>다시 학습하기</Link>
                             </Button>
                         </div>
                     )}

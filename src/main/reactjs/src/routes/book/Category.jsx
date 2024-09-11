@@ -11,7 +11,7 @@ const conditions = [
   { value: 'title', label: '가나다순' },
 ];
 
-const ITEMS_PER_PAGE = 5;  // 한 페이지당 보여줄 아이템 수
+const ITEMS_PER_PAGE = 20;  // 한 페이지당 보여줄 아이템 수
 const SPACING = 2;  // 페이지네이션 사이의 간격
 
 export default function Category() {
@@ -143,7 +143,7 @@ export default function Category() {
 
   return (
       <main className="p-4">
-        <div className="flex items-center mb-6 space-x-4">
+        <div className="flex items-center mb-6 space-x-4 justify-end">
           <TextField
               id="outlined-select-currency"
               select
