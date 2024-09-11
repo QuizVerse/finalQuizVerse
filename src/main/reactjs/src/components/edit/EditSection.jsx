@@ -354,6 +354,14 @@ export default function EditSection({
                 />
             ))}
 
+            <div className={"flex justify-center"}>
+                <Tooltip title="질문 추가">
+                    <IconButton onClick={handleAddQuestion}>
+                        <AddIcon/>
+                    </IconButton>
+                </Tooltip>
+            </div>
+
             <CustomAlert
                 title={alertTitle}
                 openAlert={alertVisible}
