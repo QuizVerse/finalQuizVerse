@@ -31,7 +31,7 @@ export default function Wrong() {
     // 책 목록 가져오기 (Controller의 API와 연결)
     const getWrongBooks = async () => {
         try {
-            const res = await axios.get(`/wrong/get/booklist`);
+            const res = await axios.get(`/wrong/get/wronglist`);
             console.log("Fetched data: ", res.data); // 데이터를 콘솔에 출력해서 확인
 
             setBookList(res.data); // 책 목록 상태 업데이트
