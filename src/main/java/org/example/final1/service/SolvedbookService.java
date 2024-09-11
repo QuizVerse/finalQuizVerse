@@ -33,6 +33,8 @@ public class SolvedbookService {
 
         // 이미 존재하는 Solvedbook을 찾기
         SolvedbookDto existingSolvedBook = findSolvedBookByUserAndBook(userDto, book);
+        System.out.println("existingSolvedBook"+existingSolvedBook);
+
 
         if (existingSolvedBook != null) {
             // 이미 풀었던 문제집일 경우 기존 solvedBook 반환
@@ -104,8 +106,16 @@ public class SolvedbookService {
                     .solvedbookStart(solvedBook.getSolvedbookStart())
                     .solvedbookEnd(solvedBook.getSolvedbookEnd())
                     .solvedbookTimer(solvedBook.getSolvedbookTimer())
+                    //여기에 임시저장 추가해주기
                     .build();
         }).collect(Collectors.toList());
+    }
+
+
+    public SolvedbookDto getSolvedBookBysolvedbookId(Integer solvedbookId) {
+        // Optional에서 SolvedbookDto 반환, 없으면 예외 처리
+        return solvedBookRepository.findBySolvedbookId1(solvedbookId)
+                .orElseThrow(() -> new IllegalArgumentException("Solvedbook not found with ID: " + solvedbookId));
     }
 
 
@@ -129,5 +139,10 @@ public class SolvedbookService {
         return solvedbookRepository.findBySolvedbookId(solvedbookId);
     }
 
+
+    // Solvedbook을 업데이트하는 메서드
+    public void updateSolvedBook(SolvedbookDto solvedbook) {
+        solvedbookRepository.save(solvedbook); // DB에 업데이트
+    }
 
 }

@@ -13,43 +13,47 @@ function Footer() {
             }}
         >
             <Container maxWidth="lg">
-                <Grid container spacing={4}>
-                    <Grid item xs={12} md={4}>
+                <Grid container className={"space-x-44"}>
+                    <Grid item >
                         <Typography variant="h6" gutterBottom>
                             <img src="/logooo.png" alt="quizverse" style={{height: "72px"}}/>
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item  className={"flex space-x-8"}>
                         <Typography variant="h6" gutterBottom>
                             Quick Links
                         </Typography>
-                        <Link href="#" color="inherit" variant="body2">
-                            Home
-                        </Link>
-                        <br />
-                        <Link href="#" color="inherit" variant="body2">
-                            About
-                        </Link>
-                        <br />
-                        <Link href="#" color="inherit" variant="body2">
-                            Contact Us
-                        </Link>
+                        <div className={"space-y-4"}>
+                            <Link href="#" color="inherit" variant="body2">
+                                Home
+                            </Link>
+                            <br/>
+                            <Link href="#" color="inherit" variant="body2">
+                                About
+                            </Link>
+                            <br/>
+                            <Link href="#" color="inherit" variant="body2">
+                                Contact Us
+                            </Link>
+                        </div>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item className={"flex space-x-8"}>
                         <Typography variant="h6" gutterBottom>
                             SNS
                         </Typography>
-                        <Link href="#" color="inherit" variant="body2">
-                            Facebook
-                        </Link>
-                        <br />
-                        <Link href="#" color="inherit" variant="body2">
-                            Twitter
-                        </Link>
-                        <br />
-                        <Link href="#" color="inherit" variant="body2">
-                            Instagram
-                        </Link>
+                        <div className={"space-y-4"}>
+                            <Link href="#" color="inherit" variant="body2">
+                                Facebook
+                            </Link>
+                            <br/>
+                            <Link href="#" color="inherit" variant="body2">
+                                Twitter
+                            </Link>
+                            <br/>
+                            <Link href="#" color="inherit" variant="body2">
+                                Instagram
+                            </Link>
+                        </div>
                     </Grid>
                 </Grid>
                 <Box
