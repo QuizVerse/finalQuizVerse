@@ -32,7 +32,7 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
     Optional<SolvedbookDto> findBySolvedbookId(int solvedbookId);
 
 
-    @Query("SELECT new org.example.final1.dto.BookWrongInfoDto(" +
+    @Query("SELECT new org.example.final1.model.BookWrongInfoDto(" +
             "b.bookId, b.bookImage, b.bookTitle, u.userNickname, b.bookCreatedate, COUNT(w)) " +
             "FROM SolvedbookDto s " +
             "JOIN s.book b " +

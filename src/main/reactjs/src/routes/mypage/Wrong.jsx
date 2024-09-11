@@ -33,7 +33,7 @@ export default function Wrong() {
             const res = await axios.get(`/wrong/wrong-info/`+userId);
             console.log("Fetched data: ", res.data); // 데이터를 콘솔에 출력해서 확인
 
-            setBookList(res); // 책 목록 상태 업데이트
+            setBookList(res.data); // 책 목록 상태 업데이트
         } catch (error) {
             setError(error);
         } finally {
@@ -70,8 +70,6 @@ export default function Wrong() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {loading ? (
                     <div>Loading...</div>
-                ) : error ? (
-                    <div>Error loading data</div>
                 ) : bookList.length > 0 ? (
                     bookList.map((book) => (
                         <BookCard
@@ -82,14 +80,13 @@ export default function Wrong() {
                                     ? `${photopath}/${book.bookImage}`
                                     : "/default-image.jpg"
                             } // 이미지가 없을 경우 대체 이미지 사용
-                            cardType="B"
+                            cardType="C"
                             nickname={book.userNickname || "Unknown"}
                             createDate={book.bookCreatedate}
                             title={book.bookTitle}
+                            bookQuestionCount={book.wrongCount}
                             bookUrl={`/book/detail/${book.bookId}`}
-                            bookmarkCount={book.bookmarkCount}
-                            bookQuestionCount={book.bookQuestionCount}
-                            bookSectionCount={book.bookSectionCount}
+                            isWrong={true}
                             status={book.bookStatus}
                         />
                     ))
@@ -97,7 +94,6 @@ export default function Wrong() {
                     <div>No books available</div>
                 )}
             </div>
-
             {/*/!* 페이지네이션 *!/*/}
             {/*<Stack spacing={SPACING} justifyContent="center" direction="row" mt={4}>*/}
             {/*    <Pagination*/}
