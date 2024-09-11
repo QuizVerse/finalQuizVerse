@@ -45,6 +45,9 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
 
     @Query("SELECT sb FROM SolvedbookDto sb WHERE sb.solvedbookId = :solvedbookId")
     Optional<SolvedbookDto> findBySolvedbookId1(@Param("solvedbookId") Integer solvedbookId);
+
+    @Query("SELECT s.book.bookId FROM SolvedbookDto s WHERE s.solvedbookId = :solvedbookId")
+    Integer findBookIdBySolvedbookId(@Param("solvedbookId") Integer solvedbookId);
 }
 
 
