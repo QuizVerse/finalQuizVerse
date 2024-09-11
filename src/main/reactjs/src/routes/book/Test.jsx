@@ -114,37 +114,52 @@ export default function ParentComponent() {
     });
   };
 
-  const handleTemporarySave = () => {
+  const handleTemporarySave = async () => {
     const saveData = {
       answers: formatAnswers(),
       timeElapsed: timeElapsed,
     };
 
     localStorage.setItem("temporarySave", JSON.stringify(saveData));
-
-    navigate("/");
+    console.log("임시 저장 완료");
   };
 
   const openConfirm = async () => {
     try {
-      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}`, formatAnswers());
+      await handleTemporarySave(); // 답안 저장
+
+      const currentTime = new Date(); // 현재 시간
+
+      const dataToSend = {
+        answers: formatAnswers(),  // 사용자가 입력한 답안을 전송
+        timeElapsed: timeElapsed,  // 경과 시간(타이머 값)
+        currentTime: currentTime,  // 제출 시간
+      };
+
+      // 서버로 데이터 전송
+      const response = await axios.post(`/book/save/answers?wrongRepeat=${wrongRepeat}&solvedbookId=${solvedbookId}`, dataToSend);
+
       setConfirmVisible(true);
       console.log("답안 제출 성공", response.data);
-      //navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`);
     } catch (error) {
       console.error("답안 제출 중 오류:", error.response?.data);
     }
   };
 
-  const closeConfirm = () => setConfirmVisible(false);
-  const passbtn = () => {
-    closeConfirm();
-    navigate(`/book/score/${bookId}`);
+  const closeConfirm = () => {
+    setConfirmVisible(false);
   };
 
-  const submitbtn = () => {
+  const passbtn = async () => {
+    await handleTemporarySave(); // 임시 저장
     closeConfirm();
-    navigate(`/book/score/${bookId}/${solvedbookId}`);
+    navigate(`/book/score/${bookId}`); // 네비게이션
+  };
+
+  const submitbtn = async () => {
+    await handleTemporarySave(); // 임시 저장
+    closeConfirm();
+    navigate(`/book/score/${bookId}/${solvedbookId}`); // 네비게이션
   };
 
   const handleAnswerChange = (questionId, answer) => {
@@ -201,8 +216,8 @@ export default function ParentComponent() {
           <div className="flex items-center space-x-4">
             <DensityMediumOutlinedIcon />
             <span className="text-lg font-semibold">
-            {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
-          </span>
+              {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
+            </span>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
@@ -249,7 +264,6 @@ export default function ParentComponent() {
             clickBtn2={submitbtn}
             bookId={bookId}
         />
-
       </div>
   );
 }

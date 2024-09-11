@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,12 +100,42 @@ public class TestController {
     // 답안을 저장하는 엔드포인트
 
     @PostMapping("/save/answers")
-    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers, @RequestParam("wrongRepeat") int wrongRepeat, HttpServletRequest request) {
+    public ResponseEntity<String> saveAnswers(
+            @RequestBody Map<String, Object> requestBody, // 요청 본문으로 Map을 받음
+            @RequestParam("wrongRepeat") int wrongRepeat,
+            @RequestParam("solvedbookId") int solvedbookId,
+            HttpServletRequest request) {
+        System.out.println("solvedbookId"+solvedbookId);
         try {
-            answerService.saveAnswers(answers,wrongRepeat,request);
+            // 1. 요청 본문에서 데이터 추출
+            List<AnswerDto> answers = (List<AnswerDto>) requestBody.get("answers");
+            Integer timeElapsed = (Integer) requestBody.get("timeElapsed");
+            String currentTime = (String) requestBody.get("currentTime");
 
-            System.out.println("Wrong Repeat: " + wrongRepeat);
+            // 2. Solvedbook 가져오기
+            SolvedbookDto solvedbook = solvedbookService.getSolvedBookBysolvedbookId(solvedbookId);
+            System.out.println("solvedbook"+solvedbook);
 
+
+            if (solvedbook == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solvedbook not found.");
+            }
+
+            // 3. Solvedbook에 제출 시간과 타이머 값 설정
+            Date now = new Date(); // 현재 시간을 Date 객체로 가져오기
+            // Date 객체를 Timestamp로 변환하여 설정
+            solvedbook.setSolvedbookEnd(new Timestamp(new Date().getTime())); // 제출 시간 설정
+            // 제출 시간 설정
+            solvedbook.setSolvedbookTimer(String.valueOf(timeElapsed)); // 경과 시간 설정
+            solvedbook.setSolvedbookIssubmitted(true); // 제출 완료 상태로 설정
+
+
+
+            // 4. Solvedbook 업데이트
+            solvedbookService.updateSolvedBook(solvedbook); // solvedbook 저장
+
+            // 5. 답안 저장 서비스 호출 (AnswerService에서 처리)
+            answerService.saveAnswers(answers, wrongRepeat, request);
 
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
