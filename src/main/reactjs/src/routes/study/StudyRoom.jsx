@@ -486,7 +486,7 @@ export default function StudyRoom() {
                                         <b>{roomName}</b>
 
                                     </Typography>
-                                    <Box sx={{ flexGrow: 1 }} /> {/* 이 Box가 여백을 자동으로 생성 */}
+                                    <Box sx={{ flexGrow: 1 }} />
                                     <IconButton color="inherit" onClick={leaveRoom}>
                                         <ExitToAppIcon sx={{ fontSize: 30 }} />
                                     </IconButton>
@@ -629,19 +629,6 @@ export default function StudyRoom() {
 
 
                         <div id="room" className="flex flex-col">
-                            <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
-                                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                                        {roomName}
-                                    </Typography>
-                                    <Box sx={{ flexGrow: 1, textAlign: 'center', mx: 2 }}>
-                                        {/* Replace this text with your room description */}
-                                        <Typography variant="subtitle1">
-                                            방에 대한 설명설명충
-                                        </Typography>
-                                    </Box>
-                                </Toolbar>
-                            </AppBar>
                             <div id="layout-container-share" className="">
                                 {/* 화면 공유 비디오 표시 */}
                                 {isScreenSharing && screenTrack && (
