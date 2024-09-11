@@ -28,15 +28,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -76,6 +76,16 @@ export default function StudyRoom() {
             await stopVideoPreview();
         }
         setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
+
+         // 카메라 상태를 웹소켓을 통해 서버로 전송
+        if (socket) {
+            const message = JSON.stringify({
+                type: 'camera_status',
+                participantName: participantName,
+                isCamOn: !isCamOn, // 새로운 상태를 서버로 전송
+            });
+            socket.send(message);
+        }
     };
 
     //사용자 정보를 가져오는 함수
@@ -250,35 +260,6 @@ export default function StudyRoom() {
             throw error;
         }
     }    
-
-    //카메라 켜기
-    async function enableCamera() {
-        // // 사용자의 비디오 장치에서 비디오 스트림을 생성
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const videoTrack = stream.getVideoTracks()[0];
-        const localVideoTrack = new LocalVideoTrack(videoTrack);
-        await room.localParticipant.publishTrack(localVideoTrack);
-        setLocalTrack(localVideoTrack);
-        setIsCameraEnabled(true); // 카메라가 켜졌다고 설정
-    }
-    //카메라 끄기
-    async function disableCamera() {
-        if (localTrack) {
-            await room.localParticipant.unpublishTrack(localTrack);
-            localTrack.stop(); // 비디오 트랙을 중지합니다.
-            setLocalTrack(null);
-        }
-        setIsCameraEnabled(false);
-    }
-    //카메라 토글 함수
-    async function toggleCamera() {
-        if (isCameraEnabled) {
-            await disableCamera();
-        } else {
-            await enableCamera();
-        }
-        setIsCameraEnabled(!isCameraEnabled);
-    }
     // 마이크 음소거 기능
     const toggleMicrophone = async () => {
     if (isMicrophoneMuted) {
@@ -380,8 +361,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
 };
  // 화면 공유 WebSocket
  useEffect(() => {
-    const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-    //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+    //const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+    const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
     
     screenShareWs.onopen = () => {
         console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -425,8 +406,8 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -462,6 +443,63 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
         else {
             console.warn('소켓이 열려 있지 않거나 메시지가 비어 있습니다.');
         }
+    };
+
+    useEffect(() => {
+        // 웹소켓 연결 설정
+        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+
+        ws.onopen = () => {
+            console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
+        };
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log('카메라 상태 메시지 수신됨:', message);
+
+            // 다른 참가자의 카메라 상태를 업데이트
+            if (message.type === 'camera_status') {
+                if (message.participantName !== participantName) {
+                   // 카메라 상태를 업데이트
+                    updateCameraStatus(message.participantName, message.isCamOn);
+                }
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('카메라 상태 웹소켓 연결이 종료되었습니다.');
+        };
+
+        ws.onerror = (error) => {
+            console.error('카메라 상태 웹소켓 오류 발생:', error);
+        };
+
+        setSocket(ws);
+
+        return () => {
+            ws.close();
+        };
+    }, [participantName]);
+    const [cameraStatus, setCameraStatus] = useState({});
+
+    // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
+    const sendCameraStatus = (isCamOn) => {
+        if (socket) {
+            const message = JSON.stringify({
+                type: 'camera_status',
+                participantName: participantName,
+                isCamOn: isCamOn,
+            });
+            socket.send(message);
+        }
+    };
+
+    // 카메라 상태를 업데이트하는 함수
+    const updateCameraStatus = (participantName, isCamOn) => {
+        setCameraStatus(prevStatus => ({
+            ...prevStatus,
+            [participantName]: isCamOn
+        }));
     };
 
     // scroll set to bottom
@@ -621,27 +659,44 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                 ))}
                             </div>
                             <div id="layout-container" className="flex-grow h-[80vh]">
-                                {!isCamOn && localTrack && (
+                                {!isCamOn && localTrack ?(
                                     <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
+                                ) :
+                                (
+                                    <div className="startvideo-container">
+                                            <img
+                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                                style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
+                                            />
+                                    </div>
                                 )}
                                 {/* 일반 비디오 및 오디오 트랙 렌더링 */}
                                 {remoteTracks 
                                     .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
-                                    .map(remoteTrack =>
-                                        remoteTrack.trackPublication.kind === "video" ? (
-                                            <VideoComponent
-                                                key={remoteTrack.trackPublication.trackSid}
-                                                track={remoteTrack.trackPublication.videoTrack}
-                                                participantIdentity={remoteTrack.participantIdentity}
+                                    .map(remoteTrack => {
+                                        const isCamOn = cameraStatus[remoteTrack.participantIdentity];
+                                        return remoteTrack.trackPublication.kind === "video" ? (
+                                            !isCamOn ? (
+                                                <VideoComponent
+                                                    key={remoteTrack.trackPublication.trackSid}
+                                                    track={remoteTrack.trackPublication.videoTrack}
+                                                    participantIdentity={remoteTrack.participantIdentity}
+                                                />
+                                            ) : 
+                                        <div className="startvideo-container2">
+                                            <img
+                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                                style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
                                             />
+                                        </div>
                                         ) : (
                                             <AudioComponent
                                                 key={remoteTrack.trackPublication.trackSid}
                                                 track={remoteTrack.trackPublication.audioTrack}
                                                 muted={isMicrophoneMuted} // 음소거 상태 전달
                                             />
-                                        )
-                                    )
+                                        );
+                                    })
                                 }
                             </div>
                             <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-around items-center p-4 shadow-xl z-50 h-20">
