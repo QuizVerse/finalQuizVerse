@@ -4,7 +4,7 @@ import AddClassMember from "../../components/modal/AddClassMember";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ConfirmRoleChangeModal from "../../components/modal/ConfirmRoleChangeModal";
-import {Button} from "@mui/material";
+import {Button, Checkbox, Chip} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import CustomAlert from "../../components/modal/CustomAlert";
 import Pagination from '@mui/material/Pagination'; // Material UI Pagination 가져오기
@@ -298,14 +298,19 @@ export default function MyclassDetail() {
               <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 w-10">
-                  <input
-                      type="checkbox"
-                      aria-hidden="true"
-                      tabIndex="-1"
+                  <Checkbox
                       value="on"
                       checked={allSelected}
                       onChange={handleSelectAll}
                   />
+                  {/*<input*/}
+                  {/*    type="checkbox"*/}
+                  {/*    aria-hidden="true"*/}
+                  {/*    tabIndex="-1"*/}
+                  {/*    value="on"*/}
+                  {/*    checked={allSelected}*/}
+                  {/*    onChange={handleSelectAll}*/}
+                  {/*/>*/}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                   이름
@@ -331,14 +336,19 @@ export default function MyclassDetail() {
                       className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                   >
                     <td className="p-4 align-middle">
-                      <input
-                          type="checkbox"
-                          aria-hidden="true"
-                          tabIndex="-1"
+                      <Checkbox
                           value="on"
                           checked={member.isSelected || false}
                           onChange={() => handleSelectMember(member.classmemberId)}
                       />
+                      {/*<input*/}
+                      {/*    type="checkbox"*/}
+                      {/*    aria-hidden="true"*/}
+                      {/*    tabIndex="-1"*/}
+                      {/*    value="on"*/}
+                      {/*    checked={member.isSelected || false}*/}
+                      {/*    onChange={() => handleSelectMember(member.classmemberId)}*/}
+                      {/*/>*/}
                     </td>
                     <td className="p-4 align-middle">{member.user.userNickname}</td>
                     <td className="p-4 align-middle">
@@ -363,9 +373,10 @@ export default function MyclassDetail() {
                       {new Date(member.classmemberDate).toLocaleString()}
                     </td>
                     <td className="p-4 align-middle">
-                      <div
-                          className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-                        {member.classmemberRole === 2 ? "멤버" : "방장"}
+                      <div>
+                        {member.classmemberRole === 2 ?
+                            <Chip label="멤버" variant="outlined" color={"primary"} />
+                            : <Chip label="방장" variant="filled" color={"primary"} />}
                       </div>
                     </td>
                   </tr>
