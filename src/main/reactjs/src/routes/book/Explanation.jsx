@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Button, Typography } from "@mui/material";
 import PanoramaFishEyeOutlinedIcon from '@mui/icons-material/PanoramaFishEyeOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const Explanation = () => {
-  const { bookId } = useParams();
+  const { bookId, solvedbookId } = useParams();
   const [bookData, setBookData] = useState({});
   const [sections, setSections] = useState([]);
   const [questionsBySection, setQuestionsBySection] = useState({});
@@ -167,8 +167,8 @@ const Explanation = () => {
   return (
       <div className="max-w-4xl mx-auto p-4">
         <div className="flex justify-end">
-          <Button variant="outlined" onClick={generatePDF}>
-            PDF로 출력
+          <Button variant="outlined">
+            <Link to={`/book/score/${bookId}/${solvedbookId}`}>성적보기</Link>  {/* Link 컴포넌트 사용 */}
           </Button>
         </div>
         <div>
