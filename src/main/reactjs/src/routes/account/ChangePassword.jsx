@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomAlert from "../../components/modal/CustomAlert";
+import {Box, Button, TextField, Typography} from "@mui/material";
 
 export default function ChangePassword() {
   const [user_email, setUser_email] = useState('');
@@ -171,27 +172,25 @@ export default function ChangePassword() {
             </div>
             <div className="p-6 space-y-4">
               <div className="space-y-2">
-                <label
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    htmlFor="email"
-                >
-                  Email
-                </label>
-                <div className="flex items-center space-x-2">
-                  <input
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      id="email"
+                <Box sx={{mb: 2}} className={"flex items-center gap-2"}>
+                  <TextField
+                      fullWidth
+                      label="Email"
+                      variant={"standard"}
+                      size="small"
                       placeholder="이메일"
+                      value={user_email}
                       onChange={(e) => setUser_email(e.target.value)}
                   />
-                  <button
-                      type="button"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                  <Button
+                      variant="outlined"
                       onClick={sendEmail}
+                      sx={{mt: 1, float: 'right'}}
+                      className={"whitespace-nowrap"}
                   >
                     인증코드 발송
-                  </button>
-                </div>
+                  </Button>
+                </Box>
               </div>
               <div className="space-y-2">
                 <label
@@ -201,106 +200,73 @@ export default function ChangePassword() {
                   Authentication code
                 </label>
                 <div className="flex items-center space-x-2">
-                  <input
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      id="auth-code"
+                  <TextField
+                      fullWidth
+                      label="인증 코드"
+                      variant="standard"
+                      size="small"
                       placeholder="인증 코드"
                       value={auth_code} // 사용자 입력 코드
                       onChange={(e) => setAuth_code(e.target.value)} // 입력 값 상태로 업데이트
                       disabled={!isCodeSent} // 인증 코드 전송 여부에 따라 입력 필드 비활성화/활성화
                   />
-                  <button
+                  <Button
                       type="button"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-shrink-0"
+                      variant={"outlined"}
                       onClick={checkEmail}
                       disabled={!isCodeSent} // 인증 코드 전송 여부에 따라 버튼 비활성화/활성화
                   >
                     확인
-                  </button>
+                  </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">인증 제한 시간: {formatTime(timeLeft)}</p>
+                <Typography variant="caption" display="block">
+                  인증 제한 시간: {formatTime(timeLeft)}
+                </Typography>
               </div>
+
               <div className="space-y-2">
-                <label
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    htmlFor="password"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                <Box sx={{mb: 2}}>
+                  <TextField
+                      fullWidth
+                      label="Password"
+                      variant="standard"
                       type="password"
-                      id="password"
+                      size="small"
                       placeholder="비밀번호"
                       value={user_password}
                       onChange={(e) => setUser_password(e.target.value)}
                       disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 비밀번호 필드 비활성화/활성화
                   />
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                </div>
-                <p className="text-xs text-muted-foreground">영문/숫자/특수문자 2가지 이상 조합 (8~20자)</p>
-              </div>
-              <div className="space-y-2">
-                <label
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    htmlFor="password-check"
-                >
-                  Password Check
-                </label>
-                <div className="relative">
-                  <input
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  <p className="text-xs text-muted-foreground">영문/숫자/특수문자 2가지 이상 조합 (8~20자)</p>
+                </Box>
+                <Box sx={{mb: 2}}>
+                  <TextField
+                      fullWidth
+                      label="Password Check"
+                      variant="standard"
                       type="password"
-                      id="password-check"
+                      size="small"
                       placeholder="비밀번호 확인"
                       value={user_passwordcheck}
                       onChange={(e) => setUser_passwordcheck(e.target.value)}
                       disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 비밀번호 확인 필드 비활성화/활성화
                   />
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                </div>
-                <p className={`text-xs ${passwordMessage.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
-                  {passwordMessage}
-                </p>
+                  <Typography variant="caption" className={`text-xs ${passwordMessage.includes('사용 가능한') ? 'text-green-500' : 'text-red-500'}`}>
+                    {passwordMessage}
+                  </Typography>
+                </Box>
               </div>
+
             </div>
             <div className="flex items-center p-6">
-              <button
+              <Button
                   type="submit"
-                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                  fullWidth
+                  variant={"contained"}
                   disabled={!emailcheck} // 이메일 인증 완료 여부에 따라 제출 버튼 비활성화/활성화
-              >
+                  >
                 확인
-              </button>
+              </Button>
             </div>
             <CustomAlert
                 openAlert={alertVisible}
