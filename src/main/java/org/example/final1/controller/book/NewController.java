@@ -54,19 +54,12 @@ public class NewController {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid JWT token")); // 유효하지 않은 JWT 토큰 처리
         }
 
-        // 사진 업로드 처리 (사진이 있는 경우에만)
+        // 사진 업로드 처리
         String bookPhoto = null;
         if (upload != null && !upload.isEmpty()) {
             bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
-            bookDto.setBookImage(bookPhoto); // 업로드된 사진의 URL을 설정
         }
-        // 이미지가 없으면 빈 문자열로 설정한다냥!
-        if (upload == null || upload.isEmpty()) {
-            bookDto.setBookImage("");  // 빈 문자열로 설정
-        } else {
-            bookPhoto = ncpObjectStorageService.uploadFile(bucketName, folderName, upload);
-            bookDto.setBookImage(bookPhoto);  // 업로드된 이미지의 URL을 설정
-        }
+        bookDto.setBookImage(bookPhoto != null ? bookPhoto : "");
 
         // 클래스 설정 (classId가 제공된 경우에만)
         if (classId != null) {
