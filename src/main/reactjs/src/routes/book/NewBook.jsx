@@ -170,6 +170,7 @@ export default function NewBook() {
                             fullWidth
                             label="문제집 설명"
                             placeholder="문제집 설명"
+                            multiline
                             value={bookDescription}
                             onChange={handleBookDescriptionChange}
                         />
