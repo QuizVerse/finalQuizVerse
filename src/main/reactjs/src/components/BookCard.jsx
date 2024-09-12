@@ -191,7 +191,7 @@ export default function BookCard(props) {
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
                     <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
-                        <Button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</Button>
+                        <div className={"cursor-pointer"}>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</div>
                     </CopyToClipboard>
                 }
                 openAlert={copyAlertVisible}
