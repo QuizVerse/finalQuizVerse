@@ -35,7 +35,17 @@ export default function StudyList() {
     // 방 목록을 가져오는 함수
     const getRoomList = () => {
         axios.get(`/studys/lists`).then((res) => {
-            setRoomList(res.data);
+            //setRoomList(res.data);
+            // 응답 데이터가 배열인지 확인
+            if (Array.isArray(res.data)) {
+                setRoomList(res.data);
+            } else {
+                console.error('Fetched data is not an array:', res.data);
+                setRoomList([]);  // 배열이 아닌 경우 빈 배열로 설정
+            }
+        }).catch(error => {
+            console.error('Failed to fetch room list:', error);
+            setRoomList([]);  // 에러 발생 시 빈 배열로 설정
         });
     };
 
