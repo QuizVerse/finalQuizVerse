@@ -6,9 +6,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 // 필터 옵션 정의
 const conditions = [
-  { value: 'popular', label: '인기순' },
-  { value: 'recent', label: '최신순' },
-  { value: 'title', label: '가나다순' },
+  { value : 'popular', label : '인기순' },
+  { value : 'recent', label : '최신순' },
+  { value : 'oldest', label : '오래된순'},
+  { value : 'title', label : '가나다순' },
 ];
 
 const ITEMS_PER_PAGE = 20;  // 한 페이지당 보여줄 아이템 수
@@ -66,7 +67,9 @@ export default function Category() {
           } else if (sortCondition === 'title') {
             booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
           } else if (sortCondition === 'popular') {
-            booksData = booksData.sort((a, b) => b.bookViewCount - a.bookViewCount);
+            booksData = booksData.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
+          } else if (sortCondition === 'oldest') {
+            booksData = booksData.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
           }
 
           let bookmarkedBookIds = [];
@@ -185,7 +188,7 @@ export default function Category() {
                   </div>
               ))
           ) : (
-              <div>No books available</div>
+              <div style={{fontSize:"30px"}}>이용가능한 문제집이 없습니다!</div>
           )}
         </section>
         <div className="flex justify-center mt-4">
