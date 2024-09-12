@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
 import CustomAlert from "../../components/modal/CustomAlert";
@@ -118,7 +118,11 @@ export default function Login() {
                     <div className="flex justify-between text-sm text-muted-foreground">
                         <Button
                             variant={"text"}
-                            type="button">회원정보 조회</Button>
+                            type="button">
+                            <Link to={"/account/finduser"}>
+                                회원정보 조회
+                            </Link>
+                        </Button>
                         <span>|</span>
                         <Button type="button"
                                 variant={"text"}
