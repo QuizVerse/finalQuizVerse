@@ -60,13 +60,17 @@ public class StudyDao {
         return studyDaoInter.findById(studyId);
     }
     // 화상방 나갈때 스터디 멤버 삭제
-    public void removeStudyMember(int studyId, UserDto userDto) 
+    public void removeStudyMember(int studyId, int userId) 
     {
-        StudymemberDto studymember = studyMemberDaoInter.findByStudyIdAndUserId(studyId, userDto.getUserId());
+        StudymemberDto studymember = studyMemberDaoInter.findByStudy_StudyIdAndUser_UserId(studyId, userId);
         if (studymember != null) 
         {
-            //멤버가 존재할 경우
+            //멤버 삭제
             studyMemberDaoInter.delete(studymember);
+            // 만약 리더(user_role == 1)라면 스터디도 삭제
+            if (studymember.getUserRole() == 1) {
+                studyDaoInter.deleteById(studyId);
+            }
         }
     }
 }

@@ -109,8 +109,9 @@ public class StudyController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 유효하지 않은 JWT 토큰 처리
         }
 
-        // 스터디 멤버에서 사용자 삭제
-        studyService.removeStudyMember(studyId, userDto);
+        // 스터디 멤버에서 사용자 ID를 추출하여 삭제
+        int userId = userDto.getUserId();
+        studyService.removeStudyMember(studyId, userId);  // userId만 전달
 
         return ResponseEntity.ok("Member removed successfully");
     }
