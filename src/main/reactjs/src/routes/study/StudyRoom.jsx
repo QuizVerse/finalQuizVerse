@@ -694,7 +694,7 @@ export default function StudyRoom() {
                                     </button>
 
                                     {/* 나가기 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={leaveRoom}>
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={() => leaveRoom(study_id)}>
                                         <ExitToAppIcon fontSize="medium" />
                                         <span className="text-s mt-1">나가기</span>
                                     </button>
