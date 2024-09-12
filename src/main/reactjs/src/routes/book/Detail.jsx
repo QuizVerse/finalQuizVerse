@@ -132,74 +132,84 @@ export default function Detail() {
   };
 
   return (
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Box sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        border: "1px solid #ddd", // 두께 2px의 검은색 테두리 추가
+        borderRadius: "8px", // 모서리를 둥글게 설정 (선택 사항)
+        padding: "16px", // 테두리 안쪽에 여백 추가
+      }}>
         <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
-          <Grid container spacing={2} justifyContent="center">
+          <div className={"flex w-full gap-16"}>
             {/* 왼편 이미지 */}
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={4} sx={{ paddingLeft: 0 }} className={"w-full"}>
               <Card>
                 <CardMedia
                     component="img"
-                    image={`${photopath}/${bookData.bookImage}`} // 전체 경로를 조합하여 이미지 경로 설정
+                    image={
+                      bookData.bookImage
+                          ? `${photopath}/${bookData.bookImage}` // 이미지가 있을 때
+                          : "/quizverse-logo.png" // 이미지가 없을 때 기본 이미지
+                    }
                     alt="Book Image"
-                    sx={{ height: 'auto', maxHeight: 600, width: '100%', objectFit: 'contain' }}
+                    sx={{
+                      height: 400, // 이미지 높이를 400px로 설정
+                      width: '100%', // 너비를 100%로 설정하여 그리드에 맞게
+                      objectFit: 'cover', // 이미지가 잘리지 않고 적절하게 맞춰지도록 설정
+                      borderRadius: 2, // 이미지에 약간의 곡선 테두리 추가
+                    }}
                 />
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Grid item xs={12} md={6} className={"w-full"}>
+              <Box sx={{display: "flex", flexDirection: "column", gap: 3}}>
+
                 <Typography
                     variant="h4"
                     component="div"
-                    sx={{ fontWeight: "bold" }}
+                    sx={{fontWeight: "bold"}}
                 >
                   {bookData.bookTitle}
                 </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  출제자:
-                  {bookData.user ? bookData.user.userNickname : "알 수 없음"}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  출제일자:{" "}
-                  {bookData.bookCreatedate
-                      ? formatDate(bookData.bookCreatedate)
-                      : "알 수 없음"}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  카테고리:{" "}
-                  {bookData.category ? bookData.category.categoryName : "기타"}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  {bookData.bookDescription || "알 수 없음"}
-                </Typography>
-
-                <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 2 }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <div className={"space-y-2"}>
+                  <Typography variant="body1" color="text.secondary">
+                    출제자:
+                    {bookData.user ? bookData.user.userNickname : "알 수 없음"}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    출제일자:{" "}
+                    {bookData.bookCreatedate
+                        ? formatDate(bookData.bookCreatedate)
+                        : "알 수 없음"}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    카테고리:{" "}
+                    {bookData.category ? bookData.category.categoryName : "기타"}
+                  </Typography>
+                </div>
+                <div className={"p-4 bg-gray-100 rounded"}>
+                  <Typography variant="body2">
+                    {bookData.bookDescription || "알 수 없음"}
+                  </Typography>
+                </div>
+                <div className={"flex flex-col gap-4"}>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Chip
                         label="총 점수"
                         color="primary"
-                        sx={{
-                          borderRadius: "16px",
-                          fontSize: "0.875rem",
-                          padding: "5px 10px",
-                        }}
+                        variant={"outlined"}
                     />
                     <Typography variant="body1">
-                      {bookData.bookTotalscore}
+                      {bookData.bookTotalscore} 점
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Chip
                         label="응시 제한시간"
                         color="primary"
-                        sx={{
-                          borderRadius: "16px",
-                          fontSize: "0.875rem",
-                          padding: "5px 10px",
-                        }}
+                        variant={"outlined"}
                     />
                     <Typography variant="body1">
                       {bookData.bookTimer === 0
@@ -207,36 +217,34 @@ export default function Detail() {
                           : bookData.bookTimer + " 분"}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                     <Chip
                         label="상태"
                         color="primary"
-                        sx={{
-                          borderRadius: "16px",
-                          fontSize: "0.875rem",
-                          padding: "5px 10px",
-                        }}
+                        variant={"outlined"}
                     />
                     <Typography variant="body1">
                       {bookData.bookStatus === 0 ? "공개" : bookData.bookStatus === 1 ? "클래스 공개" : "비공개"}
                     </Typography>
                   </Box>
+                </div>
+                <div className={"w-full flex justify-end"}>
+                  <Button
+                      onClick={handleStartExam} // 버튼 클릭 시 시험 응시 처리
+                      variant="contained"
+                      color="primary"
+                      size={"large"}
+                      fullWidth
+                  >
+                    시험 응시
+                  </Button>
+                </div>
                 </Box>
-
-                <Button
-                    onClick={handleStartExam} // 버튼 클릭 시 시험 응시 처리
-                    variant="contained"
-                    color="primary"
-                    sx={{ mt: 4, height: 56 }}
-                >
-                  시험 응시
-                </Button>
-              </Box>
             </Grid>
-          </Grid>
+          </div>
 
           {/* 리뷰 섹션 */}
-          <Container component="section" sx={{ mt: 8, mb: 4 }}>
+          <Container component="section" sx={{mt: 8, mb: 4}}>
             <Typography variant="h6" component="div">
               리뷰 ({reviewData.length}){" "}
               <span style={{ color: "#FFD700" }}>★ {averageReviewScore}</span>
