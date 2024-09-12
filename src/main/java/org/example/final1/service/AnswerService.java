@@ -89,6 +89,7 @@ public class AnswerService {
                 answer.setWrongRepeat(wrongRepeat);
 
 
+                System.out.println(wrongRepeat);
 
                 if (!isCorrect) {
                     // 틀린 답안인 경우 오답 저장 로직 추가
@@ -96,6 +97,7 @@ public class AnswerService {
                 }
 
             }
+
 
             // 답안 순서 설정
             answer.setAnswerOrder(answerDto.getAnswerOrder());

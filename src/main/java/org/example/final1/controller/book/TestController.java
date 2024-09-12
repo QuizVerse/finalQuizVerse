@@ -112,27 +112,7 @@ public class TestController {
         }
     }
 
-    // 시간만 저장하는 임시 저장 엔드포인트 수정
-    @PostMapping("/save/temporary")
-    public ResponseEntity<String> saveTime(@RequestBody Map<String, Integer> requestBody, HttpServletRequest request) {
-        try {
-            Integer timeLeft = requestBody.get("timeLeft");
-            Integer bookId = requestBody.get("bookId");
 
-            // JWT에서 사용자 정보 추출 (사용자 검증)
-            UserDto userDto = jwtService.getUserFromJwt(request);
-            if (userDto == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-
-            // 시간 저장 서비스 호출
-            // solvedbookService.saveRemainingTime(userDto, bookId, timeLeft);
-            return ResponseEntity.ok("남은 시간이 성공적으로 저장되었습니다.");
-        } catch (Exception e) {
-            System.err.println("Error saving time: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시간 저장 중 오류가 발생했습니다.");
-        }
-    }
     // 오답 문제를 필터링하여 반환하는 API
     // SolvedbookId와 wrongRepeat로 오답 문제들을 조회하는 API
     @GetMapping("/test/wrong")
@@ -143,6 +123,19 @@ public class TestController {
 
         return ResponseEntity.ok(wrongQuestions);
 
+    }
+
+    // solvedbookId를 기반으로 isSubmitted 값을 true로 업데이트하는 API
+    @PostMapping("/submit/{solvedbookId}")
+    public ResponseEntity<String> submitTest(@PathVariable int solvedbookId) {
+        try {
+            // solvedbookId로 해당 시험의 isSubmitted 값을 true로 업데이트
+            solvedbookService.setSubmitTrue(solvedbookId);
+            return ResponseEntity.ok("시험이 성공적으로 제출되었습니다.");
+        } catch (Exception e) {
+            System.err.println("시험 제출 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시험 제출 중 오류가 발생했습니다.");
+        }
     }
 
 }
