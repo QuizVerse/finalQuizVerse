@@ -778,31 +778,6 @@ export default function StudyRoom() {
                                     })
                                 }
                             </div>
-                            <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-around items-center p-4 shadow-xl z-50 h-20">
-                                {/* 카메라 토글 버튼 */}
-                                <button className="flex flex-col items-center mx-4" onClick={toggleCam}>
-                                    {isCameraEnabled ? <VideocamIcon fontSize="large" /> : <VideocamOffIcon fontSize="large" />}
-                                    <span className="text-xs mt-1">{isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}</span>
-                                </button>
-
-                                {/* 마이크 토글 버튼 */}
-                                {/* <button className="flex flex-col items-center mx-4" onClick={toggleMicrophone}>
-                                    {isMicrophoneMuted ? <MicIcon fontSize="large" /> : <MicOffIcon fontSize="large" />}
-                                    <span className="text-xs mt-1">{isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}</span>
-                                </button> */}
-
-                                {/* 화면 공유 토글 버튼 */}
-                                <button className="flex flex-col items-center mx-4" onClick={toggleScreenSharing}>
-                                    {isScreenSharing ? <ScreenShareIcon fontSize="large" /> : <ScreenShareIcon fontSize="large" />}
-                                    <span className="text-xs mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
-                                </button>
-
-                                {/* 나가기 버튼 */}
-                                <button className="flex flex-col items-center mx-4" onClick={() => leaveRoom(study_id)}>
-                                    <ExitToAppIcon fontSize="large" />
-                                    <span className="text-xs mt-1">나가기</span>
-                                </button>
-                            </div>
                         </div>
 
 
