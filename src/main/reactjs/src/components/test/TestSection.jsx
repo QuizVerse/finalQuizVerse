@@ -3,103 +3,69 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { IconButton, Typography } from "@mui/material";
 import TestQuestion from "./TestQuestion";
+import axios from "axios";
 import CustomConfirm from "../modal/CustomConfirm";
 import CustomAlert from "../modal/CustomAlert";
-import axios from "axios";
 
 export default function TestSection({
-                                        index,
-                                        sectionCount,
-                                        section,
-                                        filterquestions = [], // 기본값을 빈 배열로 설정
-                                        setLoading,
-                                        onAnswerChange,
-                                        savedAnswer = [] // 기본값을 빈 배열로 설정
+                                        index,            // 섹션의 순서 (인덱스)
+                                        sectionCount,     // 전체 섹션 수
+                                        section,          // 섹션 데이터 (각 섹션의 정보)
+                                        setLoading,       // 로딩 상태 관리
+                                        onAnswerChange    // 상위 컴포넌트에서 답안 변경 시 호출되는 함수
                                     }) {
-    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteIndex, setDeleteIndex] = useState(0);
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [alertTitle, setAlertTitle] = useState("");
-    const [questions, setQuestions] = useState([]);
-    const [showDescription, setShowDescription] = useState(
-        section.sectionDescription !== "" || section.sectionImage !== ""
-    );
+    const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"; // 이미지 경로
+    const [isCollapsed, setIsCollapsed] = useState(false);   // 섹션이 접혀 있는지 상태 관리
+    const [questions, setQuestions] = useState([]);          // 섹션에 해당하는 질문 데이터
+    const [deleteConfirm, setDeleteConfirm] = useState(false); // 삭제 확인 상태
+    const [alertVisible, setAlertVisible] = useState(false);   // 알림창 표시 여부
+    const [alertTitle, setAlertTitle] = useState("");          // 알림창 제목
 
+    // 섹션 설명을 표시할지 여부 결정
+    const showDescription = section.sectionDescription !== "" || section.sectionImage !== "";
+
+    // 질문 데이터를 불러오기 위한 useEffect
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchQuestions = async () => {
             try {
+                setLoading(true);  // 로딩 시작
                 const res = await axios.get(`/book/question/getall/${section.sectionId}`);
-                setQuestions(res.data || []); // 데이터가 없을 때 빈 배열로 설정
-                setLoading(false);
-
-                const savedData = localStorage.getItem('temporarySave');
-                if (savedData) {
-                    const parsedData = JSON.parse(savedData);
-                    setQuestions((prevQuestions) => {
-                        return prevQuestions.map((question) => {
-                            const savedAnswer = parsedData.answers.find(
-                                (answer) => answer.question.questionId === question.questionId
-                            );
-                            if (savedAnswer) {
-                                return {
-                                    ...question,
-                                    answer: savedAnswer.choices || savedAnswer.subjectiveAnswer,
-                                };
-                            }
-                            return question;
-                        });
-                    });
-                }
+                setQuestions(res.data);
+                setLoading(false);  // 로딩 완료
             } catch (error) {
-                setLoading(true);
-                console.error("Error fetching book data:", error);
+                console.error("Error fetching questions:", error);
+                setLoading(false);  // 오류 발생 시에도 로딩 상태 해제
             }
         };
-        fetchData();
-    }, [section.sectionId, setLoading]);
+        fetchQuestions(); // 질문 데이터를 가져오는 함수 호출
+    }, [section.sectionId, setLoading]);  // 섹션 ID 변경 시 데이터 새로 가져오기
 
+    // 섹션 접기/펼치기 함수
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
 
-    const handleUpdateQuestion = (index, updated) => {
+    // 질문이 업데이트될 때 호출되는 함수
+    const handleUpdateQuestion = (index, updatedQuestion) => {
         const updatedQuestions = [...questions];
-        updatedQuestions[index] = {
-            ...updatedQuestions[index],
-            ...updated,
-        };
+        updatedQuestions[index] = { ...updatedQuestions[index], ...updatedQuestion };
         setQuestions(updatedQuestions);
-        console.log(updatedQuestions);
+        console.log(updatedQuestions); // 업데이트된 질문 상태 확인
     };
 
-    const clickBtn1 = () => {
+    // Confirm 창 닫기
+    const closeConfirm = () => {
         setDeleteConfirm(false);
-        setDeleteIndex('');
     };
 
-    const clickBtn2 = () => {
-        setDeleteConfirm(false);
-        setDeleteIndex('');
-    };
-
-    const openConfirm = () => {
-        setDeleteConfirm(true);
-    };
-
-    const openAlert = (alertTitle) => {
-        setAlertTitle(alertTitle);
-        setAlertVisible(true);
-    };
-
+    // Alert 창 닫기
     const closeAlert = () => {
         setAlertVisible(false);
     };
 
     return (
         <div className="flex flex-col gap-4 bg-blue-100 px-10 py-4 rounded">
-            <div className="flex items-center space-x-2 justify-between">
+            <div className="flex items-center space-between">
                 <Typography variant="h5">{section.sectionTitle || "섹션 제목"}</Typography>
                 <div>
                     <span>{index + 1} 섹션 / {sectionCount} 섹션</span>
@@ -108,52 +74,48 @@ export default function TestSection({
                     </IconButton>
                 </div>
             </div>
+
+            {/* 섹션 내용 (접혀 있지 않으면 표시) */}
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <Typography>{section.sectionTitle}</Typography>
-                    <div className="flex flex-col gap-4">
-                        {showDescription && (
-                            <Typography>{section.sectionDescription}</Typography>
+                    {showDescription && <Typography>{section.sectionDescription}</Typography>}
+                    <div className="flex justify-center">
+                        {section.sectionImage && (
+                            <img
+                                src={imagePath + section.sectionImage}
+                                alt={section.sectionDescription}
+                                className="w-36 h-36 object-cover"
+                            />
                         )}
-                        <div className={"flex justify-center"}>
-                            {section.sectionImage !== "" ? (
-                                <img
-                                    src={imagePath + section.sectionImage}
-                                    alt={section.sectionDescription}
-                                    className="w-36 h-36 object-cover"
-                                />
-                            ) : ""}
-                        </div>
                     </div>
+
+                    {/* 각 질문을 렌더링 */}
+                    {questions.map((question, questionIndex) => (
+                        <TestQuestion
+                            key={questionIndex}
+                            question={question}
+                            onAnswerChange={onAnswerChange}
+                            index={questionIndex}
+                            totalQuestions={questions.length}
+                            openConfirm={setDeleteConfirm}
+                        />
+                    ))}
                 </div>
             )}
-            {filterquestions.length > 0 ? (
-                filterquestions.map((question, index) => (
-                    <TestQuestion
-                        key={index}
-                        index={index}
-                        totalQuestions={questions.length}
-                        question={question}
-                        openConfirm={openConfirm}
-                        onAnswerChange={onAnswerChange}
-                        savedAnswer={savedAnswer.find(answer => answer.question.questionId === question.questionId)?.answer || []}
-                    />
-                ))
-            ) : (
-                <div>질문이 없습니다.</div>
-            )}
 
+            {/* CustomAlert 컴포넌트 */}
             <CustomAlert
                 title={alertTitle}
                 openAlert={alertVisible}
                 closeAlert={closeAlert}
             />
 
+            {/* CustomConfirm 컴포넌트 */}
             <CustomConfirm
                 id={15}
                 openConfirm={deleteConfirm}
-                clickBtn1={clickBtn1}
-                clickBtn2={clickBtn2}
+                clickBtn1={closeConfirm}
+                clickBtn2={closeConfirm}
             />
         </div>
     );

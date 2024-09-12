@@ -36,7 +36,7 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_end")
     private Timestamp solvedbookEnd;
 
-    @Column(name = "solvedbook_timer", length = 100,nullable = false)
+    @Column(name = "solvedbook_timer", length = 100,nullable = true)
     private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
