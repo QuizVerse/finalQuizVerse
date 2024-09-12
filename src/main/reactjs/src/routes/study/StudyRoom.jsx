@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -367,8 +367,8 @@ export default function StudyRoom() {
     };
     // 화면 공유 WebSocket
     useEffect(() => {
-        //const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+        const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
 
         screenShareWs.onopen = () => {
             console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -412,8 +412,8 @@ export default function StudyRoom() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -453,7 +453,8 @@ export default function StudyRoom() {
 
     useEffect(() => {
         // 웹소켓 연결 설정
-        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -620,16 +621,86 @@ export default function StudyRoom() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
-
                         <div className="flex flex-col bg-gray-100 p-4 " style={{height:'100%'}}>
-                            사용자들이 나올 화면<br/>
-                            시바타 유니<br/>
-                            정상혁<br/>
-                            우태형<br/>
-                            도훈하윤<br/>
-                            막내 aka 민지박
-                        </div>
+                            {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
+                            <div className="flex-grow overflow-y-auto">
+                                <div className="flex flex-col space-y-2 h-[40vh]">
+                                    사용자들이 나올 화면<br />
+                                    시바타 유니<br />
+                                    정상혁<br />
+                                    우태형<br />
+                                    도훈하윤<br />
+                                    막내 aka 민지박
+                                    {/* 많은 사용자 예시 추가 */}
+                                    더 많은 사용자들<br />
+                                    사용자 A<br />
+                                    사용자 B<br />
+                                    사용자 C<br />
+                                    사용자 D<br />
+                                    사용자 E<br />
+                                    사용자 F<br />
+                                    사용자 G<br />
+                                    사용자 A<br />
+                                    사용자 B<br />
+                                    사용자 C<br />
+                                    사용자 D<br />
+                                    사용자 E<br />
+                                    사용자 F<br />
+                                    사용자 G<br />
+                                    사용자 A<br />
+                                    사용자 B<br />
+                                    사용자 C<br />
+                                    사용자 D<br />
+                                    사용자 E<br />
+                                    사용자 F<br />
+                                    사용자 G<br />
+                                    사용자 A<br />
+                                    사용자 B<br />
+                                    사용자 C<br />
+                                    사용자 D<br />
+                                    사용자 E<br />
+                                    사용자 F<br />
+                                    사용자 G<br />
+                                    사용자 D<br />
+                                    사용자 E<br />
+                                    사용자 F<br />
+                                    사용자 G<br />
+                                </div>
+                            </div>
 
+                            {/* 버튼 영역 */}
+                            <div className="h-[50vh] bg-gray text-white p-4">
+                                {/* 빈 공간 */}
+                                <div className="h-[50%]" />
+
+                                {/* 버튼 영역 하단 절반 */}
+                                <div className="grid grid-cols-2 grid-rows-2 gap-4 h-[50%]">
+                                    {/* 카메라 토글 버튼 */}
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleCam}>
+                                        {isCameraEnabled ? <VideocamIcon fontSize="medium" /> : <VideocamOffIcon fontSize="medium" />}
+                                        <span className="text-s mt-1">{isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}</span>
+                                    </button>
+
+                                    {/* 마이크 토글 버튼 */}
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleMicrophone}>
+                                        {isMicrophoneMuted ? <MicIcon fontSize="medium" /> : <MicOffIcon fontSize="medium" />}
+                                        <span className="text-s mt-1">{isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}</span>
+                                    </button>
+
+                                    {/* 화면 공유 토글 버튼 */}
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={toggleScreenSharing}>
+                                        {isScreenSharing ? <ScreenShareIcon fontSize="medium" /> : <ScreenShareIcon fontSize="medium" />}
+                                        <span className="text-s mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
+                                    </button>
+
+                                    {/* 나가기 버튼 */}
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={leaveRoom}>
+                                        <ExitToAppIcon fontSize="medium" />
+                                        <span className="text-s mt-1">나가기</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
                         <div id="room" className="flex flex-col">
                             {/* <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
