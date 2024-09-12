@@ -51,7 +51,7 @@ export default function StudyRoom() {
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const { study_id, studyTitle } = useParams(); // URL에서 studyId 추출
+    const { studyId, studyTitle } = useParams(); // URL에서 studyId 추출
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
@@ -191,7 +191,9 @@ export default function StudyRoom() {
     }
 
     //방 나가기
-    async function leaveRoom() {
+    async function leaveRoom(studyId) {
+        // 서버에 스터디 멤버 삭제 요청
+        await axios.post(`/studys/removes`, { studyId });
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
