@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +30,12 @@ public class CategoryController {
         List<CategoryDto> list = categoryService.findAllCategory();
         return ResponseEntity.ok(list);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<CategoryDto>> getName(@PathVariable("id") int id) {
+        Optional<CategoryDto> category = categoryService.getCategory(id);
+        return ResponseEntity.ok(category);
+    }
+
 
 }
