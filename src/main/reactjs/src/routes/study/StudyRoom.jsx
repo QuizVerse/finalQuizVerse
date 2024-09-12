@@ -201,7 +201,7 @@ export default function StudyRoom() {
         setLocalTrack(undefined);
         setPreviewStream(undefined);
         setRemoteTracks([]);
-        //공유화면, ?
+        //공유화면 정리
         if (isScreenSharing && screenTrack) {
             await screenTrack.stop();
             setScreenTrack(null);
