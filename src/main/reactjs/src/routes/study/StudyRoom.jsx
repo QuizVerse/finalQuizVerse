@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -367,8 +367,8 @@ export default function StudyRoom() {
     };
     // 화면 공유 WebSocket
     useEffect(() => {
-        //const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+        const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
 
         screenShareWs.onopen = () => {
             console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -412,8 +412,8 @@ export default function StudyRoom() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -453,7 +453,8 @@ export default function StudyRoom() {
 
     useEffect(() => {
         // 웹소켓 연결 설정
-        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -620,9 +621,7 @@ export default function StudyRoom() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
-
-
-                        <div className="flex flex-col bg-gray-100 h-[85vh]">
+                        <div className="flex flex-col bg-gray-100 p-4 " style={{height:'100%'}}>
                             {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
                             <div className="flex-grow overflow-y-auto">
                                 <div className="flex flex-col space-y-2 h-[40vh]">
@@ -702,7 +701,6 @@ export default function StudyRoom() {
                                 </div>
                             </div>
                         </div>
-
 
                         <div id="room" className="flex flex-col">
                             {/* <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
