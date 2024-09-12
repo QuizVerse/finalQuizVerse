@@ -1,16 +1,22 @@
 import { Button } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import SearchInput from "./SearchInput";
 
 export default function CategoryHeader() {
     const [categoryList, setCategoryList] = useState([]);
     const navigate = useNavigate();
+    const [categoryId, setCategoryId] = useState('');  // 현재 카테고리 ID 상태
+    const location = useLocation();
 
     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const catId = params.get('cat') || '';
+        setCategoryId(catId);
         getDataList();
-    }, []);
+    }, [location]);  // location이 바뀔 때마다 useEffect 실행
+
 
     const getDataList = () => {
         axios.get('/category/list')
@@ -32,13 +38,13 @@ export default function CategoryHeader() {
                 {categoryList &&
                     categoryList.map((row) => (
                         <Button key={row.categoryId}
-                                size={"large"}
-                                className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full">
+                                variant={categoryId == row.categoryId ? "outlined" : "text"}
+                        >
                             <Link to={`/book/category?cat=${row.categoryId}`}>{row.categoryName}</Link>
                         </Button>
                     ))
                 }
-                <Button className="px-4 py-2 text-blue-600 border border-blue-600 rounded-full" size={"large"}>
+                <Button>
                     <Link to={'/book/list'}>전체보기</Link>
                 </Button>
             </div>
