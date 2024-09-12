@@ -73,9 +73,6 @@ export default function StudyList() {
                 console.log(res.data);  // 성공 시 메시지 출력
                 navigate(`/study/room/${studyId}`, { state: { studyTitle } });  // 방으로 이동
             })
-            .catch((err) => {
-                console.error("스터디 멤버 추가 중 오류 발생:", err);
-            });
     };
 
     // 페이지네이션에 맞게 현재 페이지의 항목을 계산
