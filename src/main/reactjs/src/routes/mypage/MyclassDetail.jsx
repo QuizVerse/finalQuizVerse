@@ -4,7 +4,7 @@ import AddClassMember from "../../components/modal/AddClassMember";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ConfirmRoleChangeModal from "../../components/modal/ConfirmRoleChangeModal";
-import {Button, Checkbox, Chip} from "@mui/material";
+import {Button, Checkbox, Chip, Typography} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import CustomAlert from "../../components/modal/CustomAlert";
 import Pagination from '@mui/material/Pagination'; // Material UI Pagination 가져오기
@@ -257,9 +257,12 @@ export default function MyclassDetail() {
 
   return (
       <main className="flex-1 py-12 px-6">
-        <h1 className="mb-6 text-2xl font-bold">
-          {classdata ? classdata.className : 'Loading...'}
-        </h1>
+        <div className={"mb-6"}>
+          <h1 className="mb-4 text-2xl font-bold">
+            {classdata ? classdata.className : 'Loading...'}
+          </h1>
+          <Typography variant={"body2"}>{classdata ? classdata.classDescription : 'Loading...'}</Typography>
+        </div>
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">

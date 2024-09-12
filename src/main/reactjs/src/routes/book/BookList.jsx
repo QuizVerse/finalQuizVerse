@@ -18,7 +18,6 @@ export default function BookList() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
-    const [top5Books, setTop5Books] = useState([]);
 
 
     useEffect(() => {
@@ -86,15 +85,6 @@ export default function BookList() {
                                     [categoryId]: sortedBooks
                                 };
                             });
-
-                            // setBooksByCategory(prevState => ({
-                            //     ...prevState,
-                            //     [categoryId]: prevState[categoryId].map(b =>
-                            //         b.bookId === book.bookId
-                            //             ? { ...b, bookmarkCount: countBookmark, bookSectionCount: countSection, bookQuestionCount: countQuestion }
-                            //             : b
-                            //     )
-                            // }));
                         })
                     )
                 );
@@ -123,19 +113,8 @@ export default function BookList() {
                 console.error('Failed to check login status', error);
             }
         };
-
-        const fetchTop5Books = async () => {
-            try {
-                const response = await axios.get('/books/top5?categoryId=1');  // categoryId는 필요에 맞게 설정
-                setTop5Books(response.data);  // API로부터 받은 데이터를 상태에 저장
-            } catch (error) {
-                console.error("Failed to fetch top 5 books by bookmark count", error);
-            }
-        };
-
         checkLoginStatus();
         fetchCategoriesAndBooks();
-        fetchTop5Books();
 
     }, [isLoggedIn]);  // 로그인 상태 변경 시마다 데이터 새로고침
 
