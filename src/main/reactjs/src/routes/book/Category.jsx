@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 // 필터 옵션 정의
 const conditions = [
-  { value : 'popular', label : '인기순' },
+  { value : 'bookmark', label : '즐겨찾기순' },
   { value : 'recent', label : '최신순' },
   { value : 'oldest', label : '오래된순'},
   { value : 'title', label : '가나다순' },
@@ -29,7 +29,7 @@ export default function Category() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [page, setPage] = useState(1);
-  const [sortCondition, setSortCondition] = useState('popular');  // 정렬 기준 상태 추가
+  const [sortCondition, setSortCondition] = useState('recent');  // 정렬 기준 상태 추가
 
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -64,16 +64,7 @@ export default function Category() {
           const response = await axios.get(`/books/category?id=${catId}`);
           let booksData = response.data;
 
-          // 정렬 조건에 따라 책 목록 정렬
-          if (sortCondition === 'recent') {
-            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
-          } else if (sortCondition === 'title') {
-            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
-          } else if (sortCondition === 'popular') {
-            booksData = booksData.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
-          } else if (sortCondition === 'oldest') {
-            booksData = booksData.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
-          }
+          
 
           let bookmarkedBookIds = [];
 
@@ -98,6 +89,17 @@ export default function Category() {
                 };
               })
           );
+          
+          // 정렬 조건에 따라 책 목록 정렬
+          if (sortCondition === 'recent') {
+            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+          } else if (sortCondition === 'title') {
+            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
+          } else if (sortCondition === 'bookmark') {
+            booksData = booksData.sort((a, b) => a.bookmarkCount - b.bookmarkCount);
+          } else if (sortCondition === 'oldest') {
+            booksData = booksData.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
+          }
 
           setBooks(updatedBooks);
         }
