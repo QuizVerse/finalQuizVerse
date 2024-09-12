@@ -9,6 +9,7 @@ import org.example.final1.repository.Study.StudyDao;
 import org.example.final1.repository.Study.StudyMemberDaoInter;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -40,8 +41,10 @@ public class StudyService {
         studyDao.addStudyMember(studyDto, userDto);
     }
     // 스터디 멤버 삭제
-    public void removeStudyMember(int studyId, UserDto userDto)
+    @Transactional
+    public void removeStudyMember(int studyId, int userId)
     {
-        studyDao.removeStudyMember(studyId, userDto);
+        // DAO를 통해 스터디 멤버를 삭제하고, 리더일 경우 스터디도 삭제
+        studyDao.removeStudyMember(studyId, userId);
     }
 }
