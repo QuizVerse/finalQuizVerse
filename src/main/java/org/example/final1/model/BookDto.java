@@ -33,7 +33,7 @@ public class BookDto {
     @Column(name = "book_title", nullable = false, length = 50)
     private String bookTitle;
 
-    @Column(name = "book_description", nullable = false, length = 255)
+    @Column(name = "book_description", nullable = false, length = 2000)
     private String bookDescription;
 
     @Column(name = "book_status", nullable = false)
