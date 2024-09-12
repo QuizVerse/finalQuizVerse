@@ -21,25 +21,6 @@ import CustomAlert from "../../components/modal/CustomAlert";
 import Paper from '@mui/material/Paper';
 import {useNavigate} from "react-router-dom";
 
-const conditions = [
-  {
-    value: 'popular',
-    label: '인기순',
-  },
-  {
-    value: 'recent',
-    label: '최신순',
-  },
-  {
-    value: 'old',
-    label: '오래된순',
-  },
-  {
-    value: 'title',
-    label: '제목순',
-  },
-];
-
 const ITEMS_PER_PAGE = 10;
 const SPACING = 2;
 
