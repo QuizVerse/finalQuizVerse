@@ -20,6 +20,8 @@ public class SolvedBookInfoDto {
     private int bookTimer;
     private Timestamp bookCreatedate;
 
+    private int solvedbookId;
+    private boolean solvedbookIssubmitted;
     private Timestamp solvedbookStart;
     private Timestamp solvedbookEnd;
     private String solvedbookTimer;

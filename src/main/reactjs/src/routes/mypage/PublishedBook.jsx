@@ -25,7 +25,7 @@ export default function PublishedBook() {
   const [bookList, setBookList] = useState([]); // 책 목록
   const [page, setPage] = useState(1); // 현재 페이지
   const [sort, setSort] = useState('popular'); // 정렬 기준
-  const [userId, setUserId] = useState(null); // 사용자 ID
+  const [user, setUser] = useState(null); // 사용자 ID
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
@@ -47,7 +47,7 @@ export default function PublishedBook() {
   const fetchUserInfo = async () => {
     try {
       const res = await axios.get(`/book/username`); // 사용자 정보 요청
-      setUserId(res.data.userId);
+      setUser(res.data);
       setIsLoggedIn(true); // 로그인 상태
     } catch (error) {
       setIsLoggedIn(false);
@@ -56,10 +56,10 @@ export default function PublishedBook() {
 
   // 책 목록 가져오기
   const getPublishedBooks = async () => {
-    if (!userId) return;
+    if (!user) return;
 
     try {
-      const res = await axios.get(`/publishedbook/user-books?userId=${userId}`);
+      const res = await axios.get(`/publishedbook/user-books?userId=${user.userId}`);
       const bookWithDetails = await Promise.all(res.data.map(async (book) => {
         const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
           axios.get(`/bookmark/countBookmarks/${book.bookId}`),  // 북마크 수 가져오기
@@ -90,10 +90,10 @@ export default function PublishedBook() {
   }, []);
 
   useEffect(() => {
-    if (userId) {
+    if (user) {
       getPublishedBooks();
     }
-  }, [userId]);
+  }, [user]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -106,7 +106,11 @@ export default function PublishedBook() {
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
     navigate('/book/new'); // '/book/new' 페이지로 이동
-  };  
+  };
+
+  const handleBookDelete = (bookId) => {
+    setBookList((prevBookList) => prevBookList.filter((book) => book.bookId !== bookId));
+  };
 
   return (
       <main className="flex-1 py-12 px-6">
@@ -126,6 +130,7 @@ export default function PublishedBook() {
                       bookId={book.bookId}
                       photo={`${photopath}/${book.bookImage}`}
                       cardType="B"
+                      user={user}
                       nickname={book.user?.userNickname || "Unknown"}
                       className="flex-1"
                       createDate={book.bookCreatedate}
@@ -135,6 +140,7 @@ export default function PublishedBook() {
                       bookQuestionCount={book.bookmarkCount}
                       bookSectionCount={book.bookSectionCount}
                       status={book.bookStatus}
+                      onDelete={handleBookDelete} // 삭제 핸들러 전달
                   />
               ))
           ) : (

@@ -45,7 +45,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         response.addCookie(jwtCookie);
 
         // Redirect to the frontend application
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("/");
 
 
     }

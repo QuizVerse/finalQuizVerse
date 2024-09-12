@@ -26,9 +26,6 @@ public class SolvedbookDto {
     //해당 문제집이 삭제되더라도 삭제된 문제집이라고만 뜨게 하기
     private BookDto book;
 
-
-
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private UserDto user;

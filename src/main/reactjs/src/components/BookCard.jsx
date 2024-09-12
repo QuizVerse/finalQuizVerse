@@ -55,14 +55,14 @@ export default function BookCard(props) {
      * @description : 삭제 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
-        if(props.bookId === null || props.bookId === "") return;
-        if(!user) openAlert("로그인이 필요한 서비스입니다.");
+        console.log("왜이럼", props.bookId)
 
         axios.delete('/publishedbook/delete/' + props.bookId, {
             data: user // DELETE 요청에서 바디 데이터 전달
         }).then(res => {
             console.log(res);
             setConfirmVisible(false);
+            setAnchorEl(false);
 
             // 부모 컴포넌트에 삭제된 책 ID 전달
             if (props.onDelete) {
@@ -191,7 +191,7 @@ export default function BookCard(props) {
                 title={`${props.title}에 대한 링크가 생성되었습니다.`}
                 content={
                     <CopyToClipboard text={ siteUrl + "/book/detail/" + props.bookId} onCopy={handleCopy}>
-                        <button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</button>
+                        <Button>링크를 클릭하여 복사 : { siteUrl + "/book/detail/"+ props.bookId}</Button>
                     </CopyToClipboard>
                 }
                 openAlert={copyAlertVisible}
@@ -246,7 +246,7 @@ export default function BookCard(props) {
                         )}
                     </Link>
 
-                    {/*A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기*/}
+                    {/*A타입 -  문제집 목록, 카테고리별 문제집, 클래스 상세 - 클래스 공개 문제집, 즐겨찾기, 검색창 */}
                     {props.cardType === 'A' && (
                         <div className="flex items-center justify-between mt-4">
                             <IconButton className="text-red-600" onClick={handleBookmarkClick}>

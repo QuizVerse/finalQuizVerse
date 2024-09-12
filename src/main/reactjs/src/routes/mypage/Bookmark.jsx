@@ -139,6 +139,7 @@ export default function Bookmark() {
                   nickname={book.user?.userNickname || "Unknown"}
                   createDate={book.bookCreatedate}
                   title={book.bookTitle}
+                  isBookmark={book.isBookmark}
                   category={book.category?.categoryName || "Unknown"}
                   bookmarkCount={book.bookmarkCount}
                   bookQuestionCount={book.bookQuestionCount}
