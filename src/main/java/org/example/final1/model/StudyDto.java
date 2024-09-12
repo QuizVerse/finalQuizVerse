@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_study")
@@ -45,4 +46,9 @@ public class StudyDto {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private UserDto user;
+
+    // 스터디 멤버와의 관계 설정
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE) // 스터디가 삭제되면 스터디 멤버도 삭제
+    private List<StudymemberDto> studymembers;
 }
