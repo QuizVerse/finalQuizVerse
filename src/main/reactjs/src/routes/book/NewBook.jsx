@@ -230,6 +230,7 @@ export default function NewBook() {
                         <TextField
                             fullWidth
                             label="문제집 총점(점)"
+                            placeholder="100"
                             value={totalPoints}
                             onChange={handleTotalPointsChange}
                         />

@@ -21,18 +21,27 @@ public class StudyService {
         return studyDao.getAllRoom();
     }
 
-    public void insertRoom(StudyDto dto)
+    public StudyDto insertRoom(StudyDto studyDto, UserDto userDto)
     {
-        studyDao.insertRoom(dto);
+        // 스터디 생성자를 설정 (방 생성자를 UserDto로 설정)
+        studyDto.setUser(userDto);
+
+        // 스터디 방 생성
+        return studyDao.insertRoom(studyDto); // 저장 후 반환된 StudyDto 객체에 studyId가 있음
     }
 
-    public StudyDto StudyRoomDto(int studyId)
-    {
-        return studyDao.StudyRoomDto(studyId);
-    }
+    // 스터디 멤버로 사용자 추가
+    public void addStudyMember(int studyId, UserDto userDto) {
+        // studyId로 스터디 정보 가져오기
+        StudyDto studyDto = studyDao.getStudyById(studyId)
+            .orElseThrow(() -> new RuntimeException("Study not found with id: " + studyId));
 
-    public void saveStudyMember(StudymemberDto studymemberDto) 
+        // DAO에 스터디 정보와 사용자 정보를 전달하여 스터디 멤버로 추가
+        studyDao.addStudyMember(studyDto, userDto);
+    }
+    // 스터디 멤버 삭제
+    public void removeStudyMember(int studyId, UserDto userDto)
     {
-        studyDao.saveStudyMember(studymemberDto);
+        studyDao.removeStudyMember(studyId, userDto);
     }
 }

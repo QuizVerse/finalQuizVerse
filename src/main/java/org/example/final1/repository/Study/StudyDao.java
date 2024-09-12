@@ -1,6 +1,7 @@
 package org.example.final1.repository.Study;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.example.final1.model.StudyDto;
 import org.example.final1.model.StudymemberDto;
@@ -21,30 +22,51 @@ public class StudyDao {
         return studyDaoInter.findAll();
     }
     //화상방 만들기
-    public void insertRoom(StudyDto dto)
+    public StudyDto insertRoom(StudyDto dto)
     {
-        //study 저장
-        studyDaoInter.save(dto);
+        // 스터디 저장
+        StudyDto savedStudy = studyDaoInter.save(dto);
 
-        // StudyMember 생성
-        StudymemberDto studymemberDto = new StudymemberDto();
-        studymemberDto.setStudy(dto);  // StudyDto 수동으로 설정
-        studymemberDto.setUser(dto.getUser());  // StudyDto와 연관된 UserDto 설정
-        studymemberDto.setUserRole(1);  // 리더 역할
+        // StudyMember 생성 (스터디 리더로 저장)
+        StudymemberDto studymemberDto = StudymemberDto.builder()
+            .study(savedStudy)               // 저장된 스터디 엔티티 설정
+            .user(savedStudy.getUser())      // 스터디를 생성한 사용자 설정
+            .userRole(1)                     // 리더 역할 설정 (1)
+            .build();
 
-        // StudyMember 저장
+        // 스터디 멤버 저장
         studyMemberDaoInter.save(studymemberDto);
+        // 생성된 스터디 객체 반환
+        return savedStudy;
     }
 
-    //아이디 참조하여 Dto받아오기
-    public StudyDto StudyRoomDto(int studyId)
+    // 스터디 멤버 추가 메서드
+    public void addStudyMember(StudyDto studyDto, UserDto userDto) 
     {
-        return studyDaoInter.getReferenceById(studyId);
-    }
+        // 새로운 스터디 멤버를 생성
+        StudymemberDto studymemberDto = StudymemberDto.builder()
+            .study(studyDto)  // 스터디 정보 설정
+            .user(userDto)    // 사용자 정보 설정 (스터디 멤버로 추가될 사용자)
+            .userRole(0)      // 0: 일반 멤버
+            .build();
 
-    // 스터디 멤버 저장 메서드
-    public void saveStudyMember(StudymemberDto studymemberDto)
-     {
+        // 스터디 멤버 저장
         studyMemberDaoInter.save(studymemberDto);
+    }
+    
+    // 특정 studyId로 스터디 정보 가져오기
+    public Optional<StudyDto> getStudyById(int studyId)
+    {
+        return studyDaoInter.findById(studyId);
+    }
+    // 화상방 나갈때 스터디 멤버 삭제
+    public void removeStudyMember(int studyId, UserDto userDto) 
+    {
+        StudymemberDto studymember = studyMemberDaoInter.findByStudyIdAndUserId(studyId, userDto.getUserId());
+        if (studymember != null) 
+        {
+            //멤버가 존재할 경우
+            studyMemberDaoInter.delete(studymember);
+        }
     }
 }
