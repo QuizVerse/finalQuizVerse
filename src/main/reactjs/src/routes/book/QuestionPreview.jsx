@@ -64,11 +64,22 @@ export default function QuestionPreview() {
 
 
     const handleScoreInput = (index, newScore) => {
-        const updatedQuestions = [...questions];
         const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
 
-        updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
+        // 새로 입력된 점수로 총합을 계산
+        const updatedTotalScore = questions.reduce((acc, curr, i) => {
+            // 입력 중인 인덱스는 새 점수로 대체
+            return acc + (i === index ? parsedScore : (curr.questionPoint || 0));
+        }, 0);
 
+        // 총 점수를 넘는 경우 경고 및 return
+        if (updatedTotalScore > targetTotal) {
+            openAlert(`총 점수(${targetTotal}점)를 넘을 수 없습니다.`);
+            return;
+        }
+
+        // 문제가 없으면 점수 업데이트
+        const updatedQuestions = [...questions];
         updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
 
         setQuestions(updatedQuestions);
@@ -133,11 +144,11 @@ export default function QuestionPreview() {
     return (
         <div className={"space-y-8"}>
             <div className={"flex justify-center"}>
-                <Typography variant="h5" mb={2}>문제 미리보기</Typography>
+                <Typography variant="h4" mb={2}>문제 미리보기</Typography>
             </div>
             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
                 <div className={"flex justify-between p-4"}>
-                    <Typography variant="h6">{bookData.user ? bookData.user.userNickname : "로드 중..."}</Typography>
+                    <Typography variant="h6">{bookData.bookTitle ? bookData.bookTitle : "로드 중..."}</Typography>
                     <Typography variant="h6">
                         총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                     </Typography>
@@ -169,8 +180,10 @@ export default function QuestionPreview() {
                         watchSlidesProgress={true}
                         modules={[Scrollbar, Mousewheel]}  // Mousewheel 모듈 추가
                         scrollbar={{draggable:true}}
-                        mousewheel={true}
-                        style={{ paddingLeft: '20px' }}
+                        mousewheel={true}  // 마우스 휠 속도 설정
+                        // mousewheel={{ sensitivity: 5 }}  // 마우스 휠 속도 설정
+
+                        style={{ paddingLeft: '5px', paddingRight:'15px' }}
                     >
                         {questions.map((question, index) => {
                             // inputRefs.current 배열 초기화 처리
