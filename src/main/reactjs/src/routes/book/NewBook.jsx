@@ -20,9 +20,9 @@ export default function NewBook() {
     const [bookName, setBookName] = useState('');
     const [bookDescription, setBookDescription] = useState('');
     const [totalPoints, setTotalPoints] = useState('');
-    const [isChecked, setIsChecked] = useState(true);
+    const [isChecked, setIsChecked] = useState(false);
     const [timeLimit, setTimeLimit] = useState('');
-    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(true);
+    const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false);
     const navigate = useNavigate();
     const [categoryList, setCategoryList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -238,49 +238,46 @@ export default function NewBook() {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">
                             <label className="text-sm font-medium">제한시간 여부</label>
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={isTimeLimitEnabled}
-                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                onClick={toggleTimeSwitch}
-                            >
-                                <span className={`pointer-events-none block h-5 w-5 rounded-full ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
-                            </button>
+                            <Switch
+                                checked={isTimeLimitEnabled}
+                                onChange={toggleTimeSwitch}
+                                color="primary"
+                            />
                         </div>
 
                         {isTimeLimitEnabled && (
                             <TextField
                                 fullWidth
                                 label="제한시간 (분)"
-                                placeholder="100"
                                 value={timeLimit}
                                 onChange={handleTimeLimitChange}
                             />
                         )}
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">문제집 표지</label>
                         <div className="relative">
-                            <div className="flex justify-end">
-                                <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                    <CreateIcon />
-                                </IconButton>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">문제집 표지</label>
+                                <Tooltip title={'사진추가'}>
+                                    <IconButton onClick={() => document.getElementById('file-input').click()}>
+                                        <CreateIcon/>
+                                    </IconButton>
+                                </Tooltip>
                             </div>
                             <div className="flex justify-center">
-                                <img
-                                    src={coverImage}
-                                    alt="CoverImage"
-                                    className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
-                                />
+                                {coverImage !== '' ? (
+                                    <img
+                                        src={coverImage}
+                                        alt="CoverImage"
+                                        className="w-36 h-36 object-cover"
+                                        height="150"
+                                    />) : ("")}
                                 <input
                                     type="file"
                                     id="file-input"
                                     accept="image/*"
                                     onChange={photoUploadEvent}
-                                    style={{ display: 'none' }}
+                                    style={{display: 'none'}}
                                 />
                             </div>
                         </div>

@@ -13,7 +13,7 @@ import ShareVideoComponent from "../../components/ShareVideoComponent";
 import StartVideoComponent from "../../components/StartVideoComponent";
 import { LiveKitRoom, LayoutContextProvider, ScreenShareIcon, StopScreenShareIcon } from "@livekit/components-react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams , useLocation  } from "react-router-dom";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import {
     Videocam as VideocamIcon,
@@ -22,6 +22,7 @@ import {
     MicOff as MicOffIcon,
     ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
+import VideoComponentcopy from "../../components/VideoComponent copy";
 
 
 let APPLICATION_SERVER_URL = "";
@@ -97,11 +98,13 @@ export default function StudyRoom() {
             setParticipantImage(res.data.userImage);
         });
     };
-
+    const location = useLocation();
     useEffect(() => {
         getUserDto();
-        setRoomName(studyTitle);
-    }, []);
+        if (location.state?.studyTitle) {
+            setRoomName(location.state.studyTitle);
+        }
+    }, [location.state?.studyTitle]);
 
     // 방에 참가하기 전 카메라 미리보기 활성화 함수
     const startVideoPreview = async () => {
@@ -613,9 +616,9 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[90vh]">
+                    <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
 
-                        <div className="flex flex-col bg-gray-100 p-4 h-[85vh]">
+                        <div className="flex flex-col bg-gray-100 p-4 " style={{height:'100%'}}>
                             사용자들이 나올 화면<br/>
                             시바타 유니<br/>
                             정상혁<br/>
@@ -651,7 +654,6 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                 {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
                                 {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
                                     <ShareVideoComponent
-
                                         key={remoteTrack.trackPublication.trackSid}
                                         track={remoteTrack.trackPublication.videoTrack}
                                         participantIdentity={remoteTrack.participantIdentity}
@@ -663,7 +665,10 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                     <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
                                 ) :
                                 (
-                                    <div className="startvideo-container">
+                                    <div className="video-container2">
+                                        <div className="participant-data">
+                                            <p>{participantName + (localTrack ? " (You)" : "")}</p>
+                                        </div>
                                             <img
                                                 src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
                                                 style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
@@ -683,12 +688,10 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                                                     participantIdentity={remoteTrack.participantIdentity}
                                                 />
                                             ) : 
-                                        <div className="startvideo-container2">
-                                            <img
-                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                                style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
-                                            />
-                                        </div>
+                                            <VideoComponentcopy
+                                            participantIdentity={remoteTrack.participantIdentity}
+                                            participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
+                                        />
                                         ) : (
                                             <AudioComponent
                                                 key={remoteTrack.trackPublication.trackSid}
@@ -727,7 +730,7 @@ const getSharedScreenTracks = (remoteTracks, sharedScreenTrackSid) => {
                         </div>
 
 
-                        <div className="flex flex-col bg-gray-100 p-4 h-[85vh]">
+                        <div className="flex flex-col bg-gray-100 p-4 " style={{height:'100%'}}>
                             <div className="flex-grow overflow-y-auto">
                                 <ul id="messages" className="flex flex-col">
                                     {messages.map((msg, index) => (

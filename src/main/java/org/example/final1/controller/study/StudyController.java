@@ -12,7 +12,7 @@ import org.example.final1.model.UserDto;
 import org.example.final1.service.JwtService;
 import org.example.final1.service.StudyService;
 import org.example.final1.storage.NcpObjectStorageService;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,18 +45,45 @@ public class StudyController {
     }
 
     @PostMapping("/inserts")
-    public void insertRoom(
+    public ResponseEntity<Map<String, Object>> insertRoom(
             @RequestBody StudyDto studyDto,
             HttpServletRequest request)
     {
         // JWT 토큰에서 사용자 정보 가져오기
         UserDto userDto = jwtService.getUserFromJwt(request);
-        if (userDto == null) return ; // 유효하지 않은 JWT 토큰 처리
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 유효하지 않은 JWT 토큰 처리
+        }
 
         studyDto.setUser(userDto);
 
-        // 스터디 저장
-        studyService.insertRoom(studyDto);
+        // 스터디 방 생성
+        StudyDto createdStudy = studyService.insertRoom(studyDto, userDto);
+
+        // 생성된 스터디 방 ID 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("studyId", createdStudy.getStudyId());
+
+        System.out.println("생성된 studyId: " + createdStudy.getStudyId());  // 디버깅용 로그
+
+        return ResponseEntity.ok(response); // 방 ID를 응답으로 반환
+    }
+    
+    @PostMapping("/joins")
+    public ResponseEntity<String> addStudyMember(
+            @RequestParam("studyId") int studyId, 
+            HttpServletRequest request) 
+    {
+        // JWT 토큰에서 사용자 정보 가져오기
+        UserDto userDto = jwtService.getUserFromJwt(request);
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 유효하지 않은 JWT 토큰 처리
+        }
+
+       // 스터디에 사용자 추가
+       studyService.addStudyMember(studyId, userDto);
+
+       return ResponseEntity.ok("Member added successfully");
     }
 
     //사진만 먼저 업로드
@@ -69,12 +96,5 @@ public class StudyController {
         Map<String, String> map=new HashMap<>();
         map.put("photo", photo);
         return map;
-    }
-
-    @GetMapping("/dtos")
-    public StudyDto StudyRoomDto(@RequestParam("study_id") int studyId)
-    {
-        System.out.println("111111");
-        return studyService.StudyRoomDto(studyId);
     }
 }
