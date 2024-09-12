@@ -112,7 +112,7 @@ public class StudyController {
         // 스터디 멤버에서 사용자 ID를 추출하여 삭제
         int userId = userDto.getUserId();
         studyService.removeStudyMember(studyId, userId);  // userId만 전달
-
+        
         return ResponseEntity.ok("Member removed successfully");
     }
 }
