@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@SuppressWarnings("java:S1220")
 public class NewService {
 
     private final NewRepository newRepository;

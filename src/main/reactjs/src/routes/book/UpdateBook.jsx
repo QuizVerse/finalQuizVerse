@@ -126,6 +126,7 @@ export default function UpdateBook() {
             }
         })
             .then((res) => {
+                navigate("/book/detail/" + bookId);
                 console.log("Data saved successfully, navigating to /book/edit");
                 console.log("d오오오오오오옹",res);
                 // navigate("/book/edit/" + bookId);
