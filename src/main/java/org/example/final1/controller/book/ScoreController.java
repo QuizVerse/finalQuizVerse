@@ -1,3 +1,4 @@
+/*
 package org.example.final1.controller.book;
 
 
@@ -31,8 +32,8 @@ public class ScoreController {
     }
 
     @GetMapping("/score/{id}")
-    public ResponseEntity<BookDto> getScoreInfo(@PathVariable("id") int id) {
-        BookDto bookDto = bookService.getBookByBookId(id);
+//    public ResponseEntity<BookDto> getScoreInfo(@PathVariable("id") int id) {
+        BookDto bookDto = bookService.getBookByBookId(id)
         if(bookDto == null) {
             return ResponseEntity.noContent().build();
         } else {
@@ -83,3 +84,4 @@ public class ScoreController {
         return ResponseEntity.ok(answers);
     }
 }
+*/

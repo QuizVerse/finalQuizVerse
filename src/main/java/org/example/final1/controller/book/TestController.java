@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,39 +19,37 @@ import java.util.Map;
 public class TestController {
 
     private final BookService bookService;
-    private final TestService testService;
-    private final JwtService jwtService;
-    private final SolvedbookService solvedbookService;
-    private final AnswerService answerService;
-    private final WrongRepository wrongbookRepository;
-    private final WrongService wrongService;
-
     @Autowired
-    public TestController(BookService bookService,
-                          TestService testService,
-                          JwtService jwtService,
-                          SolvedbookService solvedbookService,
-                          AnswerService answerService,
-                          WrongRepository wrongbookRepository,
-                          WrongService wrongService) {
+    private TestService testService;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private SolvedbookService solvedbookService;
+    @Autowired
+    private AnswerService answerService;
+    @Autowired
+    private WrongRepository wrongbookRepository;
+    @Autowired
+    private WrongService wrongService;
+
+
+    public TestController(BookService bookService) {
         this.bookService = bookService;
-        this.testService = testService;
-        this.jwtService = jwtService;
-        this.solvedbookService = solvedbookService;
-        this.answerService = answerService;
-        this.wrongbookRepository = wrongbookRepository;
-        this.wrongService = wrongService;
     }
 
     // 로그인한 사용자 정보 가져오기
     @GetMapping("/username")
     public ResponseEntity<UserDto> getUserInfo(HttpServletRequest request) {
+
         UserDto userDto = jwtService.getUserFromJwt(request);
         if(userDto == null) {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+
         return ResponseEntity.ok(userDto);
     }
+
 
     // 문제집 정보 불러오기
     @GetMapping("/test/{id}")
@@ -98,38 +94,16 @@ public class TestController {
     }
 
     // 사용자가 제출한 답안을 저장하는 API 엔드포인트
+
+    // 답안을 저장하는 엔드포인트
+
     @PostMapping("/save/answers")
-    public ResponseEntity<String> saveAnswers(
-            @RequestBody Map<String, Object> requestBody,
-            @RequestParam("wrongRepeat") int wrongRepeat,
-            @RequestParam("solvedbookId") int solvedbookId,
-            HttpServletRequest request) {
-        System.out.println("solvedbookId: " + solvedbookId);
+    public ResponseEntity<String> saveAnswers(@RequestBody List<AnswerDto> answers, @RequestParam int wrongRepeat, HttpServletRequest request) {
         try {
-            // 1. 요청 본문에서 데이터 추출
-            @SuppressWarnings("unchecked")
-            List<AnswerDto> answers = (List<AnswerDto>) requestBody.get("answers");
-            Integer timeElapsed = (Integer) requestBody.get("timeElapsed");
-            String currentTime = (String) requestBody.get("currentTime");
+            answerService.saveAnswers(answers,wrongRepeat,request);
 
-            // 2. Solvedbook 가져오기
-            SolvedbookDto solvedbook = solvedbookService.getSolvedBookBysolvedbookId(solvedbookId);
-            System.out.println("solvedbook: " + solvedbook);
+            System.out.println("Wrong Repeat: " + wrongRepeat);
 
-            if (solvedbook == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solvedbook not found.");
-            }
-
-            // 3. Solvedbook에 제출 시간과 타이머 값 설정
-            solvedbook.setSolvedbookEnd(new Timestamp(new Date().getTime())); // 제출 시간 설정
-            solvedbook.setSolvedbookTimer(String.valueOf(timeElapsed)); // 경과 시간 설정
-            solvedbook.setSolvedbookIssubmitted(true); // 제출 완료 상태로 설정
-
-            // 4. Solvedbook 업데이트
-            solvedbookService.updateSolvedBook(solvedbook); // solvedbook 저장
-
-            // 5. 답안 저장 서비스 호출 (AnswerService에서 처리)
-            answerService.saveAnswers(answers, wrongRepeat, request);
 
             return ResponseEntity.ok("답안이 성공적으로 저장되었습니다.");
         } catch (Exception e) {
@@ -138,33 +112,30 @@ public class TestController {
         }
     }
 
-    // 시간만 저장하는 임시 저장 엔드포인트 수정
-    @PostMapping("/save/temporary")
-    public ResponseEntity<String> saveTime(@RequestBody Map<String, Integer> requestBody, HttpServletRequest request) {
+
+    // 오답 문제를 필터링하여 반환하는 API
+    // SolvedbookId와 wrongRepeat로 오답 문제들을 조회하는 API
+    @GetMapping("/test/wrong")
+    public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam int solvedbookId, @RequestParam int wrongRepeat) {
+        List<QuestionDto> wrongQuestions = wrongService.getWrongQuestions(solvedbookId, wrongRepeat);
+        System.out.println("Wrong Repeat: " + wrongRepeat);
+
+
+        return ResponseEntity.ok(wrongQuestions);
+
+    }
+
+    // solvedbookId를 기반으로 isSubmitted 값을 true로 업데이트하는 API
+    @PostMapping("/submit/{solvedbookId}")
+    public ResponseEntity<String> submitTest(@PathVariable int solvedbookId) {
         try {
-            Integer timeLeft = requestBody.get("timeLeft");
-            Integer bookId = requestBody.get("bookId");
-
-            // JWT에서 사용자 정보 추출 (사용자 검증)
-            UserDto userDto = jwtService.getUserFromJwt(request);
-            if (userDto == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-
-            // 시간 저장 서비스 호출
-            // solvedbookService.saveRemainingTime(userDto, bookId, timeLeft);
-            return ResponseEntity.ok("남은 시간이 성공적으로 저장되었습니다.");
+            // solvedbookId로 해당 시험의 isSubmitted 값을 true로 업데이트
+            solvedbookService.setSubmitTrue(solvedbookId);
+            return ResponseEntity.ok("시험이 성공적으로 제출되었습니다.");
         } catch (Exception e) {
-            System.err.println("Error saving time: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시간 저장 중 오류가 발생했습니다.");
+            System.err.println("시험 제출 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시험 제출 중 오류가 발생했습니다.");
         }
     }
 
-    // 오답 문제를 필터링하여 반환하는 API
-    @GetMapping("/test/wrong")
-    public ResponseEntity<List<QuestionDto>> getWrongQuestions(@RequestParam("solvedbookId") int solvedbookId, @RequestParam("wrongRepeat") int wrongRepeat) {
-        List<QuestionDto> wrongQuestions = wrongService.getWrongQuestions(solvedbookId, wrongRepeat);
-        System.out.println("Wrong Repeat: " + wrongRepeat);
-        return ResponseEntity.ok(wrongQuestions);
-    }
 }
