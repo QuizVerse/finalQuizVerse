@@ -28,6 +28,10 @@ export default function StudyList() {
         window.scrollTo(0, 0);
     };
 
+    useEffect(() => {
+        console.log('Rendering roomList:', roomList);
+    }, [roomList]);
+
     // 방 목록을 가져오는 함수
     const getRoomList = () => {
         axios.get(`/studys/lists`).then((res) => {
