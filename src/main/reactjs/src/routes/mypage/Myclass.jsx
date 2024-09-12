@@ -215,7 +215,7 @@ export default function Myclass() {
                             onClick={() => classClick(row.classId)}
                             style={{cursor: "pointer"}}
                         >
-                          <TableCell component="th" scope="row">
+                          <TableCell scope="row">
                             {row.className}
                           </TableCell>
                           <TableCell>{row.memberCount}</TableCell>
