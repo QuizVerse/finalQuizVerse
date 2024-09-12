@@ -7,7 +7,7 @@ import {
     InputLabel,
     FormControl,
     TextField,
-    IconButton
+    IconButton, Tooltip, Switch
 } from "@mui/material";
 import { useNavigate, useParams } from 'react-router-dom'; // useParams import
 import CreateIcon from '@mui/icons-material/Create';
@@ -64,7 +64,7 @@ export default function UpdateBook() {
                     setTimeLimit(book.bookTimer);
                     setIsChecked(book.bookDivide === 1 ? true : false);
                     setIsTimeLimitEnabled(book.bookTimer === 0 ? false : true);
-                    setCoverImage(book.bookImage);
+                    setCoverImage(photopath + book.bookImage);
                     setVisibility(book.bookStatus === 0 ? '전체 공개' : book.bookStatus === 1 ? '클래스 공개' : '비공개');
                     setSelectedClass(book.class1 !== null? book.class1.className : "");
                 })
@@ -126,8 +126,10 @@ export default function UpdateBook() {
             }
         })
             .then((res) => {
+                navigate("/book/detail/" + bookId);
                 console.log("Data saved successfully, navigating to /book/edit");
-                navigate("/book/edit/" + bookId);
+                console.log("d오오오오오오옹",res);
+                // navigate("/book/edit/" + bookId);
             })
             .catch(err => {
                 console.error("Update failed:", err);
@@ -224,7 +226,6 @@ export default function UpdateBook() {
                         <TextField
                             fullWidth
                             label="문제집 총점(점)"
-                            placeholder="100"
                             value={totalPoints}
                             onChange={handleTotalPointsChange}
                         />
@@ -232,49 +233,46 @@ export default function UpdateBook() {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center space-x-2">
                             <label className="text-sm font-medium">제한시간 여부</label>
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={isTimeLimitEnabled}
-                                className={`peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full ${isTimeLimitEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                onClick={toggleTimeSwitch}
-                            >
-                                <span className={`pointer-events-none block h-5 w-5 rounded-full ${isTimeLimitEnabled ? 'translate-x-5 bg-white' : 'translate-x-0 bg-gray-500'}`}></span>
-                            </button>
+                            <Switch
+                                checked={isTimeLimitEnabled}
+                                onChange={toggleTimeSwitch}
+                                color="primary"
+                            />
                         </div>
 
                         {isTimeLimitEnabled && (
                             <TextField
                                 fullWidth
                                 label="제한시간 (분)"
-                                placeholder="100"
                                 value={timeLimit}
                                 onChange={handleTimeLimitChange}
                             />
                         )}
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">문제집 표지</label>
                         <div className="relative">
-                            <div className="flex justify-end">
-                                <IconButton onClick={() => document.getElementById('file-input').click()}>
-                                    <CreateIcon />
-                                </IconButton>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">문제집 표지</label>
+                                <Tooltip title={'사진추가'}>
+                                    <IconButton onClick={() => document.getElementById('file-input').click()}>
+                                        <CreateIcon/>
+                                    </IconButton>
+                                </Tooltip>
                             </div>
                             <div className="flex justify-center">
-                                <img
-                                    src={photopath + coverImage}
-                                    alt="CoverImage"
-                                    className="w-36 h-36 object-cover"
-                                    width="150"
-                                    height="150"
-                                />
+                                {coverImage !== '' ? (
+                                    <img
+                                        src={coverImage}
+                                        alt="CoverImage"
+                                        className="w-36 h-36 object-cover"
+                                        height="150"
+                                    />) : ("")}
                                 <input
                                     type="file"
                                     id="file-input"
                                     accept="image/*"
                                     onChange={photoUploadEvent}
-                                    style={{ display: 'none' }}
+                                    style={{display: 'none'}}
                                 />
                             </div>
                         </div>

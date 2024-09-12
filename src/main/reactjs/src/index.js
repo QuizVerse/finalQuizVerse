@@ -290,7 +290,7 @@ const router = createBrowserRouter([
                 errorElement: <ErrorPage />,
             },
             {
-                path: '/study/room/:study_id/:studyTitle',
+                path: '/study/room/:study_id',
                 element: <StudyRoom />,
                 errorElement: <ErrorPage />,
             },
@@ -300,11 +300,7 @@ const router = createBrowserRouter([
 
         path: "/mypage",
         element: (
-            <private>
-                <Mypage />
-            </private>
-
-
+            <Mypage />
         ),
         errorElement: <ErrorPage />,
         children :[

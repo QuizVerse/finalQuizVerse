@@ -42,6 +42,7 @@ export default function StudyList() {
     // 방 생성 페이지로 이동하는 함수
     const NewRoom = () => {
         // 방 생성 페이지로 이동
+        navigate(`/study/new`);
     };
 
     // 검색어에 따라 방 목록을 필터링
@@ -61,8 +62,20 @@ export default function StudyList() {
             setModalOpen(true);
         } else {
             // 비밀번호가 필요 없을 경우 바로 방으로 이동
-            navigate(`/study/room/${studyId}/${studyTitle}`);
+            //navigate(`/study/room/${studyId}`, { state: { studyTitle } });
+            joinStudy(studyId, studyTitle); // 스터디 멤버 추가 요청
         }
+    };
+    // 스터디 멤버 추가 API 호출 함수
+    const joinStudy = (studyId, studyTitle) => {
+        axios.post(`/studys/joins?studyId=${studyId}`)  // studyId를 쿼리 매개변수로 추가
+            .then((res) => {
+                console.log(res.data);  // 성공 시 메시지 출력
+                navigate(`/study/room/${studyId}`, { state: { studyTitle } });  // 방으로 이동
+            })
+            .catch((err) => {
+                console.error("스터디 멤버 추가 중 오류 발생:", err);
+            });
     };
 
     // 페이지네이션에 맞게 현재 페이지의 항목을 계산

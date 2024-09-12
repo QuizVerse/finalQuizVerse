@@ -21,4 +21,6 @@ public class BookResponseDto {
     private int bookmarkCount;
     private int bookSectionCount;
     private int bookQuestionCount;
+    private String userNickname;  // 사용자 닉네임 추가
+    private String categoryName;  // 사용자 닉네임 추가
 }

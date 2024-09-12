@@ -249,7 +249,6 @@ export default function NewBook() {
                             <TextField
                                 fullWidth
                                 label="제한시간 (분)"
-                                placeholder="100"
                                 value={timeLimit}
                                 onChange={handleTimeLimitChange}
                             />

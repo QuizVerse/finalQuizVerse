@@ -14,6 +14,7 @@ export default function NewStudy() {
     const [studyTitle, setStudyTitle] = useState('');
     const [studyDescription, setStudyDescription] = useState('');
     const [totalMember, setTotalMember] = useState('');
+    const [passwd, setPasswd] = useState('');
 
 
     const handleVisibilityChange = (event) => {
@@ -28,22 +29,35 @@ export default function NewStudy() {
 
     const handleRoomNameChange = (e) => setStudyTitle(e.target.value);
     const handleRoomDescriptionChange = (e) => setStudyDescription(e.target.value);
+    const handleRoomPasswd = (e) => setPasswd(e.target.value);
 
     // Submit new study
     const handleSubmit = () => {
+        if (totalMember > 8) {
+            alert("총 멤버 수는 8명 이상을 초과할 수 없습니다.");
+            return setTotalMember(''); // 조건을 만족하면 함수 종료
+        }
         const newRoomData = {
             "studyTitle": studyTitle,
             "studyDescription": studyDescription,
             "studyMemberlimit": totalMember,
             "studyImage": coverImage,
-            "studyStatus": visibility === '전체 공개' ? 1 : 0 // 상태를 1 또는 0으로 설정
+            "studyStatus": visibility === '전체 공개' ? 1 : 0, // 상태를 1 또는 0으로 설정
+            "studyPasswd": passwd === '전체 공개' ? null : passwd
         };
 
+        console.log(newRoomData);
+
         axios.post(`/studys/inserts`, newRoomData)
+         
             .then((res) => {
-                console.log(res.data);
-                navigate(`/study/list`)
-                //navigate(`/study/room/${res.data.study_id}`)
+                console.log("응답 데이터:", res.data);
+                const studyId = res.data.studyId; // 서버로부터 받은 studyId
+                if (!studyId) {
+                    console.error("Received undefined studyId");
+                    return;
+                }
+                navigate(`/study/room/${studyId}`,{state: { studyTitle: studyTitle }})
             })
             .catch((err) => {
                 console.error("Error:", err.response ? err.response.data : err.message);
@@ -127,10 +141,10 @@ export default function NewStudy() {
                             <FormControl fullWidth>
                                 <TextField
                                     labelId="visibility-label"
-                                    //value={visibility}
+                                    value={passwd}
                                     label="비밀번호"
                                     type="password"
-                                    //onChange={handleClassChange}
+                                    onChange={handleRoomPasswd}
                                 >
                                 </TextField>
                             </FormControl>
@@ -140,7 +154,7 @@ export default function NewStudy() {
                             <TextField
                                 fullWidth
                                 label="화상스터디 인원"
-                                placeholder="최대 20명"
+                                placeholder="최대 8명"
                                 value={totalMember}
                                 onChange={handleTotalMemberChange}
                             ></TextField>
