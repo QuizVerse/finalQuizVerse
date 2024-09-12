@@ -17,11 +17,11 @@ export default function NewBook() {
     const [category, setCategory] = useState('');
     const [visibility, setVisibility] = useState('전체 공개');
     const [coverImage, setCoverImage] = useState('');
-    const [bookName, setBookName] = useState('클래스 멤버들도 문제 만들기');
-    const [bookDescription, setBookDescription] = useState('제발');
-    const [totalPoints, setTotalPoints] = useState('100');
+    const [bookName, setBookName] = useState('');
+    const [bookDescription, setBookDescription] = useState('');
+    const [totalPoints, setTotalPoints] = useState('');
     const [isChecked, setIsChecked] = useState(true);
-    const [timeLimit, setTimeLimit] = useState('10');
+    const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(true);
     const navigate = useNavigate();
     const [categoryList, setCategoryList] = useState([]);
