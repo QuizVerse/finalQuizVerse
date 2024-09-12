@@ -62,7 +62,7 @@ public class StudyDao {
     // 화상방 나갈때 스터디 멤버 삭제
     public void removeStudyMember(int studyId, int userId) 
     {
-        StudymemberDto studymember = studyMemberDaoInter.findByStudy_StudyIdAndUser_UserId(studyId, userId);
+        StudymemberDto studymember = studyMemberDaoInter.findStudyMember(studyId, userId);
         if (studymember != null) 
         {
             //멤버 삭제
