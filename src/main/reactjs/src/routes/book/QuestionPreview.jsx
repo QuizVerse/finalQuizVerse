@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import PreviewSection from "../../components/questionPreview/PreviewSection";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { Scrollbar, Mousewheel } from 'swiper/modules'
 
 export default function QuestionPreview() {
     const { bookId } = useParams();
@@ -28,6 +29,8 @@ export default function QuestionPreview() {
     const [alertTitle, setAlertTitle] = useState("");
 
     const [totalPoints, setTotalPoints] = useState(0);
+    const inputRefs = useRef([]);  // ref 배열을 생성
+
 
     const navigate = useNavigate();
 
@@ -63,6 +66,7 @@ export default function QuestionPreview() {
     const handleScoreInput = (index, newScore) => {
         const updatedQuestions = [...questions];
         const parsedScore = newScore === "" ? "" : parseFloat(newScore) || 0.0;
+
         updatedQuestions[index].questionPoint = parsedScore === "" ? "" : parsedScore;
 
         updatedQuestions[index].questionPoint = Math.round(parsedScore * 10) / 10;
@@ -157,38 +161,52 @@ export default function QuestionPreview() {
                     </div>
 
                     <Swiper
-                        slidesPerView={10}
+                        slidesPerView={20}
                         spaceBetween={30}
-                        centeredSlides={true}
+                        centeredSlides={false}
                         className="mySwiper"
                         virtual={false}
                         watchSlidesProgress={true}
+                        modules={[Scrollbar, Mousewheel]}  // Mousewheel 모듈 추가
+                        scrollbar={{draggable:true}}
+                        mousewheel={true}
+                        style={{ paddingLeft: '20px' }}
                     >
-                        {questions.map((question, index) => (
-                            <SwiperSlide key={index} style={{ overflow: 'visible' }}>
-                                <div className="flex flex-col items-center space-y-2 space-x-4">
-                                    <div className="font-medium whitespace-nowrap p-2">{`${index + 1}번`}</div>
-                                    <div className="min-w-max whitespace-nowrap p-2">
-                                        <TextField
-                                            type="number"
-                                            step="0.1"
-                                            min="0"
-                                            value={question.questionPoint}
-                                            onChange={(e) => handleScoreInput(index, e.target.value)}
-                                            size="small"
-                                            variant="standard"
-                                            inputProps={{
-                                                step: 0.1,
-                                                min: 0,
-                                                className: "text-center"
-                                            }}
-                                            className="w-12"
-                                            style={{ zIndex: 1 }}
-                                        />
+                        {questions.map((question, index) => {
+                            // inputRefs.current 배열 초기화 처리
+                            if (!inputRefs.current[index]) {
+                                inputRefs.current[index] = React.createRef();  // 각 항목에 대해 새로운 ref 생성
+                            }
+                            return (
+                                <SwiperSlide key={index} style={{ overflow: 'visible' }}>
+                                    <div className="flex flex-col items-center space-y-2 space-x-4">
+                                        <div className="font-medium whitespace-nowrap p-2">{`${index + 1}번`}</div>
+                                        <div className="min-w-max whitespace-nowrap p-2">
+                                            <TextField
+                                                type="number"
+                                                step="0.1"
+                                                min="0"
+                                                value={question.questionPoint}
+                                                onChange={(e) => handleScoreInput(index, e.target.value)}
+                                                size="small"
+                                                variant="standard"
+                                                inputProps={{
+                                                    step: 0.1,
+                                                    min: 0,
+                                                    className: "text-center"
+                                                }}
+                                                className="w-12"
+                                                style={{ zIndex: 1 }}
+                                                inputRef={inputRefs.current[index]}  // 각 input에 ref 설정
+                                                onFocus={() => {
+                                                    inputRefs.current[index].current?.select();  // 클릭 시 전체 선택
+                                                }}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </SwiperSlide>
-                        ))}
+                                </SwiperSlide>
+                            );
+                        })}
                     </Swiper>
 
                     <div className="flex flex-col items-center space-y-2 justify-center bg-[#EEF7FF]">
