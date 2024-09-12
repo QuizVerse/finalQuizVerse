@@ -59,4 +59,14 @@ public class StudyDao {
     {
         return studyDaoInter.findById(studyId);
     }
+    // 화상방 나갈때 스터디 멤버 삭제
+    public void removeStudyMember(int studyId, UserDto userDto) 
+    {
+        StudymemberDto studymember = studyMemberDaoInter.findByStudyIdAndUserId(studyId, userDto.getUserId());
+        if (studymember != null) 
+        {
+            //멤버가 존재할 경우
+            studyMemberDaoInter.delete(studymember);
+        }
+    }
 }
