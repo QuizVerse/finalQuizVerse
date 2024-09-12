@@ -93,7 +93,7 @@ export default function Wrong() {
                         />
                     ))
                 ) : (
-                    <div>No books available</div>
+                    <div>이용가능한 문제집이 없습니다!</div>
                 )}
             </div>
             {/* 페이지네이션 */}

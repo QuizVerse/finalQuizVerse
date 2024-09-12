@@ -57,14 +57,12 @@ export default function Category() {
         const params = new URLSearchParams(location.search);
         const catId = params.get('cat') || '';
         setCategoryId(catId);
-        const response = await axios.get(`/category/`+catId);
-        setCategory(response.data)
+        const categoryResponse = await axios.get(`/category/`+catId);
+        setCategory(categoryResponse.data)
 
         if (catId) {
           const response = await axios.get(`/books/category?id=${catId}`);
           let booksData = response.data;
-
-          
 
           let bookmarkedBookIds = [];
 
@@ -85,23 +83,24 @@ export default function Category() {
                   bookQuestionCount: countQuestionResponse.data,
                   bookSectionCount: countSectionResponse.data,
                   isBookmark: bookmarkedBookIds.includes(book.bookId),
-                  userNickname: book.user?.userNickname || 'Unknown',  // 사용자 닉네임 처리
+                  userNickname: book.user?.userNickname || 'Unknown',
                 };
               })
           );
-          
+
           // 정렬 조건에 따라 책 목록 정렬
+          let sortedBooks = [...updatedBooks];
           if (sortCondition === 'recent') {
-            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+            sortedBooks = sortedBooks.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
           } else if (sortCondition === 'title') {
-            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
+            sortedBooks = sortedBooks.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
           } else if (sortCondition === 'bookmark') {
-            booksData = booksData.sort((a, b) => a.bookmarkCount - b.bookmarkCount);
+            sortedBooks = sortedBooks.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
           } else if (sortCondition === 'oldest') {
-            booksData = booksData.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
+            sortedBooks = sortedBooks.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
           }
 
-          setBooks(updatedBooks);
+          setBooks(sortedBooks);
         }
       } catch (error) {
         setError(error);
