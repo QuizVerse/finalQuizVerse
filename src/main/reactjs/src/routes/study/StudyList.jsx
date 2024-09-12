@@ -66,9 +66,9 @@ export default function StudyList() {
             joinStudy(studyId, studyTitle); // 스터디 멤버 추가 요청
         }
     };
-    //스터디 멤버 추가 API 호출 함수
+    // 스터디 멤버 추가 API 호출 함수
     const joinStudy = (studyId, studyTitle) => {
-        axios.post(`/studys/joins`, { studyId })  // studyId와 함께 POST 요청
+        axios.post(`/studys/joins?studyId=${studyId}`)  // studyId를 쿼리 매개변수로 추가
             .then((res) => {
                 console.log(res.data);  // 성공 시 메시지 출력
                 navigate(`/study/room/${studyId}`, { state: { studyTitle } });  // 방으로 이동
