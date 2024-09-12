@@ -159,7 +159,7 @@ export default function ScorePreview() {
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className="flex justify-end space-x-2 mb-4">
-                <Button variant="outlined" onClick={() => navigate(`/book/score/${bookId}/${solvedbookId}`)}>
+                <Button variant="outlined" onClick={() => navigate(`/book/score/${bookId}/${solvedbookId}?wrongRepeat=${wrongRepeat}`)}>
                     성적표로 돌아가기
                 </Button>
                 <Button variant="outlined" onClick={downloadpdf}>

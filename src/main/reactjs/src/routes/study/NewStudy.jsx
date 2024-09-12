@@ -123,6 +123,20 @@ export default function NewStudy() {
                             </FormControl>
                         </div>
                         <div className="space-y-2">
+                        {visibility === '비공개' && (
+                            <FormControl fullWidth>
+                                <TextField
+                                    labelId="visibility-label"
+                                    //value={visibility}
+                                    label="비밀번호"
+                                    type="password"
+                                    //onChange={handleClassChange}
+                                >
+                                </TextField>
+                            </FormControl>
+                        )}
+                        </div>
+                        <div className="space-y-2">
                             <TextField
                                 fullWidth
                                 label="화상스터디 인원"

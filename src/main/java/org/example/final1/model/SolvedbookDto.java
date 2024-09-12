@@ -29,21 +29,26 @@ public class SolvedbookDto {
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private UserDto user;
 
-    @Column(name = "solvedbook_start", nullable = false)
+    @Column(name = "solvedbook_start")
     private Timestamp solvedbookStart;
 
     @Column(name = "solvedbook_end")
     private Timestamp solvedbookEnd;
 
-    @Column(name = "solvedbook_timer", length = 100)
+    @Column(name = "solvedbook_timer", length = 100,nullable = false)
     private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
     @JsonManagedReference  // 부모-자식 관계에서 부모로 설정 (JSON에서 직렬화됨)
     @ToString.Exclude  // 순환 참조 방지
     private List<AnswerDto> answers;
+
+    @Column(name = "solvedbook_issubmitted", length = 100,nullable = false)
+    // 새로운 필드 추가: 시험 제출 여부
+    private boolean solvedbookIssubmitted;
+
 }

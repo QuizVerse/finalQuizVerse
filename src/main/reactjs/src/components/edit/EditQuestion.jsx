@@ -142,8 +142,30 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
             <div className="flex items-center space-x-2 justify-center cursor-move" ref={ref}>
                 <DragHandleIcon/> {/* 드래그 핸들 아이콘 */}
             </div>
-            <div className="flex items-center space-x-2 justify-between">
-                <Typography variant="h5">{question.questionTitle || "문제 질문"}</Typography>
+            <div className="flex items-end justify-between">
+                <div className="flex gap-4 w-full items-end">
+                    <TextField
+                        fullWidth
+                        label={"문제 질문"}
+                        placeholder="질문을 입력하세요."
+                        variant={"standard"}
+                        value={question.questionTitle}
+                        onChange={(e) => onUpdateQuestion({questionTitle: e.target.value})}
+                    />
+                    <FormControl fullWidth>
+                        <Select
+                            labelId="visibility-label"
+                            value={question.questionType}
+                            variant={"standard"}
+                            onChange={(e) => openConfirm(e, question.questionId)}
+                        >
+                            <MenuItem value={0}>선택형</MenuItem>
+                            <MenuItem value={1}>다중선택형</MenuItem>
+                            <MenuItem value={2}>OX 선택형</MenuItem>
+                            <MenuItem value={3}>단답형</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
                 <div>
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} {/* 질문 접기/펼치기 아이콘 */}
@@ -152,32 +174,7 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
             </div>
             {!isCollapsed && (  // 질문이 접혀있지 않을 때만 내용 표시
                 <div className="flex flex-col gap-4">
-                    <div className="flex gap-4">
-                        <TextField
-                            fullWidth
-                            label={"문제 질문"}
-                            placeholder="질문을 입력하세요."
-                            variant={"standard"}
-                            value={question.questionTitle}
-                            onChange={(e) => onUpdateQuestion({questionTitle: e.target.value})}
-                        />
 
-                        <FormControl fullWidth>
-                            <InputLabel id="visibility-label">문제 형식</InputLabel>
-                            <Select
-                                labelId="visibility-label"
-                                value={question.questionType}
-                                label="문제 형식"
-                                variant={"standard"}
-                                onChange={(e) => openConfirm(e, question.questionId)}
-                            >
-                                <MenuItem value={0}>선택형</MenuItem>
-                                <MenuItem value={1}>다중선택형</MenuItem>
-                                <MenuItem value={2}>OX 선택형</MenuItem>
-                                <MenuItem value={3}>단답형</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </div>
                     {showDescription && (  // 문제 설명이 있을 때만 표시
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-4">
@@ -189,7 +186,8 @@ export default function EditQuestion({index, moveQuestion, onDuplicate, onDelete
                                     value={question.questionDescription}
                                     onChange={(e) => onUpdateQuestion({questionDescription: e.target.value})}
                                 />
-                                <IconButton onClick={() => document.getElementById('description-image-'+question.questionId).click()}>
+                                <IconButton
+                                    onClick={() => document.getElementById('description-image-' + question.questionId).click()}>
                                     <InsertPhotoIcon/>
                                 </IconButton>
                                 <IconButton onClick={handleDeleteDescription}>

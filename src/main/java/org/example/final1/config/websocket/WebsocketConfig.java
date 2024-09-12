@@ -22,6 +22,11 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	public ScreenShareWebSocketHandler screenShareWebSocketHandler() {
 		return new ScreenShareWebSocketHandler();
 	}
+
+	@Bean
+    public CameraWebSocketHandler cameraWebSocketHandler() {
+        return new CameraWebSocketHandler();
+    }
 	
     @Override
 	public void addCorsMappings(CorsRegistry registry) {
@@ -45,5 +50,11 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 				.setAllowedOrigins("http://localhost:3000") // React 앱 주소
 				//.setAllowedOrigins("https://www.quizverse.kro.kr")
 				.addInterceptors(new HttpSessionHandshakeInterceptor());
+		//카메라 
+		registry.addHandler(cameraWebSocketHandler(), "/ws/camera")
+			.setAllowedOrigins("http://localhost:3000") // React 앱 주소
+			//.setAllowedOrigins("https://www.quizverse.kro.kr")
+			.addInterceptors(new HttpSessionHandshakeInterceptor());
+
 	 }	
 }
