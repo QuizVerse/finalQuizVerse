@@ -51,7 +51,7 @@ export default function StudyRoom() {
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const { studyId, studyTitle } = useParams(); // URL에서 studyId 추출
+    const { study_id } = useParams(); // URL에서 studyId 추출
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
@@ -191,9 +191,10 @@ export default function StudyRoom() {
     }
 
     //방 나가기
-    async function leaveRoom(studyId) {
+    async function leaveRoom(study_id) {
+        console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        await axios.post(`/studys/removes`, { studyId });
+        await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
@@ -531,7 +532,7 @@ export default function StudyRoom() {
 
                                     </Typography>
                                     <Box sx={{ flexGrow: 1 }} /> {/* 이 Box가 여백을 자동으로 생성 */}
-                                    <IconButton color="inherit" onClick={leaveRoom}>
+                                    <IconButton color="inherit" onClick={() => leaveRoom(study_id)}>
                                         <ExitToAppIcon sx={{ fontSize: 30 }} />
                                     </IconButton>
                                 </Toolbar>
@@ -797,7 +798,7 @@ export default function StudyRoom() {
                                 </button>
 
                                 {/* 나가기 버튼 */}
-                                <button className="flex flex-col items-center mx-4" onClick={leaveRoom}>
+                                <button className="flex flex-col items-center mx-4" onClick={() => leaveRoom(study_id)}>
                                     <ExitToAppIcon fontSize="large" />
                                     <span className="text-xs mt-1">나가기</span>
                                 </button>
