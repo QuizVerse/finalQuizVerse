@@ -39,4 +39,9 @@ public class StudyService {
         // DAO에 스터디 정보와 사용자 정보를 전달하여 스터디 멤버로 추가
         studyDao.addStudyMember(studyDto, userDto);
     }
+    // 스터디 멤버 삭제
+    public void removeStudyMember(int studyId, UserDto userDto)
+    {
+        studyDao.removeStudyMember(studyId, userDto);
+    }
 }

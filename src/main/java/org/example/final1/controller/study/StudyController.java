@@ -97,4 +97,21 @@ public class StudyController {
         map.put("photo", photo);
         return map;
     }
+    //화상방 나갈때 스터디 멤버 삭제
+    @PostMapping("/removes")
+    public ResponseEntity<String> leaveStudyMember(
+            @RequestParam("studyId") int studyId,
+            HttpServletRequest request) 
+    {
+        // JWT 토큰에서 사용자 정보 가져오기
+        UserDto userDto = jwtService.getUserFromJwt(request);
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 유효하지 않은 JWT 토큰 처리
+        }
+
+        // 스터디 멤버에서 사용자 삭제
+        studyService.removeStudyMember(studyId, userDto);
+
+        return ResponseEntity.ok("Member removed successfully");
+    }
 }
