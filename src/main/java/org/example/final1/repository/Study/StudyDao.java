@@ -8,6 +8,8 @@ import org.example.final1.model.StudymemberDto;
 import org.example.final1.model.UserDto;
 import org.example.final1.repository.User.UserDaoInter;
 import org.springframework.stereotype.Repository;
+
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Repository
@@ -60,6 +62,7 @@ public class StudyDao {
         return studyDaoInter.findById(studyId);
     }
     // 화상방 나갈때 스터디 멤버 삭제
+    @Transactional
     public void removeStudyMember(int studyId, int userId) 
     {
         StudymemberDto studymember = studyMemberDaoInter.findStudyMember(studyId, userId);

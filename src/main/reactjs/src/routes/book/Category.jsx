@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MenuItem, Pagination, Stack, TextField } from '@mui/material';
+import {MenuItem, Pagination, Stack, TextField, Typography} from '@mui/material';
 import BookCard from '../../components/BookCard';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ export default function Category() {
 
   const location = useLocation();
   const [categoryId, setCategoryId] = useState('');  // 현재 카테고리 ID 상태
+  const [category, setCategory] = useState('');  // 현재 카테고리 ID 상태
   const [books, setBooks] = useState([]);  // 카테고리에 해당하는 책 목록
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,6 +56,8 @@ export default function Category() {
         const params = new URLSearchParams(location.search);
         const catId = params.get('cat') || '';
         setCategoryId(catId);
+        const response = await axios.get(`/category/`+catId);
+        setCategory(response.data)
 
         if (catId) {
           const response = await axios.get(`/books/category?id=${catId}`);
@@ -142,8 +145,9 @@ export default function Category() {
   };
 
   return (
-      <main className="p-4">
-        <div className="flex items-center mb-6 space-x-4 justify-end">
+      <main className="px-4">
+        <div className="flex items-center mb-6 space-x-4 justify-between">
+          <h1 className={"text-3xl font-bold"}>{category.categoryName}</h1>
           <TextField
               id="outlined-select-currency"
               select

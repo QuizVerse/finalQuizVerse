@@ -105,6 +105,7 @@ export default function UpdateBook() {
         setError(null);
 
         const formData = new FormData();
+        formData.append('bookId', bookId);
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
