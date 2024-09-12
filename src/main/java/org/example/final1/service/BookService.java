@@ -1,8 +1,10 @@
 package org.example.final1.service;
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.BookResponseDto;
 import org.example.final1.repository.BookRepository;
 import org.example.final1.repository.CategoryRepository;
+import org.example.final1.storage.NcpObjectStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,18 @@ public class BookService {
 
     @Autowired
     private final CategoryRepository categoryRepository;
+    @Autowired
+    private BookmarkService bookmarkService;
+    @Autowired
+    private SectionService sectionService;
+    @Autowired
+    private QuestionService questionService;
+    @Autowired
+    private NcpObjectStorageService ncpObjectStorageService; // 파일 삭제를 위한 서비스
+
+    private String bucketName = "bitcamp701-129";
+    private String folderName = "final/book";
+
 
     public List<BookDto> getBooksByCategory(Integer categoryId) {
         // 카테고리 ID에 해당하는 책 목록을 가져옵니다.
@@ -42,7 +56,21 @@ public class BookService {
 
     // 책을 저장하거나 업데이트하는 메소드
     public BookDto saveBook(BookDto bookDto) {
-        // bookDto를 데이터베이스에 저장
+        // 기존 책 정보 조회
+        Optional<BookDto> existingBookOpt = bookRepository.findById(bookDto.getBookId());
+        if (existingBookOpt.isPresent()) {
+            BookDto existingBook = existingBookOpt.get();
+
+            // 기존 사진 URL 처리
+            if (bookDto.getBookImage() != null && !bookDto.getBookImage().equals(existingBook.getBookImage())) {
+                // 기존 사진 URL이 있고 새로운 사진으로 교체된 경우, 기존 사진 삭제
+                if (existingBook.getBookImage() != null && !existingBook.getBookImage().isEmpty()) {
+                    ncpObjectStorageService.deleteFile(bucketName, folderName, existingBook.getBookImage());
+                }
+            }
+        }
+
+        // 책 정보 저장
         return bookRepository.save(bookDto);
     }
 
@@ -50,9 +78,40 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public List<BookDto> searchBooks(String keyword) {
-        return bookRepository.searchByTitleOrDescription(keyword);
+    // 책 검색
+    public List<BookResponseDto> searchBooks(String keyword){
+        // 책 검색 로직
+        List<BookDto> books = bookRepository.searchByTitleOrDescription(keyword);
+
+        // BookResponseDto로 변환
+        return books.stream().map(book -> {
+            boolean isBookmark = false;
+            int bookmarkCount = bookmarkService.getBookmarkCountByBookId(book.getBookId());
+            int sectionCount = sectionService.getSectionCountByBookId(book.getBookId());
+            int questionCount = questionService.getQuestionCountByBookId(book.getBookId());
+
+            // UserDto에서 닉네임 가져오기
+            String userNickname = book.getUser() != null ? book.getUser().getUserNickname() : "Unknown";
+            String categoryName = book.getCategory() != null ? book.getCategory().getCategoryName() : "Unknown";
+
+            return BookResponseDto.builder()
+                    .bookId(book.getBookId())
+                    .bookImage(book.getBookImage())
+                    .bookTitle(book.getBookTitle())
+                    .bookDescription(book.getBookDescription())
+                    .bookStatus(book.getBookStatus())
+                    .bookTimer(book.getBookTimer())
+                    .bookIspublished(book.isBookIspublished())
+                    .isBookmark(isBookmark)
+                    .bookmarkCount(bookmarkCount)
+                    .bookSectionCount(sectionCount)
+                    .bookQuestionCount(questionCount)
+                    .userNickname(userNickname)  // userNickname 추가
+                    .categoryName(categoryName)  // userNickname 추가
+                    .build();
+        }).collect(Collectors.toList());
     }
+
     public BookDto getBookByBookId(int id) {
         return bookRepository.findByBookId(id);
     }

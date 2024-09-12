@@ -112,16 +112,22 @@ export default function MainHeader() {
                                         className="h-full w-full object-cover rounded-full border border-[#cccccc]"
                                     />
                                 ) : (
-                                    <span>User</span>
+                                    <img
+                                        src="/DefaultProfileImage.png" // 기본 프로필 이미지 경로
+                                        alt="Default Profile"
+                                        style={{ width: '48px', height: '48px'}}
+                                        className="h-full w-full object-cover rounded-full border border-[#cccccc]"
+                                    />
                                 )}
                             </Link>
+
                         </div>
                     ) : (
                         <div className="flex items-center space-x-2">
                             <Button size={"large"}>
                                 <Link to='/account/login'>로그인</Link>
                             </Button>
-                            <Button size={"large"} variant={"outlined"}>
+                            <Button size={"large"}>
                                 <Link to='/account/signup'>회원가입</Link>
                             </Button>
                         </div>

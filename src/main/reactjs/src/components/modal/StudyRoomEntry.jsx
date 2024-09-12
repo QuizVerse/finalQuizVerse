@@ -10,7 +10,7 @@ export default function StudyRoomEntry({ studyId, studyTitle, studyPasswd, open,
     useEffect(() => {
         if (!studyPasswd) {
             // 비밀번호가 없으면 바로 입장
-            navigate(`/study/room/${studyId}/${studyTitle}`);
+            navigate(`/study/room/${studyId}`,{ state: { studyTitle } });
         }
     }, [studyPasswd, studyId, studyTitle, navigate]);
 
@@ -18,7 +18,7 @@ export default function StudyRoomEntry({ studyId, studyTitle, studyPasswd, open,
     const handlePasswordSubmit = () => {
         if (inputPasswd === studyPasswd) {
             // 비밀번호가 맞으면 방으로 이동
-            navigate(`/study/room/${studyId}/${studyTitle}`);
+            navigate(`/study/room/${studyId}`,{ state: { studyTitle } });
         } else {
             // 비밀번호가 틀리면 에러 메시지 표시
             setError(true);

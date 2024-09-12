@@ -1,12 +1,18 @@
 import BookCard from "../../components/BookCard";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddClassMember from "../../components/modal/AddClassMember";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ConfirmRoleChangeModal from "../../components/modal/ConfirmRoleChangeModal";
-import {Button} from "@mui/material";
+import {Button, Checkbox, Chip} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import CustomAlert from "../../components/modal/CustomAlert";
+import Pagination from '@mui/material/Pagination'; // Material UI Pagination 가져오기
+import Stack from '@mui/material/Stack';
+
+const ITEMS_PER_PAGE = 5; // 페이지당 항목 수
+const SPACING = 2; // 페이지네이션 간격
+const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user"; // 중요한 photopath 유지
 
 export default function MyclassDetail() {
   const { classId } = useParams(); // URL 파라미터에서 classId를 가져옵니다.
@@ -40,10 +46,10 @@ export default function MyclassDetail() {
     setAlertVisible(false);
   };
 
-
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
   const [currentPage, setCurrentPage] = useState(1); // 페이지네이션 - 현재 페이지를 관리합니다.
   const [pageGroup, setPageGroup] = useState(0); // 페이지 그룹 (5개씩 페이지 번호를 표시하기 위해 추가)
-  const itemsPerPage = 5; // 페이지당 보여줄 구성원 수를 설정합니다.
+  const itemsPerPage = ITEMS_PER_PAGE; // 페이지당 보여줄 구성원 수를 설정합니다.
   const pagesPerGroup = 5; // 한 번에 표시할 페이지 번호 수
 
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
@@ -190,6 +196,7 @@ export default function MyclassDetail() {
             member.user.userEmail.toLowerCase().includes(lowerCaseQuery)
     );
     setFilteredMembers(filtered);
+    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
   }, [searchQuery, members]);
 
   // 방장 권한 변경 모달에서 "확인" 버튼을 눌렀을 때 호출됩니다.
@@ -211,44 +218,42 @@ export default function MyclassDetail() {
       console.error("Failed to change leader", e);
     }
   };
+  // 페이지가 변경될 때 보여줄 멤버를 계산하는 함수
+  const currentMembers = filteredMembers.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+  );
 
-  // 페이지네이션: 현재 페이지에서 보여줄 멤버들을 계산합니다.
-  const indexOfLastMember = currentPage * itemsPerPage;
-  const indexOfFirstMember = indexOfLastMember - itemsPerPage;
-  const currentMembers = filteredMembers.slice(indexOfFirstMember, indexOfLastMember);
-
-  // 총 페이지 수 계산
-  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
-
-  // 페이지네이션: 페이지 변경 함수
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // 페이지 그룹 범위 계산
-  const startPage = pageGroup * pagesPerGroup + 1;
-  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
-  const pageNumbers = [];
-  for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
-  }
-
-  // 다음 페이지 그룹으로 이동
-  const nextPageGroup = () => {
-    if (endPage < totalPages) {
-      setPageGroup(pageGroup + 1);
-    }
-  };
-
-  // 이전 페이지 그룹으로 이동
-  const prevPageGroup = () => {
-    if (pageGroup > 0) {
-      setPageGroup(pageGroup - 1);
-    }
+  // 페이지 변경 핸들러
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    window.scrollTo(0, 0); // 페이지 변경 시 상단으로 스크롤
   };
 
   // 검색
   const handleSearch = (keyword) => {
     setSearchQuery(keyword);
   };
+
+  const clickBookmark = async (bookId) => {
+    try {
+      const book = books.find(book => book.bookId === bookId);
+      const newIsBookmark = !book.isBookmark;
+
+      // 서버에 북마크 토글 요청
+      await axios.post('/bookmark/toggle', { bookId });
+
+      // UI 상태 업데이트
+      setBooks(books.map(book =>
+          book.bookId === bookId
+              ? { ...book, isBookmark: newIsBookmark }
+              : book
+      ));
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
+  };
+
 
   return (
       <main className="flex-1 py-12 px-6">
@@ -293,14 +298,19 @@ export default function MyclassDetail() {
               <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 w-10">
-                  <input
-                      type="checkbox"
-                      aria-hidden="true"
-                      tabIndex="-1"
+                  <Checkbox
                       value="on"
                       checked={allSelected}
                       onChange={handleSelectAll}
                   />
+                  {/*<input*/}
+                  {/*    type="checkbox"*/}
+                  {/*    aria-hidden="true"*/}
+                  {/*    tabIndex="-1"*/}
+                  {/*    value="on"*/}
+                  {/*    checked={allSelected}*/}
+                  {/*    onChange={handleSelectAll}*/}
+                  {/*/>*/}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                   이름
@@ -326,14 +336,19 @@ export default function MyclassDetail() {
                       className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                   >
                     <td className="p-4 align-middle">
-                      <input
-                          type="checkbox"
-                          aria-hidden="true"
-                          tabIndex="-1"
+                      <Checkbox
                           value="on"
                           checked={member.isSelected || false}
                           onChange={() => handleSelectMember(member.classmemberId)}
                       />
+                      {/*<input*/}
+                      {/*    type="checkbox"*/}
+                      {/*    aria-hidden="true"*/}
+                      {/*    tabIndex="-1"*/}
+                      {/*    value="on"*/}
+                      {/*    checked={member.isSelected || false}*/}
+                      {/*    onChange={() => handleSelectMember(member.classmemberId)}*/}
+                      {/*/>*/}
                     </td>
                     <td className="p-4 align-middle">{member.user.userNickname}</td>
                     <td className="p-4 align-middle">
@@ -358,9 +373,10 @@ export default function MyclassDetail() {
                       {new Date(member.classmemberDate).toLocaleString()}
                     </td>
                     <td className="p-4 align-middle">
-                      <div
-                          className="inline-flex w-fit items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-                        {member.classmemberRole === 2 ? "멤버" : "방장"}
+                      <div>
+                        {member.classmemberRole === 2 ?
+                            <Chip label="멤버" variant="outlined" color={"primary"} />
+                            : <Chip label="방장" variant="filled" color={"primary"} />}
                       </div>
                     </td>
                   </tr>
@@ -368,39 +384,18 @@ export default function MyclassDetail() {
               </tbody>
             </table>
           </div>
-          {/* 페이지네이션 버튼 */}
-          <div className="flex justify-center mt-4">
-            {/* 이전 버튼 */}
-            {pageGroup > 0 && (
-                <button
-                    onClick={prevPageGroup}
-                    className="mx-1 px-3 py-1 rounded bg-gray-200"
-                >
-                  이전
-                </button>
-            )}
 
-            {pageNumbers.map((pageNumber) => (
-                <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={`mx-1 px-3 py-1 rounded ${
-                        currentPage === pageNumber ? "bg-primary text-white" : "bg-gray-200"
-                    }`}
-                >
-                  {pageNumber}
-                </button>
-            ))}
-
-            {/* 다음 버튼 */}
-            {endPage < totalPages && (
-                <button
-                    onClick={nextPageGroup}
-                    className="mx-1 px-3 py-1 rounded bg-gray-200"
-                >
-                  다음
-                </button>
-            )}
+          {/* Pagination */}
+          <div className="w-full flex justify-center mt-4">
+            <Stack spacing={SPACING}>
+              <Pagination
+                  count={totalPages} // 총 페이지 수
+                  page={currentPage} // 현재 페이지
+                  onChange={handlePageChange} // 페이지 변경 핸들러
+                  showFirstButton
+                  showLastButton
+              />
+            </Stack>
           </div>
         </div>
         <div className="flex items-center justify-between mb-6">
@@ -410,15 +405,21 @@ export default function MyclassDetail() {
           {books.map((book) => (
               <BookCard
                   key={book.bookId}
-                  cardType="A" // 필요에 따라 cardType 설정
-                  nickname={book.user.userNickname}
-                  createDate={new Date(book.bookCreatedate).toLocaleDateString()}
+                  bookId={book.bookId}
+                  photo={`${photopath}/${book.bookImage}`}
+                  cardType="A"
+                  nickname={book.user?.userNickname || 'Unknown'}
+                  createDate={book.bookCreatedate}
                   title={book.bookTitle}
-                  category={book.category.categoryName} // 카테고리명
-                  viewCount="10" // 임의로 설정, 필요에 따라 수정
-                  questionCount="20" // 임의로 설정, 필요에 따라 수정
-                  sectionCoune="4" // 임의로 설정, 필요에 따라 수정
-                  status={book.bookStatus === 1 ? "Published" : "Draft"}
+                  category={book.category?.categoryName || 'Unknown'}
+                  bookmarkCount={book.bookmarkCount}
+                  bookQuestionCount={book.bookQuestionCount}
+                  bookSectionCount={book.bookSectionCount}
+                  status={book.bookStatus}
+                  bookUrl={`/book/detail/${book.bookId}`}
+                  updateBookmark={() => clickBookmark(book.bookId)}
+                  isBookmark={book.isBookmark}
+                  isLoggedIn={true}
               />
           ))}
         </div>
