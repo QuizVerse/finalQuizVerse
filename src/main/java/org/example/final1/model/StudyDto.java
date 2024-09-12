@@ -39,7 +39,7 @@ public class StudyDto {
     @Column(name = "study_status", nullable = false)
     private short studyStatus;
 
-    @Column(name = "study_passwd", nullable = false, length = 255)
+    @Column(name = "study_passwd", nullable = true, length = 255)
     private String studyPasswd;
 
     @ManyToOne
