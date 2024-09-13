@@ -166,7 +166,7 @@ export default function BookList() {
                             <ArrowForwardIosIcon fontSize={'small'} />
                         </Link>
                     </div>
-                    <div className="flex gap-4 justify-center">
+                    <div className="grid grid-cols-5 gap-4">
                         {booksByCategory[category.categoryId]?.slice(0, 5)?.map((book) => (
                             <BookCard
                                 key={book.bookId}

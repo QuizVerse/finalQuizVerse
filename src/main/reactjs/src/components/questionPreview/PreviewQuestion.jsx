@@ -38,7 +38,7 @@ export default function PreviewQuestion({
             {!isCollapsed && (  // 질문이 접혀있지 않을 때만 내용 표시
                 <div className="flex flex-col gap-4">
                     <div className="flex gap-4">
-                        <Typography>{question.questionTitle}</Typography>
+                        {/*<Typography>{question.questionTitle}</Typography>*/}
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex gap-4">
