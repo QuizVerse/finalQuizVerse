@@ -80,7 +80,7 @@ export default function SearchBook() {
                             isBookmark: bookmarkedBookIds.includes(book.bookId)  // bookId가 북마크 목록에 있는지 확인
                         }));
                     }
-
+                    console.log("book", books)
                     setSearchResults(books);
                 }
             } catch (error) {
@@ -130,15 +130,16 @@ export default function SearchBook() {
                     <section className="grid grid-cols-5 gap-4">
                         {currentItems.length > 0 ? (
                             currentItems.map(book => (
+
                                 <BookCard
                                     key={book.bookId}
                                     bookId={book.bookId}
                                     photo={photopath+book.bookImage}
                                     cardType="A"
-                                    nickname={book.user?.userNickname || 'Unknown'}
+                                    nickname={book.userNickname || 'Unknown'}
                                     createDate={book.bookCreatedate}
                                     title={book.bookTitle}
-                                    category={book.category?.categoryName || 'Unknown'}
+                                    category={book.categoryName || 'Unknown'}
                                     bookmarkCount={book.bookmarkCount}
                                     bookQuestionCount={book.bookQuestionCount}
                                     bookSectionCount={book.bookSectionCount}
