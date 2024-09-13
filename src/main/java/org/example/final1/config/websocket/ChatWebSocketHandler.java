@@ -20,11 +20,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        String payload = message.getPayload(); // 클라이언트가 보낸 JSON 메시지 그대로 사용
     	// 모든 연결된 클라이언트에게 메시지 전송
     	synchronized (sessions) {
             for (WebSocketSession webSocketSession : sessions) {
                 if (webSocketSession.isOpen()) {
-                    webSocketSession.sendMessage(message);
+                    webSocketSession.sendMessage(new TextMessage(payload));
                 }
             }
         }
