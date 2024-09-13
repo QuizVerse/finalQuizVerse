@@ -84,6 +84,10 @@ export default function BookCard(props) {
             .then(res => {
                 setSnackMessage("문제집이 성공적으로 복제되었습니다.");
                 setState({ open: true, Transition: Fade });
+                // 부모 컴포넌트에 삭제된 책 ID 전달
+                if (props.onCopy) {
+                    props.onCopy(props.bookId);
+                }
             })
             .catch(error => {
                 console.error("복제 실패", error);

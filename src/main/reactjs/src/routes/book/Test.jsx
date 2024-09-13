@@ -48,8 +48,6 @@ export default function ParentComponent() {
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
 
-        console.log("book", bookRes.data.book);
-
         // bookTimer를 가져와서 초 단위로 변환 후 타이머 설정
         const bookTimerInMinutes = bookRes.data.book.bookTimer;
         const bookTimerInSeconds = bookTimerInMinutes * 60; // 분 단위 -> 초 단위 변환
