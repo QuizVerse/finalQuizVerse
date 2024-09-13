@@ -15,6 +15,7 @@ export default function SearchBook() {
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const [error, setError] = useState(null); // 에러 상태 추가
     const location = useLocation();
+    const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/";
 
     // 북마크 상태를 업데이트하는 함수
     const clickBookmark = async (bookId) => {
@@ -114,23 +115,24 @@ export default function SearchBook() {
                     <section className="grid grid-cols-5 gap-4">
                         {currentItems.length > 0 ? (
                             currentItems.map(book => (
-                                <div key={book.bookId}>
-                                    <BookCard
-                                        cardType="A"
-                                        nickname={book.userNickname}  // 사용자 닉네임 표시
-                                        createDate={book.bookCreatedate}
-                                        title={book.bookTitle}
-                                        status={book.bookStatus}
-                                        category={book.categoryName || 'Unknown'}
-                                        viewCount={book.bookViewCount}
-                                        bookQuestionCount={book.bookQuestionCount}
-                                        bookSectionCount={book.bookSectionCount}
-                                        bookmarkCount={book.bookmarkCount}
-                                        isBookmark={book.isBookmark}
-                                        updateBookmark={() => clickBookmark(book.bookId)}
-                                        isLoggedIn={isLoggedIn}
-                                    />
-                                </div>
+                                <BookCard
+                                    key={book.bookId}
+                                    bookId={book.bookId}
+                                    photo={photopath+book.bookImage}
+                                    cardType="A"
+                                    nickname={book.user?.userNickname || 'Unknown'}
+                                    createDate={book.bookCreatedate}
+                                    title={book.bookTitle}
+                                    category={book.category?.categoryName || 'Unknown'}
+                                    bookmarkCount={book.bookmarkCount}
+                                    bookQuestionCount={book.bookQuestionCount}
+                                    bookSectionCount={book.bookSectionCount}
+                                    status={book.bookStatus}
+                                    bookUrl={`/book/detail/${book.bookId}`}
+                                    updateBookmark={() => clickBookmark(book.bookId)}
+                                    isBookmark={book.isBookmark}
+                                    isLoggedIn={isLoggedIn}
+                                />
                             ))
                         ) : (
                             <div>No books available</div>
