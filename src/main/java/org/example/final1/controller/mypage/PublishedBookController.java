@@ -105,6 +105,11 @@ public class PublishedBookController {
         copiedBook.setBookTitle(originalBook.getBookTitle() + " (복제본)");
         copiedBook.setBookDescription(originalBook.getBookDescription());
         copiedBook.setBookImage(originalBook.getBookImage());
+        copiedBook.setCategory(originalBook.getCategory());
+        copiedBook.setBookStatus(originalBook.getBookStatus());
+        copiedBook.setBookTimer(originalBook.getBookTimer());
+        copiedBook.setBookTotalscore(originalBook.getBookTotalscore());
+        copiedBook.setBookIspublished(originalBook.isBookIspublished());
         copiedBook.setUser(user); // 복사한 사용자에게 소유권 설정
 
         // 복제된 문제집 저장
