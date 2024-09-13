@@ -109,6 +109,12 @@ export default function UpdateBook() {
         formData.append('bookTitle', bookName);
         formData.append('bookDescription', bookDescription);
         formData.append('bookStatus', visibility === '전체 공개' ? 0 : visibility === '클래스 공개' ? 1 : 2);
+
+        // 클래스 공개가 선택되었고 클래스가 선택된 경우에만 classId를 추가
+        if (visibility === '클래스 공개' && selectedClass) {
+            formData.append('classId', selectedClass);
+        }
+
         formData.append('category', category);
         formData.append('bookTimer', timeLimit === '' ? 0 : parseInt(timeLimit, 10));
         formData.append('bookDivide', isChecked ? 1 : 0);
