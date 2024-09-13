@@ -48,6 +48,8 @@ export default function ParentComponent() {
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
 
+        console.log("book", bookRes.data.book);
+
         // bookTimer를 가져와서 초 단위로 변환 후 타이머 설정
         const bookTimerInMinutes = bookRes.data.book.bookTimer;
         const bookTimerInSeconds = bookTimerInMinutes * 60; // 분 단위 -> 초 단위 변환
@@ -208,7 +210,9 @@ export default function ParentComponent() {
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
-            <span className="text-lg">타이머: {formatTime(timeElapsed)}</span> {/* 타이머 표시 */}
+            {bookData.bookTimer > 0 ?
+                <span className="text-lg">타이머: {formatTime(timeElapsed)}</span> : ""
+            }
             <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>
