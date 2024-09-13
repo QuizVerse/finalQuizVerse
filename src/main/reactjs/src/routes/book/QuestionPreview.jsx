@@ -154,7 +154,7 @@ export default function QuestionPreview() {
                             총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
                         </Typography>
                     </div>
-                    <div className={"space-x-2"}>
+                    <div className={"space-x-2"}>`
                         <Button variant={"outlined"}
                                 onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
                         <Button
