@@ -207,7 +207,7 @@ export default function PreviewSection({
             </div>
             {!isCollapsed && (
                 <div className="flex flex-col gap-4">
-                    <Typography>{section.sectionTitle}</Typography>
+                    {/*<Typography>{section.sectionTitle}</Typography>*/}
                     <div className="flex flex-col gap-4">
                         {showDescription && (
                             <Typography>{section.sectionDescription}</Typography>

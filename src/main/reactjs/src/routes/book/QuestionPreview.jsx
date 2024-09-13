@@ -144,14 +144,16 @@ export default function QuestionPreview() {
     return (
         <div className={"space-y-8"}>
             <div className={"flex justify-center"}>
-                <Typography variant="h4" mb={2}>문제 미리보기</Typography>
+                <Typography variant="h4" mb={2} sx={{fontWeight:"bold"}}>문제 미리보기</Typography>
             </div>
             <div className={'sticky top-0 space-y-8 bg-white z-50'}>
-                <div className={"flex justify-between p-4"}>
-                    <Typography variant="h6">{bookData.bookTitle ? bookData.bookTitle : "로드 중..."}</Typography>
-                    <Typography variant="h6">
-                        총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
-                    </Typography>
+                <div className={"flex justify-between p-4 items-end"}>
+                    <div className={"space-y-2"}>
+                        <Typography variant="h5" sx={{fontWeight:"bold"}}>{bookData.bookTitle ? bookData.bookTitle : "로드 중..."}</Typography>
+                        <Typography variant="h6" sx={{color : '#666666'}}>
+                            총 {questions.length} 문항 | 총 {bookData.bookTotalscore} 점
+                        </Typography>
+                    </div>
                     <div className={"space-x-2"}>
                         <Button variant={"outlined"}
                                 onClick={()=>navigate(`/book/questionpreviewPDF/${bookId}`)}>미리보기</Button>
