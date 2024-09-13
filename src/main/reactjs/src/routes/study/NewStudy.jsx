@@ -1,6 +1,6 @@
-import {Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Button, FormControl, IconButton, TextField, Switch, FormControlLabel} from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
@@ -8,17 +8,16 @@ export default function NewStudy() {
 
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/study/";
 
-    // Dropdown state
-    const [visibility, setVisibility] = useState('');
+    // State management
+    const [isPublic, setIsPublic] = useState(true); // 스위치 상태
     const [coverImage, setCoverImage] = useState('/placeholder.svg');
     const [studyTitle, setStudyTitle] = useState('');
     const [studyDescription, setStudyDescription] = useState('');
     const [totalMember, setTotalMember] = useState('');
     const [passwd, setPasswd] = useState('');
 
-
     const handleVisibilityChange = (event) => {
-        setVisibility(event.target.value);
+        setIsPublic(event.target.checked);
     };
 
     const handleTotalMemberChange = (e) => {
@@ -42,14 +41,14 @@ export default function NewStudy() {
             "studyDescription": studyDescription,
             "studyMemberlimit": totalMember,
             "studyImage": coverImage,
-            "studyStatus": visibility === '전체 공개' ? 1 : 0, // 상태를 1 또는 0으로 설정
-            "studyPasswd": passwd === '전체 공개' ? null : passwd
+            "studyStatus": isPublic ? 1 : 0, // 스위치로 상태 결정
+            "studyPasswd": isPublic ? null : passwd
         };
 
         console.log(newRoomData);
 
         axios.post(`/studys/inserts`, newRoomData)
-         
+
             .then((res) => {
                 console.log("응답 데이터:", res.data);
                 const studyId = res.data.studyId; // 서버로부터 받은 studyId
@@ -87,7 +86,7 @@ export default function NewStudy() {
     const handleCancel = () => {
         setStudyTitle('');
         setStudyDescription('');
-        setVisibility('');
+        setIsPublic(false);
         setCoverImage('/placeholder.svg');
         setTotalMember('');
         navigate(-1);
@@ -121,35 +120,6 @@ export default function NewStudy() {
                                 onChange={handleRoomDescriptionChange}
                             ></TextField>
                         </div>
-                        <div className="space-y-4">
-                            {/* Visibility Dropdown */}
-                            <FormControl fullWidth>
-                                <InputLabel id="visibility-label">공개범위</InputLabel>
-                                <Select
-                                    labelId="visibility-label"
-                                    value={visibility}
-                                    label="공개범위"
-                                    onChange={handleVisibilityChange}
-                                >
-                                    <MenuItem value={'전체 공개'}>전체 공개</MenuItem>
-                                    <MenuItem value={'비공개'}>비공개</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <div className="space-y-2">
-                        {visibility === '비공개' && (
-                            <FormControl fullWidth>
-                                <TextField
-                                    labelId="visibility-label"
-                                    value={passwd}
-                                    label="비밀번호"
-                                    type="password"
-                                    onChange={handleRoomPasswd}
-                                >
-                                </TextField>
-                            </FormControl>
-                        )}
-                        </div>
                         <div className="space-y-2">
                             <TextField
                                 fullWidth
@@ -158,6 +128,36 @@ export default function NewStudy() {
                                 value={totalMember}
                                 onChange={handleTotalMemberChange}
                             ></TextField>
+                        </div>
+                        <div className="space-y-4">
+                            {/* Visibility Switch with label on the left */}
+                            <div className="text-sm font-medium flex justify-between items-center">
+                                {/* Left-aligned label */}
+                                <span className="mr-auto">공개여부</span>
+
+                                {/* Right-aligned switch and status */}
+                                <div className="flex items-center">
+                                    <Switch
+                                        checked={isPublic}
+                                        onChange={handleVisibilityChange}
+                                        name="visibilitySwitch"
+                                        color="primary"
+                                    />
+                                    <span>{isPublic ? "전체 공개" : "비공개"}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            {!isPublic && (
+                                <FormControl fullWidth>
+                                    <TextField
+                                        value={passwd}
+                                        label="비밀번호"
+                                        type="password"
+                                        onChange={handleRoomPasswd}
+                                    />
+                                </FormControl>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <label
