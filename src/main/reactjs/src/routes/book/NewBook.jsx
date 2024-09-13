@@ -19,7 +19,7 @@ export default function NewBook() {
     const [coverImage, setCoverImage] = useState('');
     const [bookName, setBookName] = useState('');
     const [bookDescription, setBookDescription] = useState('');
-    const [totalPoints, setTotalPoints] = useState('');
+    const [totalPoints, setTotalPoints] = useState(100);
     const [isChecked, setIsChecked] = useState(false);
     const [timeLimit, setTimeLimit] = useState('');
     const [isTimeLimitEnabled, setIsTimeLimitEnabled] = useState(false);
@@ -233,6 +233,7 @@ export default function NewBook() {
                             label="문제집 총점(점)"
                             placeholder="100"
                             value={totalPoints}
+                            type={"number"}
                             onChange={handleTotalPointsChange}
                         />
                     </div>
