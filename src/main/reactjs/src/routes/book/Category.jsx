@@ -6,9 +6,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 // 필터 옵션 정의
 const conditions = [
-  { value: 'popular', label: '인기순' },
-  { value: 'recent', label: '최신순' },
-  { value: 'title', label: '가나다순' },
+  { value : 'bookmark', label : '즐겨찾기순' },
+  { value : 'recent', label : '최신순' },
+  { value : 'oldest', label : '오래된순'},
+  { value : 'title', label : '가나다순' },
 ];
 
 const ITEMS_PER_PAGE = 20;  // 한 페이지당 보여줄 아이템 수
@@ -28,7 +29,7 @@ export default function Category() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [page, setPage] = useState(1);
-  const [sortCondition, setSortCondition] = useState('popular');  // 정렬 기준 상태 추가
+  const [sortCondition, setSortCondition] = useState('recent');  // 정렬 기준 상태 추가
 
   const itemOffset = (page - 1) * ITEMS_PER_PAGE;
 
@@ -56,21 +57,12 @@ export default function Category() {
         const params = new URLSearchParams(location.search);
         const catId = params.get('cat') || '';
         setCategoryId(catId);
-        const response = await axios.get(`/category/`+catId);
-        setCategory(response.data)
+        const categoryResponse = await axios.get(`/category/`+catId);
+        setCategory(categoryResponse.data)
 
         if (catId) {
           const response = await axios.get(`/books/category?id=${catId}`);
           let booksData = response.data;
-
-          // 정렬 조건에 따라 책 목록 정렬
-          if (sortCondition === 'recent') {
-            booksData = booksData.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
-          } else if (sortCondition === 'title') {
-            booksData = booksData.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
-          } else if (sortCondition === 'popular') {
-            booksData = booksData.sort((a, b) => b.bookViewCount - a.bookViewCount);
-          }
 
           let bookmarkedBookIds = [];
 
@@ -91,12 +83,25 @@ export default function Category() {
                   bookQuestionCount: countQuestionResponse.data,
                   bookSectionCount: countSectionResponse.data,
                   isBookmark: bookmarkedBookIds.includes(book.bookId),
-                  userNickname: book.user?.userNickname || 'Unknown',  // 사용자 닉네임 처리
+                  userNickname: book.user?.userNickname || 'Unknown',
                 };
               })
           );
 
-          setBooks(updatedBooks.filter(book => book.bookStatus === 0 || book.bookStatus ===1) );
+
+          // 정렬 조건에 따라 책 목록 정렬
+          let sortedBooks = [...updatedBooks];
+          if (sortCondition === 'recent') {
+            sortedBooks = sortedBooks.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+          } else if (sortCondition === 'title') {
+            sortedBooks = sortedBooks.sort((a, b) => a.bookTitle.localeCompare(b.bookTitle, 'ko-KR'));
+          } else if (sortCondition === 'bookmark') {
+            sortedBooks = sortedBooks.sort((a, b) => b.bookmarkCount - a.bookmarkCount);
+          } else if (sortCondition === 'oldest') {
+            sortedBooks = sortedBooks.sort((a, b) => new Date(a.bookCreatedate) - new Date(b.bookCreatedate));
+          }
+
+          setBooks(sortedBooks);
         }
       } catch (error) {
         setError(error);
@@ -185,7 +190,9 @@ export default function Category() {
                     />
               ))
           ) : (
+
               <div>해당하는 문제집이 없습니다.</div>
+
           )}
         </section>
         <div className="flex justify-center mt-4">

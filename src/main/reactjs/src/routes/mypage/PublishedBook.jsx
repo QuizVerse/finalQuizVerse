@@ -144,7 +144,7 @@ export default function PublishedBook() {
                   />
               ))
           ) : (
-              <div>No books available</div>
+              <div style={{fontSize : "30px"}}>출제한 문제집이 없습니다!</div>
           )}
         </div>
         {/* 페이지네이션 */}

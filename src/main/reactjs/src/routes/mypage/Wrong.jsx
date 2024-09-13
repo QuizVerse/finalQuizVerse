@@ -95,7 +95,6 @@ export default function Wrong() {
                     ))
                 ) : (
                     <div>현재 오답노트가 없습니다.</div>
-
                 )}
             </div>
             {/* 페이지네이션 */}
