@@ -60,7 +60,7 @@ export default function UpdateBook() {
                     setBookName(book.bookTitle);
                     setBookDescription(book.bookDescription);
                     setCategory(book.category.categoryId);
-                    setTotalPoints(book.bookTotalScore);
+                    setTotalPoints(book.bookTotalscore);
                     setTimeLimit(book.bookTimer);
                     setIsChecked(book.bookDivide === 1 ? true : false);
                     setIsTimeLimitEnabled(book.bookTimer === 0 ? false : true);
@@ -127,10 +127,8 @@ export default function UpdateBook() {
             }
         })
             .then((res) => {
-                navigate("/book/detail/" + bookId);
-                console.log("Data saved successfully, navigating to /book/edit");
-                console.log("d오오오오오오옹",res);
-                // navigate("/book/edit/" + bookId);
+                navigate("/book/edit/" + bookId);
+                console.log("updated",res);
             })
             .catch(err => {
                 console.error("Update failed:", err);
@@ -165,6 +163,7 @@ export default function UpdateBook() {
                     <div className="space-y-2">
                         <TextField
                             fullWidth
+                            multiline
                             label="문제집 설명"
                             placeholder="문제집 설명"
                             value={bookDescription}

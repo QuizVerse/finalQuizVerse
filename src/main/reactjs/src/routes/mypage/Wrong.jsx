@@ -64,6 +64,8 @@ export default function Wrong() {
     const currentBooks = bookList.slice(itemOffset, itemOffset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(bookList.length / ITEMS_PER_PAGE);
 
+    console.log(bookList);
+
     return (
         <main className="flex-1 py-12 px-6">
             <h1 className="mb-6 text-2xl font-bold">오답노트</h1>
@@ -83,7 +85,6 @@ export default function Wrong() {
                             } // 이미지가 없을 경우 대체 이미지 사용
                             cardType="C"
                             nickname={book.wrongRepeat+"번째 오답노트" || "Unknown"}
-                            createDate={book.bookCreatedate}
                             title={book.bookTitle}
                             bookQuestionCount={book.wrongCount} // 문항수
                             bookUrl={`/book/detail/${book.bookId}`}
@@ -93,7 +94,7 @@ export default function Wrong() {
                         />
                     ))
                 ) : (
-                    <div>이용가능한 문제집이 없습니다!</div>
+                    <div>현재 오답노트가 없습니다.</div>
                 )}
             </div>
             {/* 페이지네이션 */}

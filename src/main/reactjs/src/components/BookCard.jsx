@@ -223,15 +223,22 @@ export default function BookCard(props) {
                             props.photo :
                             "/quizverse-logo.png"}
                         alt="책 이미지"
-                        className="w-full h-48 rounded-t"
+                        className="w-full h-48 rounded-t object-contain"
                     />
                 </Link>
                 <div className="p-4">
                     <Link>
+
                         <div
-                            className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">
-                            {props.nickname || "알 수 없음"} · {formatDate(props.createDate)}
+                            className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">{props.nickname || "알 수 없음"}
                         </div>
+
+
+                        {props.cardType !== "C" && (
+                            <div
+                                className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">· {formatDate(props.createDate)}
+                            </div>
+                        )}
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         {props.isWrong && (
                             <p className="mt-1 text-sm text-gray-600">문항수 {props.bookQuestionCount}</p>

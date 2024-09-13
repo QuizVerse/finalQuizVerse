@@ -31,17 +31,29 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	 @Override
 	 public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		 registry.addHandler(new ChatWebSocketHandler(), "/ws/chat")
-	             .setAllowedOrigins("http://localhost:3000","https://www.quizverse.kro.kr") // React 앱 주소
+	             .setAllowedOrigins("http://localhost:3000")
+				 //.setAllowedOrigins("http://www.quizverse.kro.kr")
 	             .addInterceptors(new HttpSessionHandshakeInterceptor());
 
 		// 화면 공유 WebSocket 핸들러 등록
 		registry.addHandler(screenShareWebSocketHandler(), "/ws/screen-share")
-				.setAllowedOrigins("http://localhost:3000","https://www.quizverse.kro.kr") // React 앱 주소
+				.setAllowedOrigins("http://localhost:3000") // React 앱 주소
+				//.setAllowedOrigins("http://www.quizverse.kro.kr")
 				.addInterceptors(new HttpSessionHandshakeInterceptor());
 		//카메라 
 		registry.addHandler(cameraWebSocketHandler(), "/ws/camera")
-			.setAllowedOrigins("http://localhost:3000","https://www.quizverse.kro.kr") // React 앱 주소
+			.setAllowedOrigins("http://localhost:3000")
+			//.setAllowedOrigins("http://www.quizverse.kro.kr")
 			.addInterceptors(new HttpSessionHandshakeInterceptor());
 
-	 }	
+	}	
+
+	  // HTTP 요청에 대한 CORS 설정 추가
+	  @Override
+	  public void addCorsMappings(CorsRegistry registry) {
+		  registry.addMapping("/ws/**")
+			  .allowedOrigins("http://localhost:3000")
+			  //.setAllowedOrigins("http://www.quizverse.kro.kr")
+			  .allowedMethods("*");
+	  }
 }
