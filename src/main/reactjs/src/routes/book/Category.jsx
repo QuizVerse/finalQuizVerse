@@ -166,7 +166,6 @@ export default function Category() {
               currentItems
                   .filter(book => book.bookStatus === 0 || book.bookStatus ===1)  // status가 0 또는 1일 때만 필터링
                   .map(book => (
-                  <div key={book.bookId}>
                     <BookCard
                         Key={book.bookId}
                         bookId={book.bookId}
@@ -186,7 +185,6 @@ export default function Category() {
                         status={book.bookStatus}
                         bookUrl={`/book/detail/${book.bookId}`}
                     />
-                  </div>
               ))
           ) : (
               <div>No books available</div>
