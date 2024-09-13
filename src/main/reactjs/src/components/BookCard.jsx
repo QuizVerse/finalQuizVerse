@@ -223,7 +223,7 @@ export default function BookCard(props) {
                             props.photo :
                             "/quizverse-logo.png"}
                         alt="책 이미지"
-                        className="w-full h-48 rounded-t"
+                        className="w-full h-48 rounded-t object-contain"
                     />
                 </Link>
                 <div className="p-4">
