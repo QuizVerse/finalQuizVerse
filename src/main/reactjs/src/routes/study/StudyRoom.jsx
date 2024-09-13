@@ -400,10 +400,6 @@ export default function StudyRoom() {
                     setIsScreenSharing(true); // 화면 공유 상태 설정
                     alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
-                // 화면 공유 트랙을 설정
-                //setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
-                //setScreenSharingParticipant(message.participantName);  // 화면 공유 중인 사람 설정
-                //setIsScreenSharing(true);  // 화면 공유 상태로 설정
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
                  // 화면 공유 중지 처리
