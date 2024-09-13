@@ -125,6 +125,7 @@ export default function Signup() {
             .then(res => {
                 if (res.data === 'success') {
                     setEmailcheck(true);
+                    setTimerRunning(false);
                     showAlert("이메일 인증이 성공적으로 완료되었습니다.");
                 } else {
                     setEmailcheck(false);
