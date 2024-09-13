@@ -231,18 +231,19 @@ export default function BookCard(props) {
                     />
                 </Link>
                 <div className="p-4">
-                    <Link>
-
-                        <div
-                            className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">{props.nickname || "알 수 없음"}
+                    <Link to={"/book/detail/"+props.bookId}>
+                        {/* 닉네임, 출제일자 출력 */}
+                        <div className={"flex space-x-1"}>
+                            <div className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">
+                                {props.nickname || "알 수 없음"}
+                            </div>
+                            {props.cardType !== "C" && (
+                                <div className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">
+                                    · {formatDate(props.createDate)}
+                                </div>
+                            )}
                         </div>
 
-
-                        {props.cardType !== "C" && (
-                            <div
-                                className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">· {formatDate(props.createDate)}
-                            </div>
-                        )}
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         {props.isWrong && (
                             <p className="mt-1 text-sm text-gray-600">문항수 {props.bookQuestionCount}</p>
