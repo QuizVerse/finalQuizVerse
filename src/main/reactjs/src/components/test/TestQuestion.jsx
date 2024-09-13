@@ -55,7 +55,6 @@ export default function TestQuestion({
                     {/* 정답 설명 및 이미지 (선택사항) */}
                     {question.questionSolution && (
                         <div className="flex flex-col gap-4">
-                            <Typography>{question.questionSolution}</Typography>
                             {question.questionSolutionimage && (
                                 <div className="flex justify-center">
                                     <img

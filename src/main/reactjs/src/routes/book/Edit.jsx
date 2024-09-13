@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Button } from "@mui/material";
+import {Button, Typography} from "@mui/material";
 import EditSection from "../../components/edit/EditSection";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -266,9 +266,12 @@ export default function Edit() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <main className="p-24 space-y-4">
-                <div className="flex justify-end">
-                    <div className="flex space-x-2">
+            <main className="px-24 space-y-4">
+                <div className={"flex flex-col items-center space-y-4"}>
+                    <div>
+                        <Typography variant={"h5"} sx={{fontWeight : "bold"}}>문제 편집하기</Typography>
+                    </div>
+                    <div className="flex space-x-2 justify-end w-full">
                         <Button variant={"outlined"} onClick={handlePublishTemporary}>임시저장</Button>
                         <Button variant={"outlined"}>
                             <Link to={"/book/edit/ai/"+bookId}>AI 문제 출제</Link>
