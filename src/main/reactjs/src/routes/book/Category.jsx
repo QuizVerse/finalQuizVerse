@@ -161,7 +161,7 @@ export default function Category() {
             ))}
           </TextField>
         </div>
-        <section className="flex flex-wrap gap-4 justify-center">
+        <section className="grid grid-cols-5 gap-4">
           {currentItems.length > 0 ? (
               currentItems
                   .filter(book => book.bookStatus === 0 || book.bookStatus ===1)  // status가 0 또는 1일 때만 필터링
