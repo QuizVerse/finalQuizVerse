@@ -104,7 +104,7 @@ export default function Category() {
         setLoading(false);
       }
     };
-
+    setLoading(true);
     checkLoginStatus();
     fetchBooks();
   }, [location.search, sortCondition, isLoggedIn]);
