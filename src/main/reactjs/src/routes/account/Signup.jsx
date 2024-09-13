@@ -267,9 +267,16 @@ export default function Signup() {
                                 value={auth_code}
                                 onChange={(e) => setAuth_code(e.target.value)}
                             />
-                            <Typography variant="caption" display="block">
-                                인증 제한 시간: {formatTime(timeLeft)}
-                            </Typography>
+                            {emailcheck ? (
+                                <Typography variant="caption" color="success.main">
+                                    이메일 인증이 완료되었습니다.
+                                </Typography>
+                            ) : (
+                                <Typography variant="caption" display="block">
+                                    인증 제한 시간: {formatTime(timeLeft)}
+                                </Typography>
+                            )}
+
                         </div>
                         <Button
                             variant="outlined"
