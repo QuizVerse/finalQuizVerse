@@ -114,7 +114,9 @@ const QuestionPreviewPDF = () => {
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className={"flex justify-end"} >
-            <Button variant={"outlined"} onClick={generatePDF}>PDF로 출력</Button>
+            <Button variant={"outlined"}>
+                <Link to={"/book/questionpreview"+bookId}>문제집 미리보기</Link>
+            </Button>
             </div>
             <div>
                 <div className="overflow-x-auto pt-5 py-8">
