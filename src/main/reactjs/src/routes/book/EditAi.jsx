@@ -1,7 +1,7 @@
 import { CallGpt } from "../../components/gpt";
 import React, {useEffect, useState} from "react";
 import { Button, TextField } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import CustomAlert from "../../components/modal/CustomAlert";
 import axios from "axios";
 import LoadingModal from "../../components/modal/LoadingModal"; // 페이지 이동을 위한 훅
@@ -126,6 +126,9 @@ export default function EditAi() {
         <div className="flex flex-col min-h-screen">
             <header className="flex items-center justify-between p-4 border-b">
                 <nav className="flex items-center space-x-4 justify-end w-full">
+                    <Button variant={"outlined"}>
+                        <Link to={"/book/edit"+bookId}>에디터로 돌아가기</Link>
+                    </Button>
                     <Button variant={"contained"} onClick={handleEditClick}>
                         에디터로 편집하기
                     </Button>
