@@ -7,9 +7,8 @@ import SearchInput from "../SearchInput";
 
 export default function AddClassMember({ onClose }) {
     const [users, setUsers] = useState([]); // 여러 사용자 저장
+    const [invitedUsers, setInvitedUsers] = useState({}); // 사용자 초대 상태 저장
     const { classId } = useParams();
-    console.log("Current users:", users);
-    console.log("Current classId:", classId);
 
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user/";
 
@@ -35,8 +34,6 @@ export default function AddClassMember({ onClose }) {
     };
 
     const handleInviteClick = async (user) => {
-        console.log("Inviting user:", user);
-        console.log("Current classId:", classId);
         if (user && classId) {
             try {
                 const response = await axios.post('/myclass/invite', null, {
@@ -47,6 +44,10 @@ export default function AddClassMember({ onClose }) {
                 });
                 if (response.status === 200) {
                     alert(`${user.userNickname}님이 성공적으로 초대되었습니다.`);
+                    setInvitedUsers(prevState => ({
+                        ...prevState,
+                        [user.userId]: true // 초대 완료 상태를 true로 설정
+                    }));
                 } else {
                     alert(`${user.userNickname}님 초대에 실패하였습니다.`);
                 }
@@ -72,11 +73,20 @@ export default function AddClassMember({ onClose }) {
                 {users.length > 0 && (
                     <List>
                         {users.map((user) => (
-                            <ListItem key={user.userId} secondaryAction={
-                                <Button variant={"contained"} onClick={() => handleInviteClick(user)}>초대하기</Button>
-                            }>
+                            <ListItem
+                                key={user.userId}
+                                secondaryAction={
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => handleInviteClick(user)}
+                                        disabled={invitedUsers[user.userId]} // 초대 완료 상태라면 버튼 비활성화
+                                    >
+                                        {invitedUsers[user.userId] ? "초대 완료" : "초대하기"} {/* 버튼 텍스트 변경 */}
+                                    </Button>
+                                }
+                            >
                                 <ListItemAvatar>
-                                    <Avatar alt={user.userNickname} src={photopath + user.userImage}/>
+                                    <Avatar alt={user.userNickname} src={photopath + user.userImage} />
                                 </ListItemAvatar>
                                 <ListItemText primary={user.userNickname} />
                             </ListItem>
