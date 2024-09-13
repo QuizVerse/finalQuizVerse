@@ -61,6 +61,9 @@ export default function SearchBook() {
                     const response = await axios.get(`/books/search?keyword=${encodeURIComponent(keyword)}`);
                     let books = response.data;
 
+                    console.log("API response:", books);  // 응답 데이터를 콘솔에 출력
+
+
                     if (isLoggedIn) {
                         // 로그인된 상태라면 사용자의 북마크 정보 가져오기
                         const bookmarksResponse = await axios.get('/bookmark/user-bookmarks');

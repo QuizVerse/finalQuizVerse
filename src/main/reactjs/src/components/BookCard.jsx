@@ -169,6 +169,7 @@ export default function BookCard(props) {
     };
 
     const formatDate = (dateString) => {
+        console.log("Raw createDate value:", dateString); // 여기서 날짜 값을 확인합니다.
         const options = { year: "numeric", month: "2-digit", day: "2-digit" };
         const formattedDate = new Date(dateString)
             .toLocaleDateString("ko-KR", options)
