@@ -4,7 +4,7 @@
 import CustomConfirm from "../../components/modal/CustomConfirm";
 import React, {useEffect, useState} from "react";
 import {
-  Button,
+  Button, Chip,
   MenuItem, Pagination,
   Stack,
   Table,
@@ -202,7 +202,11 @@ export default function Myclass() {
                           <TableCell>{row.memberCount}</TableCell>
                           <TableCell>{row.joinDate ? new Date(row.joinDate).toLocaleString() : '-'}</TableCell>
                           <TableCell>{new Date(row.formattedDate).toLocaleString()}</TableCell>
-                          <TableCell>  {row.memberRole === 1 ? '방장' : '멤버'}</TableCell>
+                          <TableCell>
+                            {row.memberRole === 2 ?
+                              <Chip label="멤버" variant="outlined" color={"primary"} />
+                              : <Chip label="방장" variant="filled" color={"primary"} />}
+                          </TableCell>
                         </TableRow>
                     ))
                 }

@@ -306,14 +306,6 @@ export default function MyclassDetail() {
                       checked={allSelected}
                       onChange={handleSelectAll}
                   />
-                  {/*<input*/}
-                  {/*    type="checkbox"*/}
-                  {/*    aria-hidden="true"*/}
-                  {/*    tabIndex="-1"*/}
-                  {/*    value="on"*/}
-                  {/*    checked={allSelected}*/}
-                  {/*    onChange={handleSelectAll}*/}
-                  {/*/>*/}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                   이름
@@ -344,14 +336,6 @@ export default function MyclassDetail() {
                           checked={member.isSelected || false}
                           onChange={() => handleSelectMember(member.classmemberId)}
                       />
-                      {/*<input*/}
-                      {/*    type="checkbox"*/}
-                      {/*    aria-hidden="true"*/}
-                      {/*    tabIndex="-1"*/}
-                      {/*    value="on"*/}
-                      {/*    checked={member.isSelected || false}*/}
-                      {/*    onChange={() => handleSelectMember(member.classmemberId)}*/}
-                      {/*/>*/}
                     </td>
                     <td className="p-4 align-middle">{member.user.userNickname}</td>
                     <td className="p-4 align-middle">

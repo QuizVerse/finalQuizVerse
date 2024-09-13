@@ -55,8 +55,6 @@ export default function BookCard(props) {
      * @description : 삭제 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
-        console.log("왜이럼", props.bookId)
-
         axios.delete('/publishedbook/delete/' + props.bookId, {
             data: user // DELETE 요청에서 바디 데이터 전달
         }).then(res => {
@@ -84,6 +82,10 @@ export default function BookCard(props) {
             .then(res => {
                 setSnackMessage("문제집이 성공적으로 복제되었습니다.");
                 setState({ open: true, Transition: Fade });
+                // 부모 컴포넌트에 삭제된 책 ID 전달
+                if (props.onCopy) {
+                    props.onCopy(props.bookId);
+                }
             })
             .catch(error => {
                 console.error("복제 실패", error);
@@ -227,18 +229,19 @@ export default function BookCard(props) {
                     />
                 </Link>
                 <div className="p-4">
-                    <Link>
-
-                        <div
-                            className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">{props.nickname || "알 수 없음"}
+                    <Link to={"/book/detail/"+props.bookId}>
+                        {/* 닉네임, 출제일자 출력 */}
+                        <div className={"flex space-x-1"}>
+                            <div className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">
+                                {props.nickname || "알 수 없음"}
+                            </div>
+                            {props.cardType !== "C" && (
+                                <div className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">
+                                    · {formatDate(props.createDate)}
+                                </div>
+                            )}
                         </div>
 
-
-                        {props.cardType !== "C" && (
-                            <div
-                                className="items-center whitespace-nowrap text-xs transition-colors text-ellipsis overflow-hidden">· {formatDate(props.createDate)}
-                            </div>
-                        )}
                         <h3 className="mt-2 text-lg font-bold text-ellipsis overflow-hidden whitespace-nowrap">{props.title}</h3>
                         {props.isWrong && (
                             <p className="mt-1 text-sm text-gray-600">문항수 {props.bookQuestionCount}</p>
