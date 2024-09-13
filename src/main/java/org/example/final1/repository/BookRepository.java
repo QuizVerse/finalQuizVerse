@@ -29,6 +29,6 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
             "ORDER BY bookmarkCount DESC")
     List<Object[]> findTop5ByCategoryIdOrderByBookmarkCountDesc(@Param("categoryId") Integer categoryId);
 
-
+    List<BookDto> findByCategoryCategoryIdAndBookIspublishedTrueAndBookStatus(Integer categoryId, short bookStatus);
 
 }

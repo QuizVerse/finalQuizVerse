@@ -35,7 +35,7 @@ public class BookService {
 
     public List<BookDto> getBooksByCategory(Integer categoryId) {
         // 카테고리 ID에 해당하는 책 목록을 가져옵니다.
-        List<BookDto> books = bookRepository.findByCategoryCategoryId(categoryId);
+        List<BookDto> books = bookRepository.findByCategoryCategoryIdAndBookIspublishedTrueAndBookStatus(categoryId, (short) 0);
         return books;
     }
 
