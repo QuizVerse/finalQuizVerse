@@ -165,6 +165,7 @@ export default function UpdateBook() {
                     <div className="space-y-2">
                         <TextField
                             fullWidth
+                            multiline
                             label="문제집 설명"
                             placeholder="문제집 설명"
                             value={bookDescription}
