@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -194,7 +194,7 @@ export default function StudyRoom() {
     async function leaveRoom(study_id) {
         console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        await axios.post(`/studys/removes?studyId=${study_id}`);
+        //await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
@@ -314,6 +314,7 @@ export default function StudyRoom() {
                 screenTrack.stop(); // 트랙 중지
                 await room.localParticipant.unpublishTrack(screenTrack); // 방에서 공유 해제
                 setScreenTrack(null); // 상태 초기화
+                setSharedScreenTrackSid(null); // 트랙 ID 초기화
                 setIsScreenSharing(false);
                 await sendScreenShareStatus(roomName, participantName, false); // 중지 상태 전송
             } else {
@@ -324,8 +325,9 @@ export default function StudyRoom() {
 
                     // 트랙을 '화면 공유' 소스로 설정하여 게시
                     await room.localParticipant.publishTrack(screenTrack, { source: Track.Source.ScreenShare });
-
+                    //, { source: Track.Source.ScreenShare }
                     setScreenTrack(screenTrack);
+                    setSharedScreenTrackSid(screenTrack.id); // 트랙 ID 저장
                     setIsScreenSharing(true);
                     await sendScreenShareStatus(roomName, participantName, true); // 시작 상태 전송
                 } catch (error) {
@@ -365,10 +367,11 @@ export default function StudyRoom() {
             return isScreenShare;
         });
     };
+    const RECONNECT_INTERVAL = 5000; // 재연결 시도 간격 (5초)
     // 화면 공유 WebSocket
     useEffect(() => {
-        const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        //const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
+        //const screenShareWs = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        const screenShareWs = new WebSocket('ws://localhost:9002/ws/screen-share');
 
         screenShareWs.onopen = () => {
             console.log('화면 공유 웹소켓 연결이 설정되었습니다.');
@@ -402,7 +405,7 @@ export default function StudyRoom() {
         };
 
         return () => {
-            screenShareWs.close(); // 컴포넌트가 언마운트될 때 연결 종료
+            screenShareWs.close(); // WebSocket 연결 종료
         };
     }, [participantName]);
 
@@ -412,16 +415,25 @@ export default function StudyRoom() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
         };
 
         ws.onmessage = (event) => {
-            console.log('메시지 수신됨:', event.data);
-            setMessages(messages.concat([event.data]));
+            // console.log('메시지 수신됨:', event.data);
+            // setMessages(messages.concat([event.data]));
+            try {
+                const parsedData = JSON.parse(event.data); // JSON으로 파싱
+                console.log('메시지 수신됨:', parsedData);
+                setMessages(messages.concat([parsedData]));
+            } catch (error) {
+                console.error('JSON 파싱 오류:', error);
+                // JSON 형식이 아닌 일반 텍스트 형식으로 처리할 경우:
+                setMessages(messages.concat([event.data])); 
+            }
         };
 
         ws.onclose = () => {
@@ -442,7 +454,12 @@ export default function StudyRoom() {
     const sendMessage = (e) => {
         e.preventDefault();
         if (socket && message) {
-            let sending = participantName + " : " + message;
+            //let sending = participantName + " : " + message;
+             // 메시지를 JSON 형식으로 구성
+            const sending = JSON.stringify({
+                username: participantName,
+                message: message
+            });
             socket.send(sending);
             setMessage(''); // 메시지 입력란 비우기
         }
@@ -453,8 +470,8 @@ export default function StudyRoom() {
 
     useEffect(() => {
         // 웹소켓 연결 설정
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -784,7 +801,7 @@ export default function StudyRoom() {
                                 <ul id="messages" className="flex flex-col">
                                     {messages.map((msg, index) => (
                                         <li key={index} className={`my-2 p-2 rounded-lg ${msg.sender === 'me' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-900'}`}>
-                                            {msg}
+                                            {msg.content}
                                         </li>
                                     ))}
                                     <li ref={chatEndRef} />
