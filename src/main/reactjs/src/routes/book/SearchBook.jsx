@@ -14,6 +14,7 @@ export default function SearchBook() {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false); // 로딩 상태 추가
     const [error, setError] = useState(null); // 에러 상태 추가
+    const [searchKeyword, setSearchKeyword] = useState(''); // 검색 키워드 상태 추가
     const location = useLocation();
 
     // 북마크 상태를 업데이트하는 함수
@@ -35,6 +36,7 @@ export default function SearchBook() {
             console.error('Failed to toggle bookmark', error);
         }
     };
+
     useEffect(() => {
         const checkLoginStatus = async () => {
             try {
@@ -55,14 +57,16 @@ export default function SearchBook() {
                 const query = new URLSearchParams(location.search);
                 const keyword = query.get("keyword");
 
+                setSearchKeyword(keyword); // 검색 키워드 저장
+
                 let bookmarkedBookIds = [];
 
                 if (keyword) {
                     const response = await axios.get(`/books/search?keyword=${encodeURIComponent(keyword)}`);
                     let books = response.data;
 
-                    console.log("API response:", books);  // 응답 데이터를 콘솔에 출력
-
+                    // Filter out private books (bookStatus !== 0)
+                    books = books.filter(book => book.bookStatus === 0);
 
                     if (isLoggedIn) {
                         // 로그인된 상태라면 사용자의 북마크 정보 가져오기
@@ -77,7 +81,6 @@ export default function SearchBook() {
                     }
 
                     setSearchResults(books);
-                    console.log("books", books);
                 }
             } catch (error) {
                 console.error("Error fetching search results:", error);
@@ -90,7 +93,6 @@ export default function SearchBook() {
         checkLoginStatus();
         fetchSearchResults();
     }, [location.search, isLoggedIn]);
-
 
     // 페이지네이션 관련 계산
     const pageCount = Math.ceil(searchResults.length / ITEMS_PER_PAGE);
@@ -114,6 +116,16 @@ export default function SearchBook() {
                 </Box>
             ) : (
                 <>
+                    {/* 검색 결과 메시지 */}
+                    {searchKeyword && (
+                        <Box display="flex" justifyContent="left" alignItems="center" mb={4}>
+                            <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                                "{searchKeyword}"에 대한 검색 결과 ({searchResults.length}개)
+                            </h1>
+                        </Box>
+
+                    )}
+
                     <section className="grid grid-cols-5 gap-4">
                         {currentItems.length > 0 ? (
                             currentItems.map(book => (
@@ -136,7 +148,7 @@ export default function SearchBook() {
                                 </div>
                             ))
                         ) : (
-                            <div>No books available</div>
+                            <div>검색 결과가 없습니다.</div>
                         )}
                     </section>
                     <div className="flex justify-center mt-4">
