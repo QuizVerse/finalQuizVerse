@@ -3,31 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <title>QuizVerse 이메일 인증</title>
+  <style>
+    /* 이메일 클라이언트 호환성 문제를 해결하기 위한 기본 스타일 */
+    body, table, td {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-family: Arial, sans-serif;
+    }
+    /* 컨테이너 스타일 */
+    .container {
+      width: 100%;
+      background-color: #E9F5FF;
+      padding: 20px 0;
+    }
+    /* 내부 컨텐츠 박스 */
+    .content-box {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    /* 헤더 스타일 */
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .header img {
+      max-width: 150px;
+    }
+    .header h2 {
+      font-size: 24px;
+      color: #333333;
+      margin: 10px 0;
+    }
+    /* 본문 스타일 */
+    .content {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .content p {
+      font-size: 16px;
+      color: #555555;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .verification-code {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333333;
+      background-color: #E9F5FF;
+      padding: 15px 30px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    /* 푸터 스타일 */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #ffffff;
+      background-color: #333333;
+      padding: 15px;
+      border-radius: 0 0 10px 10px;
+    }
+  </style>
 </head>
-<body style="background-color: #ffffff; font-family: Arial, sans-serif; color: #333333; padding: 0; margin: 0;">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="max-width: 600px;">
+<body>
+<table role="presentation" class="container" width="100%" cellpadding="0" cellspacing="0">
   <tr>
-    <td align="center" style="padding: 10px 0; background-color: #000000;">
-      <img src="cid:quizverseLogo" alt="QuizVerse 로고" style="display:block; max-width: 200px;">
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 20px; background-color: #FFC107; color: #000000;">
-      <h2 style="margin: 0;">QuizVerse에 오신 것을 환영합니다!</h2>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 20px; background-color: #ffffff;">
-      <p>이메일 인증 코드는 다음과 같습니다:</p>
-      <div style="font-size: 24px; font-weight: bold; color: #000000; background-color: #FFC107; padding: 10px 20px;">
-        <span th:text="${authenticationCode}">123456</span>
-      </div>
-      <p>이 코드를 입력하여 이메일 주소를 인증해 주세요.</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 10px; background-color: #000000; color: #ffffff;">
-      <p>이메일 인증 요청을 하지 않으셨다면 이 이메일을 무시해 주세요.</p>
+    <td>
+      <!-- 내부 컨텐츠 박스 -->
+      <table role="presentation" class="content-box" cellpadding="0" cellspacing="0">
+        <!-- 헤더 섹션 -->
+        <tr>
+          <td class="header">
+            <img src="cid:quizverseLogo" alt="QuizVerse 로고"> <!-- CID 방식으로 이미지 삽입 -->
+            <h2>QuizVerse에 오신 것을 환영합니다!</h2>
+          </td>
+        </tr>
+
+        <!-- 본문 섹션 -->
+        <tr>
+          <td class="content">
+            <p>이메일 인증 코드는 다음과 같습니다:</p>
+            <div class="verification-code" th:text="${authenticationCode}">
+              <!-- 인증 코드가 동적으로 삽입될 부분 (Thymeleaf 처리) -->
+              158156
+            </div>
+            <p>이 코드를 입력하여 이메일 주소를 인증해 주세요.</p>
+          </td>
+        </tr>
+
+        <!-- 푸터 섹션 -->
+        <tr>
+          <td class="footer">
+            <p>이메일 인증 요청을 하지 않으셨다면 이 이메일을 무시해 주세요.</p>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>

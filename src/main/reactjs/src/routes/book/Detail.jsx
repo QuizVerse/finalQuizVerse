@@ -143,7 +143,18 @@ export default function Detail() {
         <Container component="main" sx={{ mt: 8, flexGrow: 1 }}>
           <div className={"flex w-full gap-16"}>
             {/* 왼편 이미지 */}
-            <Grid item xs={12} md={4} sx={{ paddingLeft: 0 }} className={"w-full"}>
+            <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  paddingLeft: 0,
+                  display: 'flex', // Flexbox 사용
+                  justifyContent: 'center', // 가로 방향으로 가운데 정렬
+                  alignItems: 'center', // 세로 방향으로 가운데 정렬 (필요 시)
+                }}
+                className={"w-full"}
+            >
               <Card>
                 <CardMedia
                     component="img"
@@ -154,14 +165,15 @@ export default function Detail() {
                     }
                     alt="Book Image"
                     sx={{
-                      height: 400, // 이미지 높이를 400px로 설정
-                      width: '100%', // 너비를 100%로 설정하여 그리드에 맞게
-                      objectFit: 'cover', // 이미지가 잘리지 않고 적절하게 맞춰지도록 설정
+                      height: '100%', // 그리드 높이에 맞춤
+                      width: 'auto',  // 이미지 비율에 맞게 가로 크기 자동 조정
+                      objectFit: 'contain', // 이미지 비율을 유지하면서 그리드에 맞춤
                       borderRadius: 2, // 이미지에 약간의 곡선 테두리 추가
                     }}
                 />
               </Card>
             </Grid>
+
 
             <Grid item xs={12} md={6} className={"w-full"}>
               <Box sx={{display: "flex", flexDirection: "column", gap: 3}}>

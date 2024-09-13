@@ -6,12 +6,8 @@ import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.example.final1.model.BookDto;
-import org.example.final1.model.UserDto;
-import org.example.final1.service.BookService;
-import org.example.final1.service.JwtService;
-import org.example.final1.service.PublishedBookService;
-import org.example.final1.service.UserService;
+import org.example.final1.model.*;
+import org.example.final1.service.*;
 import org.example.final1.storage.NcpObjectStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +25,9 @@ public class PublishedBookController {
     private final JwtService jwtService;
     private final BookService bookService;
     private final NcpObjectStorageService storageService;
+    private final SectionService sectionService;
+    private final QuestionService questionService;
+    private final ChoiceService choiceService;
 
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
@@ -50,8 +49,6 @@ public class PublishedBookController {
         List<BookDto> books = publishedbookService.getBooksByUser(user);
         return ResponseEntity.ok(books);
     }
-
-    // 문제집 삭제
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
             @PathVariable("id") int id,
@@ -72,16 +69,16 @@ public class PublishedBookController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 Forbidden 반환
         }
 
-        // 문제 해설 사진 지우기
-        String image = book.getBookImage();
-        storageService.deleteFile(bucketName, folderName, image);
+        // 문제집을 삭제하는 대신 정보 수정
+        book.setUser(null);  // 유저 정보 삭제
+        book.setBookIspublished(false);  // bookIspublished를 false로 설정
+        book.setBookStatus((short) 2);  // bookStatus를 2로 설정
 
-        // 문제집 삭제
-        bookService.deleteBook(id);
+        // 문제집 정보 업데이트
+        bookService.saveBook(book);
 
-        return ResponseEntity.noContent().build(); // 성공적으로 삭제되면 204 반환
+        return ResponseEntity.noContent().build(); // 성공적으로 업데이트하면 204 반환
     }
-
     // 문제집 복제
     @PostMapping("/copy/{id}")
     public ResponseEntity<BookDto> copyBook(
@@ -108,10 +105,55 @@ public class PublishedBookController {
         copiedBook.setBookTitle(originalBook.getBookTitle() + " (복제본)");
         copiedBook.setBookDescription(originalBook.getBookDescription());
         copiedBook.setBookImage(originalBook.getBookImage());
+        copiedBook.setCategory(originalBook.getCategory());
+        copiedBook.setBookStatus(originalBook.getBookStatus());
+        copiedBook.setBookTimer(originalBook.getBookTimer());
+        copiedBook.setBookTotalscore(originalBook.getBookTotalscore());
+        copiedBook.setBookIspublished(originalBook.isBookIspublished());
         copiedBook.setUser(user); // 복사한 사용자에게 소유권 설정
 
         // 복제된 문제집 저장
         BookDto savedCopiedBook = bookService.saveBook(copiedBook);
+
+        // 섹션 복사
+        List<SectionDto> originalSections = sectionService.getAllSections(originalBook.getBookId());
+        for (SectionDto originalSection : originalSections) {
+            SectionDto copiedSection = new SectionDto();
+            copiedSection.setSectionNumber(originalSection.getSectionNumber());
+            copiedSection.setSectionTitle(originalSection.getSectionTitle());
+            copiedSection.setSectionDescription(originalSection.getSectionDescription());
+            copiedSection.setSectionImage(originalSection.getSectionImage());
+            copiedSection.setBook(savedCopiedBook); // 복제된 문제집과 연결
+            SectionDto savedCopiedSection = sectionService.saveSection(copiedSection);
+
+            // 질문 복사
+            List<QuestionDto> originalQuestions = questionService.getAllQuestions(originalSection.getSectionId());
+            for (QuestionDto originalQuestion : originalQuestions) {
+                QuestionDto copiedQuestion = new QuestionDto();
+                copiedQuestion.setQuestionType(originalQuestion.getQuestionType());
+                copiedQuestion.setQuestionTitle(originalQuestion.getQuestionTitle());
+                copiedQuestion.setQuestionDescription(originalQuestion.getQuestionDescription());
+                copiedQuestion.setQuestionDescriptionimage(originalQuestion.getQuestionDescriptionimage());
+                copiedQuestion.setQuestionSolution(originalQuestion.getQuestionSolution());
+                copiedQuestion.setQuestionSolutionimage(originalQuestion.getQuestionSolutionimage());
+                copiedQuestion.setQuestionOrder(originalQuestion.getQuestionOrder());
+                copiedQuestion.setQuestionPoint(originalQuestion.getQuestionPoint());
+                copiedQuestion.setSection(savedCopiedSection); // 복제된 섹션과 연결
+                copiedQuestion.setBook(savedCopiedBook); // 복제된 문제집과 연결
+                QuestionDto savedCopiedQuestion = questionService.saveQuestion(copiedQuestion);
+
+                // 선택지 복사
+                List<ChoiceDto> originalChoices = choiceService.getAllChoices(originalQuestion.getQuestionId());
+                for (ChoiceDto originalChoice : originalChoices) {
+                    ChoiceDto copiedChoice = new ChoiceDto();
+                    copiedChoice.setChoiceText(originalChoice.getChoiceText());
+                    copiedChoice.setChoiceImage(originalChoice.getChoiceImage());
+                    copiedChoice.setChoiceIsanswer(originalChoice.getChoiceIsanswer());
+                    copiedChoice.setQuestion(savedCopiedQuestion); // 복제된 질문과 연결
+                    choiceService.saveChoice(copiedChoice);
+                }
+            }
+        }
 
         // 복제된 문제집 반환
         return ResponseEntity.ok(savedCopiedBook);

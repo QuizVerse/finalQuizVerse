@@ -96,7 +96,7 @@ export default function Category() {
               })
           );
 
-          setBooks(updatedBooks);
+          setBooks(updatedBooks.filter(book => book.bookStatus === 0 || book.bookStatus ===1) );
         }
       } catch (error) {
         setError(error);
@@ -104,7 +104,7 @@ export default function Category() {
         setLoading(false);
       }
     };
-
+    setLoading(true);
     checkLoginStatus();
     fetchBooks();
   }, [location.search, sortCondition, isLoggedIn]);
@@ -163,10 +163,7 @@ export default function Category() {
         </div>
         <section className="grid grid-cols-5 gap-4">
           {currentItems.length > 0 ? (
-              currentItems
-                  .filter(book => book.bookStatus === 0 || book.bookStatus ===1)  // status가 0 또는 1일 때만 필터링
-                  .map(book => (
-                  <div key={book.bookId}>
+              currentItems.map(book => (
                     <BookCard
                         Key={book.bookId}
                         bookId={book.bookId}
@@ -186,10 +183,9 @@ export default function Category() {
                         status={book.bookStatus}
                         bookUrl={`/book/detail/${book.bookId}`}
                     />
-                  </div>
               ))
           ) : (
-              <div>No books available</div>
+              <div>해당하는 문제집이 없습니다.</div>
           )}
         </section>
         <div className="flex justify-center mt-4">

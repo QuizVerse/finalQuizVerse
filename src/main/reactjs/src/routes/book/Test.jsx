@@ -22,6 +22,7 @@ export default function ParentComponent() {
 
   const [timeElapsed, setTimeElapsed] = useState(0); // 경과 시간을 저장하는 상태
   const [timerPaused, setTimerPaused] = useState(false); // 타이머 일시정지 상태
+  const [totalTime, setTotalTime] = useState(0); // 남은 시간을 저장하는 상태
 
   // 새로고침 경고 추가
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function ParentComponent() {
     };
   }, []);
 
+  // 데이터 및 bookTimer 가져오기
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -45,6 +47,13 @@ export default function ParentComponent() {
         const bookRes = await axios.get(`/book/edit/${bookId}`);
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
+
+        // bookTimer를 가져와서 초 단위로 변환 후 타이머 설정
+        const bookTimerInMinutes = bookRes.data.book.bookTimer;
+        const bookTimerInSeconds = bookTimerInMinutes * 60; // 분 단위 -> 초 단위 변환
+        setTotalTime(bookTimerInSeconds); // 남은 시간을 초 단위로 설정
+        setTimeElapsed(bookTimerInSeconds); // 타이머 초기 설정
+        console.log(bookTimerInMinutes, bookTimerInSeconds);
 
         // 질문 가져오기
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
@@ -56,6 +65,7 @@ export default function ParentComponent() {
           });
           setQuestions(wrongQuestionsRes.data);
         }
+
       } catch (error) {
         console.error("데이터를 가져오는 도중 문제가 발생했습니다.", error);
       } finally {
@@ -66,16 +76,23 @@ export default function ParentComponent() {
     fetchData();
   }, [bookId, wrongRepeat, solvedbookId]);
 
-  // 타이머: 0부터 시작해서 증가
+  // 타이머: bookTimerInSeconds 값으로 시작해서 감소
   useEffect(() => {
-    if (!timerPaused) {
+    if (!timerPaused && timeElapsed > 0) {
       const timer = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
+        setTimeElapsed((prevTime) => {
+          const newTime = prevTime - 1;
+          if (newTime <= 0) {
+            clearInterval(timer); // 시간이 0이 되면 타이머 멈춤
+            return 0;
+          }
+          return newTime;
+        });
       }, 1000);
 
       return () => clearInterval(timer);
     }
-  }, [timerPaused]);
+  }, [timerPaused, timeElapsed]);
 
   // 답안 제출 함수
   const submitAnswers = async () => {

@@ -33,9 +33,10 @@ public class BookDto {
     @Column(name = "book_title", nullable = false, length = 50)
     private String bookTitle;
 
-    @Column(name = "book_description", nullable = false, length = 255)
+    @Column(name = "book_description", nullable = false, length = 2000)
     private String bookDescription;
 
+    // 0 : 공개, 1 : 클래스 공개, 2 : 비공개
     @Column(name = "book_status", nullable = false)
     private short bookStatus;
 
