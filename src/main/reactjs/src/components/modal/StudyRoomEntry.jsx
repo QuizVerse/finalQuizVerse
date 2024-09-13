@@ -32,6 +32,8 @@ export default function StudyRoomEntry({ studyId, studyTitle, studyPasswd, open,
         setError(false);
     };
 
+    
+
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>비밀번호 입력</DialogTitle>

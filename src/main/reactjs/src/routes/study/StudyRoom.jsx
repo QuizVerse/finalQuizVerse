@@ -23,7 +23,6 @@ import {
     ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
 import VideoComponentcopy from "../../components/VideoComponent copy";
-import Brightness1Icon from '@mui/icons-material/Brightness1';
 
 
 let APPLICATION_SERVER_URL = "";
@@ -195,7 +194,7 @@ export default function StudyRoom() {
     async function leaveRoom(study_id) {
         console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        await axios.post(`/studys/removes?studyId=${study_id}`);
+        //await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
@@ -527,28 +526,18 @@ export default function StudyRoom() {
                 {!room ? (
                     <div id="join">
                         <div id="join-dialog">
-                        <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
-                <Toolbar>
-                    <Typography variant="h4" sx={{ flexGrow: 1, textAlign: 'left' }}>
-                        <b>{roomName}</b>
-                    </Typography>
-                    
-                    {/* 중앙 정렬을 위한 컨테이너 */}
-                    <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                        <Brightness1Icon 
-                            sx={{ 
-                                fontSize: 30, 
-                                color: isCamOn ? '#ff0000' : '#00ff00', // 카메라 상태에 따라 색상 조정
-                                margin: '0 10px'
-                            }} 
-                        />
-                    </Box>
+                            <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
+                                <Toolbar>
+                                    <Typography variant="h4" >
+                                        <b>{roomName}</b>
 
-                    <IconButton color="inherit" onClick={() => leaveRoom(study_id)}>
-                        <ExitToAppIcon sx={{ fontSize: 30 }} />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
+                                    </Typography>
+                                    <Box sx={{ flexGrow: 1 }} /> {/* 이 Box가 여백을 자동으로 생성 */}
+                                    <IconButton color="inherit" onClick={() => leaveRoom(study_id)}>
+                                        <ExitToAppIcon sx={{ fontSize: 30 }} />
+                                    </IconButton>
+                                </Toolbar>
+                            </AppBar>
 
 
                             {/* 미리보는 화상창 */}
