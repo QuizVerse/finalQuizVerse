@@ -322,6 +322,11 @@ export default function StudyRoom() {
                 setIsScreenSharing(false);
                 await sendScreenShareStatus(roomName, participantName, false); // 중지 상태 전송
             } else {
+                // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
+                if (screenSharingParticipant && screenSharingParticipant !== participantName) {
+                    alert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    return; // 화면 공유 시작을 중단
+                }
                 // 화면 공유 시작
                 try {
                     const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
@@ -333,6 +338,7 @@ export default function StudyRoom() {
                     setScreenTrack(screenTrack);
                     setSharedScreenTrackSid(screenTrack.id); // 트랙 ID 저장
                     setIsScreenSharing(true);
+                    setScreenSharingParticipant(participantName); // 자신을 화면 공유 중인 참가자로 설정
                     await sendScreenShareStatus(roomName, participantName, true); // 시작 상태 전송
                 } catch (error) {
                     console.error("화면 공유 시작 중 에러 발생:", error);
@@ -387,16 +393,25 @@ export default function StudyRoom() {
             // 화면 공유 상태 업데이트 로직
             if (message.isSharing) {
                 console.log(`${message.participantName}가 화면 공유를 시작했습니다.`);
+                if (!isScreenSharing && message.participantName !== participantName) {
+                    // 다른 참가자가 공유 중이면, 이 정보를 표시하고 공유 시작을 막습니다.
+                    setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
+                    setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
+                    setIsScreenSharing(true); // 화면 공유 상태 설정
+                    alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                }
                 // 화면 공유 트랙을 설정
-                setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
-                setScreenSharingParticipant(message.participantName);  // 화면 공유 중인 사람 설정
-                setIsScreenSharing(true);  // 화면 공유 상태로 설정
+                //setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
+                //setScreenSharingParticipant(message.participantName);  // 화면 공유 중인 사람 설정
+                //setIsScreenSharing(true);  // 화면 공유 상태로 설정
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
-                // 화면 공유 중지 처리
-                setSharedScreenTrackSid(null);  // 트랙 ID 초기화
-                setScreenSharingParticipant(null);  // 공유 중인 참가자 초기화
-                setIsScreenSharing(false);  // 화면 공유 상태 해제
+                 // 화면 공유 중지 처리
+                if (message.participantName === screenSharingParticipant) {
+                    setScreenSharingParticipant(null);  // 공유 중인 참가자 초기화
+                    setSharedScreenTrackSid(null);  // 트랙 ID 초기화
+                    setIsScreenSharing(false);  // 화면 공유 상태 해제
+                }
             }
         };
 
@@ -412,27 +427,20 @@ export default function StudyRoom() {
         return () => {
             ws.close(); // WebSocket 연결 종료
         };
-    }, [participantName]);
+    }, [isScreenSharing , participantName , screenSharingParticipant]);
 
     //채팅
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [cameraSocket, setCameraSocket] = useState(null);
     const [chatSocket, setChatSocket] = useState(null);
-// 채팅 WebSocket
+    // 채팅 WebSocket
     useEffect(() => {
         //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
         const ws = new WebSocket('ws://localhost:9002/ws/chat');
-        //let heartbeatInterval;
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
-            // heartbeatInterval = setInterval(() => {
-            //     if (ws.readyState === WebSocket.OPEN) {
-            //         ws.send(JSON.stringify({ type: 'heartbeat', participantName }));
-            //         console.log('채팅 하트비트 메시지 전송');
-            //     }
-            // }, 30000); // 30초마다 하트비트 전송
         };
 
         ws.onmessage = (event) => {
@@ -444,7 +452,6 @@ export default function StudyRoom() {
 
         ws.onclose = () => {
             console.log('웹소켓 연결이 종료되었습니다.');
-            //clearInterval(heartbeatInterval); // 하트비트 중지
             attemptReconnect(); // 재연결 시도
         };
 
@@ -487,24 +494,12 @@ export default function StudyRoom() {
         };
 
         ws.onmessage = (event) => {
-            //const message = event.data; // 메시지를 텍스트 형식으로 수신
             const message = JSON.parse(event.data);
             console.log('카메라 상태 메시지 수신됨:', message);
 
-            // if (message.type === 'camera_status') {
-            //     // 카메라 상태 메시지일 경우
-            //     updateCameraStatus(message.participantName, message.isCamOn);
-            // }
-            try {
-                const message = JSON.parse(event.data);  // 카메라 상태는 JSON 형식으로 처리
-                console.log('카메라 상태 메시지 수신됨:', message);
-    
-                if (message.type === 'camera_status') {
-                    // 카메라 상태 메시지일 경우 처리
-                    updateCameraStatus(message.participantName, message.isCamOn);
-                }
-            } catch (error) {
-                console.error('JSON 파싱 오류 발생:', error);
+            if (message.type === 'camera_status') {
+                // 카메라 상태 메시지일 경우
+                updateCameraStatus(message.participantName, message.isCamOn);
             }
         };
 
