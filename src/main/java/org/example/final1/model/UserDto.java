@@ -51,7 +51,7 @@ public class UserDto {
 
 
     @Builder
-    public UserDto(String userEmail, String userPassword, String userNickname, String userImage, Timestamp userCreatedate, String userProviderid, String userProvider, String userRole,String userAccessToken) {
+    public UserDto(String userEmail, String userPassword, String userNickname, String userImage, Timestamp userCreatedate, String userProviderid, String userProvider, String userRole) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userNickname = userNickname;

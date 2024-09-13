@@ -52,8 +52,8 @@ public class SecurityConfig {
                 .addFilter(corsFilter)
                 .formLogin(form -> form
                         .loginPage("/account/login") // 로그인 페이지 설정
-                        .usernameParameter("userEmail") // username 변수를 user_email로 변경
-                        .passwordParameter("userPassword")
+                        .usernameParameter("user_email") // username 변수를 user_email로 변경
+                        .passwordParameter("user_password")
                         .loginProcessingUrl("/login/user/check") // 로그인 처리 경로
                         .defaultSuccessUrl("/") // 로그인 성공 후 이동할 기본 페이지
                 )
