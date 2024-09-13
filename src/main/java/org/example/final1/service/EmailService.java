@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -55,7 +57,9 @@ public class EmailService {
 
         // 이메일 본문 설정 (HTML 형식)
         helper.setText(htmlContent, true);
-
+        // CID로 이미지 추가
+        FileSystemResource res = new FileSystemResource(new File("C:/Quizprj/finalQuizVerse/src/main/resources/static/logooo.png"));
+        helper.addInline("quizverseLogo", res);
 
         // 이메일에 이미지 파일을 첨부합
        //helper.addInline("quizverseLogo", new ClassPathResource("reactjs/src/image/Quizverse.png"));
