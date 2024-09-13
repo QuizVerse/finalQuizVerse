@@ -3,6 +3,7 @@ package org.example.final1.controller.mypage;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,6 +29,7 @@ public class PublishedBookController {
     private final SectionService sectionService;
     private final QuestionService questionService;
     private final ChoiceService choiceService;
+    private final PublishedBookService publishedBookService;
 
     private String bucketName="bitcamp701-129";
     private String folderName="final/book";
@@ -37,18 +39,25 @@ public class PublishedBookController {
         return jwtService.getUserFromJwt(request).getUserId();
     }
 
-    // 특정 사용자가 작성한 책들 가져오기
+
+    // 특정 사용자가 작성한 책들 가져오기 - BookResponseDto로 변환
     @GetMapping("/user-books")
-    public ResponseEntity<List<BookDto>> getUserBooks(@RequestParam("userId") int userId) {
+    public ResponseEntity<List<BookResponseDto>> getUserBooks(@RequestParam("userId") int userId) {
         UserDto user = userService.getUserById(userId);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<BookDto> books = publishedbookService.getBooksByUser(user);
-        return ResponseEntity.ok(books);
+        // 사용자가 작성한 책들을 가져온 뒤, BookResponseDto로 변환
+        List<BookDto> books = publishedBookService.getBooksByUser(user);
+        List<BookResponseDto> responseBooks = books.stream()
+                .map(bookService::convertToBookResponseDto)  // BookDto를 BookResponseDto로 변환
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseBooks);
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
             @PathVariable("id") int id,
@@ -79,6 +88,7 @@ public class PublishedBookController {
 
         return ResponseEntity.noContent().build(); // 성공적으로 업데이트하면 204 반환
     }
+
     // 문제집 복제
     @PostMapping("/copy/{id}")
     public ResponseEntity<BookDto> copyBook(

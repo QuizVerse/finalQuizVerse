@@ -116,9 +116,38 @@ public class BookService {
         return bookRepository.findByBookId(id);
     }
 
+    // 문제집 삭제 메서드 (진짜 삭제함)
     public void deleteBook(int id) {
         bookRepository.deleteById(id);
     }
+
+    // BookDto를 BookResponseDto로 변환하는 메서드, 추가적인 개수 정보를 포함
+    public BookResponseDto convertToBookResponseDto(BookDto bookDto) {
+        // 각 개수 정보를 서비스에서 불러오기
+        int bookmarkCount = bookmarkService.getBookmarkCountByBookId(bookDto.getBookId());
+        int questionCount = questionService.getQuestionCountByBookId(bookDto.getBookId());
+        int sectionCount = sectionService.getSectionCountByBookId(bookDto.getBookId());
+
+        return BookResponseDto.builder()
+                .bookId(bookDto.getBookId())
+                .bookImage(bookDto.getBookImage())
+                .bookTitle(bookDto.getBookTitle())
+                .bookDescription(bookDto.getBookDescription())
+                .bookStatus(bookDto.getBookStatus())
+                .bookTimer(bookDto.getBookTimer())
+                .bookCreatedate(bookDto.getBookCreatedate())
+                .bookIspublished(bookDto.isBookIspublished())
+                .bookTotalscore(bookDto.getBookTotalscore())
+                .user(bookDto.getUser())  // UserDto 변환
+                .category(bookDto.getCategory())  // CategoryDto 변환
+                .class1(bookDto.getClass1())  // ClassDto 변환
+                .isBookmark(false)  // 임의의 북마크 여부
+                .bookmarkCount(bookmarkCount)  // 실제 북마크 개수
+                .bookSectionCount(sectionCount)  // 실제 섹션 개수
+                .bookQuestionCount(questionCount)  // 실제 질문 개수
+                .build();
+    }
+
 
 }
 

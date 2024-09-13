@@ -55,8 +55,6 @@ export default function BookCard(props) {
      * @description : 삭제 확인 버튼 클릭시 실행되는 로직
      * */
     const clickBtn2 = () => {
-        console.log("왜이럼", props.bookId)
-
         axios.delete('/publishedbook/delete/' + props.bookId, {
             data: user // DELETE 요청에서 바디 데이터 전달
         }).then(res => {
