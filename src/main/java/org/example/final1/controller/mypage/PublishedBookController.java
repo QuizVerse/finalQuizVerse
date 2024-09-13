@@ -50,8 +50,6 @@ public class PublishedBookController {
         List<BookDto> books = publishedbookService.getBooksByUser(user);
         return ResponseEntity.ok(books);
     }
-
-    // 문제집 삭제
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
             @PathVariable("id") int id,
@@ -72,14 +70,15 @@ public class PublishedBookController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 Forbidden 반환
         }
 
-        // 문제 해설 사진 지우기
-        String image = book.getBookImage();
-        storageService.deleteFile(bucketName, folderName, image);
+        // 문제집을 삭제하는 대신 정보 수정
+        book.setUser(null);  // 유저 정보 삭제
+        book.setBookIspublished(false);  // bookIspublished를 false로 설정
+        book.setBookStatus((short) 2);  // bookStatus를 2로 설정
 
-        // 문제집 삭제
-        bookService.deleteBook(id);
+        // 문제집 정보 업데이트
+        bookService.saveBook(book);
 
-        return ResponseEntity.noContent().build(); // 성공적으로 삭제되면 204 반환
+        return ResponseEntity.noContent().build(); // 성공적으로 업데이트하면 204 반환
     }
 
     // 문제집 복제
