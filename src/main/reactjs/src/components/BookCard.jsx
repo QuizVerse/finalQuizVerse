@@ -216,7 +216,7 @@ export default function BookCard(props) {
                 <MenuItem onClick={handleCopyBook}>복제하기</MenuItem>
                 <MenuItem onClick={openConfirm}>삭제하기</MenuItem>
             </Menu>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-[330px]" data-v0-t="card">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full" data-v0-t="card">
                 <Link to={`/book/detail/${props.bookId}`}>
                     <img
                         src={props.photo && props.photo.startsWith("https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/2") ?
