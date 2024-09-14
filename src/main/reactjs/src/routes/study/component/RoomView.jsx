@@ -12,6 +12,7 @@ import {ScreenShareIcon} from "@livekit/components-react";
 import VideoComponentcopy from "../../../components/study/VideoComponent copy";
 import {useState} from "react";
 import axios from "axios";
+import RoomControlPanel from "./RoomControlPanel";
 
 export default function RoomView({ roomName, isCamOn, localTrack, remoteTracks, cameraStatus, screenTrack }) {
 
@@ -44,7 +45,14 @@ export default function RoomView({ roomName, isCamOn, localTrack, remoteTracks, 
     //
 
     return (
-        <></>
+        <>
+            <div className="flex flex-col h-screen">
+                <div className="flex-grow bg-[#222222]">
+
+                </div>
+                <RoomControlPanel/>
+            </div>
+        </>
         // <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
         //     <div className="flex flex-col bg-gray-100 p-4 " style={{height: '100%'}}>
         //         {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
