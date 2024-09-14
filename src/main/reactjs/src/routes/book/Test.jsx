@@ -208,7 +208,9 @@ export default function ParentComponent() {
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
-            <span className="text-lg">타이머: {formatTime(timeElapsed)}</span> {/* 타이머 표시 */}
+            {bookData.bookTimer > 0 ?
+                <span className="text-lg">타이머: {formatTime(timeElapsed)}</span> : ""
+            }
             <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>

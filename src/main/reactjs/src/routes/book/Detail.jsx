@@ -28,7 +28,7 @@ export default function Detail() {
 
   //사진
   const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
-
+  const userImagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user/";
 
   const toggleMoreReviews = () => {
     setShowMoreReviews(!showMoreReviews);
@@ -279,7 +279,7 @@ export default function Detail() {
                                     }
                                     src={
                                       review.user && review.user.userImage
-                                          ? review.user.userImage
+                                          ? userImagePath + review.user.userImage
                                           : "/placeholder-user.jpg"
                                     }
                                     sx={{ width: 50, height: 50 }}

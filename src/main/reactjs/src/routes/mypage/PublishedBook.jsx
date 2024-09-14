@@ -60,22 +60,7 @@ export default function PublishedBook() {
 
     try {
       const res = await axios.get(`/publishedbook/user-books?userId=${user.userId}`);
-      const bookWithDetails = await Promise.all(res.data.map(async (book) => {
-        const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
-          axios.get(`/bookmark/countBookmarks/${book.bookId}`),  // 북마크 수 가져오기
-          axios.get(`/book/question/count/${book.bookId}`),      // 문항 수 가져오기
-          axios.get(`/book/section/count/${book.bookId}`)        // 섹션 수 가져오기
-        ]);
-
-        return {
-          ...book,
-          bookmarkCount: bookmarkCountResponse.data,      // 북마크 수
-          bookQuestionCount: questionCountResponse.data,  // 문항 수
-          bookSectionCount: sectionCountResponse.data     // 섹션 수
-        };
-      }));
-
-      setBookList(bookWithDetails);  // 책 목록 상태 업데이트
+      setBookList(res.data);  // 책 목록 상태 업데이트
     } catch (error) {
       setError(error);
     } finally {
@@ -137,14 +122,14 @@ export default function PublishedBook() {
                       title={book.bookTitle}
                       bookUrl={`/book/detail/${book.bookId}`}
                       bookmarkCount={book.bookmarkCount}
-                      bookQuestionCount={book.bookmarkCount}
+                      bookQuestionCount={book.bookQuestionCount}
                       bookSectionCount={book.bookSectionCount}
                       status={book.bookStatus}
                       onDelete={handleBookDelete} // 삭제 핸들러 전달
                   />
               ))
           ) : (
-              <div>No books available</div>
+              <div style={{fontSize : "30px"}}>출제한 문제집이 없습니다!</div>
           )}
         </div>
         {/* 페이지네이션 */}

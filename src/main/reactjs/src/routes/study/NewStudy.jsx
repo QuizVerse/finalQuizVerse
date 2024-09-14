@@ -1,8 +1,9 @@
-import {Button, FormControl, IconButton, TextField, Switch, FormControlLabel} from "@mui/material";
+import {Button, FormControl, IconButton, TextField, Switch, FormControlLabel, Typography} from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import React, { useState } from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 export default function NewStudy() {
 
@@ -10,11 +11,31 @@ export default function NewStudy() {
 
     // State management
     const [isPublic, setIsPublic] = useState(true); // 스위치 상태
-    const [coverImage, setCoverImage] = useState('/placeholder.svg');
+    const [totalMemberValidation, setTotalMemberValidation] = useState(true); // 스위치 상태
+    const [coverImage, setCoverImage] = useState('');
     const [studyTitle, setStudyTitle] = useState('');
     const [studyDescription, setStudyDescription] = useState('');
     const [totalMember, setTotalMember] = useState('');
     const [passwd, setPasswd] = useState('');
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
 
     const handleVisibilityChange = (event) => {
         setIsPublic(event.target.checked);
@@ -22,7 +43,13 @@ export default function NewStudy() {
 
     const handleTotalMemberChange = (e) => {
         const value = e.target.value;
-        // 숫자로 변환
+        const count = Number(value);
+        if (count < 9 && count > 1) {
+            setTotalMemberValidation(true);
+        } else {
+            setTotalMemberValidation(false);
+            return setTotalMember(''); // 조건을 만족하면 함수 종료
+        }
         setTotalMember(value ? parseInt(value, 10) : 0);
     };
 
@@ -32,8 +59,8 @@ export default function NewStudy() {
 
     // Submit new study
     const handleSubmit = () => {
-        if (totalMember > 8) {
-            alert("총 멤버 수는 8명 이상을 초과할 수 없습니다.");
+        if (!totalMemberValidation) {
+            openAlert("총 멤버 수는 1명 이상 8명 이하여야 합니다.");
             return setTotalMember(''); // 조건을 만족하면 함수 종료
         }
         const newRoomData = {
@@ -42,7 +69,7 @@ export default function NewStudy() {
             "studyMemberlimit": totalMember,
             "studyImage": coverImage,
             "studyStatus": isPublic ? 1 : 0, // 스위치로 상태 결정
-            "studyPasswd": isPublic ? null : passwd
+            "studyPasswd": isPublic ? "" : passwd
         };
 
         console.log(newRoomData);
@@ -61,7 +88,7 @@ export default function NewStudy() {
             .catch((err) => {
                 console.error("Error:", err.response ? err.response.data : err.message);
             });
-    };
+        };
 
     // Image Upload
     const handleFileChange = (event) => {
@@ -115,6 +142,7 @@ export default function NewStudy() {
                             <TextField
                                 fullWidth
                                 label="화상스터디 설명"
+                                multiline
                                 placeholder="화상스터디 설명"
                                 value={studyDescription}
                                 onChange={handleRoomDescriptionChange}
@@ -125,9 +153,16 @@ export default function NewStudy() {
                                 fullWidth
                                 label="화상스터디 인원"
                                 placeholder="최대 8명"
+                                inputProps={{ maxLength: 1, inputMode: 'numeric', pattern: '[0-9]*' }}
+                                type="text"
                                 value={totalMember}
                                 onChange={handleTotalMemberChange}
                             ></TextField>
+                            {!totalMemberValidation &&
+                                <Typography variant={"caption"} color={"red"}>
+                                    총 멤버 수는 1명 이상 8명 이하여야 합니다.
+                                </Typography>
+                            }
                         </div>
                         <div className="space-y-4">
                             {/* Visibility Switch with label on the left */}
@@ -160,27 +195,29 @@ export default function NewStudy() {
                             )}
                         </div>
                         <div className="space-y-2">
-                            <label
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                화상스터디 표지
-                            </label>
-                            <div className="relative">
+                            <div className={"flex justify-between items-center"}>
+                                <label
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                    화상스터디 표지
+                                </label>
                                 {/* Upload Button */}
                                 <div className={"flex justify-end"}>
                                     <IconButton onClick={() => document.getElementById('file-input').click()}>
                                         <CreateIcon/>
                                     </IconButton>
                                 </div>
-
+                            </div>
+                            <div className="relative">
                                 <div className={"flex justify-center"}>
                                     {/* Image Preview */}
-                                    <img
-                                        src={photopath + coverImage}
-                                        alt="Cover"
-                                        className="w-36 h-36 object-cover"
-                                        width="150"
-                                        height="150"
-                                    />
+                                    {coverImage !== '' ? (
+                                        <img
+                                            src={photopath + coverImage}
+                                            alt="Cover"
+                                            className="w-36 h-36 object-cover"
+                                            width="150"
+                                            height="150"
+                                        />) : ("")}
                                     {/* Hidden File Input */}
                                     <input
                                         type="file"
@@ -211,6 +248,12 @@ export default function NewStudy() {
                     </div>
                 </div>
             </main>
+
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
         </>
     );
 }
