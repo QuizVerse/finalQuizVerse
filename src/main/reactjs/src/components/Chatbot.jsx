@@ -1,67 +1,89 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar, Button, Fab, IconButton, TextField } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 훅
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { useNavigate } from 'react-router-dom';
 
 export default function Chatbot() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false); // 챗봇 열림/닫힘 상태 관리
     const [messages, setMessages] = useState([]); // 채팅 메시지 상태 관리
     const [userInput, setUserInput] = useState(''); // 사용자 입력 상태 관리
     const [dynamicButtons, setDynamicButtons] = useState([]); // 동적 버튼 상태 관리
-    const navigate = useNavigate(); // 페이지 이동을 위한 훅
+    const [stompClient, setStompClient] = useState(null); // WebSocket 클라이언트 상태
+    const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const socket = new SockJS('/ws'); // SockJS를 통해 WebSocket 연결
+        const client = new Client({
+            webSocketFactory: () => socket,
+            debug: (str) => {
+                console.log(str);
+            },
+            reconnectDelay: 5000, // 자동 재연결 딜레이
+            onConnect: () => {
+                console.log('Connected to WebSocket');
+                client.subscribe('/topic/public', (message) => {
+                    handleReceiveMessage(message.body); // 서버 응답 처리
+                });
+                setIsConnected(true); // 연결 완료 상태 업데이트
+            },
+            onStompError: (frame) => {
+                console.error('Broker error: ', frame.headers['message']);
+                setIsConnected(false); // 연결 상태 끊김
+            },
+        });
+
+        client.activate(); // WebSocket 연결 활성화
+        setStompClient(client);
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+                stompClient.deactivate(); // WebSocket 연결 해제
+            }
+        };
+    }, []);
 
     // 챗봇 열림/닫힘 상태를 토글하는 함수
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
     };
 
-    // 사용자의 메시지 입력 및 챗봇 응답 추가 함수
+    // 서버로 메시지를 전송하는 함수
     const handleSendMessage = () => {
-        if (!userInput) return; // 빈 입력은 무시
+        if (!userInput || !stompClient || !isConnected) {
+            console.error('STOMP client is not connected or user input is empty.');
+            return; // 빈 입력 및 stompClient가 없거나 연결되지 않았을 경우 무시
+        }
 
+        // 사용자가 입력한 메시지를 화면에 추가
         const newMessages = [
             ...messages,
-            { sender: 'user', text: userInput }, // 사용자 메시지 추가
-            { sender: 'bot', text: generateResponse(userInput) } // 챗봇의 응답 추가
+            { sender: 'user', text: userInput } // 사용자 메시지 추가
         ];
 
-        setMessages(newMessages);
-        generateButtons(userInput); // 입력에 따라 버튼 생성
+        setMessages(newMessages); // 새로운 메시지 상태 업데이트
+
+        // 서버로 메시지 전송 (STOMP 프로토콜 사용)
+        stompClient.publish({
+            destination: '/app/sendMessage',  // 서버의 @MessageMapping("/sendMessage")로 매핑된 경로
+            body: userInput,  // 사용자 입력을 그대로 전송
+        });
+
         setUserInput(''); // 입력 필드 초기화
     };
 
-    // 간단한 챗봇 응답 생성 함수
-    const generateResponse = (input) => {
-        if (input.toLowerCase().includes('회원가입')) {
-            return '회원가입 페이지로 이동할 수 있습니다.';
-        } else if (input.toLowerCase().includes('로그인')) {
-            return '로그인 페이지로 이동할 수 있습니다.';
-        } else if (input.toLowerCase().includes('책 목록')) {
-            return '책 목록 페이지로 이동할 수 있습니다.';
-        } else {
-            return '해당 명령을 이해하지 못했습니다. 다른 명령을 시도해 주세요.';
-        }
-    };
+    // 서버에서 받은 메시지를 처리하는 함수
+    const handleReceiveMessage = (chatMessage) => {
+        const newMessages = [
+            ...messages,
+            { sender: 'bot', text: chatMessage } // 서버로부터 받은 메시지 추가
+        ];
 
-    // 사용자의 입력에 따라 동적 버튼 생성
-    const generateButtons = (input) => {
-        if (input.toLowerCase().includes('회원가입')) {
-            setDynamicButtons([
-                { label: '회원가입으로 이동', path: '/account/signup' }
-            ]);
-        } else if (input.toLowerCase().includes('로그인')) {
-            setDynamicButtons([
-                { label: '로그인으로 이동', path: '/account/login' }
-            ]);
-        } else if (input.toLowerCase().includes('책 목록')) {
-            setDynamicButtons([
-                { label: '책 목록으로 이동', path: '/book/list' }
-            ]);
-        } else {
-            setDynamicButtons([]); // 매칭되는 게 없으면 버튼을 제거
-        }
+        setMessages(newMessages);
     };
 
     // 페이지 이동 함수
