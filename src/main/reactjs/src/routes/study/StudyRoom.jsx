@@ -29,16 +29,19 @@ import {
     ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
 import VideoComponentcopy from "../../components/study/VideoComponent copy";
+import JoinRoom from "./component/JoinRoom";
+import RoomControlPanel from "./component/RoomControlPanel";
+import RoomView from "./component/RoomView";
 
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 // function configureUrls() {
 //     APPLICATION_SERVER_URL = "http://localhost:3000/";
@@ -50,14 +53,15 @@ export default function StudyRoom() {
     const [localTrack, setLocalTrack] = useState(undefined);
     const [localAudioTrack, setLocalAudioTrack] = useState(null);
     const [remoteTracks, setRemoteTracks] = useState([]);
-    const [participantName, setParticipantName] = useState("");
-    const [participantImage, setParticipantImage] = useState("");
+
     const [roomName, setRoomName] = useState("");
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const { study_id } = useParams(); // URL에서 studyId 추출
+    const [participantName, setParticipantName] = useState("");
+    const [participantImage, setParticipantImage] = useState("");
+    const { studyId } = useParams(); // URL에서 studyId 추출
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
@@ -87,8 +91,8 @@ export default function StudyRoom() {
         sendCameraStatus(isCamOn); // 전송 함수 호출
     };
 
-     // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
-     const sendCameraStatus = (isCamOn) => {
+    // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
+    const sendCameraStatus = (isCamOn) => {
         if (cameraSocket && cameraSocket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: 'camera_status',
@@ -200,27 +204,6 @@ export default function StudyRoom() {
         }
     }
 
-    //방 나가기
-    async function leaveRoom(study_id) {
-        console.log("Received studyId:", study_id); // studyId 값 출력
-        // 서버에 스터디 멤버 삭제 요청
-        await axios.post(`/studys/removes?studyId=${study_id}`);
-        // 'disconnect' 메서드를 호출하여 방에서 나가기
-        await room?.disconnect();
-        // 비디오 미리보기 종료
-        stopVideoPreview(); // 추가: 미리보기 종료
-        // 상태 초기화
-        setRoom(undefined);
-        setLocalTrack(undefined);
-        setPreviewStream(undefined);
-        setRemoteTracks([]);
-        //공유화면 정리
-        if (isScreenSharing && screenTrack) {
-            await screenTrack.stop();
-            setScreenTrack(null);
-        }
-        navi(`/study/list`);
-    }
 
     async function getToken(roomName, participantName) {
         try {
@@ -409,7 +392,7 @@ export default function StudyRoom() {
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
-                 // 화면 공유 중지 처리
+                // 화면 공유 중지 처리
                 if (message.participantName === screenSharingParticipant) {
                     setScreenSharingParticipant(null);  // 공유 중인 참가자 초기화
                     setSharedScreenTrackSid(null);  // 트랙 ID 초기화
@@ -489,7 +472,7 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
-      
+
         //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
         const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
@@ -550,95 +533,49 @@ export default function StudyRoom() {
         }
     }, [messages]);
 
+
+    //방 나가기
+    async function leaveRoom(studyId) {
+        console.log("Received studyId:", studyId); // studyId 값 출력
+        // 서버에 스터디 멤버 삭제 요청
+        await axios.post(`/studys/removes?studyId=${studyId}`);
+        // 'disconnect' 메서드를 호출하여 방에서 나가기
+        await room?.disconnect();
+        // 비디오 미리보기 종료
+        stopVideoPreview(); // 추가: 미리보기 종료
+        // 상태 초기화
+        setRoom(undefined);
+        setLocalTrack(undefined);
+        setPreviewStream(undefined);
+        setRemoteTracks([]);
+        //공유화면 정리
+        if (isScreenSharing && screenTrack) {
+            await screenTrack.stop();
+            setScreenTrack(null);
+        }
+        navi(`/study/list`);
+    }
+
     return (
     <div className="flex flex-col h-screen">
-        <div className="flex-grow bg-[#222222]"></div>
-        <div className="flex justify-between items-center p-4 bg-black text-white">
-            <span className="text-sm">{roomName}</span>
-            <div className="flex space-x-2">
-                {/* 카메라 토글 버튼 */}
-                <Tooltip title={isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}>
-                    <Button onClick={toggleCam} variant={"contained"}>
-                        {isCameraEnabled ? <VideocamIcon fontSize="medium" /> : <VideocamOffIcon fontSize="medium"/>}
-                    </Button>
-                </Tooltip>
-
-                {/* 마이크 토글 버튼 */}
-                <Tooltip title={isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}>
-                    <Button onClick={toggleMicrophone} variant={"contained"}>
-                        {isMicrophoneMuted ? <MicIcon fontSize="medium" /> : <MicOffIcon fontSize="medium" />}
-                    </Button>
-                </Tooltip>
-
-                {/* 화면 공유 토글 버튼 */}
-                <Tooltip title={isScreenSharing ? '공유 중지' : '화면 공유'}>
-                    <Button onClick={toggleScreenSharing} variant={"contained"}>
-                        {isScreenSharing ? <ScreenShareIcon fontSize="medium" /> : <ScreenShareIcon fontSize="medium" />}
-                    </Button>
-                </Tooltip>
-
-                {/* 나가기 버튼 */}
-                <Tooltip title="나가기">
-                    <Button onClick={() => leaveRoom(study_id)} variant={"contained"}>
-                        <ExitToAppIcon fontSize="medium" />
-                    </Button>
-                </Tooltip>
-            </div>
-            <div className="flex space-x-2">
-                {/* 채팅창 버튼 */}
-                <Tooltip title="채팅창 열기">
-                    <Button variant={"contained"}>
-                        <ChatIcon fontSize="medium" />
-                    </Button>
-                </Tooltip>
-            </div>
+        <div className="flex-grow bg-[#222222]">
+            {!room ? (
+                <JoinRoom
+                    studyId={studyId}
+                    roomName={roomName}
+                    toggleMic={toggleMic}
+                    toggleCam={toggleCam}
+                    toggleScreenSharing={() => {}}
+                    isCamOn={isCamOn}
+                    isMicOn={isMicOn}
+                    isScreenSharing={false}
+                />
+            ) : (
+                ""
+                // <RoomView/>
+            )}
         </div>
-        {/*<div className="absolute top-0 right-0 w-80 h-full bg-white border-l">*/}
-        {/*    <div className="p-4 border-b">*/}
-        {/*        <h2 className="text-lg font-medium">회의 중 메시지</h2>*/}
-        {/*        <button*/}
-        {/*            type="button"*/}
-        {/*            role="combobox"*/}
-        {/*            aria-controls="radix-:r2:"*/}
-        {/*            aria-expanded="false"*/}
-        {/*            aria-autocomplete="none"*/}
-        {/*            dir="ltr"*/}
-        {/*            data-state="closed"*/}
-        {/*            data-placeholder=""*/}
-        {/*            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"*/}
-        {/*            id="message-permission"*/}
-        {/*        >*/}
-        {/*            <span>모든 사용자가 메시지를 보낼 수 있도록 허용</span>*/}
-        {/*            <svg*/}
-        {/*                xmlns="http://www.w3.org/2000/svg"*/}
-        {/*                width="24"*/}
-        {/*                height="24"*/}
-        {/*                viewBox="0 0 24 24"*/}
-        {/*                fill="none"*/}
-        {/*                stroke="currentColor"*/}
-        {/*                stroke-width="2"*/}
-        {/*                stroke-linecap="round"*/}
-        {/*                stroke-linejoin="round"*/}
-        {/*                className="lucide lucide-chevron-down h-4 w-4 opacity-50"*/}
-        {/*                aria-hidden="true"*/}
-        {/*            >*/}
-        {/*                <path d="m6 9 6 6 6-6"></path>*/}
-        {/*            </svg>*/}
-        {/*        </button>*/}
-        {/*    </div>*/}
-        {/*    <div className="p-4">*/}
-        {/*        <p className="text-sm text-muted-foreground">*/}
-        {/*            메시지는 고정되어 있지 않은 한, 메시지를 전송하면 통화 중인 사용자에게만 표시됩니다. 통화가 끝나면 모든*/}
-        {/*            메시지가 삭제됩니다.*/}
-        {/*        </p>*/}
-        {/*    </div>*/}
-        {/*    <div className="absolute bottom-0 w-full p-4">*/}
-        {/*        <input*/}
-        {/*            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"*/}
-        {/*            placeholder="메시지 보내기"*/}
-        {/*        />*/}
-        {/*    </div>*/}
-        {/*</div>*/}
+        <RoomControlPanel/>
     </div>
     );
 }
