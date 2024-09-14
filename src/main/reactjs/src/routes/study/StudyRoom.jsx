@@ -198,7 +198,7 @@ export default function StudyRoom() {
     async function leaveRoom(study_id) {
         console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        //await axios.post(`/studys/removes?studyId=${study_id}`);
+        await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
