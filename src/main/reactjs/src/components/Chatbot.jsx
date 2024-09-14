@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Avatar, Button, Fab, IconButton, TextField } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
@@ -15,6 +15,15 @@ export default function Chatbot() {
     const [stompClient, setStompClient] = useState(null); // WebSocket 클라이언트 상태
     const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
     const navigate = useNavigate();
+    let subscriptionRef = null; // 구독을 해제하기 위해 참조 저장
+
+    // 채팅 창 스크롤을 제어하기 위한 Ref
+    const chatEndRef = useRef(null);
+
+    // 새로운 메시지가 추가될 때마다 스크롤을 가장 아래로 이동하는 함수
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     useEffect(() => {
         const socket = new SockJS('/ws'); // SockJS를 통해 WebSocket 연결
@@ -26,9 +35,14 @@ export default function Chatbot() {
             reconnectDelay: 5000, // 자동 재연결 딜레이
             onConnect: () => {
                 console.log('Connected to WebSocket');
-                client.subscribe('/topic/public', (message) => {
-                    handleReceiveMessage(message.body); // 서버 응답 처리
-                });
+
+                // 구독을 한 번만 설정하고, 구독 ID를 저장
+                if (!subscriptionRef) {
+                    subscriptionRef = client.subscribe('/topic/public', (message) => {
+                        handleReceiveMessage(message.body); // 서버 응답 처리
+                    });
+                }
+
                 setIsConnected(true); // 연결 완료 상태 업데이트
             },
             onStompError: (frame) => {
@@ -41,6 +55,11 @@ export default function Chatbot() {
         setStompClient(client);
 
         return () => {
+            // 컴포넌트가 언마운트될 때 구독 해제 및 WebSocket 연결 해제
+            if (subscriptionRef) {
+                subscriptionRef.unsubscribe(); // 구독 해제
+                subscriptionRef = null;
+            }
             if (stompClient && stompClient.connected) {
                 stompClient.deactivate(); // WebSocket 연결 해제
             }
@@ -59,13 +78,11 @@ export default function Chatbot() {
             return; // 빈 입력 및 stompClient가 없거나 연결되지 않았을 경우 무시
         }
 
-        // 사용자가 입력한 메시지를 화면에 추가
-        const newMessages = [
-            ...messages,
+        // 사용자 메시지를 기존 메시지 목록에 추가
+        setMessages((prevMessages) => [
+            ...prevMessages,
             { sender: 'user', text: userInput } // 사용자 메시지 추가
-        ];
-
-        setMessages(newMessages); // 새로운 메시지 상태 업데이트
+        ]);
 
         // 서버로 메시지 전송 (STOMP 프로토콜 사용)
         stompClient.publish({
@@ -78,13 +95,17 @@ export default function Chatbot() {
 
     // 서버에서 받은 메시지를 처리하는 함수
     const handleReceiveMessage = (chatMessage) => {
-        const newMessages = [
-            ...messages,
+        // 서버 응답 메시지를 기존 메시지 목록에 추가
+        setMessages((prevMessages) => [
+            ...prevMessages,
             { sender: 'bot', text: chatMessage } // 서버로부터 받은 메시지 추가
-        ];
-
-        setMessages(newMessages);
+        ]);
     };
+
+    // 새로운 메시지가 추가될 때마다 자동으로 스크롤을 아래로 이동
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     // 페이지 이동 함수
     const handleNavigation = (path) => {
@@ -114,6 +135,8 @@ export default function Chatbot() {
                                 </div>
                             </div>
                         ))}
+                        {/* 채팅 끝에 자동 스크롤 위치를 참조 */}
+                        <div ref={chatEndRef} />
                     </div>
 
                     {/* 동적 버튼들 */}
