@@ -557,25 +557,31 @@ export default function StudyRoom() {
     }
 
     return (
-    <div className="flex flex-col h-screen">
-        <div className="flex-grow bg-[#222222]">
-            {!room ? (
-                <JoinRoom
-                    studyId={studyId}
-                    roomName={roomName}
-                    toggleMic={toggleMic}
-                    toggleCam={toggleCam}
-                    toggleScreenSharing={() => {}}
-                    isCamOn={isCamOn}
-                    isMicOn={isMicOn}
-                    isScreenSharing={false}
-                />
-            ) : (
-                ""
-                // <RoomView/>
-            )}
+        <div className="flex flex-col h-screen">
+            <div className="flex-grow bg-[#222222]">
+                {!room ? (
+                    <JoinRoom
+                        roomName={roomName}
+                        studyId={studyId}
+                        participantName={participantName}
+                        participantImage={participantImage}
+                        photopath={photopath}
+                        isMicOn={isMicOn}
+                        isCamOn={isCamOn}
+                        toggleMic={toggleMic}
+                        toggleCam={toggleCam}
+                        joinRoom={joinRoom}
+                        leaveRoom={leaveRoom}
+                        previewStream={previewStream}  // 추가
+                        setParticipantName={setParticipantName}  // 추가
+                        setRoomName={setRoomName}  // 추가
+                    />
+
+                ) : (
+                    ""
+                )}
+            </div>
+            <RoomControlPanel />
         </div>
-        <RoomControlPanel/>
-    </div>
     );
 }
