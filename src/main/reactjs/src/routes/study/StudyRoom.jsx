@@ -11,7 +11,13 @@ import VideoComponent from "../../components/study/VideoComponent";
 import AudioComponent from "../../components/study/AudioComponent";
 import ShareVideoComponent from "../../components/study/ShareVideoComponent";
 import StartVideoComponent from "../../components/study/StartVideoComponent";
-import { LiveKitRoom, LayoutContextProvider, ScreenShareIcon, StopScreenShareIcon } from "@livekit/components-react";
+import {
+    LiveKitRoom,
+    LayoutContextProvider,
+    ScreenShareIcon,
+    StopScreenShareIcon,
+    ChatIcon
+} from "@livekit/components-react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {AppBar, Box, Button, IconButton, Toolbar, Tooltip, Typography} from "@mui/material";
@@ -579,24 +585,12 @@ export default function StudyRoom() {
                 </Tooltip>
             </div>
             <div className="flex space-x-2">
-                <Button>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="w-6 h-6 text-white"
-                    >
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" x2="12" y1="19" y2="22"></line>
-                    </svg>
-                </Button>
+                {/* 채팅창 버튼 */}
+                <Tooltip title="채팅창 열기">
+                    <Button variant={"contained"}>
+                        <ChatIcon fontSize="medium" />
+                    </Button>
+                </Tooltip>
             </div>
         </div>
         {/*<div className="absolute top-0 right-0 w-80 h-full bg-white border-l">*/}

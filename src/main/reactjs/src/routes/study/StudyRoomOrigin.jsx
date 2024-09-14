@@ -39,7 +39,7 @@ configureUrls();
 //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 // }
 
-export default function StudyRoom() {
+export default function StudyRoomOrigin() {
     const [room, setRoom] = useState(undefined);
     const [localTrack, setLocalTrack] = useState(undefined);
     const [localAudioTrack, setLocalAudioTrack] = useState(null);
