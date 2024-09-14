@@ -36,8 +36,6 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_end")
     private Timestamp solvedbookEnd;
 
-    @Column(name = "solvedbook_timer", length = 100,nullable = true)
-    private String solvedbookTimer;
 
     @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
     @JsonManagedReference  // 부모-자식 관계에서 부모로 설정 (JSON에서 직렬화됨)
