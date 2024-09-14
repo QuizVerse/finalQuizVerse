@@ -49,11 +49,16 @@ export default function ParentComponent() {
         setSections(bookRes.data.sections);
 
         // bookTimer를 가져와서 초 단위로 변환 후 타이머 설정
-        const bookTimerInMinutes = bookRes.data.book.bookTimer;
-        const bookTimerInSeconds = bookTimerInMinutes * 60; // 분 단위 -> 초 단위 변환
-        setTotalTime(bookTimerInSeconds); // 남은 시간을 초 단위로 설정
-        setTimeElapsed(bookTimerInSeconds); // 타이머 초기 설정
-        console.log(bookTimerInMinutes, bookTimerInSeconds);
+        if (bookRes.data.book.bookTimer) {
+          const bookTimerInMinutes = bookRes.data.book.bookTimer; // 타이머를 분 단위로 가져옴
+          const bookTimerInSeconds = bookTimerInMinutes * 60; // 분을 초로 변환
+          setTotalTime(bookTimerInSeconds); // 남은 시간을 초 단위로 설정
+          setTimeElapsed(bookTimerInSeconds); // 타이머 초기 설정
+          console.log(bookTimerInMinutes, bookTimerInSeconds);
+
+        }
+
+
 
         // 질문 가져오기
         const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
@@ -125,6 +130,13 @@ export default function ParentComponent() {
       // 제출 후 시험 상태 업데이트
       await axios.post(`/book/submit/${solvedbookId}`);
       console.log("시험 제출 상태 업데이트 성공");
+      // 답안 제출 후 로컬 스토리지에서 저장된 답변 삭제
+      answers.forEach((answer) => {
+        localStorage.removeItem(`answer_${answer.questionId}`);
+      });
+
+      // 답안 제출 후 모달을 띄움
+      setConfirmVisible(true);
 
       // 답안 제출 후 모달을 띄움
       setConfirmVisible(true);
@@ -208,9 +220,11 @@ export default function ParentComponent() {
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-lg">{questions.length}문항 | {sections.length} 섹션</span>
-            {bookData.bookTimer > 0 ?
-                <span className="text-lg">타이머: {formatTime(timeElapsed)}</span> : ""
-            }
+            {bookData?.bookTimer && bookData.bookTimer > 0 ? (
+                <span className="text-lg">타이머: {formatTime(timeElapsed)}</span>
+            ) : (
+                <span className="text-lg">시간 제한 없음</span>
+            )}
             <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>
