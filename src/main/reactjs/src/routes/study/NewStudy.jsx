@@ -69,7 +69,7 @@ export default function NewStudy() {
             "studyMemberlimit": totalMember,
             "studyImage": coverImage,
             "studyStatus": isPublic ? 1 : 0, // 스위치로 상태 결정
-            "studyPasswd": isPublic ? null : passwd
+            "studyPasswd": isPublic ? "" : passwd
         };
 
         console.log(newRoomData);
@@ -88,7 +88,7 @@ export default function NewStudy() {
             .catch((err) => {
                 console.error("Error:", err.response ? err.response.data : err.message);
             });
-    };
+        };
 
     // Image Upload
     const handleFileChange = (event) => {

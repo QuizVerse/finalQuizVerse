@@ -1,9 +1,30 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CustomAlert from "./CustomAlert";
 
 function ConfirmRoleChangeModal({ members, onClose, onConfirm, action }) {
     const [selectedMember, setSelectedMember] = useState(null);
     const navigate = useNavigate();
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
 
     const handleChange = (e) => {
         setSelectedMember(e.target.value);
@@ -14,7 +35,7 @@ function ConfirmRoleChangeModal({ members, onClose, onConfirm, action }) {
             onConfirm(selectedMember);
             onClose();// 부모 컴포넌트에서 전달된 onConfirm 함수 호출
         } else {
-            alert("새로운 방장을 선택해주세요.");
+            openAlert("새로운 방장을 선택해주세요.");
         }
     };
     const handleClose = () => {
@@ -37,12 +58,12 @@ function ConfirmRoleChangeModal({ members, onClose, onConfirm, action }) {
                     <option value="" disabled>멤버 선택</option>
                     {
                         members.filter((member) => member.classmemberRole !== 1)
-                        .map((member) => (
+                            .map((member) => (
 
-                        <option key={member.classmemberId} value={member.classmemberId}>
-                            {member.user.userNickname} ({member.user.userEmail})
-                        </option>
-                    ))}
+                                <option key={member.classmemberId} value={member.classmemberId}>
+                                    {member.user.userNickname} ({member.user.userEmail})
+                                </option>
+                            ))}
                 </select>
 
                 <div className="flex justify-end space-x-2">
@@ -53,15 +74,28 @@ function ConfirmRoleChangeModal({ members, onClose, onConfirm, action }) {
                         취소
                     </button>
                     <button
-                        className="px-4 py-2 bg-[#EEF7FF]0 text-white rounded"
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
                         onClick={handleConfirm}
                     >
                         확인
                     </button>
                 </div>
+
+
+                <CustomAlert
+                    title={alertTitle}
+                    openAlert={alertVisible}
+                    closeAlert={closeAlert}
+                />
             </div>
+
+
         </div>
+
+
+
     );
+
 }
 
 export default ConfirmRoleChangeModal;
