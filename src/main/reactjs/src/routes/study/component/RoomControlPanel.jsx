@@ -8,10 +8,10 @@ import {
 } from '@mui/icons-material';
 import {ChatIcon, ScreenShareIcon} from "@livekit/components-react";
 
-export default function RoomControlPanel({ toggleMic, toggleCam, toggleScreenSharing, leaveRoom, isCamOn, isMicOn, isScreenSharing }) {
+export default function RoomControlPanel({ roomName, toggleMic, toggleCam, toggleScreenSharing, leaveRoom, isCamOn, isMicOn, isScreenSharing }) {
     return (
         <div className="flex justify-between items-center p-4 bg-black text-white">
-            {/*<span className="text-sm">{roomName}</span>*/}
+            <span className="text-sm">{roomName}</span>
             {/*<div className="flex space-x-2">*/}
             {/*    /!* 카메라 토글 버튼 *!/*/}
             {/*    <Tooltip title={isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}>*/}
