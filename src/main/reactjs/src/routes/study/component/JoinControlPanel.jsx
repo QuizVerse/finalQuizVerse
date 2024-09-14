@@ -1,4 +1,4 @@
-import {Button, IconButton, Tooltip} from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
@@ -6,27 +6,41 @@ import {
     MicOff as MicOffIcon,
     ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
-import {ChatIcon, ScreenShareIcon} from "@livekit/components-react";
+import { ChatIcon, ScreenShareIcon } from "@livekit/components-react";
 
-export default function JoinControlPanel({ roomName, toggleMic, toggleCam, toggleScreenSharing, leaveRoom, isCamOn, isMicOn, isScreenSharing }) {
+export default function JoinControlPanel({
+                                             roomName,
+                                             toggleMic,
+                                             toggleCam,
+                                             toggleScreenSharing,
+                                             leaveRoom,
+                                             isCamOn,
+                                             isMicOn,
+                                             isScreenSharing,
+                                             participantName,
+                                             participantImage,
+                                             photopath,
+                                             studyId  // 추가
+                                         }) {
     return (
         <div className="flex justify-between items-center p-4 bg-black text-white">
             <span className="text-sm">{roomName}</span>
             <div className="flex space-x-2">
                 {/* 카메라 토글 버튼 */}
-                <Tooltip title={isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}>
+                <Tooltip title={isCamOn ? '카메라 끄기' : '카메라 켜기'}>
                     <Button onClick={toggleCam} variant={"contained"}>
-                        {isCameraEnabled ? <VideocamIcon fontSize="medium"/> : <VideocamOffIcon fontSize="medium"/>}
+                        {isCamOn ? <VideocamIcon fontSize="medium"/> : <VideocamOffIcon fontSize="medium"/>}
                     </Button>
                 </Tooltip>
 
                 {/* 마이크 토글 버튼 */}
-                <Tooltip title={isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}>
-                    <Button onClick={toggleMicrophone} variant={"contained"}>
-                        {isMicrophoneMuted ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
+                <Tooltip title={isMicOn ? '마이크 끄기' : '마이크 켜기'}>
+                    <Button onClick={toggleMic} variant={"contained"}>
+                        {isMicOn ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
                     </Button>
                 </Tooltip>
 
+                {/* 프로필 이미지 */}
                 <div>
                     <img src={`${photopath}/${participantImage}`}
                          style={{width: "60px", borderRadius: "100%"}}/>
@@ -42,7 +56,9 @@ export default function JoinControlPanel({ roomName, toggleMic, toggleCam, toggl
 
                 {/* 나가기 버튼 */}
                 <Tooltip title="입장">
-                    <Button disabled={!roomName || !participantName} variant={"contained"}>
+                    <Button disabled={!roomName || !participantName}
+                            onClick={joinRoom()}
+                            variant={"contained"}>
                         입장
                     </Button>
                 </Tooltip>
