@@ -1,5 +1,5 @@
 import SearchInput from "../../components/SearchInput";
-import StudyRoomCard from "../../components/StudyRoomCard";
+import StudyRoomCard from "../../components/study/StudyRoomCard";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import React, { useEffect, useState } from "react";
