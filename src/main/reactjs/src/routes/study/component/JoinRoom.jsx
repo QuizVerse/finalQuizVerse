@@ -1,3 +1,12 @@
+import {AppBar, Box, Button, IconButton, Toolbar, Typography} from "@mui/material";
+import {
+    Videocam as VideocamIcon,
+    VideocamOff as VideocamOffIcon,
+    Mic as MicIcon,
+    MicOff as MicOffIcon,
+    ExitToApp as ExitToAppIcon
+} from '@mui/icons-material';
+
 export default function JoinRoom({ participantName, participantImage, photopath, isMicOn, isCamOn, toggleMic, toggleCam, joinRoom }) {
     return (
         <div id="join">
