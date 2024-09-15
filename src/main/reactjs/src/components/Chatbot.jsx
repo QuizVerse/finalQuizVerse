@@ -166,6 +166,8 @@ export default function Chatbot() {
                                     </div>
                                 </div>
                             ))}
+                            {/* 스크롤을 이동시키기 위한 Ref를 여기 추가 */}
+                            <div ref={chatEndRef} />
                         </div>
 
                         {/* 동적 버튼들 */}
