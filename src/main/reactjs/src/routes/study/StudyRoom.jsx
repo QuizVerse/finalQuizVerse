@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -55,6 +55,23 @@ export default function StudyRoom() {
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+        /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
 
     // 마이크 상태를 관리하는 state (초기값: off)
     const [isMicOn, setIsMicOn] = useState(false);
@@ -328,7 +345,8 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    alert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    setAlertTitle(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    setAlertVisible(true);  // CustomAlert 창을 띄움
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
@@ -382,8 +400,8 @@ export default function StudyRoom() {
 
     // 화면 공유 WebSocket
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        //const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
 
 
         ws.onopen = () => {
@@ -401,7 +419,7 @@ export default function StudyRoom() {
                     setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
                     setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
                     setIsScreenSharing(true); // 화면 공유 상태 설정
-                    alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                    //alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
@@ -435,8 +453,8 @@ export default function StudyRoom() {
     const [chatSocket, setChatSocket] = useState(null);
     // 채팅 WebSocket
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -462,8 +480,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('채팅 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                //setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
-                setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
+                setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
+                //setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -485,8 +503,8 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -514,8 +532,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('카메라 상태 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                //setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
-                setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
+                setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
+                //setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
             }, 5000); // 5초 후 재연결 시도
         };
 
