@@ -69,7 +69,7 @@ export default function StudyList() {
     }, [searchQuery, roomList]);
 
     // 방 클릭 시 이벤트 처리 함수
-    const GoRoomEvent = (studyId, studyTitle, studyPasswd, studyStatus, nowMember, totalMember) => {
+    const GoRoomEvent = (studyId, studyTitle, studyDescription, studyPasswd, studyStatus) => {
         if (nowMember >= totalMember) {
             // 인원이 가득 찬 경우 alert 메시지 출력
             alert("해당 스터디 방은 최대 인원이 가득 차 입장할 수 없습니다.");
@@ -83,15 +83,15 @@ export default function StudyList() {
         } else {
             // 비밀번호가 필요 없을 경우 바로 방으로 이동
             //navigate(`/study/room/${studyId}`, { state: { studyTitle } });
-            joinStudy(studyId, studyTitle); // 스터디 멤버 추가 요청
+            joinStudy(studyId, studyTitle, studyDescription); // 스터디 멤버 추가 요청
         }
     };
     // 스터디 멤버 추가 API 호출 함수
-    const joinStudy = (studyId, studyTitle) => {
+    const joinStudy = (studyId, studyTitle, studyDescription) => {
         axios.post(`/studys/joins?studyId=${studyId}`)  // studyId를 쿼리 매개변수로 추가
             .then((res) => {
                 console.log(res.data);  // 성공 시 메시지 출력
-                navigate(`/study/room/${studyId}`, { state: { studyTitle } });  // 방으로 이동
+                navigate(`/study/room/${studyId}`, { state: { studyTitle, studyDescription } });  // 방으로 이동
             })
     };
 
@@ -120,17 +120,14 @@ export default function StudyList() {
                         <StudyRoomCard
                             key={index}
                             title={item.studyTitle}
-                            description={item.user.userNickname}
-                            nowMember={item.nowMember || 0}
+                            description={item.studyDescription}
+                            nowMember={0}
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus)} // 방 클릭 시 이벤트
                         />
-                    )) 
-                ) : ( 
-                    <div>생성된 스터디가 없습니다.</div>
-                    )
+                    )) || <div>생성된 스터디가 없습니다.</div>
                 }
             </div>
 
