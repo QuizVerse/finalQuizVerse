@@ -1,5 +1,5 @@
 import SearchInput from "../../components/SearchInput";
-import StudyRoomCard from "../../components/StudyRoomCard";
+import StudyRoomCard from "../../components/study/StudyRoomCard";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import React, { useEffect, useState } from "react";
@@ -69,7 +69,7 @@ export default function StudyList() {
     }, [searchQuery, roomList]);
 
     // 방 클릭 시 이벤트 처리 함수
-    const GoRoomEvent = (studyId, studyTitle, studyDescription, studyPasswd, studyStatus) => {
+    const GoRoomEvent = (studyId, studyTitle, studyDescription, studyPasswd, studyStatus, nowMember, totalMember) => {
         if (nowMember >= totalMember) {
             // 인원이 가득 찬 경우 alert 메시지 출력
             alert("해당 스터디 방은 최대 인원이 가득 차 입장할 수 없습니다.");
@@ -125,7 +125,7 @@ export default function StudyList() {
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyDescription, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
                         />
                     ))
                 ) : (
