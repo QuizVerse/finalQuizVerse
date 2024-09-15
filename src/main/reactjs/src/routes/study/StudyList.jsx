@@ -1,5 +1,5 @@
 import SearchInput from "../../components/SearchInput";
-import StudyRoomCard from "../../components/study/StudyRoomCard";
+import StudyRoomCard from "../../components/StudyRoomCard";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import React, { useEffect, useState } from "react";
@@ -120,14 +120,17 @@ export default function StudyList() {
                         <StudyRoomCard
                             key={index}
                             title={item.studyTitle}
-                            description={item.studyDescription}
-                            nowMember={0}
+                            description={item.user.userNickname}
+                            nowMember={item.nowMember || 0}
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyDescription, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
                         />
-                    )) || <div>생성된 스터디가 없습니다.</div>
+                    ))
+                ) : (
+                    <div>생성된 스터디가 없습니다.</div>
+                )
                 }
             </div>
 
