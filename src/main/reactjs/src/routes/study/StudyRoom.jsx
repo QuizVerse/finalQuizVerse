@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
+  function configureUrls() {
+      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  }
 
-function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -382,8 +382,8 @@ export default function StudyRoom() {
 
     // 화면 공유 WebSocket
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        //const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
 
 
         ws.onopen = () => {
@@ -435,8 +435,8 @@ export default function StudyRoom() {
     const [chatSocket, setChatSocket] = useState(null);
     // 채팅 WebSocket
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -462,8 +462,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('채팅 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
-                //setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
+                //setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
+                setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -485,8 +485,8 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -514,8 +514,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('카메라 상태 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
-                //setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
+                //setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
+                setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
             }, 5000); // 5초 후 재연결 시도
         };
 
