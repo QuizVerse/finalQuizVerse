@@ -36,7 +36,7 @@ public class UserService {
 
     // email로 가입 여부 확인
     public boolean getEmailcheck(String user_email) {
-        return userDaoInter.getEmailcheck(user_email) == 1;
+        return userDaoInter.getEmailCheck(user_email) == 1;
     }
 
     //회원 탈퇴
