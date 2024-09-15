@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Avatar, Button, Fab, IconButton, TextField } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import {Avatar, Button, Fab, IconButton, TextField} from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
@@ -66,9 +66,51 @@ export default function Chatbot() {
         };
     }, []);
 
-    // 챗봇 열림/닫힘 상태를 토글하는 함수
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
+        if (!isChatbotOpen) {
+            // 첫 번째 메시지: 환영 인사
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'bot', text: "안녕하세요, 퀴즈버스에 오신 것을 환영합니다!\n무엇을 도와드릴까요?" }
+            ]);
+
+            // 두 번째 메시지: 자주 묻는 질문 목록
+            setTimeout(() => {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: 'bot', text: "자주 묻는 질문 목록:" }
+                ]);
+
+                // 세 번째 작업: 0.5초 뒤에 동적 버튼 표시
+                setTimeout(() => {
+                    setDynamicButtons([
+                        { label: '퀴즈버스 소개', value: '퀴즈버스 소개' },
+                        { label: '회원 가입', value: '회원 가입' },
+                        { label: '비밀번호', value: '비밀번호' },
+                        { label: '문제집 생성', value: '문제집 생성' },
+                        { label: '오답노트', value: '오답노트' },
+                        { label: '클래스', value: '클래스' },
+                        { label: '화상스터디', value: '화상스터디' }
+                    ]);
+                }, 300); // 0.2초 후에 동적 버튼을 추가
+            }, 200); // 0.2초 후에 질문 목록 추가
+        }
+    };
+
+    // 버튼 클릭 시 서버로 메시지 전송
+    const handleButtonClick = (value) => {
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: 'user', text: value } // 사용자 선택 메시지 추가
+        ]);
+
+        if (stompClient && isConnected) {
+            stompClient.publish({
+                destination: '/app/sendMessage',  // 서버의 @MessageMapping("/sendMessage")로 매핑된 경로
+                body: value,  // 버튼으로 선택한 질문을 서버로 전송
+            });
+        }
     };
 
     // 서버로 메시지를 전송하는 함수
@@ -95,6 +137,7 @@ export default function Chatbot() {
 
     // 서버에서 받은 메시지를 처리하는 함수
     const handleReceiveMessage = (chatMessage) => {
+        console.log("Received message from server:", chatMessage); // 서버 메세지 확인
         // 서버 응답 메시지를 기존 메시지 목록에 추가
         setMessages((prevMessages) => [
             ...prevMessages,
@@ -107,51 +150,38 @@ export default function Chatbot() {
         scrollToBottom();
     }, [messages]);
 
-    // 페이지 이동 함수
-    const handleNavigation = (path) => {
-        navigate(path); // 주어진 경로로 이동
-        toggleChatbot(); // 이동 후 챗봇을 닫기
-    };
-
     return (
         <div className="fixed bottom-4 right-4 flex flex-col items-end" style={{ zIndex: 9999 }}>
-            {/* 챗봇 열림 상태에 따라 내용 표시 */}
             {isChatbotOpen && (
-                <div className={`transition-all duration-500 ease-in-out transform scale-100 opacity-100 w-[350px] p-4 bg-white border border-blue-300 rounded-lg shadow-lg h-[500px] flex flex-col justify-between`}>
-                    {/* 오른쪽 상단의 닫기(X) 버튼 */}
-                    <div className="flex justify-between items-center mb-2">
-                        <p className="text-sm font-bold">챗봇</p>
-                        <IconButton onClick={toggleChatbot}>
-                            <CloseIcon />
-                        </IconButton>
-                    </div>
+                <div className="w-[300px] p-4 bg-[#E0F1FF] border border-blue-300 rounded-lg h-96 flex flex-col justify-between">
+                    <div>
+                        <img src="/logooo.png" alt="quizverse" width={"150px"}/>
 
-                    {/* 채팅 메시지 창 */}
-                    <div className="flex flex-col gap-2 overflow-y-auto mb-4" style={{ height: '300px' }}>
-                        {messages.map((message, index) => (
-                            <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-blue-100' : 'bg-gray-200'}`}>
-                                    {message.text}
+                        {/* 채팅 메시지 창 */}
+                        <div className="flex flex-col gap-2 overflow-y-auto mb-4 h-[150px]">
+                            {messages.map((message, index) => (
+                                <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-blue-100' : 'bg-gray-200'}`}>
+                                        {message.text}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                        {/* 채팅 끝에 자동 스크롤 위치를 참조 */}
-                        <div ref={chatEndRef} />
-                    </div>
+                            ))}
+                        </div>
 
-                    {/* 동적 버튼들 */}
-                    <div className="flex flex-col gap-2 mb-4">
-                        {dynamicButtons.map((button, index) => (
-                            <Button key={index} variant="outlined" onClick={() => handleNavigation(button.path)}>
-                                {button.label}
-                            </Button>
-                        ))}
+                        {/* 동적 버튼들 */}
+                        <div className="flex space-x-2 mb-4">
+                            {dynamicButtons.map((button, index) => (
+                                <Button key={index} variant="outlined" onClick={() => handleButtonClick(button.value)}>
+                                    {button.label}
+                                </Button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* 메시지 입력창 및 전송 버튼 */}
                     <div className="flex items-center gap-2">
-                        <TextField
-                            fullWidth
+                        <input
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
                             placeholder="메시지를 입력하세요..."
                             value={userInput}
                             onChange={(e) => setUserInput(e.target.value)}
@@ -166,7 +196,6 @@ export default function Chatbot() {
                 </div>
             )}
 
-            {/* 챗봇이 닫혀 있을 때 로고 아이콘 표시 */}
             {!isChatbotOpen && (
                 <Fab color="primary" aria-label="help" onClick={toggleChatbot}>
                     <HelpOutlineIcon />
