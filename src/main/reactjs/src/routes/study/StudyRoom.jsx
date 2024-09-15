@@ -29,15 +29,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
 
-// function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
-//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-// }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -71,27 +71,29 @@ export default function StudyRoom() {
     // 카메라 상태를 토글하는 함수
     const toggleCam = async (e) => {
         e.preventDefault(); // 폼 제출 방지
-        if (isCamOn) {
+        if (!isCamOn) {
             await stopVideoPreview();
         } else {
             startVideoPreview();
         }
-        //setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
-        const newCamStatus = !isCamOn; // 새 상태
-        setIsCamOn(newCamStatus); // 상태 변경
-        sendCameraStatus(newCamStatus); // 변경된 상태 전송
-        //sendCameraStatus(isCamOn); // 전송 함수 호출
+        // 상태를 비동기로 변경 후 정확한 상태를 전송
+        setIsCamOn((prevState) => {
+            const newCamStatus = !prevState; // 새로운 카메라 상태
+            sendCameraStatus(newCamStatus);  // 변경된 상태를 웹소켓으로 전송
+            return newCamStatus;  // 상태 업데이트
+        });
     };
 
      // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
      const sendCameraStatus = (isCamOn) => {
-        if (cameraSocket && cameraSocket.readyState === WebSocket.OPEN) {
+        if (cameraSocket) {
             const message = JSON.stringify({
                 type: 'camera_status',
                 participantName: participantName,
                 isCamOn: isCamOn,
             });
             cameraSocket.send(message);
+            console.log("카메라 상태 전송됨:", message); // 전송된 메시지 출력
         }
     };
 
@@ -380,8 +382,8 @@ export default function StudyRoom() {
 
     // 화면 공유 WebSocket
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        //const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
 
 
         ws.onopen = () => {
@@ -433,8 +435,8 @@ export default function StudyRoom() {
     const [chatSocket, setChatSocket] = useState(null);
     // 채팅 WebSocket
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -460,8 +462,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('채팅 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                //setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
-                setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
+                setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
+                //setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -483,9 +485,8 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
-      
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -513,8 +514,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('카메라 상태 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                //setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
-                setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
+                setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
+                //setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -529,7 +530,7 @@ export default function StudyRoom() {
     const updateCameraStatus = (participantName, isCamOn) => {
         setCameraStatus(prevStatus => ({
             ...prevStatus,
-            [participantName]: isCamOn
+            [participantName]: isCamOn,
         }));
         console.log(`${participantName}의 카메라 상태 업데이트됨: ${isCamOn ? '켜짐' : '꺼짐'}`);
     };
@@ -778,7 +779,7 @@ export default function StudyRoom() {
                                 {remoteTracks
                                     .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
                                     .map(remoteTrack => {
-                                        const isCamOn = cameraStatus[remoteTrack.participantIdentity];
+                                        const isCamOn = cameraStatus[remoteTrack.participantIdentity]; // 웹소켓으로부터 수신된 카메라 상태
                                         return remoteTrack.trackPublication.kind === "video" ? (
                                             !isCamOn ? (
                                                 <VideoComponent
@@ -786,11 +787,12 @@ export default function StudyRoom() {
                                                     track={remoteTrack.trackPublication.videoTrack}
                                                     participantIdentity={remoteTrack.participantIdentity}
                                                 />
-                                            ) :
+                                            ) : (
                                                 <VideoComponentcopy
                                                     participantIdentity={remoteTrack.participantIdentity}
                                                     participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
                                                 />
+                                            )
                                         ) : (
                                             <AudioComponent
                                                 key={remoteTrack.trackPublication.trackSid}
