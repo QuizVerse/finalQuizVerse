@@ -57,7 +57,7 @@ export default function JoinControlPanel({
                 {/* 나가기 버튼 */}
                 <Tooltip title="입장">
                     <Button disabled={!roomName || !participantName}
-                            onClick={joinRoom()}
+                            // onClick={joinRoom}
                             variant={"contained"}>
                         입장
                     </Button>

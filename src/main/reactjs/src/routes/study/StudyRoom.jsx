@@ -13,16 +13,16 @@ import StartVideoComponent from "../../components/study/StartVideoComponent";
 import {LiveKitRoom, LayoutContextProvider, ScreenShareIcon, StopScreenShareIcon} from "@livekit/components-react";
 import axios from "axios";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
-import {AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, IconButton, Toolbar, Tooltip, Typography} from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
     Mic as MicIcon,
     MicOff as MicOffIcon,
-    ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
 import VideoComponentcopy from "../../components/study/VideoComponent copy";
-
+import LoginIcon from '@mui/icons-material/Login';
+import CloseIcon from '@mui/icons-material/Close';
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
@@ -550,47 +550,71 @@ export default function StudyRoom() {
                 {/* token={token} serverUrl={LIVEKIT_URL} connect={!!token} */}
                 {!room ? (
                     <div className={"bg-black w-screen h-screen flex items-center justify-center"}>
-                        <div className={"bg-gray-50 w-[720px] h-[540px]"}>
-                            <div>
-                                <Typography variant="h4">
-                                    <b>{roomName}</b>
-                                </Typography>
-                                <Box sx={{flexGrow: 1}}/> {/* 이 Box가 여백을 자동으로 생성 */}
-                                <IconButton color="inherit" onClick={() => leaveRoom(study_id)}>
-                                    <ExitToAppIcon sx={{fontSize: 30}}/>
-                                </IconButton>
+                        <div className={"bg-[#666666] w-[720px] rounded"}>
+                            <div className={"p-4 space-y-4"}>
+                                <div className={"flex justify-between items-center"}>
+                                    <Typography variant="h5">
+                                        <b>{roomName}</b>
+                                    </Typography>
+                                    <Tooltip title="나가기">
+                                        <IconButton onClick={() => leaveRoom(study_id)}>
+                                            <CloseIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+                                <div className={"break-all h-[48px] overflow-y-scroll"}>
+                                    adasdasdasdasdasdasdasdaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfadfasdfkjasldfhsldfjalsdkjfl;asdkjfalskdjfl;askdjfls;adkjf;lsadkjf;dsakljfadasdasdasdasdasdasdasdaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfadfasdfkjasldfhsldfjalsdkjfl;asdkjfalskdjfl;askdjfls;adkjf;lsadkjf;dsakljf
+                                </div>
                             </div>
 
-                            <div>
-                                {/* 미리보는 화상창 */}
-                                {previewStream ? (
-                                    <StartVideoComponent
-                                        track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
-                                        local={true}
-                                    />
-                                ) : (
-                                    // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                    <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
-                                )}
+                            <div className={"h-[360px] flex justify-center items-center p-4"}>
+                                <div className={"bg-[#222222] w-full h-full flex justify-center items-center"}>
+                                    {/* 미리보는 화상창 */}
+                                    {previewStream ? (
+                                        <StartVideoComponent
+                                            track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
+                                            local={true}
+                                        />
+                                    ) : (
+                                        // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                        <div>
+                                            <Avatar title={participantName}
+                                                    src={`${photopath}/${participantImage}`}
+                                                    sx={{width: "96px", height: "96px"}}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
+
 
                             {/* 버튼 스위칭 위치입니다 */}
-                            <div className={"flex"}>
-                                <IconButton onClick={toggleMic}>
-                                    {isMicOn ? <MicOffIcon/> : <MicIcon/>}
-                                </IconButton>
+                            <div className={"p-4 flex justify-center gap-4 bg-[#222222] rounded-b"}>
+                                {/* 카메라 토글 버튼 */}
+                                <Tooltip title={isCamOn ? '카메라 끄기' : '카메라 켜기'}>
+                                    <Button onClick={toggleCam} variant={"contained"}>
+                                        {isCamOn ? <VideocamIcon fontSize="medium"/> :
+                                            <VideocamOffIcon fontSize="medium"/>}
+                                    </Button>
+                                </Tooltip>
 
-                                <IconButton onClick={toggleCam} size="large">
-                                    {isCamOn ? <VideocamOffIcon/> : <VideocamIcon/>}
-                                </IconButton>
+                                {/* 마이크 토글 버튼 */}
+                                <Tooltip title={isMicOn ? '마이크 끄기' : '마이크 켜기'}>
+                                    <Button onClick={toggleMic} variant={"contained"}>
+                                        {isMicOn ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
+                                    </Button>
+                                </Tooltip>
+
 
                                 <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
-                                <Button
-                                    variant="contained"
-                                    onClick={joinRoom}
-                                    disabled={!roomName || !participantName}>
-                                    입장
-                                </Button>
+                                {/* 나가기 버튼 */}
+                                <Tooltip title="입장">
+                                    <Button disabled={!roomName || !participantName}
+                                            onClick={joinRoom}
+                                            variant={"contained"}>
+                                        <LoginIcon/>
+                                    </Button>
+                                </Tooltip>
                             </div>
                         </div>
                     </div>
@@ -677,7 +701,7 @@ export default function StudyRoom() {
                                     {/* 나가기 버튼 */}
                                     <button className="flex flex-col items-center justify-center py-1 px-2"
                                             onClick={() => leaveRoom(study_id)}>
-                                        <ExitToAppIcon fontSize="medium"/>
+                                        <CloseIcon fontSize="medium"/>
                                         <span className="text-s mt-1">나가기</span>
                                     </button>
                                 </div>
