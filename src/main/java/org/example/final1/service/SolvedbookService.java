@@ -69,6 +69,7 @@ public class SolvedbookService {
 
         // isSubmitted 값을 true로 설정
         solvedbook.setSolvedbookIssubmitted(true);
+        solvedbook.setSolvedbookEnd(new Timestamp(System.currentTimeMillis()));
 
         // 업데이트 내용을 저장
         solvedbookRepository.save(solvedbook);
@@ -104,16 +105,11 @@ public class SolvedbookService {
                     .solvedbookIssubmitted(solvedBook.isSolvedbookIssubmitted())
                     .solvedbookStart(solvedBook.getSolvedbookStart())
                     .solvedbookEnd(solvedBook.getSolvedbookEnd())
-                    .solvedbookTimer(solvedBook.getSolvedbookTimer())
                     .build();
         }).collect(Collectors.toList());
     }
 
-    public SolvedbookDto getSolvedBookBysolvedbookId(Integer solvedbookId) {
-        // Optional에서 SolvedbookDto 반환, 없으면 예외 처리
-        return solvedBookRepository.findBySolvedbookId1(solvedbookId)
-                .orElseThrow(() -> new IllegalArgumentException("Solvedbook not found with ID: " + solvedbookId));
-    }
+
 
 
     public SolvedbookDto getSolvedBookById(Integer solvedbookId) {
@@ -137,9 +133,5 @@ public class SolvedbookService {
     }
 
 
-    // Solvedbook을 업데이트하는 메서드
-//    public void updateSolvedBook(SolvedbookDto solvedbook) {
-//        solvedbookRepository.save(solvedbook); // DB에 업데이트
-//    }
 
 }

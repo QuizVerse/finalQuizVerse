@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BookCard from "../../components/BookCard";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -112,12 +113,11 @@ export default function Summary() {
                         <span className="text-[#3877BB]">{user.userNickname}</span>님이 만든 문제집
                     </h2>
                     <Button
-                        className="rounded-lg border bg-card text-card-foreground shadow-sm"
                         variant="text"
                         component={Link}
-                        to="/mypage/publishedbook"
-                    >
+                        to="/mypage/publishedbook">
                         전체보기
+                        <ArrowForwardIosIcon sx={{fontSize : "12px", marginLeft : "4px", paddingBottom : "2px"}} color={"primary"}/>
                     </Button>
                 </div>
                 <div className="grid grid-cols-4 gap-4">

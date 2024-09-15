@@ -9,6 +9,7 @@ import SearchInput from "../../components/SearchInput";
 import CustomAlert from "../../components/modal/CustomAlert";
 import Pagination from '@mui/material/Pagination'; // Material UI Pagination 가져오기
 import Stack from '@mui/material/Stack';
+import CustomConfirm from "../../components/modal/CustomConfirm";
 
 const ITEMS_PER_PAGE = 5; // 페이지당 항목 수
 const SPACING = 2; // 페이지네이션 간격
@@ -30,6 +31,27 @@ export default function MyclassDetail() {
   // alert state
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
+
+  const [openConfirm, setOpenConfirm] = useState(false); // CustomConfirm 모달 상태 추가
+  const [confirmId, setConfirmId] = useState(null); // CustomConfirm 모달의 id 상태 추가
+
+
+  // 확인 버튼 클릭 시 처리할 로직
+  const handleConfirm = () => {
+    setOpenConfirm(false); // CustomConfirm 모달 닫기
+    if (confirmId === 18) {
+      setOpenRoleChange({ isOpen: true, action: "leaveClass" }); // ConfirmRoleChangeModal 열기
+    } else if (confirmId === 19) {
+      setOpenRoleChange({ isOpen: true, action: "changeRole" }); // 방장 권한 부여 모달 열기
+    }
+  };
+
+// 취소 버튼 클릭 시 처리할 로직
+  const handleCancel = () => {
+    setOpenConfirm(false); // CustomConfirm 모달 닫기
+    setOpenRoleChange({ isOpen: false, action: null }); // ConfirmRoleChangeModal을 무조건 닫기
+  };
+
 
   /**
    * @description : Alert창 열릴 때
@@ -133,8 +155,8 @@ export default function MyclassDetail() {
     if (members.length > 1 && userRole === 1) {
       // 멤버가 1명 이상이고 사용자가 방장일 때
       console.log("Opening role change modal because user is a leader and there are more than 1 member");
-      openAlert("탈퇴를 하기 위해선 방장 역할을 멤버에게 방장 역할을 넘겨주여야 합니다.");
-      setOpenRoleChange({ isOpen: true, action: "leaveClass" }); // 방장 권한 변경 모달을 엽니다.
+      setConfirmId(18); // CustomConfirm 모달에 사용할 ID 설정
+      setOpenConfirm(true); // CustomConfirm 모달 열기
     } else {
       // 멤버가 1명이거나 사용자가 방장이 아닐 때
       console.log("Deleting class or leaving because user is not a leader or there is only one member");
@@ -149,8 +171,8 @@ export default function MyclassDetail() {
     if (members.length > 1 && userRole === 1) {
       // 멤버가 1명 이상이고 사용자가 방장일 때
       console.log("Opening role change modal because user is a leader and there are more than 1 member");
-      openAlert("방장 역할을 멤버에게 넘겨주게 되며 자신의 역할은 멤버로 변환이 됩니다.");
-      setOpenRoleChange({ isOpen: true, action: "changeRole" }); // 방장 권한 변경 모달을 엽니다.
+      setConfirmId(19); // CustomConfirm 모달에 사용할 ID 설정
+      setOpenConfirm(true); // CustomConfirm 모달 열기
     } else {
       console.log("Cannot change role because there are not enough members");
       openAlert("방장을 부여할 멤버들이 없습니다.");
@@ -410,6 +432,14 @@ export default function MyclassDetail() {
               />
           ))}
         </div>
+        {/* CustomConfirm 모달 */}
+        <CustomConfirm
+            openConfirm={openConfirm}
+            closeConfirm={handleCancel} // 취소 버튼 클릭 시 모달 닫기만 함
+            id={confirmId}
+            clickBtn1={handleCancel} // 취소 버튼 클릭 시 모달 닫기
+            clickBtn2={handleConfirm} // 확인 버튼 클릭 시 방장 변경 모달 열기
+        />
 
         <CustomAlert
             title={alertTitle}

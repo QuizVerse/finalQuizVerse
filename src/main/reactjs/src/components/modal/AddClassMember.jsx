@@ -1,9 +1,10 @@
 import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import SearchInput from "../SearchInput";
+import CustomAlert from "./CustomAlert";
 
 export default function AddClassMember({ onClose }) {
     const [users, setUsers] = useState([]); // 여러 사용자 저장
@@ -11,6 +12,25 @@ export default function AddClassMember({ onClose }) {
     const { classId } = useParams();
 
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user/";
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
 
     // 닉네임 검색 로직
     const handleSearch = async (nickname) => {
@@ -43,17 +63,17 @@ export default function AddClassMember({ onClose }) {
                     }
                 });
                 if (response.status === 200) {
-                    alert(`${user.userNickname}님이 성공적으로 초대되었습니다.`);
+                    openAlert(`${user.userNickname}님이 성공적으로 초대되었습니다.`);
                     setInvitedUsers(prevState => ({
                         ...prevState,
                         [user.userId]: true // 초대 완료 상태를 true로 설정
                     }));
                 } else {
-                    alert(`${user.userNickname}님 초대에 실패하였습니다.`);
+                    openAlert(`${user.userNickname}님 초대에 실패하였습니다.`);
                 }
             } catch (e) {
                 console.error('Error inviting user:', e);
-                alert('초대 중 오류가 발생하였습니다.');
+                openAlert('초대 중 오류가 발생하였습니다.');
             }
         }
     };
@@ -94,6 +114,12 @@ export default function AddClassMember({ onClose }) {
                     </List>
                 )}
             </div>
+
+            <CustomAlert
+                title={alertTitle}
+                openAlert={alertVisible}
+                closeAlert={closeAlert}
+            />
         </>
     );
 }
