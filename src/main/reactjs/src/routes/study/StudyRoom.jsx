@@ -29,16 +29,17 @@ import CustomAlert from "../../components/modal/CustomAlert";
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
-
-function configureUrls() {
-    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-}
-
+//배포
 // function configureUrls() {
-//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
 //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 // }
+
+//로컬
+function configureUrls() {
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
@@ -214,7 +215,7 @@ export default function StudyRoom() {
     async function leaveRoom(study_id) {
         console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        await axios.post(`/studys/removes?studyId=${study_id}`);
+        //await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
@@ -449,8 +450,8 @@ export default function StudyRoom() {
     const [chatSocket, setChatSocket] = useState(null);
     // 채팅 WebSocket
     useEffect(() => {
-        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -734,32 +735,47 @@ export default function StudyRoom() {
                                         <span className="text-s mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
                                     </button>
 
-                                   {/* 나가기 버튼 */}
-            <Button
-                className="flex flex-col items-center justify-center py-1 px-2"
-                onClick={handleOpen}
-                startIcon={<ExitToAppIcon fontSize="medium" />}
-            >
-                나가기
-            </Button>
+                                    {/* 나가기 버튼 */}
+                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={handleOpen}>
+                                        <ExitToAppIcon fontSize="medium" />
+                                        <span className="text-s mt-1">나가기</span>
+                                    </button>
 
-            {/* 모달 (Dialog) */}
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>정말 나가시겠습니까?</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="secondary">
-                        취소
-                    </Button>
-                    <Button onClick={handleConfirm} color="primary">
-                        나가기
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                                    {/* 방장이 나갈 때의 모달 */}
+                                    <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClose} color="secondary">
+                                                취소
+                                            </Button>
+                                            <Button onClick={handleConfirm} color="primary">
+                                                나가기
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+
+                                    {/* 일반 사용자가 나갈 때의 모달 */}
+                                    <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClose} color="secondary">
+                                                취소
+                                            </Button>
+                                            <Button onClick={handleConfirm} color="primary">
+                                                나가기
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
                                 </div>
                             </div>
                         </div>
