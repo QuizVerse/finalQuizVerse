@@ -610,9 +610,10 @@ export default function StudyRoom() {
                                     </Button>
                                 </Tooltip>
 
+                                <Tooltip title={participantName}>
+                                    <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
+                                </Tooltip>
 
-                                <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
-                                {/* 나가기 버튼 */}
                                 <Tooltip title="입장">
                                     <Button disabled={!roomName || !participantName}
                                             onClick={joinRoom}
