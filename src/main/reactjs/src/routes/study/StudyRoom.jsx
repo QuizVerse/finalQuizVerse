@@ -14,7 +14,7 @@ import StartVideoComponent from "../../components/StartVideoComponent";
 import { LiveKitRoom, LayoutContextProvider, ScreenShareIcon, StopScreenShareIcon } from "@livekit/components-react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar, Typography } from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
@@ -23,16 +23,17 @@ import {
     ExitToApp as ExitToAppIcon
 } from '@mui/icons-material';
 import VideoComponentcopy from "../../components/VideoComponent copy";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-  function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+function configureUrls() {
+    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 // function configureUrls() {
 //     APPLICATION_SERVER_URL = "http://localhost:3000/";
@@ -53,6 +54,7 @@ export default function StudyRoom() {
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
     const { study_id } = useParams(); // URL에서 studyId 추출
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
+    const [open, setOpen] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
 
@@ -81,8 +83,8 @@ export default function StudyRoom() {
         sendCameraStatus(isCamOn); // 전송 함수 호출
     };
 
-     // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
-     const sendCameraStatus = (isCamOn) => {
+    // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
+    const sendCameraStatus = (isCamOn) => {
         if (cameraSocket && cameraSocket.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({
                 type: 'camera_status',
@@ -193,6 +195,20 @@ export default function StudyRoom() {
             await leaveRoom();
         }
     }
+
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleConfirm = () => {
+        leaveRoom(study_id); // 나가기 버튼 클릭 시 leaveRoom 함수 호출
+        handleClose(); // 모달 닫기
+    };
 
     //방 나가기
     async function leaveRoom(study_id) {
@@ -403,7 +419,7 @@ export default function StudyRoom() {
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
-                 // 화면 공유 중지 처리
+                // 화면 공유 중지 처리
                 if (message.participantName === screenSharingParticipant) {
                     setScreenSharingParticipant(null);  // 공유 중인 참가자 초기화
                     setSharedScreenTrackSid(null);  // 트랙 ID 초기화
@@ -424,7 +440,7 @@ export default function StudyRoom() {
         return () => {
             ws.close(); // WebSocket 연결 종료
         };
-    }, [isScreenSharing , participantName , screenSharingParticipant]);
+    }, [isScreenSharing, participantName, screenSharingParticipant]);
 
     //채팅
     const [message, setMessage] = useState('');
@@ -483,7 +499,7 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
-      
+
         //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
         const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
@@ -646,7 +662,7 @@ export default function StudyRoom() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
-                        <div className="flex flex-col bg-gray-100 p-4 " style={{height:'100%'}}>
+                        <div className="flex flex-col bg-gray-100 p-4 " style={{ height: '100%' }}>
                             {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
                             <div className="flex-grow overflow-y-auto">
                                 <div className="flex flex-col space-y-2 h-[40vh]">
@@ -718,11 +734,32 @@ export default function StudyRoom() {
                                         <span className="text-s mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
                                     </button>
 
-                                    {/* 나가기 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2" onClick={() => leaveRoom(study_id)}>
-                                        <ExitToAppIcon fontSize="medium" />
-                                        <span className="text-s mt-1">나가기</span>
-                                    </button>
+                                   {/* 나가기 버튼 */}
+            <Button
+                className="flex flex-col items-center justify-center py-1 px-2"
+                onClick={handleOpen}
+                startIcon={<ExitToAppIcon fontSize="medium" />}
+            >
+                나가기
+            </Button>
+
+            {/* 모달 (Dialog) */}
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="secondary">
+                        취소
+                    </Button>
+                    <Button onClick={handleConfirm} color="primary">
+                        나가기
+                    </Button>
+                </DialogActions>
+            </Dialog>
                                 </div>
                             </div>
                         </div>
