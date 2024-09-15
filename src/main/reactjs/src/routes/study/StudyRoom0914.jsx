@@ -48,7 +48,7 @@ function configureUrls() {
 //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 // }
 
-export default function StudyRoom() {
+export default function StudyRoom0914() {
     const [room, setRoom] = useState(undefined);
     const [localTrack, setLocalTrack] = useState(undefined);
     const [localAudioTrack, setLocalAudioTrack] = useState(null);
@@ -557,7 +557,8 @@ export default function StudyRoom() {
     }
 
     return (
-        <>
+        <LayoutContextProvider>
+            <LiveKitRoom>
             {!room ? (
                 <JoinRoom
                     roomName={roomName}
@@ -579,6 +580,7 @@ export default function StudyRoom() {
             ) : (
                 "장난하냐?"
             )}
-        </>
+            </LiveKitRoom>
+        </LayoutContextProvider>
     );
 }
