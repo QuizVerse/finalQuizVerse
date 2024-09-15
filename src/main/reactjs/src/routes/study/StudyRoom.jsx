@@ -344,12 +344,10 @@ export default function StudyRoom() {
                     await sendScreenShareStatus(roomName, participantName, true); // 시작 상태 전송
                 } catch (error) {
                     console.error("화면 공유 시작 중 에러 발생:", error);
-                    alert("화면 공유를 시작하는 동안 문제가 발생했습니다. 권한을 허용했는지 확인하세요.");
                 }
             }
         } catch (error) {
             console.error("화면 공유 토글 중 에러 발생:", error);
-            alert("화면 공유 상태를 변경하는 동안 문제가 발생했습니다.");
         }
     }
 
@@ -382,8 +380,8 @@ export default function StudyRoom() {
 
     // 화면 공유 WebSocket
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        //const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
 
 
         ws.onopen = () => {
@@ -462,8 +460,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('채팅 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
-                //setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
+                //setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
+                setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -486,8 +484,8 @@ export default function StudyRoom() {
     //웹소켓 카메라
     useEffect(() => {
       
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -515,8 +513,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('카메라 상태 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
-                //setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
+                //setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
+                setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
             }, 5000); // 5초 후 재연결 시도
         };
 
