@@ -30,10 +30,15 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
+//   function configureUrls() {
+//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+//   }
+    
   function configureUrls() {
-      APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-      LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  }
+    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+}
 
 export default function StudyRoom() {
     const [room, setRoom] = useState(undefined);
