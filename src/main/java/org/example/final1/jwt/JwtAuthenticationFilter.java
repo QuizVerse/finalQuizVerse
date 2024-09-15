@@ -8,9 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.final1.config.auth.PrincipalDetails;
-import org.example.final1.model.TokenDto;
 import org.example.final1.model.UserDto;
-import org.example.final1.service.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +29,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final TokenService tokenService;
     // /account/login 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -101,8 +98,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 기기별 식별자 (랜덤 UUID 생성)
         String deviceId = UUID.randomUUID().toString();
         // Refresh Token을 데이터베이스에 저장
-        tokenService.saveRefreshToken(refreshToken, principalDetails.getUserDto(), deviceId);
-        System.out.println("tokenservice");
+
+        // JWT 토큰을 HttpOnly 쿠키에 저장
+        Cookie jwtCookie = new Cookie("jwtToken", jwtToken);
+        jwtCookie.setHttpOnly(true);  // XSS 보호
+        jwtCookie.setSecure(true);    // HTTPS에서만 전송 (배포 환경에서 적용)
+        jwtCookie.setPath("/");       // 애플리케이션 전체에 사용 가능
+        jwtCookie.setMaxAge((int) (JwtProperties.EXPIRATION_TIME / 1000)); // 만료 시간 설정 (초 단위)
+
 
 
         // Refresh Token을 HttpOnly 쿠키에 저장
@@ -113,11 +116,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(refreshTokenExpiryTime); // 쿠키 만료 시간을 Refresh Token 만료 시간과 동일하게 설정
 
+
+
+
+        // 쿠키 추가
+        response.addCookie(jwtCookie);
         response.addCookie(refreshTokenCookie);
-        //super.successfulAuthentication(request, response, chain, authResult);
-        response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX + jwtToken);//헤더에 담길내용으로 응답되는 형식
-        //System.out.println(jwtToken);
-        //jwt토큰 반환
+
+//        response.addCookie(refreshTokenCookie);
+//        //super.successfulAuthentication(request, response, chain, authResult);
+//        response.addHeader(JwtProperties.HEADER_STRING,JwtProperties.TOKEN_PREFIX + jwtToken);//헤더에 담길내용으로 응답되는 형식
+//        //System.out.println(jwtToken);
+//        //jwt토큰 반환
     }
 
 
