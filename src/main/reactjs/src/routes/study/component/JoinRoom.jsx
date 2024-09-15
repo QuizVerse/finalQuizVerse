@@ -26,7 +26,6 @@ export default function JoinRoom({
     return (
         <div className="flex flex-col h-screen">
             <div className="flex-grow bg-[#222222]">
-                왜 아무것도 안나와?
                 {previewStream ? (
                     <StartVideoComponent
                         track={previewStream.getVideoTracks()[0]}
@@ -55,6 +54,7 @@ export default function JoinRoom({
                     {/* 카메라 토글 버튼 */}
                     <Tooltip title={isCamOn ? '카메라 끄기' : '카메라 켜기'}>
                         <Button onClick={toggleCam} variant={"contained"}>
+                            왜
                             {isCamOn ? <VideocamIcon fontSize="medium"/> : <VideocamOffIcon fontSize="medium"/>}
                         </Button>
                     </Tooltip>
@@ -62,6 +62,7 @@ export default function JoinRoom({
                     {/* 마이크 토글 버튼 */}
                     <Tooltip title={isMicOn ? '마이크 끄기' : '마이크 켜기'}>
                         <Button onClick={toggleMic} variant={"contained"}>
+                            안뜨
                             {isMicOn ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
                         </Button>
                     </Tooltip>
@@ -76,6 +77,7 @@ export default function JoinRoom({
                     {/* 나가기 버튼 */}
                     <Tooltip title="나가기">
                         <Button onClick={() => leaveRoom(studyId)} variant={"contained"}>
+                            냐고
                             <ExitToAppIcon/>
                         </Button>
                     </Tooltip>
