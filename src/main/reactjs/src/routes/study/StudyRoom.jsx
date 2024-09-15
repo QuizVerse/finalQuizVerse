@@ -35,10 +35,17 @@ let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
+<<<<<<< HEAD
+  // function configureUrls() {
+  //     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+  //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+  // }
+=======
 //   function configureUrls() {
 //       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
 //       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 //   }
+>>>>>>> 1069483aae052be99dd73c3c6b633fa88695abdf
 
 function configureUrls() {
     APPLICATION_SERVER_URL = "http://localhost:3000/";
