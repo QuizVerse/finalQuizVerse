@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import './bannerStyle.css';
 import { Pagination } from 'swiper/modules';
+import {Button, Typography} from "@mui/material";
 
 export default function BookList() {
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book";
@@ -158,13 +159,20 @@ export default function BookList() {
     return (
         <>
             {categories.map(category => (
-                <section className="mb-8" key={category.categoryId}>
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold">{category.categoryName} Top 5</h2>
-                        <Link className="text-gray-600 flex gap-2 items-center" to={`/book/category?cat=${category.categoryId}`}>
+                <section className="mb-16" key={category.categoryId}>
+                    <div className="flex items-end justify-between mb-4 space-x-2">
+                        <Typography variant={"h5"} sx={{fontWeight : "bold", paddingY: "6px"}}>
+                            {category.categoryName} Top 5
+                        </Typography>
+                        <Button
+                            variant="text"
+                            component={Link}
+                            to={`/book/category?cat=${category.categoryId}`}>
                             전체보기
-                            <ArrowForwardIosIcon fontSize={'small'} />
-                        </Link>
+                            <ArrowForwardIosIcon
+                                sx={{fontSize : "12px", marginLeft : "4px", paddingBottom : "2px"}}
+                                color={"primary"}/>
+                        </Button>
                     </div>
                     <div className="grid grid-cols-5 gap-4">
                         {booksByCategory[category.categoryId]?.slice(0, 5)?.map((book) => (

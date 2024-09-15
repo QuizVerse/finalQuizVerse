@@ -21,7 +21,13 @@ public class StudyDao {
     //화상방 전체 출력
     public List<StudyDto> getAllRoom()
     {
-        return studyDaoInter.findAll();
+        List<StudyDto> studies = studyDaoInter.findAll();
+        // 각 스터디에 대한 멤버 수를 계산하고 설정
+        for (StudyDto study : studies) {
+            int memberCount = studyMemberDaoInter.countMembersByStudyId(study.getStudyId());
+            study.setNowMember(memberCount);  // 현재 멤버 수 설정
+        }
+        return studies;
     }
     //화상방 만들기
     public StudyDto insertRoom(StudyDto dto)
@@ -61,59 +67,23 @@ public class StudyDao {
     {
         return studyDaoInter.findById(studyId);
     }
-    // // 화상방 나갈때 스터디 멤버 삭제
-    // @Transactional
-    // public void removeStudyMember(int studyId, int userId) 
-    // {
-    //     StudymemberDto studymember = studyMemberDaoInter.findStudyMember(studyId, userId);
-    //     // if (studymember != null) 
-    //     // {
-    //     //     //멤버 삭제
-    //     //     studyMemberDaoInter.delete(studymember);
-    //     //     // 만약 리더(user_role == 1)라면 스터디도 삭제
-    //     //     if (studymember.getUserRole() == 1) {
-    //     //         studyDaoInter.deleteById(studyId);
-    //     //     }
-    //     // }
-    //     if (studymember == null) {
-    //         // 멤버가 존재하지 않으면 로그 출력 또는 예외 처리
-    //         throw new RuntimeException("스터디 멤버를 찾을 수 없습니다.");
-    //     }
-    
-    //     // 멤버 삭제
-    //     studyMemberDaoInter.delete(studymember);
-    
-    //     // 리더인 경우 스터디 삭제
-    //     if (studymember.getUserRole() == 1) {
-    //         studyDaoInter.deleteById(studyId);
-    //     }
-    // }
-
+    // 화상방 나갈때 스터디 멤버 삭제
     @Transactional
-public void removeStudyMember(int studyId, int userId) {
-    try {
-        // 스터디 멤버 찾기
+    public void removeStudyMember(int studyId, int userId) 
+    {
         StudymemberDto studymember = studyMemberDaoInter.findStudyMember(studyId, userId);
+        
         if (studymember == null) {
-            // 멤버가 없으면 로그 출력 및 예외 발생
-            throw new RuntimeException("스터디 멤버를 찾을 수 없습니다. studyId: " + studyId + ", userId: " + userId);
+            // 멤버가 존재하지 않으면 로그 출력 또는 예외 처리
+            throw new RuntimeException("스터디 멤버를 찾을 수 없습니다.");
         }
-
+    
         // 멤버 삭제
         studyMemberDaoInter.delete(studymember);
-
-        // 만약 리더라면 스터디 자체를 삭제
+    
+        // 리더인 경우 스터디 삭제
         if (studymember.getUserRole() == 1) {
             studyDaoInter.deleteById(studyId);
-            System.out.println("스터디가 삭제되었습니다. studyId: " + studyId);
-        } else {
-            System.out.println("스터디 멤버가 삭제되었습니다. userId: " + userId);
         }
-    } catch (Exception e) {
-        // 예외 발생 시 트랜잭션 롤백 및 로그 출력
-        System.err.println("스터디 멤버 삭제 중 오류 발생: " + e.getMessage());
-        throw e; // 예외를 다시 던져 트랜잭션을 롤백함
     }
-}
-
 }

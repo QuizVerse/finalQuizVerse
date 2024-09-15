@@ -125,6 +125,20 @@ const confirmContent = [
         btn1Text: "",
         btn2Text: "",
     },
+    {
+        id: 18,
+        title: "클래스를 나가겠습니까?",
+        content: "탈퇴를 하기 위해선 방장 역할을 멤버에게 방장 역할을 넘겨주여야 합니다.",
+        btn1Text: "취소",
+        btn2Text: "확인",
+    },
+    {
+        id: 19,
+        title: "방장 권한을 부여하시겠습니까?",
+        content: "방장 권한을 부여하시게되면 사용자의 역할은 멤버로 전환이 됩니다",
+        btn1Text: "취소",
+        btn2Text: "확인",
+    },
 ]
 
 export default confirmContent;
