@@ -14,9 +14,9 @@ import {
     LiveKitRoom,
     LayoutContextProvider,
     ScreenShareIcon,
-    StopScreenShareIcon,
-    ChatIcon
+    ChatIcon,
 } from "@livekit/components-react";
+import PeopleIcon from '@mui/icons-material/People';
 import axios from "axios";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
 import {AppBar, Avatar, Box, Button, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
@@ -46,22 +46,47 @@ function configureUrls() {
 }
 
 export default function StudyRoom() {
+
+    // URL에서 studyId 추출
+    const {study_id} = useParams();
+
+    // 방 관련 정보
     const [room, setRoom] = useState(undefined);
-    const [localTrack, setLocalTrack] = useState(undefined);
-    const [localAudioTrack, setLocalAudioTrack] = useState(null);
-    const [remoteTracks, setRemoteTracks] = useState([]);
     const [participantName, setParticipantName] = useState("");
     const [participantImage, setParticipantImage] = useState("");
     const [roomName, setRoomName] = useState("");
     const [roomDescription, setRoomDescription] = useState("");
+
+    const [localTrack, setLocalTrack] = useState(undefined);
+    const [localAudioTrack, setLocalAudioTrack] = useState(null);
+    const [remoteTracks, setRemoteTracks] = useState([]);
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const {study_id} = useParams(); // URL에서 studyId 추출
+
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+
+    // 추가: 채팅창 토글 상태를 관리하는 state
+    const [isChatOpen, setIsChatOpen] = useState(false);
+
+    // 채팅창 토글 함수
+    const toggleChat = () => {
+        setIsParticipantListOpen(false);
+        setIsChatOpen((prevState) => !prevState);
+    };
+
+    // 참여자 토글 상태를 관리하는 state
+    const [isParticipantListOpen, setIsParticipantListOpen] = useState(false);
+
+    // 참여자 리스트
+    const toggleParticipantList = () => {
+        setIsChatOpen(false);
+        setIsParticipantListOpen((prevState) => !prevState);
+    };
+
 
     // 마이크 상태를 관리하는 state (초기값: off)
     const [isMicOn, setIsMicOn] = useState(false);
@@ -654,12 +679,6 @@ export default function StudyRoom() {
                     <div className="flex flex-col h-screen">
                         <div className="flex-grow bg-[#222222]">
                             <div className="flex h-full relative">
-                                {/*<div className="flex flex-col bg-gray-100 p-4 " style={{height: '100%'}}>*/}
-                                {/*    /!* 사용자들이 나올 화면에 스크롤 기능 추가 *!/*/}
-                                {/*    <div className="flex-grow overflow-y-auto">*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-
                                 <div id="room" className="flex flex-col">
                                     <div id="layout-container-share" className="">
                                         {/* 화면 공유 비디오 표시 */}
@@ -724,33 +743,53 @@ export default function StudyRoom() {
                                         }
                                     </div>
                                 </div>
-
-                                {/* 채팅창 */}
-                                <div className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
-                                    <div className="flex-grow overflow-y-auto">
-                                        <ul id="messages" className="flex flex-col">
-                                            {messages.map((msg, index) => (
-                                                <li key={index}
-                                                    className="my-2 p-2 rounded-lg bg-gray-200 text-gray-900">
-                                                    {msg}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <form onSubmit={sendMessage} className="flex items-center mt-2 gap-2">
-                                        <TextField
-                                            fullWidth
-                                            type="text"
-                                            variant={"outlined"}
-                                            size={"small"}
-                                            autoComplete="off"
-                                            value={message}
-                                            onChange={(e) => setMessage(e.target.value)}
-                                            placeholder="메시지를 입력하세요"
-                                        />
-                                        <Button type="submit" variant={"contained"}>Send</Button>
-                                    </form>
-                                </div>
+                                    {isParticipantListOpen && (
+                                        <div className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <Typography variant="h6">참여자 목록</Typography>
+                                                {/* 채팅창 닫기 버튼 */}
+                                                <IconButton onClick={toggleParticipantList}>
+                                                    <CloseIcon/>
+                                                </IconButton>
+                                            </div>
+                                            <div className="flex-grow overflow-y-auto">
+                                            </div>
+                                        </div>
+                                    )}
+                                {isChatOpen && (
+                                    <div
+                                        className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <Typography variant="h6">채팅</Typography>
+                                            {/* 채팅창 닫기 버튼 */}
+                                            <IconButton onClick={toggleChat}>
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            </div>
+                                            <div className="flex-grow overflow-y-auto">
+                                                <ul id="messages" className="flex flex-col">
+                                                    {messages.map((msg, index) => (
+                                                        <li key={index} className="my-2 p-2 rounded-lg bg-gray-200 text-gray-900">
+                                                            {msg}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            <form onSubmit={sendMessage} className="flex items-center mt-2 gap-2">
+                                                <TextField
+                                                    fullWidth
+                                                    type="text"
+                                                    variant={"outlined"}
+                                                    size={"small"}
+                                                    autoComplete="off"
+                                                    value={message}
+                                                    onChange={(e) => setMessage(e.target.value)}
+                                                    placeholder="메시지를 입력하세요"
+                                                />
+                                                <Button type="submit" variant={"contained"}>Send</Button>
+                                            </form>
+                                        </div>
+                                    )}
                             </div>
                         </div>
                         <div className="flex justify-between items-center p-4 bg-black text-white">
@@ -759,26 +798,34 @@ export default function StudyRoom() {
                                 {/* 카메라 토글 버튼 */}
                                 <Tooltip title={isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}>
                                     <Button onClick={toggleCam} variant={"contained"}>
-                                        {isCameraEnabled ? <VideocamIcon fontSize="medium"/> :
-                                            <VideocamOffIcon fontSize="medium"/>}
+                                        {isCameraEnabled ? <VideocamIcon /> :
+                                            <VideocamOffIcon />}
                                     </Button>
                                 </Tooltip>
                                 {/* 마이크 토글 버튼 */}
                                 <Tooltip title={isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}>
                                     <Button onClick={toggleMicrophone} variant={"contained"}>
-                                        {isMicrophoneMuted ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
+                                        {isMicrophoneMuted ? <MicIcon /> : <MicOffIcon />}
                                     </Button>
                                 </Tooltip>
                                 {/* 화면 공유 토글 버튼 */}
                                 <Tooltip title={isScreenSharing ? '공유 중지' : '화면 공유'}>
                                     <Button onClick={toggleScreenSharing} variant={"contained"}>
-                                        {isScreenSharing ? <ScreenShareIcon fontSize="medium"/> : <ScreenShareIcon fontSize="medium"/>}
+                                        {isScreenSharing ? <ScreenShareIcon /> : <ScreenShareIcon />}
                                     </Button>
                                 </Tooltip>
+
                                 {/* 채팅창 버튼 */}
-                                <Tooltip title="채팅창">
-                                    <Button variant={"contained"}>
-                                        <ChatIcon fontSize="medium"/>
+                                <Tooltip title={isChatOpen ? '채팅창 닫기' : '채팅창 열기'}>
+                                    <Button onClick={toggleChat} variant={"contained"}>
+                                        <ChatIcon  />
+                                    </Button>
+                                </Tooltip>
+
+                                {/* 참여자 목록 버튼 */}
+                                <Tooltip title={isParticipantListOpen ? '참여자 목록 닫기' : '참여자 목록 열기'}>
+                                    <Button onClick={toggleParticipantList} variant={"contained"}>
+                                        <PeopleIcon  />
                                     </Button>
                                 </Tooltip>
                             </div>
@@ -786,7 +833,7 @@ export default function StudyRoom() {
                                 {/* 나가기 버튼 */}
                                 <Tooltip title="나가기">
                                     <Button onClick={() => leaveRoom(study_id)} variant={"contained"}>
-                                        <ExitToAppIcon fontSize="medium"/>
+                                        <ExitToAppIcon />
                                     </Button>
                                 </Tooltip>
                             </div>
