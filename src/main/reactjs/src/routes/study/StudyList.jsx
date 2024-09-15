@@ -69,7 +69,13 @@ export default function StudyList() {
     }, [searchQuery, roomList]);
 
     // 방 클릭 시 이벤트 처리 함수
-    const GoRoomEvent = (studyId, studyTitle, studyPasswd, studyStatus) => {
+    const GoRoomEvent = (studyId, studyTitle, studyPasswd, studyStatus, nowMember, totalMember) => {
+        if (nowMember >= totalMember) {
+            // 인원이 가득 찬 경우 alert 메시지 출력
+            alert("해당 스터디 방은 최대 인원이 가득 차 입장할 수 없습니다.");
+            return; // 함수 종료하여 더 이상 입장 로직이 실행되지 않음
+        }
+
         if (studyStatus === 0) {
             // 방 상태가 0일 경우 StudyRoomEntry 모달을 띄움
             setSelectedRoom({ studyId, studyTitle, studyPasswd });
@@ -109,19 +115,22 @@ export default function StudyList() {
             </div>
             <div className="grid grid-cols-2 w-full max-w-5xl gap-4">
                 {/* 페이지네이션을 적용한 리스트 */}
-                {filteredRoom &&
+                {filteredRoom && filteredRoom.length > 0 ? (
                     currentItems.map((item, index) => (
                         <StudyRoomCard
                             key={index}
                             title={item.studyTitle}
-                            description={item.studyDescription}
-                            nowMember={0}
+                            description={item.user.userNickname}
+                            nowMember={item.nowMember || 0}
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
                         />
-                    )) || <div>생성된 스터디가 없습니다.</div>
+                    )) 
+                ) : ( 
+                    <div>생성된 스터디가 없습니다.</div>
+                    )
                 }
             </div>
 

@@ -46,4 +46,8 @@ public class StudyDto {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private UserDto user;
+
+    // 현재 멤버 수를 추가
+    @Transient
+    private int nowMember;  // DB에서 계산한 멤버 수를 저장하는 필드
 }
