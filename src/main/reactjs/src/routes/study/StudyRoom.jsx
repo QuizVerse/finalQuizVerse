@@ -75,13 +75,15 @@ export default function StudyRoom() {
     const toggleCam = async (e) => {
         e.preventDefault(); // 폼 제출 방지
         if (isCamOn) {
-            startVideoPreview();
-        } else {
             await stopVideoPreview();
+        } else {
+            startVideoPreview();
         }
-        setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
-
-        sendCameraStatus(isCamOn); // 전송 함수 호출
+        //setIsCamOn((prevState) => !prevState); // 이전 상태를 반대로 변경
+        const newCamStatus = !isCamOn; // 새 상태
+        setIsCamOn(newCamStatus); // 상태 변경
+        sendCameraStatus(newCamStatus); // 변경된 상태 전송
+        //sendCameraStatus(isCamOn); // 전송 함수 호출
     };
 
     // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
@@ -90,7 +92,7 @@ export default function StudyRoom() {
             const message = JSON.stringify({
                 type: 'camera_status',
                 participantName: participantName,
-                isCamOn: !isCamOn,
+                isCamOn: isCamOn,
             });
             cameraSocket.send(message);
         }
