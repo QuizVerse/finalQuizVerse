@@ -23,7 +23,7 @@ export default function Summary() {
         // 로그인 정보
         const fetchUserId = async () => {
             try {
-                const response = await axios.get('/book/username');
+                const response = await axios.get('/summary/nickname');
                 if (response.status === 200 && response.data) {
                     setUser(response.data);
                     setUserId(response.data.userId);

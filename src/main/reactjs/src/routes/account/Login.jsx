@@ -32,8 +32,8 @@ export default function Login() {
         e.preventDefault();
         try {
             const response=await axios.post('/login/user/check',{
-                user_email,
-                user_password
+                userEmail: user_email, // 필드 이름을 서버에서 기대하는 userEmail로 변경
+                userPassword: user_password // 필드 이름을 서버에서 기대하는 userPassword로 변경
             });
             const token=response.headers['authorization'];
             localStorage.setItem('token',token);
