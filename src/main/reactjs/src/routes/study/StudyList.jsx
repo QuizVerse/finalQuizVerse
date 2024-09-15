@@ -125,7 +125,7 @@ export default function StudyList() {
                             totalMember={item.studyMemberlimit}
                             status={item.studyStatus}
                             image={item.studyImage}
-                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
+                            onClick={() => GoRoomEvent(item.studyId, item.studyTitle, item.studyDescription, item.studyPasswd, item.studyStatus, item.nowMember || 0, item.studyMemberlimit)} // 방 클릭 시 이벤트
                         />
                     ))
                 ) : (

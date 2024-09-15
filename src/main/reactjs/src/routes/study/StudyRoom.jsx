@@ -46,6 +46,7 @@ export default function StudyRoom() {
     const [participantName, setParticipantName] = useState("");
     const [participantImage, setParticipantImage] = useState("");
     const [roomName, setRoomName] = useState("");
+    const [roomDescription, setRoomDescription] = useState("");
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
@@ -105,11 +106,13 @@ export default function StudyRoom() {
     };
     const location = useLocation();
     useEffect(() => {
-        getUserDto();
-        if (location.state?.studyTitle) {
+        if (location.state) {
             setRoomName(location.state.studyTitle);
+            setRoomDescription(location.state.studyDescription);
+        } else {
+            console.log("State가 전달되지 않음");
         }
-    }, [location.state?.studyTitle]);
+    }, [location.state]);
 
     // 방에 참가하기 전 카메라 미리보기 활성화 함수
     const startVideoPreview = async () => {
@@ -564,8 +567,8 @@ export default function StudyRoom() {
                                         </IconButton>
                                     </Tooltip>
                                 </div>
-                                <div className={"break-all h-[48px] overflow-y-scroll"}>
-                                    adasdasdasdasdasdasdasdaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfadfasdfkjasldfhsldfjalsdkjfl;asdkjfalskdjfl;askdjfls;adkjf;lsadkjf;dsakljfadasdasdasdasdasdasdasdaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfadfasdfkjasldfhsldfjalsdkjfl;asdkjfalskdjfl;askdjfls;adkjf;lsadkjf;dsakljf
+                                <div className={"break-all"}>
+                                    {roomDescription}
                                 </div>
                             </div>
 
