@@ -9,4 +9,7 @@ public interface StudyMemberDaoInter extends JpaRepository<StudymemberDto, Integ
     // 특정 스터디와 사용자에 해당하는 멤버 찾기
     @Query("SELECT sm FROM StudymemberDto sm WHERE sm.study.studyId = :studyId AND sm.user.userId = :userId")
     StudymemberDto findStudyMember(@Param("studyId") int studyId, @Param("userId") int userId);
+    // study_id별 멤버 수 계산 쿼리
+    @Query("SELECT COUNT(sm) FROM StudymemberDto sm WHERE sm.study.studyId = :studyId")
+    int countMembersByStudyId(@Param("studyId") int studyId);
 } 
