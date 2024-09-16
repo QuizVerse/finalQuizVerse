@@ -283,7 +283,9 @@ const router = createBrowserRouter([
             },
             {
                 path: '/study/new',
-                element: <NewStudy />,
+                element: <PrivateRoute>
+                            <NewStudy />
+                        </PrivateRoute>,
                 errorElement: <ErrorPage />,
             },
             {
@@ -291,17 +293,12 @@ const router = createBrowserRouter([
                 element: <StudyList />,
                 errorElement: <ErrorPage />,
             },
-            // {
-            //     path: '/study/room/:study_id',
-            //     element: <StudyRoomOrigin />,
-            //     errorElement: <ErrorPage />,
-            // },
+            {
+                path: '/study/room/:study_id',
+                element: <StudyRoom />,
+                errorElement: <ErrorPage />,
+            },
         ]
-    },
-    {
-        path: '/study/room/:study_id',
-        element: <StudyRoom />,
-        errorElement: <ErrorPage />,
     },
     {
 

@@ -26,7 +26,7 @@ export default function Chatbot() {
     };
 
     useEffect(() => {
-        const socket = new SockJS('/ws'); // SockJS를 통해 WebSocket 연결
+        const socket = new SockJS('/ws/stomp'); // SockJS를 통해 WebSocket 연결
         const client = new Client({
             webSocketFactory: () => socket,
             debug: (str) => {
@@ -85,12 +85,8 @@ export default function Chatbot() {
                 // 세 번째 작업: 0.5초 뒤에 동적 버튼 표시
                 setTimeout(() => {
                     setDynamicButtons([
-                        { label: '퀴즈버스 소개', value: '퀴즈버스 소개' },
                         { label: '회원 가입', value: '회원 가입' },
-                        { label: '비밀번호', value: '비밀번호' },
                         { label: '문제집 생성', value: '문제집 생성' },
-                        { label: '오답노트', value: '오답노트' },
-                        { label: '클래스', value: '클래스' },
                         { label: '화상스터디', value: '화상스터디' }
                     ]);
                 }, 300); // 0.2초 후에 동적 버튼을 추가
