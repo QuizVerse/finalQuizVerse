@@ -86,7 +86,6 @@ export default function Wrong() {
                             cardType="C"
                             nickname={book.wrongRepeat+"번째 오답노트" || "Unknown"}
                             title={book.bookTitle}
-                            bookQuestionCount={book.wrongCount} // 문항수
                             bookUrl={`/book/detail/${book.bookId}`}
                             wrongUrl={`/book/test/${book.bookId}/${book.solvedbook.solvedbookId}?wrongRepeat=${book.wrongRepeat}`}  // 다시학습하기 버튼 눌렀을때
                             isWrong={true}
