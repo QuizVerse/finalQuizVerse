@@ -283,14 +283,15 @@ const router = createBrowserRouter([
             },
             {
                 path: '/study/new',
-                element: <PrivateRoute>
-                            <NewStudy />
-                        </PrivateRoute>,
+                element: <NewStudy />,
                 errorElement: <ErrorPage />,
             },
             {
                 path: '/study/list',
-                element: <StudyList />,
+                element: 
+                <PrivateRoute>
+                    <StudyList />
+                </PrivateRoute>,
                 errorElement: <ErrorPage />,
             },
             {
