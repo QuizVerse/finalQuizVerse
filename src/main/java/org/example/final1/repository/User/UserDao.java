@@ -11,7 +11,7 @@ public class UserDao {
     private UserDaoInter userDaoInter;
 
     public int getNicknamecheck(String user_nickname){
-        return userDaoInter.getNicknamecheck(user_nickname);
+        return userDaoInter.getNicknameCheck(user_nickname);
     }
 
     public void joinUser(UserDto userDto){
@@ -20,7 +20,7 @@ public class UserDao {
     
      // email로 가입 여부 확인 
     public int getEmailcheck(String user_email) {
-        return userDaoInter.getEmailcheck(user_email);
+        return userDaoInter.getEmailCheck(user_email);
     }
 
 }

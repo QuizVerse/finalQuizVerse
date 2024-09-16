@@ -46,7 +46,7 @@ public class WrongController {
         Integer userId = userDto.getUserId();
 
         // 사용자 ID에 해당하는 오답 데이터를 Service에서 가져옵니다.
-        List<WrongDto> wrongNotes = wrongService.getWrongBooksByUserId(userId);
+        List<WrongDto> wrongNotes = wrongService.getGroupedWrongBooksByUserId(userId);
 
         // 데이터를 클라이언트에 반환
         return ResponseEntity.ok(wrongNotes);

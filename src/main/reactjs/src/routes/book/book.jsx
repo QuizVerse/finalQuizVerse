@@ -6,7 +6,8 @@ import { Pagination, Autoplay, Navigation } from "swiper/modules"; // Autoplay, 
 import React, {useEffect, useState} from "react";
 import MainFooter from "../../components/MainFooter";
 import { Link } from "react-router-dom";
-import axios from "axios";  // react-router-dom에서 Link 컴포넌트 임포트
+import axios from "axios";
+import Chatbot from "../../components/Chatbot";  // react-router-dom에서 Link 컴포넌트 임포트
 
 export default function Book() {
     const location = useLocation();
@@ -76,6 +77,7 @@ export default function Book() {
             <div className="p-16">
                 <Outlet />
             </div>
+            <Chatbot/>
             <MainFooter/>
         </div>
     );

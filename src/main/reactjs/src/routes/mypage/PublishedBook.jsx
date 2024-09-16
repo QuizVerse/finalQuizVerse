@@ -60,11 +60,7 @@ export default function PublishedBook() {
 
     try {
       const res = await axios.get(`/publishedbook/user-books?userId=${user.userId}`);
-
-      // 책 목록을 createdate를 기준으로 최신순으로 정렬
-      const sortedBooks = res.data.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
-
-      setBookList(sortedBooks);  // 책 목록 상태 업데이트
+      setBookList(res.data);  // 책 목록 상태 업데이트
     } catch (error) {
       setError(error);
     } finally {
@@ -72,7 +68,15 @@ export default function PublishedBook() {
     }
   };
 
+  /*    setBookList(res.data);  // 책 목록 상태 업데이트
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false); // 로딩 상태 해제
+    }
+  };
 
+*/
   // 컴포넌트가 마운트될 때 사용자 정보 및 책 목록 가져오기
   useEffect(() => {
     fetchUserInfo();
