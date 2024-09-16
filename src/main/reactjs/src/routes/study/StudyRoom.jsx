@@ -156,6 +156,7 @@ export default function StudyRoom() {
     };
     const location = useLocation();
     useEffect(() => {
+        getUserDto();
         if (location.state) {
             setRoomName(location.state.studyTitle);
             setRoomDescription(location.state.studyDescription);
@@ -632,7 +633,7 @@ export default function StudyRoom() {
                                     ) : (
                                         // 카메라 꺼진 상태를 나타내는 이미지 경로
                                         <div>
-                                            <Avatar title={participantName}
+                                            <img //title={participantName}
                                                     src={`${photopath}/${participantImage}`}
                                                     sx={{width: "96px", height: "96px"}}
                                             />
@@ -645,7 +646,7 @@ export default function StudyRoom() {
                             {/* 버튼 스위칭 위치입니다 */}
                             <div className={"p-4 flex justify-center gap-4 bg-[#222222] rounded-b"}>
                                 {/* 카메라 토글 버튼 */}
-                                <Tooltip title={isCamOn ? '카메라 끄기' : '카메라 켜기'}>
+                                <Tooltip title={isCamOn ? '카메라 켜기' : '카메라 끄기'}>
                                     <Button onClick={toggleCam} variant={"contained"}>
                                         {isCamOn ? <VideocamIcon fontSize="medium"/> :
                                             <VideocamOffIcon fontSize="medium"/>}
@@ -666,7 +667,7 @@ export default function StudyRoom() {
                                     <input
                                         id="participant-name"
                                         className="form-control"
-                                        type="hidden"
+                                        type="text"
                                         value={participantName}
                                         onChange={(e) => setParticipantName(e.target.value)}
                                         required />
