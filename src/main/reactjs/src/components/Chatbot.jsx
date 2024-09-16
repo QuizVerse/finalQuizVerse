@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {Avatar, Button, Fab, IconButton, TextField} from '@mui/material';
+import {Avatar, Button, Fab, IconButton, TextField, Tooltip} from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
@@ -153,15 +153,24 @@ export default function Chatbot() {
     return (
         <div className="fixed bottom-4 right-4 flex flex-col items-end" style={{ zIndex: 9999 }}>
             {isChatbotOpen && (
-                <div className="w-[300px] p-4 bg-[#E0F1FF] border border-blue-300 rounded-lg h-96 flex flex-col justify-between">
+                <div className="w-[300px] p-4 bg-[#E0F1FF] border border-blue-300 rounded-lg flex flex-col justify-between">
                     <div>
-                        <img src="/logooo.png" alt="quizverse" width={"150px"}/>
+                        <div className={"flex justify-between items-center mb-4"}>
+                            <img src="/logooo.png" alt="quizverse" width={"150px"}/>
+
+                            <Tooltip title="나가기">
+                                <IconButton onClick={() => setIsChatbotOpen(false)}>
+                                    <CloseIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </div>
+
 
                         {/* 채팅 메시지 창 */}
                         <div className="flex flex-col gap-2 overflow-y-auto mb-4 h-[150px]">
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-blue-100' : 'bg-gray-200'}`}>
+                                    <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-[#ededed]' : 'bg-white'}`}>
                                         {message.text}
                                     </div>
                                 </div>
@@ -171,9 +180,13 @@ export default function Chatbot() {
                         </div>
 
                         {/* 동적 버튼들 */}
-                        <div className="flex space-x-2 mb-4">
+                        <div className="space-y-2 mb-4">
                             {dynamicButtons.map((button, index) => (
-                                <Button key={index} variant="outlined" onClick={() => handleButtonClick(button.value)}>
+                                <Button
+                                    key={index}
+                                    variant="outlined"
+                                    fullWidth
+                                    onClick={() => handleButtonClick(button.value)}>
                                     {button.label}
                                 </Button>
                             ))}
@@ -182,10 +195,12 @@ export default function Chatbot() {
 
                     {/* 메시지 입력창 및 전송 버튼 */}
                     <div className="flex items-center gap-2">
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+                        <TextField
+                            variant={"outlined"}
+                            size={"small"}
                             placeholder="메시지를 입력하세요..."
                             value={userInput}
+                            className={"bg-white"}
                             onChange={(e) => setUserInput(e.target.value)}
                             onKeyPress={(e) => {
                                 if (e.key === 'Enter') handleSendMessage();
