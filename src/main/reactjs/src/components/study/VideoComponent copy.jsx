@@ -10,7 +10,7 @@ export default function VideoComponentcopy({ track, participantIdentity, local =
 
     return (
         <div className="video-container2">
-            <div className="participant-data">
+            <div className="participant-data absolute top-0 right-0">
                 <p>{participantIdentity}</p>
             </div>
             <img

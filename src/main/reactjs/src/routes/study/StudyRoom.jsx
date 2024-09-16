@@ -5,61 +5,102 @@ import {
     RoomEvent,
     Track
 } from "livekit-client";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import VideoComponent from "../../components/study/VideoComponent";
 import AudioComponent from "../../components/study/AudioComponent";
 import ShareVideoComponent from "../../components/study/ShareVideoComponent";
 import StartVideoComponent from "../../components/study/StartVideoComponent";
-import {LiveKitRoom, LayoutContextProvider, ScreenShareIcon, StopScreenShareIcon} from "@livekit/components-react";
+import {
+    LiveKitRoom,
+    LayoutContextProvider,
+    ScreenShareIcon,
+    ChatIcon,
+} from "@livekit/components-react";
+import PeopleIcon from '@mui/icons-material/People';
 import axios from "axios";
-
-import { AppBar, Avatar, Tooltip, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar, Typography } from "@mui/material";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
-
+import {AppBar, Avatar, Box, Button, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
     Mic as MicIcon,
-    MicOff as MicOffIcon,
+    MicOff as MicOffIcon, ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
-
-//import VideoComponentcopy from "../../components/VideoComponent copy";
-import CustomAlert from "../../components/modal/CustomAlert";
 import VideoComponentcopy from "../../components/study/VideoComponent copy";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
+
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
-    
-  function configureUrls() {
+function configureUrls() {
     APPLICATION_SERVER_URL = "http://localhost:3000/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
 
+
 export default function StudyRoom() {
+
+    // URL에서 studyId 추출
+    const {study_id} = useParams();
+
+    // 방 관련 정보
     const [room, setRoom] = useState(undefined);
-    const [localTrack, setLocalTrack] = useState(undefined);
-    const [localAudioTrack, setLocalAudioTrack] = useState(null);
-    const [remoteTracks, setRemoteTracks] = useState([]);
     const [participantName, setParticipantName] = useState("");
     const [participantImage, setParticipantImage] = useState("");
     const [roomName, setRoomName] = useState("");
     const [roomDescription, setRoomDescription] = useState("");
+
+    const [localTrack, setLocalTrack] = useState(undefined);
+    const [localAudioTrack, setLocalAudioTrack] = useState(null);
+    const [remoteTracks, setRemoteTracks] = useState([]);
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
-    const {study_id} = useParams(); // URL에서 studyId 추출
+
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
-    const [open, setOpen] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
+    // 추가: 채팅창 토글 상태를 관리하는 state
+    const [isChatOpen, setIsChatOpen] = useState(false);
+
+    // 채팅창 토글 함수
+    const toggleChat = () => {
+        setIsParticipantListOpen(false);
+        setIsChatOpen((prevState) => !prevState);
+    };
+
+    // 참여자 토글 상태를 관리하는 state
+    const [isParticipantListOpen, setIsParticipantListOpen] = useState(false);
+
+    // 참여자 리스트
+    const toggleParticipantList = () => {
+        setIsChatOpen(false);
+        setIsParticipantListOpen((prevState) => !prevState);
+    };
+
 
     // 마이크 상태를 관리하는 state (초기값: off)
     const [isMicOn, setIsMicOn] = useState(false);
@@ -91,7 +132,7 @@ export default function StudyRoom() {
 
      // 카메라 상태를 웹소켓을 통해 서버로 전송하는 함수
      const sendCameraStatus = (isCamOn) => {
-        if (cameraSocket && cameraSocket.readyState === WebSocket.OPEN) {
+        if (cameraSocket) {
             const message = JSON.stringify({
                 type: 'camera_status',
                 participantName: participantName,
@@ -113,6 +154,7 @@ export default function StudyRoom() {
     };
     const location = useLocation();
     useEffect(() => {
+        getUserDto();
         if (location.state) {
             setRoomName(location.state.studyTitle);
             setRoomDescription(location.state.studyDescription);
@@ -205,25 +247,11 @@ export default function StudyRoom() {
         }
     }
 
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleConfirm = () => {
-        leaveRoom(study_id); // 나가기 버튼 클릭 시 leaveRoom 함수 호출
-        handleClose(); // 모달 닫기
-    };
-
     //방 나가기
     async function leaveRoom(study_id) {
         console.log("Received studyId:", study_id); // studyId 값 출력
         // 서버에 스터디 멤버 삭제 요청
-        //await axios.post(`/studys/removes?studyId=${study_id}`);
+        await axios.post(`/studys/removes?studyId=${study_id}`);
         // 'disconnect' 메서드를 호출하여 방에서 나가기
         await room?.disconnect();
         // 비디오 미리보기 종료
@@ -351,7 +379,7 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    alert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    openAlert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
@@ -424,7 +452,7 @@ export default function StudyRoom() {
                     setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
                     setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
                     setIsScreenSharing(true); // 화면 공유 상태 설정
-                    alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                    openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
@@ -507,6 +535,7 @@ export default function StudyRoom() {
     };
     //웹소켓 카메라
     useEffect(() => {
+
         //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
         const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
@@ -572,6 +601,7 @@ export default function StudyRoom() {
             <LiveKitRoom>
                 {/* token={token} serverUrl={LIVEKIT_URL} connect={!!token} */}
                 {!room ? (
+                    // 스터디 입장 페이지
                     <div className={"bg-black w-screen h-screen flex items-center justify-center"}>
                         <div className={"bg-[#666666] w-[720px] rounded"}>
                             <div className={"p-4 space-y-4"}>
@@ -590,327 +620,240 @@ export default function StudyRoom() {
                                 </div>
                             </div>
 
-                            {/* 미리보는 화상창 */}
-                            {previewStream ? (
-                                <StartVideoComponent
-                                    track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
-                                    local={true}
-
-                                />
-                            ) : (
-                                <div className="startvideo-container2">
-                                    <img
-                                        src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                        style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
-                                    />
+                            <div className={"h-[360px] flex justify-center items-center p-4"}>
+                                <div className={"bg-[#222222] w-full h-full flex justify-center items-center"}>
+                                    {/* 미리보는 화상창 */}
+                                    {previewStream ? (
+                                        <StartVideoComponent
+                                            track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
+                                            local={true}
+                                        />
+                                    ) : (
+                                        // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                        <div>
+                                            <Avatar title={participantName}
+                                                    src={`${photopath}/${participantImage}`}
+                                                    sx={{width: "96px", height: "96px"}}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault()
-                                    joinRoom();
-                                  
-                                }}>
-                                <div>
-                                    {/* <label htmlFor="participant-name">참가자</label> */}
+                            </div>
+
+
+                            {/* 버튼 스위칭 위치입니다 */}
+                            <div className={"p-4 flex justify-center gap-4 bg-[#222222] rounded-b"}>
+                                {/* 카메라 토글 버튼 */}
+                                <Tooltip title={isCamOn ? '카메라 켜기' : '카메라 끄기'}>
+                                    <Button onClick={toggleCam} variant={"contained"}>
+                                        {isCamOn ? <VideocamIcon fontSize="medium"/> :
+                                            <VideocamOffIcon fontSize="medium"/>}
+                                    </Button>
+                                </Tooltip>
+
+                                {/* 마이크 토글 버튼 */}
+                                <Tooltip title={isMicOn ? '마이크 끄기' : '마이크 켜기'}>
+                                    <Button onClick={toggleMic} variant={"contained"}>
+                                        {isMicOn ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
+                                    </Button>
+                                </Tooltip>
+
+                                <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
+                                <form onSubmit={(e) => {joinRoom(); e.preventDefault();}}>
                                     <input
                                         id="participant-name"
                                         className="form-control"
-                                        type="text"
+                                        type="hidden"
                                         value={participantName}
                                         onChange={(e) => setParticipantName(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    {/* <label htmlFor="room-name">Room</label> */}
+                                        required />
+
                                     <input
                                         id="room-name"
                                         className="form-control"
                                         type="hidden"
                                         value={roomName}
                                         onChange={(e) => setRoomName(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                {/* 버튼 스위칭 위치입니다 */}
-                                <div style={{
-                                    textAlign: "center",
-                                    marginTop: "50px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-evenly", // 버튼들 사이에 균일한 간격
-                                    width: "100%", // 전체 너비 사용
-                                    maxWidth: "1200px", // 최대 너비 설정 (필요에 따라 조정)
-                                    margin: "0 auto" // 중앙 정렬
-                                }}>
-                                    <IconButton onClick={toggleMic}>
-                                        {isMicOn ? <MicOffIcon sx={{ fontSize: 60 }} /> : <MicIcon sx={{ fontSize: 60 }} />}
-                                    </IconButton>
+                                        required />
 
-                                    <IconButton onClick={toggleCam} size="large">
-                                        {isCamOn ? <VideocamOffIcon sx={{ fontSize: 60 }} /> : <VideocamIcon sx={{ fontSize: 60 }} />}
-                                    </IconButton>
-
-                                    <div>
-                                        {/* 프로필사진넣는 명령어 입력해주길 */}
-                                        <img src={`${photopath}/${participantImage}`}
-                                            style={{ width: "60px", borderRadius: "100%" }} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <button
-                                        variant="contained"
-                                        type="submit"
-                                        disabled={!roomName || !participantName}
-                                        sx={{ display: 'block', margin: '0 auto', fontSize: 20 }}>
-                                        입장
-                                    </button>
-                                </div>
-                            </form>
+                                    <Tooltip title="입장">
+                                        <Button
+                                            type="submit"
+                                            variant={"contained"}
+                                            color={"success"}>
+                                             <LoginIcon/>
+                                        </Button>
+                                    </Tooltip>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-[0.5fr,1.5fr,0.5fr] h-[85vh]">
-                        <div className="flex flex-col bg-gray-100 p-4 " style={{height: '100%'}}>
-                            {/* 사용자들이 나올 화면에 스크롤 기능 추가 */}
-                            <div className="flex-grow overflow-y-auto">
-                                <div className="flex flex-col space-y-2 h-[40vh]">
-                                    사용자들이 나올 화면<br/>
-                                    시바타 유니<br/>
-                                    정상혁<br/>
-                                    우태형<br/>
-                                    도훈하윤<br/>
-                                    막내 aka 민지박
-                                    {/* 많은 사용자 예시 추가 */}
-                                    더 많은 사용자들<br/>
-                                    사용자 A<br/>
-                                    사용자 B<br/>
-                                    사용자 C<br/>
-                                    사용자 D<br/>
-                                    사용자 E<br/>
-                                    사용자 F<br/>
-                                    사용자 G<br/>
-                                    사용자 A<br/>
-                                    사용자 B<br/>
-                                    사용자 C<br/>
-                                    사용자 D<br/>
-                                    사용자 E<br/>
-                                    사용자 F<br/>
-                                    사용자 G<br/>
-                                    사용자 A<br/>
-                                    사용자 B<br/>
-                                    사용자 C<br/>
-                                    사용자 D<br/>
-                                    사용자 E<br/>
-                                    사용자 F<br/>
-                                    사용자 G<br/>
-                                    사용자 A<br/>
-                                    사용자 B<br/>
-                                    사용자 C<br/>
-                                    사용자 D<br/>
-                                    사용자 E<br/>
-                                    사용자 F<br/>
-                                    사용자 G<br/>
-                                    사용자 D<br/>
-                                    사용자 E<br/>
-                                    사용자 F<br/>
-                                    사용자 G<br/>
-                                </div>
-                            </div>
-
-                            {/* 버튼 영역 */}
-                            <div className="h-[50vh] bg-gray text-white p-4">
-                                {/* 빈 공간 */}
-                                <div className="h-[50%]"/>
-
-                                {/* 버튼 영역 하단 절반 */}
-                                <div className="grid grid-cols-2 grid-rows-2 gap-4 h-[50%]">
-                                    {/* 카메라 토글 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2"
-                                            onClick={toggleCam}>
-                                        {isCameraEnabled ? <VideocamIcon fontSize="medium"/> :
-                                            <VideocamOffIcon fontSize="medium"/>}
-                                        <span className="text-s mt-1">{isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}</span>
-                                    </button>
-
-                                    {/* 마이크 토글 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2"
-                                            onClick={toggleMicrophone}>
-                                        {isMicrophoneMuted ? <MicIcon fontSize="medium"/> :
-                                            <MicOffIcon fontSize="medium"/>}
-                                        <span className="text-s mt-1">{isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}</span>
-                                    </button>
-
-                                    {/* 화면 공유 토글 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2"
-                                            onClick={toggleScreenSharing}>
-                                        {isScreenSharing ? <ScreenShareIcon fontSize="medium"/> :
-                                            <ScreenShareIcon fontSize="medium"/>}
-                                        <span className="text-s mt-1">{isScreenSharing ? '공유 중지' : '화면 공유'}</span>
-                                    </button>
-
-                                    {/* 나가기 버튼 */}
-                                    <button className="flex flex-col items-center justify-center py-1 px-2"
-                                            onClick={handleOpen}>
-                                        <CloseIcon fontSize="medium"/>
-                                        <span className="text-s mt-1">나가기</span>
-                                    </button>
-
-                                    {/* 방장이 나갈 때의 모달 */}
-                                    <Dialog open={open} onClose={handleClose}>
-                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleClose} color="secondary">
-                                                취소
-                                            </Button>
-                                            <Button onClick={handleConfirm} color="primary">
-                                                나가기
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-
-                                    {/* 일반 사용자가 나갈 때의 모달 */}
-                                    <Dialog open={open} onClose={handleClose}>
-                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleClose} color="secondary">
-                                                취소
-                                            </Button>
-                                            <Button onClick={handleConfirm} color="primary">
-                                                나가기
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="room" className="flex flex-col">
-                            {/* <AppBar position="static" sx={{ backgroundColor: 'lightgray' }}>
-                                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                                        {roomName}
-                                    </Typography>
-                                    <Box sx={{ flexGrow: 1, textAlign: 'center', mx: 2 }}> */}
-                            {/* Replace this text with your room description */}
-                            {/* <Typography variant="subtitle1">
-                                            방에 대한 설명설명충
-                                        </Typography>
-                                    </Box>
-                                </Toolbar>
-                            </AppBar> */}
-                            <div id="layout-container-share" className="">
-                                {/* 화면 공유 비디오 표시 */}
-                                {isScreenSharing && screenTrack && (
-                                    <ShareVideoComponent
-                                        track={screenTrack} // 화면 공유 비디오 트랙
-                                        participantIdentity={screenSharingParticipant || participantName} // 화면 공유를 나타내는 고유 이름
-                                        local={screenSharingParticipant === participantName} // 본인이 공유 중인 경우 local로 설정
-                                    />
-                                )}
-                                {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
-                                {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
-                                    <ShareVideoComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.videoTrack}
-                                        participantIdentity={remoteTrack.participantIdentity}
-                                    />
-                                ))}
-                            </div>
-                            <div id="layout-container" className="flex-grow h-[80vh]">
-                                {!isCamOn && localTrack ? (
-                                        <VideoComponent track={localTrack} participantIdentity={participantName}
-                                                        local={true}/>
-                                    ) :
-                                    (
-                                        <div className="video-container2">
-                                            <div className="participant-data">
-                                                <p>{participantName + (localTrack ? " (You)" : "")}</p>
-                                            </div>
-                                            <img
-                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                                style={{width: '320px', height: '240px'}} // 원하는 크기 설정
+                    // 화상 스터디 방 내부
+                    <div className="flex flex-col h-screen">
+                        <div className="flex-grow bg-[#222222]">
+                            <div className="flex h-full relative">
+                                <div id="room" className="flex flex-col">
+                                    <div id="layout-container-share" className="">
+                                        {/* 화면 공유 비디오 표시 */}
+                                        {isScreenSharing && screenTrack && (
+                                            <ShareVideoComponent
+                                                track={screenTrack} // 화면 공유 비디오 트랙
+                                                participantIdentity={screenSharingParticipant || participantName} // 화면 공유를 나타내는 고유 이름
+                                                local={screenSharingParticipant === participantName} // 본인이 공유 중인 경우 local로 설정
                                             />
+                                        )}
+                                        {/* 원격 화면 공유 비디오 트랙을 추가로 렌더링 */}
+                                        {getSharedScreenTracks(remoteTracks, sharedScreenTrackSid).map(remoteTrack => (
+                                            <ShareVideoComponent
+                                                key={remoteTrack.trackPublication.trackSid}
+                                                track={remoteTrack.trackPublication.videoTrack}
+                                                participantIdentity={remoteTrack.participantIdentity}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div id="layout-container" className="flex-grow h-[80vh]">
+                                        {!isCamOn && localTrack ? (
+                                                <VideoComponent track={localTrack} participantIdentity={participantName}
+                                                                local={true}/>
+                                            ) :
+                                            (
+                                                <div className="video-container2">
+                                                    <div className="participant-data absolute top-0 right-0">
+                                                        <p>{participantName + (localTrack ? " (You)" : "")}</p>
+                                                    </div>
+                                                    <Avatar
+                                                        title={participantImage}
+                                                        src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                                        sx={{width : "72px", height : "72px"}}
+                                                    />
+                                                </div>
+                                            )}
+                                        {/* 일반 비디오 및 오디오 트랙 렌더링 */}
+                                        {remoteTracks
+                                            .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
+                                            .map(remoteTrack => {
+                                                const isCamOn = cameraStatus[remoteTrack.participantIdentity]; // 웹소켓으로부터 수신된 카메라 상태
+                                                return remoteTrack.trackPublication.kind === "video" ? (
+                                                    !isCamOn ? (
+                                                        <VideoComponent
+                                                            key={remoteTrack.trackPublication.trackSid}
+                                                            track={remoteTrack.trackPublication.videoTrack}
+                                                            participantIdentity={remoteTrack.participantIdentity}
+                                                        />
+                                                    ) : (
+                                                        <VideoComponentcopy
+                                                            participantIdentity={remoteTrack.participantIdentity}
+                                                            participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
+                                                        />
+                                                    )
+                                                ) : (
+                                                    <AudioComponent
+                                                        key={remoteTrack.trackPublication.trackSid}
+                                                        track={remoteTrack.trackPublication.audioTrack}
+                                                        muted={isMicrophoneMuted} // 음소거 상태 전달
+                                                    />
+                                                );
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                    {isParticipantListOpen && (
+                                        <div className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <Typography variant="h6">참여자 목록</Typography>
+                                                {/* 채팅창 닫기 버튼 */}
+                                                <IconButton onClick={toggleParticipantList}>
+                                                    <CloseIcon/>
+                                                </IconButton>
+                                            </div>
+                                            <div className="flex-grow overflow-y-auto">
+                                            </div>
                                         </div>
                                     )}
-                                {/* 일반 비디오 및 오디오 트랙 렌더링 */}
-                                {remoteTracks
-                                    .filter(track => isRegularVideoTrack(track, sharedScreenTrackSid) || isAudioTrack(track))
-                                    .map(remoteTrack => {
-                                        const isCamOn = cameraStatus[remoteTrack.participantIdentity]; // 웹소켓으로부터 수신된 카메라 상태
-                                        return remoteTrack.trackPublication.kind === "video" ? (
-                                            !isCamOn ? (
-                                                <VideoComponent
-                                                    key={remoteTrack.trackPublication.trackSid}
-                                                    track={remoteTrack.trackPublication.videoTrack}
-                                                    participantIdentity={remoteTrack.participantIdentity}
+                                {isChatOpen && (
+                                    <div
+                                        className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <Typography variant="h6">채팅</Typography>
+                                            {/* 채팅창 닫기 버튼 */}
+                                            <IconButton onClick={toggleChat}>
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            </div>
+                                            <div className="flex-grow overflow-y-auto">
+                                                <ul id="messages" className="flex flex-col">
+                                                    {messages.map((msg, index) => (
+                                                        <li key={index} className="my-2 p-2 rounded-lg bg-gray-200 text-gray-900">
+                                                            {msg}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            <form onSubmit={sendMessage} className="flex items-center mt-2 gap-2">
+                                                <TextField
+                                                    fullWidth
+                                                    type="text"
+                                                    variant={"outlined"}
+                                                    size={"small"}
+                                                    autoComplete="off"
+                                                    value={message}
+                                                    onChange={(e) => setMessage(e.target.value)}
+                                                    placeholder="메시지를 입력하세요"
                                                 />
-                                            ) : (
-                                                <VideoComponentcopy
-                                                    participantIdentity={remoteTrack.participantIdentity}
-                                                    participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
-                                                />
-                                            )
-                                        ) : (
-                                            <AudioComponent
-                                                key={remoteTrack.trackPublication.trackSid}
-                                                track={remoteTrack.trackPublication.audioTrack}
-                                                muted={isMicrophoneMuted} // 음소거 상태 전달
-                                            />
-                                        );
-                                    })
-                                }
+                                                <Button type="submit" variant={"contained"}>Send</Button>
+                                            </form>
+                                        </div>
+                                    )}
                             </div>
                         </div>
+                        <div className="flex justify-between items-center p-4 bg-black text-white">
+                            <span className="text-sm">{roomName}</span>
+                            <div className="flex space-x-2">
+                                {/* 카메라 토글 버튼 */}
+                                <Tooltip title={isCameraEnabled ? '카메라 끄기' : '카메라 켜기'}>
+                                    <Button onClick={toggleCam} variant={"contained"}>
+                                        {isCameraEnabled ? <VideocamIcon /> :
+                                            <VideocamOffIcon />}
+                                    </Button>
+                                </Tooltip>
+                                {/* 마이크 토글 버튼 */}
+                                <Tooltip title={isMicrophoneMuted ? '마이크 끄기' : '마이크 켜기'}>
+                                    <Button onClick={toggleMicrophone} variant={"contained"}>
+                                        {isMicrophoneMuted ? <MicIcon /> : <MicOffIcon />}
+                                    </Button>
+                                </Tooltip>
+                                {/* 화면 공유 토글 버튼 */}
+                                <Tooltip title={isScreenSharing ? '공유 중지' : '화면 공유'}>
+                                    <Button onClick={toggleScreenSharing} variant={"contained"}>
+                                        {isScreenSharing ? <ScreenShareIcon /> : <ScreenShareIcon />}
+                                    </Button>
+                                </Tooltip>
 
-                        <div className="flex flex-col bg-gray-100 p-4 " style={{height: '100%'}}>
-                            <div className="flex-grow overflow-y-auto">
-                                <ul id="messages" className="flex flex-col">
-                                    {/* {messages.map((msg, index) => {
-                                        return (
-                                            <li
-                                                key={index}
-                                                className={`my-2 p-2 rounded-lg ${
-                                                    username === participantName ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-900'
-                                                }`}
-                                            >
-                                                <strong>{username}</strong>: {content}
-                                            </li>
-                                        );
-                                    })}
-                                    <li ref={chatEndRef} /> */}
-                                    {messages.map((msg, index) => (
-                                        <li key={index} className="my-2 p-2 rounded-lg bg-gray-200 text-gray-900">
-                                            {msg}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {/* 채팅창 버튼 */}
+                                <Tooltip title={isChatOpen ? '채팅창 닫기' : '채팅창 열기'}>
+                                    <Button onClick={toggleChat} variant={"contained"}>
+                                        <ChatIcon  />
+                                    </Button>
+                                </Tooltip>
+
+                                {/* 참여자 목록 버튼 */}
+                                <Tooltip title={isParticipantListOpen ? '참여자 목록 닫기' : '참여자 목록 열기'}>
+                                    <Button onClick={toggleParticipantList} variant={"contained"}>
+                                        <PeopleIcon  />
+                                    </Button>
+                                </Tooltip>
                             </div>
-                            <form onSubmit={sendMessage} className="flex items-center mt-2">
-                                <input
-                                    type="text"
-                                    autoComplete="off"
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="메시지를 입력하세요"
-                                    className="border border-gray-300 rounded-lg py-2 px-4 w-full"
-                                />
-                                <button type="submit"
-                                        className="bg-blue-500 text-white font-bold py-2 px-4 rounded ml-2">
-                                    Send
-                                </button>
-                            </form>
+                            <div className="flex space-x-2">
+                                {/* 나가기 버튼 */}
+                                <Tooltip title="나가기">
+                                    <Button onClick={() => leaveRoom(study_id)}
+                                            variant={"contained"}
+                                            color={"error"}>
+                                        <ExitToAppIcon />
+                                    </Button>
+                                </Tooltip>
+                            </div>
                         </div>
                     </div>
                 )}
