@@ -590,56 +590,84 @@ export default function StudyRoom() {
                                 </div>
                             </div>
 
-                            <div className={"h-[360px] flex justify-center items-center p-4"}>
-                                <div className={"bg-[#222222] w-full h-full flex justify-center items-center"}>
-                                    {/* 미리보는 화상창 */}
-                                    {previewStream ? (
-                                        <StartVideoComponent
-                                            track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
-                                            local={true}
-                                        />
-                                    ) : (
-                                        // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                        <div>
-                                            <Avatar title={participantName}
-                                                    src={`${photopath}/${participantImage}`}
-                                                    sx={{width: "96px", height: "96px"}}
-                                            />
-                                        </div>
-                                    )}
+                            {/* 미리보는 화상창 */}
+                            {previewStream ? (
+                                <StartVideoComponent
+                                    track={previewStream.getVideoTracks()[0]} // MediaStreamTrack을 전달
+                                    local={true}
+
+                                />
+                            ) : (
+                                <div className="startvideo-container2">
+                                    <img
+                                        src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                        style={{ width: '320px', height: '240px' }} // 원하는 크기 설정
+                                    />
                                 </div>
-                            </div>
+                            )}
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault()
+                                    joinRoom();
+                                  
+                                }}>
+                                <div>
+                                    {/* <label htmlFor="participant-name">참가자</label> */}
+                                    <input
+                                        id="participant-name"
+                                        className="form-control"
+                                        type="text"
+                                        value={participantName}
+                                        onChange={(e) => setParticipantName(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    {/* <label htmlFor="room-name">Room</label> */}
+                                    <input
+                                        id="room-name"
+                                        className="form-control"
+                                        type="hidden"
+                                        value={roomName}
+                                        onChange={(e) => setRoomName(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                {/* 버튼 스위칭 위치입니다 */}
+                                <div style={{
+                                    textAlign: "center",
+                                    marginTop: "50px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-evenly", // 버튼들 사이에 균일한 간격
+                                    width: "100%", // 전체 너비 사용
+                                    maxWidth: "1200px", // 최대 너비 설정 (필요에 따라 조정)
+                                    margin: "0 auto" // 중앙 정렬
+                                }}>
+                                    <IconButton onClick={toggleMic}>
+                                        {isMicOn ? <MicOffIcon sx={{ fontSize: 60 }} /> : <MicIcon sx={{ fontSize: 60 }} />}
+                                    </IconButton>
 
+                                    <IconButton onClick={toggleCam} size="large">
+                                        {isCamOn ? <VideocamOffIcon sx={{ fontSize: 60 }} /> : <VideocamIcon sx={{ fontSize: 60 }} />}
+                                    </IconButton>
 
-                            {/* 버튼 스위칭 위치입니다 */}
-                            <div className={"p-4 flex justify-center gap-4 bg-[#222222] rounded-b"}>
-                                {/* 카메라 토글 버튼 */}
-                                <Tooltip title={isCamOn ? '카메라 끄기' : '카메라 켜기'}>
-                                    <Button onClick={toggleCam} variant={"contained"}>
-                                        {isCamOn ? <VideocamIcon fontSize="medium"/> :
-                                            <VideocamOffIcon fontSize="medium"/>}
-                                    </Button>
-                                </Tooltip>
-
-                                {/* 마이크 토글 버튼 */}
-                                <Tooltip title={isMicOn ? '마이크 끄기' : '마이크 켜기'}>
-                                    <Button onClick={toggleMic} variant={"contained"}>
-                                        {isMicOn ? <MicIcon fontSize="medium"/> : <MicOffIcon fontSize="medium"/>}
-                                    </Button>
-                                </Tooltip>
-
-                                <Tooltip title={participantName}>
-                                    <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
-                                </Tooltip>
-
-                                <Tooltip title="입장">
-                                    <Button 
-                                            onClick={joinRoom}
-                                            variant={"contained"}>
-                                        <LoginIcon/>
-                                    </Button>
-                                </Tooltip>
-                            </div>
+                                    <div>
+                                        {/* 프로필사진넣는 명령어 입력해주길 */}
+                                        <img src={`${photopath}/${participantImage}`}
+                                            style={{ width: "60px", borderRadius: "100%" }} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        variant="contained"
+                                        type="submit"
+                                        disabled={!roomName || !participantName}
+                                        sx={{ display: 'block', margin: '0 auto', fontSize: 20 }}>
+                                        입장
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 ) : (
