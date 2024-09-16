@@ -29,8 +29,6 @@ import {
 import VideoComponentcopy from "../../components/study/VideoComponent copy";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
-import CustomAlert from "../../components/modal/CustomAlert";
-import RoomControlPanel from "./component/RoomControlPanel";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
@@ -681,8 +679,9 @@ export default function StudyRoom() {
                                     <Tooltip title="입장">
                                         <Button
                                             type="submit"
-                                            variant={"contained"}>
-                                            <LoginIcon/>
+                                            variant={"contained"}
+                                            color={"success"}>
+                                             <LoginIcon/>
                                         </Button>
                                     </Tooltip>
                                 </form>
@@ -848,7 +847,9 @@ export default function StudyRoom() {
                             <div className="flex space-x-2">
                                 {/* 나가기 버튼 */}
                                 <Tooltip title="나가기">
-                                    <Button onClick={() => leaveRoom(study_id)} variant={"contained"}>
+                                    <Button onClick={() => leaveRoom(study_id)}
+                                            variant={"contained"}
+                                            color={"error"}>
                                         <ExitToAppIcon />
                                     </Button>
                                 </Tooltip>
