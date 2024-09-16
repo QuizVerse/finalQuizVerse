@@ -55,18 +55,22 @@ export default function PublishedBook() {
   };
 
   // 책 목록 가져오기
-  const getPublishedBooks = async () => {
-    if (!user) return;
+const getPublishedBooks = async () => {
+  if (!user) return;
 
-    try {
-      const res = await axios.get(`/publishedbook/user-books?userId=${user.userId}`);
-      setBookList(res.data);  // 책 목록 상태 업데이트
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false); // 로딩 상태 해제
-    }
-  };
+  try {
+    const res = await axios.get(`/publishedbook/user-books?userId=${user.userId}`);
+    
+    // 책 목록을 createdate 기준으로 최신순으로 정렬
+    const sortedBooks = res.data.sort((a, b) => new Date(b.bookCreatedate) - new Date(a.bookCreatedate));
+    
+    setBookList(sortedBooks);  // 정렬된 책 목록으로 상태 업데이트
+  } catch (error) {
+    setError(error);
+  } finally {
+    setLoading(false); // 로딩 상태 해제
+  }
+};
 
   /*    setBookList(res.data);  // 책 목록 상태 업데이트
     } catch (error) {
