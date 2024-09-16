@@ -71,6 +71,7 @@ import UpdateBook from "./routes/book/UpdateBook";
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import StudyRoomOrigin from "./routes/study/StudyRoomOrigin";
 import StudyRoom0914 from "./routes/study/StudyRoom0914";
+import StudyRoomCSS from "./routes/study/StudyRoomCSS";
 
 const router = createBrowserRouter([
     {
@@ -293,19 +294,17 @@ const router = createBrowserRouter([
                 element: <StudyList />,
                 errorElement: <ErrorPage />,
             },
-            {
-                path: '/study/room/:study_id',
-                element: <StudyRoom />,
-                errorElement: <ErrorPage />,
-            },
         ]
+    },
+    {
+        path: '/study/room/:study_id',
+        element: <StudyRoom />,
+        errorElement: <ErrorPage />,
     },
     {
 
         path: "/mypage",
-        element: (
-            <Mypage />
-        ),
+        element: (<Mypage />),
         errorElement: <ErrorPage />,
         children :[
             {

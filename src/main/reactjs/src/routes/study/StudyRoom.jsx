@@ -633,7 +633,7 @@ export default function StudyRoom() {
                                     ) : (
                                         // 카메라 꺼진 상태를 나타내는 이미지 경로
                                         <div>
-                                            <img //title={participantName}
+                                            <Avatar title={participantName}
                                                     src={`${photopath}/${participantImage}`}
                                                     sx={{width: "96px", height: "96px"}}
                                             />
@@ -660,14 +660,12 @@ export default function StudyRoom() {
                                     </Button>
                                 </Tooltip>
 
-                                <Tooltip title={participantName}>
-                                    <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
-                                </Tooltip>
+                                <Avatar title={participantName} src={`${photopath}/${participantImage}`}/>
                                 <form onSubmit={(e) => {joinRoom(); e.preventDefault();}}>
                                     <input
                                         id="participant-name"
                                         className="form-control"
-                                        type="text"
+                                        type="hidden"
                                         value={participantName}
                                         onChange={(e) => setParticipantName(e.target.value)}
                                         required />
@@ -722,12 +720,13 @@ export default function StudyRoom() {
                                             ) :
                                             (
                                                 <div className="video-container2">
-                                                    <div className="participant-data">
+                                                    <div className="participant-data absolute top-0 right-0">
                                                         <p>{participantName + (localTrack ? " (You)" : "")}</p>
                                                     </div>
-                                                    <img
+                                                    <Avatar
+                                                        title={participantImage}
                                                         src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
-                                                        style={{width: '320px', height: '240px'}} // 원하는 크기 설정
+                                                        sx={{width : "72px", height : "72px"}}
                                                     />
                                                 </div>
                                             )}
