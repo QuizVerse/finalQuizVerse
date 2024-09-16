@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -80,33 +81,36 @@ public class WrongService {
     }
 
 
-    public List<WrongDto> getWrongBooksByUserId(Integer userId) {
-        // 사용자 ID로 오답 목록을 조회
-        List<WrongDto> wrongEntities = wrongRepository.findByUserUserId(userId);
 
-        // 결과를 담을 리스트
-        List<WrongDto> wrongDtoList = new ArrayList<>();
+    // solvedbookId와 wrongRepeat 조합을 기준으로 그룹화된 오답 목록을 반환하는 메서드
+    public List<WrongDto> getGroupedWrongBooksByUserId(Integer userId) {
+        // 사용자의 모든 오답 데이터를 가져옴
+        List<WrongDto> wrongDtoList = wrongRepository.findByUserUserId(userId);
 
-        // 각 오답 엔티티에 대해 처리
-        for (WrongDto wrongEntity : wrongEntities) {
-            // solvedbookId로 bookId를 조회
-            Integer bookId = solvedbookRepository.findBookIdBySolvedbookId(wrongEntity.getSolvedbook().getSolvedbookId());
+        // 각 solvedbookId에 대해 bookId와 bookTitle을 가져와서 설정
+        wrongDtoList.forEach(wrong -> {
+            Integer bookId = wrong.getSolvedbook().getBook().getBookId(); // solvedbook에서 bookId를 가져옴
+            String bookTitle = wrong.getSolvedbook().getBook().getBookTitle(); // solvedbook에서 bookTitle을 가져옴
+            wrong.setBookId(bookId); // @Transient 필드에 bookId 저장
+            wrong.setBookTitle(bookTitle); // @Transient 필드에 bookTitle 저장
+        });
 
+        // solvedbookId와 wrongRepeat 조합을 기준으로 중복되지 않게 그룹화하는 작업을 수행
+        Map<String, WrongDto> groupedBooks = wrongDtoList.stream()
+                .collect(Collectors.toMap(
+                        wrong -> generateKey(wrong), // 각 오답(wrong)의 solvedbookId와 wrongRepeat 조합을 키로 사용
+                        wrong -> wrong, // 오답 항목 자체를 값으로 사용
+                        (existing, replacement) -> existing // 만약 중복된 키가 있을 경우, 기존 항목을 유지하고 새로운 항목은 무시
+                ));
 
-            BookDto bookDto=bookRepository.findByBookId(bookId);
-            String bookTitle=bookDto.getBookTitle();
+        // Map의 값들을 리스트로 변환하여 반환
+        return groupedBooks.values().stream().collect(Collectors.toList());
+    }
 
-            wrongEntity.setBookTitle(bookTitle);
-
-
-            // WrongDto 객체에 bookId 설정
-            wrongEntity.setBookId(bookId); // 필요한 경우 bookId 필드를 추가하고 설정
-
-            // 리스트에 추가
-            wrongDtoList.add(wrongEntity);
-        }
-
-        return wrongDtoList;
+    // solvedbookId와 wrongRepeat 값을 조합하여 고유한 키를 생성하는 메서드
+    // 예를 들어, solvedbookId가 1이고 wrongRepeat가 2일 경우 "1-2"라는 키를 생성
+    private String generateKey(WrongDto wrong) {
+        return wrong.getSolvedbook().getSolvedbookId() + "-" + wrong.getWrongRepeat();
     }
 
     // 특정 유저 ID에 대한 책 정보 및 틀린 문항 수 조회
