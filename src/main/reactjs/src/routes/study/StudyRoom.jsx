@@ -5,7 +5,7 @@ import {
     RoomEvent,
     Track
 } from "livekit-client";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import VideoComponent from "../../components/study/VideoComponent";
 import AudioComponent from "../../components/study/AudioComponent";
 import ShareVideoComponent from "../../components/study/ShareVideoComponent";
@@ -29,28 +29,18 @@ import {
 import VideoComponentcopy from "../../components/study/VideoComponent copy";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
+import CustomAlert from "../../components/modal/CustomAlert";
 import RoomControlPanel from "./component/RoomControlPanel";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
-<<<<<<< HEAD
-  // function configureUrls() {
-  //     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-  //     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-  // }
-=======
-//   function configureUrls() {
-//       APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
-//       LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
-//   }
->>>>>>> 1069483aae052be99dd73c3c6b633fa88695abdf
-
 function configureUrls() {
     APPLICATION_SERVER_URL = "http://localhost:3000/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
+
 
 export default function StudyRoom() {
 
@@ -63,10 +53,6 @@ export default function StudyRoom() {
     const [participantImage, setParticipantImage] = useState("");
     const [roomName, setRoomName] = useState("");
     const [roomDescription, setRoomDescription] = useState("");
-
-    const [localTrack, setLocalTrack] = useState(undefined);
-    const [localAudioTrack, setLocalAudioTrack] = useState(null);
-    const [remoteTracks, setRemoteTracks] = useState([]);
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
@@ -75,6 +61,25 @@ export default function StudyRoom() {
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
 
     // 추가: 채팅창 토글 상태를 관리하는 state
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -371,7 +376,7 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    alert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    openAlert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
@@ -444,7 +449,7 @@ export default function StudyRoom() {
                     setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
                     setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
                     setIsScreenSharing(true); // 화면 공유 상태 설정
-                    alert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                    openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
@@ -849,6 +854,5 @@ export default function StudyRoom() {
                 )}
             </LiveKitRoom>
         </LayoutContextProvider>
-    )
-        ;
+    );
 }
