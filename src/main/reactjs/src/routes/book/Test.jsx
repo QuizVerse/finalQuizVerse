@@ -59,16 +59,16 @@ export default function ParentComponent() {
         }
 
 
-
-        // 질문 가져오기
-        const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-        setQuestions(questionsRes.data);
-
-        if (wrongRepeat > 0) {
+        if (wrongRepeat && wrongRepeat > 0) {
           const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
             params: { solvedbookId, wrongRepeat },
           });
           setQuestions(wrongQuestionsRes.data);
+        }
+        else {
+          // 모든 문제 가져오기
+          const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+          setQuestions(questionsRes.data); // 전체 문제를 저장
         }
 
       } catch (error) {
@@ -213,7 +213,7 @@ export default function ParentComponent() {
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
-            <DensityMediumOutlinedIcon />
+            <DensityMediumOutlinedIcon/>
             <span className="text-lg font-semibold">
             {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
           </span>
@@ -235,18 +235,30 @@ export default function ParentComponent() {
         </header>
 
         <div className="space-y-4">
-          {sections.map((section, index) => (
-              <TestSection
-                  key={index}
-                  index={index}
-                  sectionCount={sections.length}
-                  section={section}
-                  book={bookData}
-                  loading={loading}
-                  setLoading={setLoading}
-                  onAnswerChange={handleAnswerChange}
-              />
-          ))}
+          {sections &&
+              sections.map((section, index) => {
+                // 각 섹션에 해당하는 질문을 필터링
+                const filteredQuestions = questions.filter(
+                    (question) => question.section.sectionId === section.sectionId
+                );
+
+                // 필터링된 질문이 없으면 해당 섹션을 렌더링하지 않음
+                if (filteredQuestions.length === 0) return null;
+
+                return (
+                    <TestSection
+                        key={index}
+                        index={index}
+                        sectionCount={sections.length}
+                        section={section}
+                        book={bookData}
+                        loading={loading}
+                        setLoading={setLoading}
+                        filterquestions={filteredQuestions} // 필터링된 질문 전달
+                        onAnswerChange={handleAnswerChange}
+                    />
+                );
+              })}
         </div>
 
         {/* 리뷰 모달 */}

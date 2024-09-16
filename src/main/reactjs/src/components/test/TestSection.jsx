@@ -12,7 +12,8 @@ export default function TestSection({
                                         sectionCount,     // 전체 섹션 수
                                         section,          // 섹션 데이터 (각 섹션의 정보)
                                         setLoading,       // 로딩 상태 관리
-                                        onAnswerChange    // 상위 컴포넌트에서 답안 변경 시 호출되는 함수
+                                        onAnswerChange,    // 상위 컴포넌트에서 답안 변경 시 호출되는 함수
+                                        filterquestions,
                                     }) {
     const imagePath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/book/"; // 이미지 경로
     const [isCollapsed, setIsCollapsed] = useState(false);   // 섹션이 접혀 있는지 상태 관리
@@ -90,14 +91,14 @@ export default function TestSection({
                     </div>
 
                     {/* 각 질문을 렌더링 */}
-                    {questions.map((question, questionIndex) => (
+                    {filterquestions.map((question, index) => (
                         <TestQuestion
-                            key={questionIndex}
-                            question={question}
-                            onAnswerChange={onAnswerChange}
-                            index={questionIndex}
+                            key={index}
+                            index={index}
                             totalQuestions={questions.length}
+                            question={question}
                             openConfirm={setDeleteConfirm}
+                            onAnswerChange={onAnswerChange}
                         />
                     ))}
                 </div>
