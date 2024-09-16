@@ -53,6 +53,10 @@ export default function StudyRoom() {
     const [participantImage, setParticipantImage] = useState("");
     const [roomName, setRoomName] = useState("");
     const [roomDescription, setRoomDescription] = useState("");
+
+    const [localTrack, setLocalTrack] = useState(undefined);
+    const [localAudioTrack, setLocalAudioTrack] = useState(null);
+    const [remoteTracks, setRemoteTracks] = useState([]);
     const [token, setToken] = useState(null);
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
