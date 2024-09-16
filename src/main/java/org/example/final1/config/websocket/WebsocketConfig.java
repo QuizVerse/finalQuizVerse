@@ -31,19 +31,19 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	 @Override
 	 public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		 registry.addHandler(new ChatWebSocketHandler(), "/ws/chat")
-	            //.setAllowedOrigins("http://localhost:3000")
-				.setAllowedOrigins("https://www.quizverse.kro.kr")
+	            .setAllowedOrigins("http://localhost:3000")
+				//.setAllowedOrigins("https://www.quizverse.kro.kr")
 	            .addInterceptors(new HttpSessionHandshakeInterceptor());
 
 		// 화면 공유 WebSocket 핸들러 등록
 		registry.addHandler(screenShareWebSocketHandler(), "/ws/screen-share")
-				//.setAllowedOrigins("http://localhost:3000") // React 앱 주소
-				.setAllowedOrigins("https://www.quizverse.kro.kr")
+				.setAllowedOrigins("http://localhost:3000") // React 앱 주소
+				//.setAllowedOrigins("https://www.quizverse.kro.kr")
 				.addInterceptors(new HttpSessionHandshakeInterceptor());
 		//카메라 
 		registry.addHandler(cameraWebSocketHandler(), "/ws/camera")
-			//.setAllowedOrigins("http://localhost:3000")
-			.setAllowedOrigins("https://www.quizverse.kro.kr")
+			.setAllowedOrigins("http://localhost:3000")
+			//.setAllowedOrigins("https://www.quizverse.kro.kr")
 			.addInterceptors(new HttpSessionHandshakeInterceptor());
 
 	}	
@@ -52,8 +52,8 @@ public class WebsocketConfig implements WebMvcConfigurer, WebSocketConfigurer {
 	  @Override
 	  public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/ws/**")
-			//.allowedOrigins("http://localhost:3000")
-			.allowedOrigins("https://www.quizverse.kro.kr")
+			.allowedOrigins("http://localhost:3000")
+			//.allowedOrigins("https://www.quizverse.kro.kr")
 			.allowedMethods("*");
 	  }
 }

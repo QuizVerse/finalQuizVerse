@@ -19,6 +19,10 @@ export default function ParentComponent() {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const wrongRepeat = queryParams.get("wrongRepeat"); // 오답 문제인지 여부
+  const [showAllQuestions, setShowAllQuestions] = useState(false); // 모든 문제 보기 상태
+
+
+
 
   const [timeElapsed, setTimeElapsed] = useState(0); // 경과 시간을 저장하는 상태
   const [timerPaused, setTimerPaused] = useState(false); // 타이머 일시정지 상태
@@ -44,6 +48,22 @@ export default function ParentComponent() {
     const fetchData = async () => {
       setLoading(true);
       try {
+        if (showAllQuestions) {
+          // 모든 문제 가져오기
+          const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+          setQuestions(questionsRes.data); // 전체 문제를 저장
+        } else if (wrongRepeat && wrongRepeat > 0) {
+          // 틀린 문제만 가져오기
+          const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
+            params: { solvedbookId, wrongRepeat },
+          });
+          setQuestions(wrongQuestionsRes.data);
+        } else {
+          // 모든 문제 가져오기 (디폴트)
+          const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
+          setQuestions(questionsRes.data); // 전체 문제를 저장
+        }
+
         const bookRes = await axios.get(`/book/edit/${bookId}`);
         setBookData(bookRes.data.book);
         setSections(bookRes.data.sections);
@@ -55,22 +75,7 @@ export default function ParentComponent() {
           setTotalTime(bookTimerInSeconds); // 남은 시간을 초 단위로 설정
           setTimeElapsed(bookTimerInSeconds); // 타이머 초기 설정
           console.log(bookTimerInMinutes, bookTimerInSeconds);
-
         }
-
-
-
-        // 질문 가져오기
-        const questionsRes = await axios.get(`/book/questionpreview/${bookId}`);
-        setQuestions(questionsRes.data);
-
-        if (wrongRepeat > 0) {
-          const wrongQuestionsRes = await axios.get(`http://localhost:9002/book/test/wrong`, {
-            params: { solvedbookId, wrongRepeat },
-          });
-          setQuestions(wrongQuestionsRes.data);
-        }
-
       } catch (error) {
         console.error("데이터를 가져오는 도중 문제가 발생했습니다.", error);
       } finally {
@@ -79,8 +84,7 @@ export default function ParentComponent() {
     };
 
     fetchData();
-  }, [bookId, wrongRepeat, solvedbookId]);
-
+  }, [bookId, wrongRepeat, solvedbookId, showAllQuestions]); // showAllQuestions 추가
   // 타이머: bookTimerInSeconds 값으로 시작해서 감소
   useEffect(() => {
     if (!timerPaused && timeElapsed > 0) {
@@ -213,7 +217,7 @@ export default function ParentComponent() {
       <div className={"space-y-8"}>
         <header className="flex items-center justify-between w-full p-4 bg-white shadow-md">
           <div className="flex items-center space-x-4">
-            <DensityMediumOutlinedIcon />
+            <DensityMediumOutlinedIcon/>
             <span className="text-lg font-semibold">
             {bookData?.bookTitle} | 출제자: {bookData?.user ? bookData.user.userNickname : "로드 중..."}
           </span>
@@ -225,6 +229,13 @@ export default function ParentComponent() {
             ) : (
                 <span className="text-lg">시간 제한 없음</span>
             )}
+            <Button
+                variant="contained"
+                onClick={() => setShowAllQuestions(true)} // 모든 문제를 보도록 설정
+                disabled={showAllQuestions} // 이미 모든 문제를 보고 있다면 비활성화
+            >
+              모든 문제 다 풀기
+            </Button>
             <Button variant="outlined" onClick={handleTemporarySave}>
               임시 저장
             </Button>
@@ -235,18 +246,32 @@ export default function ParentComponent() {
         </header>
 
         <div className="space-y-4">
-          {sections.map((section, index) => (
-              <TestSection
-                  key={index}
-                  index={index}
-                  sectionCount={sections.length}
-                  section={section}
-                  book={bookData}
-                  loading={loading}
-                  setLoading={setLoading}
-                  onAnswerChange={handleAnswerChange}
-              />
-          ))}
+          {sections &&
+              sections.map((section, index) => {
+                // 각 섹션에 해당하는 질문을 필터링
+                const filteredQuestions = showAllQuestions
+                    ? questions // 모든 문제 보기
+                    : questions.filter(
+                        (question) => question.section.sectionId === section.sectionId
+                    );
+
+                // 필터링된 질문이 없으면 해당 섹션을 렌더링하지 않음
+                if (filteredQuestions.length === 0) return null;
+
+                return (
+                    <TestSection
+                        key={index}
+                        index={index}
+                        sectionCount={sections.length}
+                        section={section}
+                        book={bookData}
+                        loading={loading}
+                        setLoading={setLoading}
+                        filterquestions={filteredQuestions} // 필터링된 질문 전달
+                        onAnswerChange={handleAnswerChange}
+                    />
+                );
+              })}
         </div>
 
         {/* 리뷰 모달 */}

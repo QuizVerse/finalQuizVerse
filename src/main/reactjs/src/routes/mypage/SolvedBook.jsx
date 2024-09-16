@@ -107,16 +107,15 @@ export default function PublishedBook() {
                             {row.solvedbookEnd ? new Date(row.solvedbookEnd).toLocaleString() : '-'}
                           </TableCell>
                           <TableCell>
-
                             {row.solvedbookIssubmitted ? (
-                              <Button variant="outlined">
-                                <Link to={`/book/test/${row.bookId}/${row.solvedbookId}?wrongRepeat=0`}>이어서 풀기</Link>
-                              </Button>
-                          ) : (
-                              <Button variant="outlined">
-                                <Link to={`/book/score/${row.bookId}/${row.solvedbookId}?wrongRepeat=`}>성적 확인</Link>
-                              </Button>
-                          )}
+                                <Button variant="outlined">
+                                  <Link to={`/book/score/${row.bookId}/${row.solvedbookId}?wrongRepeat=0`}>성적 확인</Link>
+                                </Button>
+                            ) : (
+                                <Button variant="outlined">
+                                  <Link to={`/book/test/${row.bookId}/${row.solvedbookId}?wrongRepeat=0`}>이어서 풀기</Link>
+                                </Button>
+                            )}
                           </TableCell>
 
                         </TableRow>

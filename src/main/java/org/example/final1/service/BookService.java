@@ -108,6 +108,7 @@ public class BookService {
                     .bookQuestionCount(questionCount)
                     .userNickname(userNickname)  // userNickname 추가
                     .categoryName(categoryName)  // userNickname 추가
+                    .bookCreatedate(book.getBookCreatedate())  // bookCreatedate 추가
                     .build();
         }).collect(Collectors.toList());
     }
