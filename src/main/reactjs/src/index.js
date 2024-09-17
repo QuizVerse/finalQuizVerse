@@ -288,7 +288,10 @@ const router = createBrowserRouter([
             },
             {
                 path: '/study/list',
-                element: <StudyList />,
+                element: 
+                // <PrivateRoute>
+                    <StudyList />,
+                //</PrivateRoute>,
                 errorElement: <ErrorPage />,
             },
         ]
