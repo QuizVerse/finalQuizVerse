@@ -19,7 +19,7 @@ import {
 import PeopleIcon from '@mui/icons-material/People';
 import axios from "axios";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
-import {AppBar, Avatar, Box, Button, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
@@ -63,6 +63,7 @@ export default function StudyRoom() {
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+    const [open, setOpen] = useState(false);
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
@@ -246,6 +247,22 @@ export default function StudyRoom() {
             await leaveRoom();
         }
     }
+    
+     // 모달 열기 함수
+     const handleOpen = () => {
+        setOpen(true);
+    };
+
+    // 모달 닫기 함수
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // 나가기 확인 함수 (실제로 방을 나가는 기능)
+    const handleConfirm = () => {
+        leaveRoom(study_id); // 방 나가기 함수 호출
+        handleClose(); // 모달 닫기
+    };
 
     //방 나가기
     async function leaveRoom(study_id) {
@@ -853,12 +870,49 @@ export default function StudyRoom() {
                             <div className="flex space-x-2">
                                 {/* 나가기 버튼 */}
                                 <Tooltip title="나가기">
-                                    <Button onClick={() => leaveRoom(study_id)}
+                                    <Button onClick={handleOpen}
                                             variant={"contained"}
                                             color={"error"}>
                                         <ExitToAppIcon />
                                     </Button>
                                 </Tooltip>
+
+                                 {/* 방장이 나갈 때의 모달 */}
+                                 {/* <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClose} color="secondary">
+                                                취소
+                                            </Button>
+                                            <Button onClick={handleConfirm} color="primary">
+                                                나가기
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog> */}
+
+                                    {/* 일반 사용자가 나갈 때의 모달 */}
+                                    <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClose} color="secondary">
+                                                취소
+                                            </Button>
+                                            <Button onClick={handleConfirm} color="primary">
+                                                나가기
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+
                             </div>
                         </div>
                     </div>
