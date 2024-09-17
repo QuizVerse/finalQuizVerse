@@ -26,7 +26,7 @@ import {
     Mic as MicIcon,
     MicOff as MicOffIcon, ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
-import VideoComponentcopy from "../../components/study/VideoComponent copy";
+import "../../routes/study/StudyRoom.css";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -663,7 +663,7 @@ export default function StudyRoom() {
                                     <input
                                         id="participant-name"
                                         className="form-control"
-                                        type="hidden"
+                                        type="text"
                                         value={participantName}
                                         onChange={(e) => setParticipantName(e.target.value)}
                                         required />
@@ -691,11 +691,11 @@ export default function StudyRoom() {
                 ) : (
                     // 화상 스터디 방 내부
                     <div className="flex flex-col h-screen">
-                        <div className="flex-grow bg-[#222222]">
-                            <div className="flex h-full relative">
+                        <div className="flex-grow bg-[#222222] flex justify-center items-center">
+                            <div className="relative">
                                 <div id="room" className="flex flex-col">
-                                    <div id="layout-container-share" className="">
-                                        {/* 화면 공유 비디오 표시 */}
+                                    <div id="layout-container-share">
+                                        {/* 화면 공유 비디오 표시    */}
                                         {isScreenSharing && screenTrack && (
                                             <ShareVideoComponent
                                                 track={screenTrack} // 화면 공유 비디오 트랙
@@ -742,10 +742,16 @@ export default function StudyRoom() {
                                                             participantIdentity={remoteTrack.participantIdentity}
                                                         />
                                                     ) : (
-                                                        <VideoComponentcopy
-                                                            participantIdentity={remoteTrack.participantIdentity}
-                                                            participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
-                                                        />
+                                                        <div className="video-container2">
+                                                            <div className="participant-data absolute top-0 right-0">
+                                                                <p>{participantName + (localTrack ? " (You)" : "")}</p>
+                                                            </div>
+                                                            <Avatar
+                                                                title={participantImage}
+                                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                                                sx={{width : "72px", height : "72px"}}
+                                                            />
+                                                        </div>
                                                     )
                                                 ) : (
                                                     <AudioComponent
@@ -759,7 +765,7 @@ export default function StudyRoom() {
                                     </div>
                                 </div>
                                     {isParticipantListOpen && (
-                                        <div className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        <div className="flex flex-col bg-gray-100 p-4 h-[920px] w-[360px] fixed top-0 right-0">
                                             <div className="flex justify-between items-center mb-2">
                                                 <Typography variant="h6">참여자 목록</Typography>
                                                 {/* 채팅창 닫기 버튼 */}
@@ -773,7 +779,7 @@ export default function StudyRoom() {
                                     )}
                                 {isChatOpen && (
                                     <div
-                                        className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        className="flex flex-col bg-gray-100 p-4 h-[920px] w-[360px] fixed top-0 right-0">
                                         <div className="flex justify-between items-center mb-2">
                                             <Typography variant="h6">채팅</Typography>
                                             {/* 채팅창 닫기 버튼 */}

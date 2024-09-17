@@ -30,7 +30,7 @@ export default function StartVideoComponent({ track, local = false }) {
     }, [track]);
 
     return (
-        <div id={"camera-"} className="startvideo-container">
+        <div id={"camera-"} className="startvideo-container2">
             <div className="participant-data">
                 {/* <p>{(local ? " (You)" : "")}</p> */}
             </div>

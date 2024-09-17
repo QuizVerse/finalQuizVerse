@@ -165,7 +165,7 @@ export default function Chatbot() {
                         <div className="flex flex-col gap-2 overflow-y-auto mb-4 h-[300px]">
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`p-2 rounded-lg bg-white ${message.sender === 'user' ? 'bg-[#1F4976] text-white' : ''}`}>
+                                    <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-[#1F4976] text-white' : 'bg-white'}`}>
                                         {message.text}
                                     </div>
                                 </div>
