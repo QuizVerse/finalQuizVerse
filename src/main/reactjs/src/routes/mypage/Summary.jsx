@@ -23,7 +23,7 @@ export default function Summary() {
         // 로그인 정보
         const fetchUserId = async () => {
             try {
-                const response = await axios.get('/summary/nickname');
+                const response = await axios.get('/book/username');
                 if (response.status === 200 && response.data) {
                     setUser(response.data);
                     setUserId(response.data.userId);
@@ -65,22 +65,7 @@ export default function Summary() {
 
         try {
             const res = await axios.get(`/publishedbook/user-books?userId=${userId}`);
-            const bookWithDetails = await Promise.all(res.data.map(async (book) => {
-                const [bookmarkCountResponse, questionCountResponse, sectionCountResponse] = await Promise.all([
-                    axios.get(`/bookmark/countBookmarks/${book.bookId}`),
-                    axios.get(`/book/question/count/${book.bookId}`),
-                    axios.get(`/book/section/count/${book.bookId}`)
-                ]);
-
-                return {
-                    ...book,
-                    bookmarkCount: bookmarkCountResponse.data,
-                    bookQuestionCount: questionCountResponse.data,
-                    bookSectionCount: sectionCountResponse.data
-                };
-            }));
-
-            setClassList(bookWithDetails);
+            setClassList(res.data);
         } catch (error) {
             setError(error);
         }
