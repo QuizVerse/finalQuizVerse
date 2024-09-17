@@ -765,7 +765,7 @@ export default function StudyRoom() {
                                     </div>
                                 </div>
                                     {isParticipantListOpen && (
-                                        <div className="flex flex-col bg-gray-100 p-4 h-[920px] w-[360px] fixed top-0 right-0">
+                                        <div className="flex flex-col bg-gray-100 p-4 h-screen w-[360px] fixed top-0 right-0">
                                             <div className="flex justify-between items-center mb-2">
                                                 <Typography variant="h6">참여자 목록</Typography>
                                                 {/* 채팅창 닫기 버튼 */}
@@ -779,7 +779,7 @@ export default function StudyRoom() {
                                     )}
                                 {isChatOpen && (
                                     <div
-                                        className="flex flex-col bg-gray-100 p-4 h-[920px] w-[360px] fixed top-0 right-0">
+                                        className="flex flex-col bg-gray-100 p-4 h-screen w-[360px] fixed top-0 right-0">
                                         <div className="flex justify-between items-center mb-2">
                                             <Typography variant="h6">채팅</Typography>
                                             {/* 채팅창 닫기 버튼 */}
