@@ -140,12 +140,12 @@ export default function Bookmark() {
                   createDate={book.bookCreatedate}
                   title={book.bookTitle}
                   isBookmark={book.isBookmark}
+                  status={book.bookStatus}
                   category={book.category?.categoryName || "Unknown"}
                   bookmarkCount={book.bookmarkCount}
                   bookQuestionCount={book.bookQuestionCount}
                   bookSectionCount={book.bookSectionCount}
                   bookUrl={`/book/detail/${book.bookId}`}
-                  isBookmark={book.isBookmark}
                   isLoggedIn={isLoggedIn}
                   updateBookmark={() => clickBookmark(book.bookId)}
               />
