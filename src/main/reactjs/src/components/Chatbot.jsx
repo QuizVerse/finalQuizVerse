@@ -87,7 +87,8 @@ export default function Chatbot() {
 
             setDynamicButtons([
                 { label: '회원 가입', value: '회원 가입' },
-                { label: '문제집 생성', value: '문제집 생성' },
+                { label: '오답노트', value: '오답노트' },
+                { label: '클래스', value: '클래스' },
                 { label: '화상스터디', value: '화상스터디' }
             ]);
         }
