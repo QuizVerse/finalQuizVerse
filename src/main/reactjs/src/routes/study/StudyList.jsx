@@ -7,6 +7,7 @@ import axios from "axios";
 import { Button } from "@mui/material";
 import StudyRoomEntry from "../../components/modal/StudyRoomEntry";
 import {useNavigate} from "react-router-dom";
+import CustomAlert from "../../components/modal/CustomAlert";
 
 
 const ITEMS_PER_PAGE = 10; // 페이지당 항목 수
@@ -26,6 +27,24 @@ export default function StudyList() {
     const handleChange = (event, value) => {
         setPage(value);
         window.scrollTo(0, 0);
+    };
+    // alert state
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+
+    /**
+     * @description : Alert창 열릴 때
+     * */
+    const openAlert = (title) => {
+        setAlertTitle(title);
+        setAlertVisible(true);
+    };
+
+    /**
+     * @description : Alert창 닫힐 때
+     * */
+    const closeAlert = () => {
+        setAlertVisible(false);
     };
 
     useEffect(() => {
@@ -72,7 +91,7 @@ export default function StudyList() {
     const GoRoomEvent = (studyId, studyTitle, studyDescription, studyPasswd, studyStatus, nowMember, totalMember) => {
         if (nowMember >= totalMember) {
             // 인원이 가득 찬 경우 alert 메시지 출력
-            alert("해당 스터디 방은 최대 인원이 가득 차 입장할 수 없습니다.");
+            openAlert("해당 스터디 방은 최대 인원이 가득 차 입장할 수 없습니다.");
             return; // 함수 종료하여 더 이상 입장 로직이 실행되지 않음
         }
 
@@ -146,6 +165,12 @@ export default function StudyList() {
                     />
                 </Stack>
             </div>
+            
+            <CustomAlert
+            title={alertTitle}
+            openAlert={alertVisible}
+            closeAlert={closeAlert}
+        />
 
             {/* StudyRoomEntry 모달 */}
             {selectedRoom && (

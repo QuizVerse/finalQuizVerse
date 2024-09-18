@@ -19,26 +19,30 @@ import {
 import PeopleIcon from '@mui/icons-material/People';
 import axios from "axios";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
-import {AppBar, Avatar, Box, Button, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
 import {
     Videocam as VideocamIcon,
     VideocamOff as VideocamOffIcon,
     Mic as MicIcon,
     MicOff as MicOffIcon, ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
-import VideoComponentcopy from "../../components/study/VideoComponent copy";
+import "../../routes/study/StudyRoom.css";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
+import CustomAlert from "../../components/modal/CustomAlert";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
 configureUrls();
 
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "http://localhost:3000/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 function configureUrls() {
-    APPLICATION_SERVER_URL = "http://localhost:3000/";
+    APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
-
 
 export default function StudyRoom() {
 
@@ -59,15 +63,59 @@ export default function StudyRoom() {
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
+    const [members, setMembers] = useState([]);
 
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
+    const [open, setOpen] = useState(false);
+    const [userRole, setUserRole] = useState(null); // 사용자 역할
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
+    useEffect(() => {
+        console.log(`Fetching members for studyId: ${study_id}`); // study_id 로그 추가
+         // study_id를 사용하여 API 요청
+         axios.get(`/studys/members?studyId=${study_id}`)
+         .then(response => {
+            console.log('Response data:', JSON.stringify(response.data, null, 2));
+            console.log('Response data:', response.data); // 응답 데이터 로그 추가
+             setMembers(response.data);
+         })
+         .catch(error => {
+             console.error('Error fetching participants:', error);
+         });
+    }, [study_id]);
+
+    useEffect(() => {
+        fetchUserRole();
+    }, [study_id]); 
+
+    // 사용자 역할 가져오기
+    async function fetchUserRole() {
+        try {
+            console.log('userRole 가져오는 중...');
+            console.log('Current study_id:', study_id); // study_id 확인
+            const response = await axios.get(`/studys/role`, {
+                params: { studyId: study_id }
+            });
+            console.log('fetchUserRole 호출됨');
+            console.log('API 호출 응답:', response);
+
+            if (response.data && response.data.userRole !== undefined) {
+                console.log(':userRole 가져오기 성공', response.data.userRole);
+                setUserRole(response.data.userRole);
+            } else {
+                console.error('userRole이 응답에 없습니다.');
+                throw new Error("User role not found in the response");
+            }
+        } catch (error) {
+            console.error('Error fetching user role:', error);
+        }
+    }
+    
     /**
      * @description : Alert창 열릴 때
      * */
@@ -246,6 +294,22 @@ export default function StudyRoom() {
             await leaveRoom();
         }
     }
+    
+     // 모달 열기 함수
+     const handleOpen = () => {
+        setOpen(true);
+    };
+
+    // 모달 닫기 함수
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    // 나가기 확인 함수 (실제로 방을 나가는 기능)
+    const handleConfirm = () => {
+        leaveRoom(study_id); // 방 나가기 함수 호출
+        handleClose(); // 모달 닫기
+    };
 
     //방 나가기
     async function leaveRoom(study_id) {
@@ -379,7 +443,7 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    openAlert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    openAlert(`${screenSharingParticipant}이 공유중입니다. 공유를 중지할 때까지 기다려주세요.`);
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
@@ -433,8 +497,8 @@ export default function StudyRoom() {
 
     // 화면 공유 WebSocket
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
-        const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/screen-share');
+        //const ws = new WebSocket('ws://localhost:9002/ws/screen-share');
 
 
         ws.onopen = () => {
@@ -452,7 +516,7 @@ export default function StudyRoom() {
                     setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
                     setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
                     setIsScreenSharing(true); // 화면 공유 상태 설정
-                    openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                    //openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
@@ -486,8 +550,8 @@ export default function StudyRoom() {
     const [chatSocket, setChatSocket] = useState(null);
     // 채팅 WebSocket
     useEffect(() => {
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
-        const ws = new WebSocket('ws://localhost:9002/ws/chat');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/chat');
+        //const ws = new WebSocket('ws://localhost:9002/ws/chat');
 
         ws.onopen = () => {
             console.log('웹소켓 연결이 설정되었습니다.');
@@ -513,8 +577,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('채팅 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
-                //setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
+                //setChatSocket(new WebSocket('ws://localhost:9002/ws/chat'));
+                setChatSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/chat'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -536,8 +600,8 @@ export default function StudyRoom() {
     //웹소켓 카메라
     useEffect(() => {
 
-        //const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
-        const ws = new WebSocket('ws://localhost:9002/ws/camera');
+        const ws = new WebSocket('wss://www.quizverse.kro.kr/ws/camera');
+        //const ws = new WebSocket('ws://localhost:9002/ws/camera');
 
         ws.onopen = () => {
             console.log('카메라 상태 웹소켓 연결이 설정되었습니다.');
@@ -565,8 +629,8 @@ export default function StudyRoom() {
         const attemptReconnect = () => {
             console.log('카메라 상태 웹소켓 재연결 시도 중...');
             setTimeout(() => {
-                setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
-                //setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
+                //setCameraSocket(new WebSocket('ws://localhost:9002/ws/camera'));
+                setCameraSocket(new WebSocket('wss://www.quizverse.kro.kr/ws/camera'));
             }, 5000); // 5초 후 재연결 시도
         };
 
@@ -691,11 +755,11 @@ export default function StudyRoom() {
                 ) : (
                     // 화상 스터디 방 내부
                     <div className="flex flex-col h-screen">
-                        <div className="flex-grow bg-[#222222]">
-                            <div className="flex h-full relative">
+                        <div className="flex-grow bg-[#222222] flex justify-center items-center">
+                            <div className="relative">
                                 <div id="room" className="flex flex-col">
-                                    <div id="layout-container-share" className="">
-                                        {/* 화면 공유 비디오 표시 */}
+                                    <div id="layout-container-share">
+                                        {/* 화면 공유 비디오 표시    */}
                                         {isScreenSharing && screenTrack && (
                                             <ShareVideoComponent
                                                 track={screenTrack} // 화면 공유 비디오 트랙
@@ -719,7 +783,7 @@ export default function StudyRoom() {
                                             ) :
                                             (
                                                 <div className="video-container2">
-                                                    <div className="participant-data absolute top-0 right-0">
+                                                    <div className="participant-data">
                                                         <p>{participantName + (localTrack ? " (You)" : "")}</p>
                                                     </div>
                                                     <Avatar
@@ -742,10 +806,16 @@ export default function StudyRoom() {
                                                             participantIdentity={remoteTrack.participantIdentity}
                                                         />
                                                     ) : (
-                                                        <VideoComponentcopy
-                                                            participantIdentity={remoteTrack.participantIdentity}
-                                                            participantImage={`${photopath}/${participantImage}`} // 이미지 경로와 파일명 조합
-                                                        />
+                                                        <div className="video-container2">
+                                                            <div className="participant-data">
+                                                                <p>{participantName + (localTrack ? " (You)" : "")}</p>
+                                                            </div>
+                                                            <Avatar
+                                                                title={participantImage}
+                                                                src={`${photopath}/${participantImage}`} // 카메라 꺼진 상태를 나타내는 이미지 경로
+                                                                sx={{width : "72px", height : "72px"}}
+                                                            />
+                                                        </div>
                                                     )
                                                 ) : (
                                                     <AudioComponent
@@ -759,7 +829,7 @@ export default function StudyRoom() {
                                     </div>
                                 </div>
                                     {isParticipantListOpen && (
-                                        <div className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        <div className="flex flex-col bg-gray-100 p-4 h-screen w-[360px] fixed top-0 right-0">
                                             <div className="flex justify-between items-center mb-2">
                                                 <Typography variant="h6">참여자 목록</Typography>
                                                 {/* 채팅창 닫기 버튼 */}
@@ -768,12 +838,21 @@ export default function StudyRoom() {
                                                 </IconButton>
                                             </div>
                                             <div className="flex-grow overflow-y-auto">
+                                                {members.map(member => (
+                                                    <div key={member.user.userId}>
+                                                        <img
+                                                            src={`${photopath}/${member.user.userImage}`}  // 이미지 URL
+                                                            className="w-10 h-10 rounded-full mr-4"  // 이미지 스타일: 원형으로 만들고 마진 적용
+                                                        />
+                                                        {member.user.userNickname} {/* 또는 적절한 사용자 이름 필드 */}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     )}
                                 {isChatOpen && (
                                     <div
-                                        className="flex flex-col bg-gray-100 p-4 h-full w-[360px] absolute top-0 right-0">
+                                        className="flex flex-col bg-gray-100 p-4 h-screen w-[360px] fixed top-0 right-0">
                                         <div className="flex justify-between items-center mb-2">
                                             <Typography variant="h6">채팅</Typography>
                                             {/* 채팅창 닫기 버튼 */}
@@ -847,12 +926,49 @@ export default function StudyRoom() {
                             <div className="flex space-x-2">
                                 {/* 나가기 버튼 */}
                                 <Tooltip title="나가기">
-                                    <Button onClick={() => leaveRoom(study_id)}
+                                    <Button onClick={handleOpen}
                                             variant={"contained"}
                                             color={"error"}>
                                         <ExitToAppIcon />
                                     </Button>
                                 </Tooltip>
+
+                                    {/* 모달 렌더링 */}
+                                    {userRole === 1 ? (
+                                        // 방장이 나갈 때의 모달
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="secondary">취소</Button>
+                                                <Button onClick={handleConfirm} color="primary">나가기</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    ) : (
+                                        // 일반 사용자가 나갈 때의 모달
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="secondary">취소</Button>
+                                                <Button onClick={handleConfirm} color="primary">나가기</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    )}
+
+                                <CustomAlert
+                                            title={alertTitle}
+                                            openAlert={alertVisible}
+                                            closeAlert={closeAlert}
+                                        />
                             </div>
                         </div>
                     </div>

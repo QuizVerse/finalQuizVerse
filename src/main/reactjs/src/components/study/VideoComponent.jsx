@@ -32,8 +32,8 @@ export default function VideoComponent({ track, participantIdentity, local = fal
     }, [track]);
 
     return (
-        <div id={"camera-" + participantIdentity}>
-            <div className="participant-data absolute top-0 right-0">
+        <div id={"camera-" + participantIdentity} className="video-container">
+            <div className="participant-data">
                 <p>{participantIdentity + (local ? " (You)" : "")}</p>
             </div>
             {/* <video ref={videoElement} id={track.sid}></video> */}
