@@ -443,7 +443,7 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    openAlert("다른 참가자가 공유를 중지할 때까지 기다려주세요.");
+                    openAlert(`${participantName}이 공유중입니다. 공유를 중지할 때까지 기다려주세요.`);
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
