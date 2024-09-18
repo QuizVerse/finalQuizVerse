@@ -727,7 +727,7 @@ export default function StudyRoom() {
                                     <input
                                         id="participant-name"
                                         className="form-control"
-                                        type="text"
+                                        type="hidden"
                                         value={participantName}
                                         onChange={(e) => setParticipantName(e.target.value)}
                                         required />
