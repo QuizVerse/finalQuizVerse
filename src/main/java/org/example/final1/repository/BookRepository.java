@@ -3,6 +3,7 @@ package org.example.final1.repository;
 
 import org.example.final1.model.BookDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -30,5 +31,9 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
     List<Object[]> findTop5ByCategoryIdOrderByBookmarkCountDesc(@Param("categoryId") Integer categoryId);
 
     List<BookDto> findByCategoryCategoryIdAndBookIspublishedTrueAndBookStatus(Integer categoryId, short bookStatus);
+
+    @Modifying
+    @Query("UPDATE BookDto b SET b.user = null WHERE b.user.id = :userId")
+    void updateUserIdToNullByUserId(@Param("userId") int userId);
 
 }

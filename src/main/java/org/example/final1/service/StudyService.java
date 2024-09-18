@@ -47,4 +47,14 @@ public class StudyService {
         // DAO를 통해 스터디 멤버를 삭제하고, 리더일 경우 스터디도 삭제
         studyDao.removeStudyMember(studyId, userId);
     }
+
+    // 스터디 멤버 조회
+    public List<StudymemberDto> getStudyMembers(int studyId) {
+        return studyDao.getStudyMembers(studyId);
+    }
+
+    public StudymemberDto getStudyMemberByStudyIdAndUserId(int studyId, int userId)
+    {
+        return studyDao.getStudyMemberByStudyIdAndUserId(studyId, userId);
+    }
 }

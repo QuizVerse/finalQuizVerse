@@ -31,12 +31,14 @@ export default function Login() {
     const submitLoginEvent=async (e)=>{
         e.preventDefault();
         try {
-            const response=await axios.post('/login/user/check',{
-                userEmail: user_email, // 필드 이름을 서버에서 기대하는 userEmail로 변경
-                userPassword: user_password // 필드 이름을 서버에서 기대하는 userPassword로 변경
+            const response = await axios.post('/login/user/check', {
+                userEmail: user_email,
+                userPassword: user_password
+            }, {
+                withCredentials: true // 쿠키를 클라이언트에 저장하고 서버로 전달하는 옵션
             });
-            const token=response.headers['authorization'];
-            localStorage.setItem('token',token);
+
+            // 성공적으로 로그인한 경우 홈 화면으로 리디렉션
             navi('/');
         }
         catch (error) {
