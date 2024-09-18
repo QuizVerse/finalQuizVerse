@@ -3,6 +3,7 @@ package org.example.final1.controller.mypage;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.final1.model.UserDto;
 import org.example.final1.repository.BookRepository;
+import org.example.final1.repository.SolvedbookRepository;
 import org.example.final1.service.JwtService;
 import org.springframework.http.HttpStatus;
 import org.example.final1.model.LeaveDto;
@@ -26,6 +27,8 @@ public class LeaveController2 {
     private LeaveService leaveService;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private SolvedbookRepository solvedbookRepository;
 
     @PostMapping("/leave-reason")
     public ResponseEntity<String> leave(@RequestBody LeaveDto leaveDto, HttpServletRequest request) {
@@ -42,7 +45,9 @@ public class LeaveController2 {
         try {
             // leaveDto를 서비스로 전달
             leaveService.saveLeaveReason(leaveDto);
+
             leaveService.deleteUserById(usreDto.getUserId());
+
 
 
             return ResponseEntity.ok("탈퇴 사유가 성공적으로 저장되었습니다.");

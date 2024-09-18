@@ -3,6 +3,8 @@ package org.example.final1.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,9 +21,9 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_id")
     private int solvedbookId;
 
-
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)  // Book이 삭제되면 관련 Solvedbook도 삭제
     @ToString.Exclude  // 순환 참조 방지
     //해당 문제집이 삭제되더라도 삭제된 문제집이라고만 뜨게 하기
     private BookDto book;
@@ -37,7 +39,7 @@ public class SolvedbookDto {
     private Timestamp solvedbookEnd;
 
 
-    @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "solvedbook")
     @JsonManagedReference  // 부모-자식 관계에서 부모로 설정 (JSON에서 직렬화됨)
     @ToString.Exclude  // 순환 참조 방지
     private List<AnswerDto> answers;
@@ -45,5 +47,8 @@ public class SolvedbookDto {
     @Column(name = "solvedbook_issubmitted", length = 100,nullable = false)
     // 새로운 필드 추가: 시험 제출 여부
     private boolean solvedbookIssubmitted;
+
+/*    @OneToMany(mappedBy = "solvedbook", cascade = CascadeType.ALL)
+    private List<WrongDto> wrongs; // 추가*/
 
 }
