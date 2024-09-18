@@ -29,6 +29,7 @@ import {
 import "../../routes/study/StudyRoom.css";
 import LoginIcon from '@mui/icons-material/Login';
 import CloseIcon from '@mui/icons-material/Close';
+import CustomAlert from "../../components/modal/CustomAlert";
 
 let APPLICATION_SERVER_URL = "";
 let LIVEKIT_URL = "";
@@ -59,16 +60,59 @@ export default function StudyRoom() {
     const [isCameraEnabled, setIsCameraEnabled] = useState(true);
     const [screenTrack, setScreenTrack] = useState(null);
     const [previewStream, setPreviewStream] = useState(undefined); // 추가: 미리보기 상태
+    const [members, setMembers] = useState([]);
 
     const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
     const navi = useNavigate();
     const photopath = "https://kr.object.ncloudstorage.com/bitcamp701-129/final/user";
     const [open, setOpen] = useState(false);
+    const [userRole, setUserRole] = useState(null); // 사용자 역할
 
     // alert state
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
 
+    useEffect(() => {
+        console.log(`Fetching members for studyId: ${study_id}`); // study_id 로그 추가
+         // study_id를 사용하여 API 요청
+         axios.get(`/studys/members?studyId=${study_id}`)
+         .then(response => {
+            console.log('Response data:', JSON.stringify(response.data, null, 2));
+            console.log('Response data:', response.data); // 응답 데이터 로그 추가
+             setMembers(response.data);
+         })
+         .catch(error => {
+             console.error('Error fetching participants:', error);
+         });
+    }, [study_id]);
+
+    useEffect(() => {
+        fetchUserRole();
+    }, [study_id]); 
+
+    // 사용자 역할 가져오기
+    async function fetchUserRole() {
+        try {
+            console.log('userRole 가져오는 중...');
+            console.log('Current study_id:', study_id); // study_id 확인
+            const response = await axios.get(`/studys/role`, {
+                params: { studyId: study_id }
+            });
+            console.log('fetchUserRole 호출됨');
+            console.log('API 호출 응답:', response);
+
+            if (response.data && response.data.userRole !== undefined) {
+                console.log(':userRole 가져오기 성공', response.data.userRole);
+                setUserRole(response.data.userRole);
+            } else {
+                console.error('userRole이 응답에 없습니다.');
+                throw new Error("User role not found in the response");
+            }
+        } catch (error) {
+            console.error('Error fetching user role:', error);
+        }
+    }
+    
     /**
      * @description : Alert창 열릴 때
      * */
@@ -396,7 +440,7 @@ export default function StudyRoom() {
             } else {
                 // 다른 참가자가 화면을 공유 중인 경우 화면 공유를 시작할 수 없도록 처리
                 if (screenSharingParticipant && screenSharingParticipant !== participantName) {
-                    openAlert(`${screenSharingParticipant}가 이미 화면을 공유하고 있습니다. 다른 참가자가 공유를 중지할 때까지 기다려주세요.`);
+                    openAlert("다른 참가자가 공유를 중지할 때까지 기다려주세요.");
                     return; // 화면 공유 시작을 중단
                 }
                 // 화면 공유 시작
@@ -469,7 +513,7 @@ export default function StudyRoom() {
                     setSharedScreenTrackSid(message.trackSid);  // 해당 트랙 ID 저장
                     setScreenSharingParticipant(message.participantName); // 공유 중인 참가자 설정
                     setIsScreenSharing(true); // 화면 공유 상태 설정
-                    openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
+                    //openAlert(`${message.participantName}가 화면을 공유 중입니다. 화면 공유가 중복될 수 없습니다.`);
                 }
             } else {
                 console.log(`${message.participantName}가 화면 공유를 중지했습니다.`);
@@ -736,7 +780,7 @@ export default function StudyRoom() {
                                             ) :
                                             (
                                                 <div className="video-container2">
-                                                    <div className="participant-data absolute top-0 right-0">
+                                                    <div className="participant-data">
                                                         <p>{participantName + (localTrack ? " (You)" : "")}</p>
                                                     </div>
                                                     <Avatar
@@ -760,7 +804,7 @@ export default function StudyRoom() {
                                                         />
                                                     ) : (
                                                         <div className="video-container2">
-                                                            <div className="participant-data absolute top-0 right-0">
+                                                            <div className="participant-data">
                                                                 <p>{participantName + (localTrack ? " (You)" : "")}</p>
                                                             </div>
                                                             <Avatar
@@ -791,6 +835,15 @@ export default function StudyRoom() {
                                                 </IconButton>
                                             </div>
                                             <div className="flex-grow overflow-y-auto">
+                                                {members.map(member => (
+                                                    <div key={member.user.userId}>
+                                                        <img
+                                                            src={`${photopath}/${member.user.userImage}`}  // 이미지 URL
+                                                            className="w-10 h-10 rounded-full mr-4"  // 이미지 스타일: 원형으로 만들고 마진 적용
+                                                        />
+                                                        {member.user.userNickname} {/* 또는 적절한 사용자 이름 필드 */}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     )}
@@ -877,42 +930,42 @@ export default function StudyRoom() {
                                     </Button>
                                 </Tooltip>
 
-                                 {/* 방장이 나갈 때의 모달 */}
-                                 {/* <Dialog open={open} onClose={handleClose}>
-                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleClose} color="secondary">
-                                                취소
-                                            </Button>
-                                            <Button onClick={handleConfirm} color="primary">
-                                                나가기
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog> */}
+                                    {/* 모달 렌더링 */}
+                                    {userRole === 1 ? (
+                                        // 방장이 나갈 때의 모달
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    방장이 나가면 방이 삭제됩니다. 정말 나가시겠습니까?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="secondary">취소</Button>
+                                                <Button onClick={handleConfirm} color="primary">나가기</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    ) : (
+                                        // 일반 사용자가 나갈 때의 모달
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>정말 나가시겠습니까?</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} color="secondary">취소</Button>
+                                                <Button onClick={handleConfirm} color="primary">나가기</Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    )}
 
-                                    {/* 일반 사용자가 나갈 때의 모달 */}
-                                    <Dialog open={open} onClose={handleClose}>
-                                        <DialogTitle>정말 나가시겠습니까?</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                방을 나가면 다시 입장할 수 없습니다. 정말 나가시겠습니까?
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleClose} color="secondary">
-                                                취소
-                                            </Button>
-                                            <Button onClick={handleConfirm} color="primary">
-                                                나가기
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-
+                                <CustomAlert
+                                            title={alertTitle}
+                                            openAlert={alertVisible}
+                                            closeAlert={closeAlert}
+                                        />
                             </div>
                         </div>
                     </div>

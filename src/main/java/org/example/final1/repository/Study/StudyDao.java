@@ -86,4 +86,12 @@ public class StudyDao {
             studyDaoInter.deleteById(studyId);
         }
     }
+    // 특정 studyId로 스터디 멤버 목록 가져오기
+    public List<StudymemberDto> getStudyMembers(int studyId) {
+        return studyMemberDaoInter.findByStudyStudyId(studyId);
+    }
+     // studyId와 userId로 특정 멤버 찾기
+     public StudymemberDto getStudyMemberByStudyIdAndUserId(int studyId, int userId) {
+        return studyMemberDaoInter.findByStudyStudyIdAndUserUserId(studyId, userId);
+    }
 }
