@@ -7,10 +7,10 @@ import Cookies from 'js-cookie';
 
 export default function Leave() {
   const [reason, setReason] = useState("");
-  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false); // 이메일 인증 성공 여부
-  const [isVerifiedPassword, setIsVerifiedPassword] = useState(false); // 비밀번호 인증 성공 여부
+  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false);
+  const [isVerifiedPassword, setIsVerifiedPassword] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const [password, setPassword] = useState(""); // 비밀번호 입력 상태 추가
+  const [password, setPassword] = useState("");
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
@@ -33,11 +33,9 @@ export default function Leave() {
     }
   };
 
-  // 인증코드 전송
   const sendVerificationCode = async () => {
     try {
       const response = await axios.post("/leave/email");
-
       if (response.status === 200) {
         showAlert("알림", "인증코드가 이메일로 전송되었습니다.");
       } else {
@@ -49,14 +47,12 @@ export default function Leave() {
     }
   };
 
-  // 인증 코드 검증
   const verifyCode = async () => {
     try {
       const response = await axios.post("/leave/verify", { code: verificationCode });
-
       if (response.data.success) {
         showAlert("알림", "인증이 성공적으로 완료되었습니다.");
-        setIsVerifiedEmail(true); // 이메일 인증 성공
+        setIsVerifiedEmail(true);
       } else {
         showAlert("오류", "인증코드가 유효하지 않습니다.");
         setIsVerifiedEmail(false);
@@ -68,14 +64,12 @@ export default function Leave() {
     }
   };
 
-  // 비밀번호 인증
   const verifyPassword = async () => {
     try {
       const response = await axios.post("/leave/verify-password", { password });
-
       if (response.data.success) {
         showAlert("알림", "비밀번호 인증이 성공적으로 완료되었습니다.");
-        setIsVerifiedPassword(true); // 비밀번호 인증 성공
+        setIsVerifiedPassword(true);
       } else {
         showAlert("오류", "비밀번호가 유효하지 않습니다.");
         setIsVerifiedPassword(false);
@@ -87,7 +81,6 @@ export default function Leave() {
     }
   };
 
-  // 회원 탈퇴 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,26 +90,11 @@ export default function Leave() {
     }
 
     try {
-      // 탈퇴 사유 전송
-      const reasonResponse = await axios.post("/api/leave-reason", {
-        leaveReason: reason, // leaveReason으로 변경
-      });
+      // 탈퇴 사유 전송 및 사용자 삭제
+      const response = await axios.post("/api/leave-reason", { leaveReason: reason });
 
-      if (reasonResponse.status !== 200) {
-        console.error("탈퇴 사유 저장에 실패했습니다.");
-        showAlert("오류", "탈퇴 사유 저장에 실패했습니다.");
-        return;
-      }
-
-      setReason("");
-
-      // 탈퇴 요청
-      const leaveResponse = await axios.get("/leave/account", {
-        withCredentials: true, // 쿠키 인증 처리
-      });
-
-      if (leaveResponse.data === "success") {
-        // 탈퇴 성공 시 JWT 및 refreshToken 제거
+      if (response.status === 200) {
+        setReason("");
         Cookies.remove('jwtToken');
         Cookies.remove('refreshToken');
 
@@ -145,16 +123,10 @@ export default function Leave() {
                   timerVisible={true}
               />
               <Box display="flex" justifyContent="space-between">
-                <Button
-                    variant={'outlined'}
-                    onClick={sendVerificationCode}
-                >
+                <Button variant={'outlined'} onClick={sendVerificationCode}>
                   인증코드 발송
                 </Button>
-                <Button
-                    variant={"contained"}
-                    onClick={verifyCode}
-                >
+                <Button variant={"contained"} onClick={verifyCode}>
                   인증코드 확인
                 </Button>
               </Box>
@@ -167,11 +139,7 @@ export default function Leave() {
                   type={"password"}
                   placeholder={"비밀번호"}
               />
-              <Button
-                  variant={"contained"}
-                  fullWidth
-                  onClick={verifyPassword}
-              >
+              <Button variant={"contained"} fullWidth onClick={verifyPassword}>
                 비밀번호 확인
               </Button>
             </div>
@@ -193,7 +161,7 @@ export default function Leave() {
                 variant={"contained"}
                 onClick={handleSubmit}
                 fullWidth
-                disabled={!isVerifiedEmail || !isVerifiedPassword} // 이메일과 비밀번호 모두 인증되어야 활성화
+                disabled={!isVerifiedEmail || !isVerifiedPassword}
             >
               탈퇴하기
             </Button>

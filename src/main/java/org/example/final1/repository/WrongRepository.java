@@ -29,8 +29,9 @@ public interface WrongRepository extends JpaRepository<WrongDto, Integer> {
 
 
 
-
-
     List<WrongDto> findAllByUser_UserId(Integer userId);
+
+    void deleteBySolvedbook(SolvedbookDto solvedbook);
+
 
 }

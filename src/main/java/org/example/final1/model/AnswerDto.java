@@ -3,6 +3,8 @@ package org.example.final1.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -27,13 +29,16 @@ public class AnswerDto {
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)  // 질문 참조
+    @OnDelete(action = OnDeleteAction.CASCADE)  // 부모 질문 삭제 시 자식 답변도 삭제
     private QuestionDto question;
 
-    @ManyToMany  // 여러 개의 선택지를 참조할 수 있음
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(name = "tb_answerchoices",
             joinColumns = @JoinColumn(name = "answer_id"),
             inverseJoinColumns = @JoinColumn(name = "choice_id"))
-    private List<ChoiceDto> choices;  // 선택형 답안일 경우 선택한 선택지들
+    private List<ChoiceDto> choices;
+
 
     @Column(name = "subjective_answer", length = 1000, nullable = true)  // 주관식 답안
     private String subjectiveAnswer;

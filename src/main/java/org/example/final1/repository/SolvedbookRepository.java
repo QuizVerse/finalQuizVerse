@@ -1,5 +1,6 @@
 package org.example.final1.repository;
 
+import jakarta.transaction.Transactional;
 import org.example.final1.model.BookDto;
 import org.example.final1.model.BookWrongInfoDto;
 import org.example.final1.model.SolvedbookDto;
@@ -48,6 +49,13 @@ public interface SolvedbookRepository extends JpaRepository<SolvedbookDto, Integ
 
     @Query("SELECT s.book.bookId FROM SolvedbookDto s WHERE s.solvedbookId = :solvedbookId")
     Integer findBookIdBySolvedbookId(@Param("solvedbookId") Integer solvedbookId);
+
+
+    @Transactional
+    void deleteByUserUserId(int userId);
+
+    List<SolvedbookDto> findByUser(UserDto user);
+
 }
 
 
