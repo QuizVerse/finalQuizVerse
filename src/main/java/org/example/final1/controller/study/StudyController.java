@@ -115,4 +115,33 @@ public class StudyController {
         
         return ResponseEntity.ok("Member removed successfully");
     }
+
+    @GetMapping("/members")
+    public ResponseEntity<List<StudymemberDto>> getStudyMembers(@RequestParam int studyId) {
+        List<StudymemberDto> members = studyService.getStudyMembers(studyId);
+        return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<Map<String, Object>> getUserRole(
+            @RequestParam int studyId, 
+            HttpServletRequest request) 
+    {
+        // JWT 토큰에서 사용자 정보 가져오기
+        UserDto userDto = jwtService.getUserFromJwt(request);  // JWT를 사용해 현재 사용자 정보 추출
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 유효하지 않은 경우 처리
+        }
+
+        // studyId와 userId로 스터디 멤버 찾기
+        StudymemberDto studymember = studyService.getStudyMemberByStudyIdAndUserId(studyId, userDto.getUserId());
+
+        if (studymember != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("userRole", studymember.getUserRole());
+            return ResponseEntity.ok(response);  // userRole 반환
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // 멤버를 찾지 못한 경우
+        }
+    }
 }
