@@ -101,22 +101,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // JWT 토큰을 HttpOnly 쿠키에 저장
         Cookie jwtCookie = new Cookie("jwtToken", jwtToken);
-        jwtCookie.setHttpOnly(true);  // XSS 보호
+        jwtCookie.setHttpOnly(false);  // XSS 보호
         jwtCookie.setSecure(true);    // HTTPS에서만 전송 (배포 환경에서 적용)
         jwtCookie.setPath("/");       // 애플리케이션 전체에 사용 가능
         jwtCookie.setMaxAge((int) (JwtProperties.EXPIRATION_TIME / 1000)); // 만료 시간 설정 (초 단위)
 
-
-
         // Refresh Token을 HttpOnly 쿠키에 저장
         int refreshTokenExpiryTime = (int) (JwtProperties.REFRESH_EXPIRATION_TIME / 1000); // 초 단위로 변환
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setHttpOnly(false);
         refreshTokenCookie.setSecure(true); // HTTPS에서만 전송 (배포 환경에서만 적용)
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(refreshTokenExpiryTime); // 쿠키 만료 시간을 Refresh Token 만료 시간과 동일하게 설정
-
-
 
 
         // 쿠키 추가
