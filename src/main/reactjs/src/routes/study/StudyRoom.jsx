@@ -39,7 +39,10 @@ function configureUrls() {
     APPLICATION_SERVER_URL = "http://localhost:3000/";
     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
 }
-
+// function configureUrls() {
+//     APPLICATION_SERVER_URL = "https://www.quizverse.kro.kr/";
+//     LIVEKIT_URL = "wss://openvidu.openvidu.kro.kr/";
+// }
 
 export default function StudyRoom() {
 
