@@ -19,7 +19,7 @@ export const CallGpt = async ({ prompt }) => {
             - [Explanation]: A detailed explanation of the correct answer.
         
         Please output the following structure in Korean:
-        {
+        { 
             "sectionTitle": "Title",
             "sectionDescription": "Summary",
             "questions" :   [{
