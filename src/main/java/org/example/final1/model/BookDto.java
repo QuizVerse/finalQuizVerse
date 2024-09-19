@@ -51,7 +51,7 @@ public class BookDto {
 //    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
-    //사용자가 탈퇴할시 없는 사용자라고 뜨게 해주기!
+    @OnDelete(action = OnDeleteAction.SET_NULL) // 사용자가 삭제되면 user_id를 NULL로 설정
     private UserDto user;
 
     // Foreign Key reference to CategoryDTO

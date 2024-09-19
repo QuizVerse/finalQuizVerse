@@ -2,7 +2,9 @@
 package org.example.final1.repository;
 
 import org.example.final1.model.BookDto;
+import org.example.final1.model.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -31,4 +33,5 @@ public interface BookRepository extends JpaRepository<BookDto, Integer> {
 
     List<BookDto> findByCategoryCategoryIdAndBookIspublishedTrueAndBookStatus(Integer categoryId, short bookStatus);
 
+    void deleteByUser(UserDto user);
 }
