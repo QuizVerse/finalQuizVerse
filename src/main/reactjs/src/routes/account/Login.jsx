@@ -51,10 +51,10 @@ export default function Login() {
         navi('/account/changepassword');
     };
     const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:9002/oauth2/authorization/google";
+        window.location.href = "https://www.quizverse.kro.kr/oauth2/authorization/google";
     }
     const handleNaverLogin = () => {
-        window.location.href = "http://localhost:9002/oauth2/authorization/naver";
+        window.location.href = "https://www.quizverse.kro.kr/oauth2/authorization/naver";
     }
     const handleKakaoLogin = () => {
         window.location.href = "https://www.quizverse.kro.kr/oauth2/authorization/kakao";
