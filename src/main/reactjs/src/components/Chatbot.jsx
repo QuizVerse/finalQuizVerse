@@ -204,6 +204,7 @@ export default function Chatbot() {
                             value={userInput}
                             className={"bg-white"}
                             onChange={(e) => setUserInput(e.target.value)}
+                            fullWidth
                             onKeyPress={(e) => {
                                 if (e.key === 'Enter') handleSendMessage();
                             }}
