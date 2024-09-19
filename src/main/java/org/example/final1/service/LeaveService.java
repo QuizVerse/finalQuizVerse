@@ -1,12 +1,16 @@
 package org.example.final1.service;
 
+import jakarta.transaction.Transactional;
 import org.example.final1.model.LeaveDto;
-import org.example.final1.repository.BookRepository;
-import org.example.final1.repository.LeaveRepository;
+import org.example.final1.model.SolvedbookDto;
+import org.example.final1.model.UserDto;
+import org.example.final1.repository.*;
 import org.example.final1.repository.User.UserDao;
 import org.example.final1.repository.User.UserDaoInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class LeaveService {
@@ -18,6 +22,14 @@ public class LeaveService {
     private BookRepository bookRepository;
     @Autowired
     private UserDaoInter userDaoInter;
+    @Autowired
+    private WrongRepository wrongRepository;
+    @Autowired
+    private SolvedbookRepository solvedbookRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
+    private ClassRepository classRepository;
 
     // LeaveDto를 받아 처리
     public void saveLeaveReason(LeaveDto leaveDto) {
@@ -29,10 +41,27 @@ public class LeaveService {
         // 저장 로직 수행
         leaveRepository.save(leaveDto);
     }
-
+    @Transactional
     public void deleteUserById(int userId) {
-        // 사용자의 모든 책 레코드에서 user_id를 null로 설정
-        bookRepository.updateUserIdToNullByUserId(userId); // 해당 메서드 추가 필요
-        userDaoInter.deleteById(userId); // 인스턴스를 통해 호출
+        // 1. 사용자를 찾는다.
+        UserDto user = userDaoInter.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 2. 사용자가 푼 문제집(Solvedbook)을 먼저 삭제
+        List<SolvedbookDto> solvedBooks = solvedbookRepository.findByUser(user);
+        for (SolvedbookDto solvedBook : solvedBooks) {
+            // 관련된 답안(Answer) 삭제
+            answerRepository.deleteBySolvedbook(solvedBook);
+            // 관련된 틀린 답(WrongAnswer) 삭제
+            wrongRepository.deleteBySolvedbook(solvedBook);
+            // Solvedbook 삭제
+            solvedbookRepository.delete(solvedBook);
+        }
+
+        // 3. 사용자가 만든 책(Book) 삭제
+        bookRepository.deleteByUser(user);
+
+        // 4. 사용자를 삭제
+        userDaoInter.delete(user);
     }
 }

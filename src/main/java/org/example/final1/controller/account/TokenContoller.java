@@ -33,7 +33,7 @@ public class TokenContoller {
 
             // 새로운 액세스 토큰 쿠키로 전송
             Cookie newAccessTokenCookie = new Cookie("jwtToken", jwtToken);
-            newAccessTokenCookie.setHttpOnly(true);
+            newAccessTokenCookie.setHttpOnly(false);
             newAccessTokenCookie.setSecure(true);
             newAccessTokenCookie.setPath("/");
             newAccessTokenCookie.setMaxAge((int) JwtProperties.EXPIRATION_TIME / 1000);
