@@ -24,15 +24,10 @@ export default function MainHeader() {
         if (jwtToken && refreshToken) {
             setIsLoggedIn(true);
 
-            // 로그인한 사용자의 데이터 가져오기
+
             const fetchUserData = async () => {
                 try {
-                    const response = await axios.get("/update/user/data", {
-                        headers: {
-                            'Authorization': `Bearer ${jwtToken}`
-                        },
-                        withCredentials: true // 쿠키 기반 인증을 위해 추가
-                    });
+                    const response = await axios.get("/update/user/data");
                     setUserData(response.data);
                     setUserNickname(response.data.nickname || ""); // 서버에서 가져온 닉네임 설정
                 } catch (e) {
@@ -40,10 +35,11 @@ export default function MainHeader() {
                 }
             };
             fetchUserData();
-        } else {
-            setIsLoggedIn(false); // 토큰이 없으면 로그아웃 상태로 설정
+        }else{
+            setIsLoggedIn(false);
         }
-    }, []);  // 빈 배열로 설정하여 컴포넌트가 마운트될 때 한 번 실행
+
+    }, []);
 
     const handleLogout = async () => {
         try {

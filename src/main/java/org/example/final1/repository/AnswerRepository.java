@@ -2,6 +2,7 @@ package org.example.final1.repository;
 
 import org.example.final1.model.AnswerDto;
 import org.example.final1.model.QuestionDto;
+import org.example.final1.model.SolvedbookDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +24,8 @@ public interface AnswerRepository extends JpaRepository<AnswerDto, Integer> {
     @Query("SELECT a FROM AnswerDto a WHERE a.solvedbook.solvedbookId = :solvedbookId AND a.wrongRepeat = :wrongRepeat")
     List<AnswerDto> findCorrectAnswers(@Param("solvedbookId") int solvedbookId, @Param("wrongRepeat") int wrongRepeat);
 
+
+    void deleteBySolvedbook(SolvedbookDto solvedbook);
 
 
 

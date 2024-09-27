@@ -13,5 +13,5 @@ public interface ClassRepository extends JpaRepository<ClassDto, Integer> {
     List<ClassDto> findAllByUser(UserDto user);
 
     ClassDto findByClassId(Integer classId);
-
+    void deleteByUser_UserId(int userId);
 }

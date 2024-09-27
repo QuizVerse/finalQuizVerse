@@ -34,7 +34,7 @@ public class ClassDto {
     @CreationTimestamp
     private Timestamp classCreatedate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", nullable = true)
     private UserDto user;
 

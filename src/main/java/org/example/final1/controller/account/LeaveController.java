@@ -37,13 +37,13 @@ public class LeaveController {
     private EmailService emailService;
     private Map<String, String> leaveAuthcode = new ConcurrentHashMap<>();
 
-    // 회원 탈퇴 요청 처리 (기존)
+   /* // 회원 탈퇴 요청 처리 (기존)
     @GetMapping("/account")
     public String leaveAccount(HttpServletRequest request) {
         UserDto user = jwtService.getUserFromJwt(request);
         userService.deleteUserById(user.getUserId());
         return "success";
-    }
+    }*/
 
     // 1. 인증 코드 전송 (POST /leave/email)
     @PostMapping("/email")
