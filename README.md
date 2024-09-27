@@ -21,12 +21,27 @@
 <br>
 
 ## 1. 개발 환경
-- Front End : React, Axios, react-router-dom, MUI(Material-UI), swiperjs 
-- Back End : Spring Boot, JSON Web Token(JWT), OAuth 2.0, JPA, Spring Security, MySQL, Node.js, Hibernate, Spring Websocket
-- 버전 관리 : Git, Github
-- 협업 툴 : Jira, Trello, Postman, figma
-- 서비스 배포 환경 : Docker, Dockerhub, Jenkins, Gradle, npm
-- Naver Cloud & API : Object Storage, Cloud DB for MySQL, RESTful API(naver, google, kakao login), GPT API, OpenVidu, SMTP, Live Kit
+
+### Front End
+- React, Axios, react-router-dom, MUI(Material-UI), swiperjs
+  
+### Back End
+- Spring Boot, JSON Web Token(JWT), OAuth 2.0, JPA, Spring Security, MySQL, Node.js, Hibernate, Spring Websocket
+  
+### 버전 관리
+- Git, Github
+
+### 협업 툴
+- Jira, Trello, Postman, figma
+
+### 서비스 배포 환경
+- Docker, Dockerhub, Jenkins, Gradle, npm
+
+### Naver Cloud & API
+- Object Storage, Cloud DB for MySQL, RESTful API(naver, google, kakao login), GPT API, OpenVidu, SMTP, Live Kit
+
+
+<br>
 
 
 ## 2. 채택한 개발 기술과 브랜치 전략
@@ -43,8 +58,7 @@
 #### test-deploy
 - test-merge 브랜치의 코드를 메인 배포 이전에 시험적으로 배포 후 확인하기 위한 브랜치입니다.
 
-
- 
+<br>
   
 ## 3. 역할 분담
 ### 유니
